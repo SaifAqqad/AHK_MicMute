@@ -12,10 +12,10 @@ On the first run of the application, a config file will open in notepad that wil
     Device_Name=""
     Mute_Hotkey=""
     Unmute_Hotkey=""
-    Sound_Feedback=""
-    OnScreen_Feedback=""
+    Sound_Feedback=
+    OnScreen_Feedback=
 ### 
-`Device_Name=""` can be any substring of your microphone's name or the controller's name as shown in this image:
+`Device_Name` can be any substring of your microphone's name or the controller's name as shown in this image:
 <details><summary>image</summary>
 
 ![](./resources/Controlpaneldialog.png)
@@ -23,14 +23,14 @@ On the first run of the application, a config file will open in notepad that wil
 </details>
 
 ### 
-`Mute_Hotkey=""` and `Unmute_Hotkey=""` both can be any hotkey supported by AHK, use this [List of keys](https://www.autohotkey.com/docs/KeyList.htm) as reference. 
+`Mute_Hotkey` and `Unmute_Hotkey` both can be any hotkey supported by AHK, use this [List of keys](https://www.autohotkey.com/docs/KeyList.htm) as a reference, you can also combine them with [hotkey modifiers](https://www.autohotkey.com/docs/Hotkeys.htm#Symbols). 
 
-Examples: `"<^M"`, `"RShift"`, `"^!T"`
+Examples: `"<^M"`, `"*RShift"`, `"^!T"`
 
 Note: If both are set to the same hotkey, it will act as a toggle
 ### 
 
-`Sound_Feedback=""` and `OnScreen_Feedback=""` can be set to either `"0"` or `"1"`
+`Sound_Feedback` and `OnScreen_Feedback` can be set to either `0` or `1`
 ### 
 <details><summary>Example of a correct config</summary>
 
@@ -38,8 +38,8 @@ Note: If both are set to the same hotkey, it will act as a toggle
     Device_Name="AmazonBasics"
     Mute_Hotkey="RShift"
     Unmute_Hotkey="RShift"
-    Sound_Feedback="1"
-    OnScreen_Feedback="0"            
+    Sound_Feedback=1
+    OnScreen_Feedback=0            
 
 </details>
 
