@@ -45,7 +45,7 @@ Note: If both are set to the same hotkey, it will act as a toggle
 
 ### You can always edit the config file by clicking on *Edit config* from the tray menu.
 
-## Install using [Scoop](scoop.sh)
+## Install using [Scoop](https://scoop.sh)
 
 1. Install scoop using powershell
     
