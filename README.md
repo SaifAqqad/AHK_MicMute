@@ -23,14 +23,14 @@ On the first run of the application, a config file will open in notepad that wil
 </details>
 
 ### 
-`Mute_Hotkey` and `Unmute_Hotkey` both can be any hotkey supported by AHK, use this [List of keys](https://www.autohotkey.com/docs/KeyList.htm) as a reference, you can also combine them with [hotkey modifiers](https://www.autohotkey.com/docs/Hotkeys.htm#Symbols). 
+Both `Mute_Hotkey` and `Unmute_Hotkey` can be any hotkey supported by AHK, use this [List of keys](https://www.autohotkey.com/docs/KeyList.htm) as a reference, you can also combine them with [hotkey modifiers](https://www.autohotkey.com/docs/Hotkeys.htm#Symbols). 
 
-Examples: `"<^M"`, `"*RShift"`, `"^!T"`
+Examples: `"<^M"`, `"*RShift"`, `"^!T"`, `"LControl & XButton1"`
 
 Note: If both are set to the same hotkey, it will act as a toggle
 ### 
 
-`Sound_Feedback` and `OnScreen_Feedback` can be set to either `0` or `1`
+Both `Sound_Feedback` and `OnScreen_Feedback` can be set to either `0` or `1`
 ### 
 <details><summary>Example of a correct config</summary>
 
