@@ -6,40 +6,55 @@
 </p>
 
 ## Usage
-On the first run of the application, a config file will open in notepad that will look like this:
-        
-    [settings]
-    Device_Name=""
-    Mute_Hotkey=""
-    Unmute_Hotkey=""
-    Sound_Feedback=
-    OnScreen_Feedback=
+A config file will open the first time you run the application:
+```ini
+[settings]
+Microphone=""
+MuteHotkey=""
+UnmuteHotkey=""
+SoundFeedback=
+OnscreenFeedback=
+ExcludeFullscreen=
+UpdateWithSystem=
+```
+
+1. `Microphone` can be any substring of your microphone's name or the controller's name as shown in this image:
+   <details><summary>image</summary>
+
+   ![](./resources/Controlpaneldialog.png)
+
+   </details>
+
 ### 
-`Device_Name` can be any substring of your microphone's name or the controller's name as shown in this image:
-<details><summary>image</summary>
+2. Both `MuteHotkey` and `UnmuteHotkey` can be any hotkey supported by AHK, use this [List of keys](https://www.autohotkey.com/docs/KeyList.htm) as a reference, you can also combine them with [hotkey modifiers](https://www.autohotkey.com/docs/Hotkeys.htm#Symbols).
 
-![](./resources/Controlpaneldialog.png)
+   Examples: `"<^M"`: left ctrl+M, `"RShift"`: right shift, `"^!T"`: ctrl+alt+T, `"LControl & XButton1"`: left ctrl+ mouse 4
 
-</details>
+   Note: If both are set to the same hotkey, it will act as a toggle 
 
-### 
-Both `Mute_Hotkey` and `Unmute_Hotkey` can be any hotkey supported by AHK, use this [List of keys](https://www.autohotkey.com/docs/KeyList.htm) as a reference, you can also combine them with [hotkey modifiers](https://www.autohotkey.com/docs/Hotkeys.htm#Symbols). 
+3. Both `SoundFeedback` and `OnscreenFeedback` can be set to either `0` or `1`, you can also set `ExcludeFullscreen` to 1 to stop the OSD from showing on top of fullscreen applications
+   <details><summary>On screen feedback</summary>
 
-Examples: `"<^M"`, `"*RShift"`, `"^!T"`, `"LControl & XButton1"`
+   ![](./resources/OSD.gif)
 
-Note: If both are set to the same hotkey, it will act as a toggle
-### 
+   </details>
+   
+4. If `UpdateWithSystem` is set to 1, the tray icon will update whenever the microphone is muted/unmuted by the OS or other applications, it increases CPU usage by 1% at most
 
-Both `Sound_Feedback` and `OnScreen_Feedback` can be set to either `0` or `1`
+   
 ### 
 <details><summary>Example of a correct config</summary>
 
-    [settings]
-    Device_Name="AmazonBasics"
-    Mute_Hotkey="RShift"
-    Unmute_Hotkey="RShift"
-    Sound_Feedback=1
-    OnScreen_Feedback=0            
+```ini
+[settings]
+Microphone="amazonbasics"
+MuteHotkey="*RShift"
+UnmuteHotkey="*RShift"
+SoundFeedback=1
+OnscreenFeedback=1
+ExcludeFullscreen=0
+UpdateWithSystem=1
+```           
 
 </details>
 
