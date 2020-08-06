@@ -9,7 +9,7 @@ global device_name:="", global hotkey_mute:="", global hotkey_unmute:=""
 global sound_feedback:="", global OSD_feedback:=""
 global exclude_fullscreen:="", global sys_update:=""
 global mute_ico:="", global default_ico:=""
-if (!FileExist("config.ini")) {
+if (!FileExist("config.ini") || isFileEmpty("config.ini")) {
     IniWrite, Microphone=""`nMuteHotkey=""`nUnmuteHotkey=""`nSoundFeedback=`nOnscreenFeedback=`nExcludeFullscreen=`nUpdateWithSystem=`n, config.ini, settings
     edit_config()
 }
@@ -29,4 +29,8 @@ load_config(){
 edit_config(){
     RunWait, config.ini
     Reload
+}
+isFileEmpty(file){
+   FileGetSize, size , %file%
+   return !size
 }
