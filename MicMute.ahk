@@ -1,7 +1,8 @@
 ﻿#Include, <VA>
 #Include, <OSD>
-OSD_spawn("Loading config...", "4BB04F")
-#Include, resources.ahk
+#Include, config.ahk
+#Include, assets.ahk
+OSD_spawn("MicMute", "4BB04F")
 global global_mute:= ;1 muted
 init_tray()
 update_state()
@@ -34,48 +35,10 @@ unmute_hotkey(){
     update_state()
     show_feedback(global_mute)
 }
-;
 update_state(){
     state:=VA_GetMasterMute(device_name . ":1")
     if (state!=global_mute){
         global_mute:=state
         update_tray(global_mute)
     }
-}
-update_tray(state){
-    Menu, Tray, Icon, % state? mute_ico : default_ico
-    Menu, Tray, Tip, % state? "Microphone Muted" : "Microphone Online"
-}
-show_feedback(state){
-    if (sound_feedback){
-        SoundPlay,% state? "resources\mute.mp3" : "resources\unmute.mp3"
-    }
-    if (OSD_feedback){
-        OSD_destroy()
-        if (state)
-            OSD_spawn("Microphone Muted", "DC3545", exclude_fullscreen)
-        else
-            OSD_spawn("Microphone Online", "007BFF", exclude_fullscreen)
-    }
-}
-;tray initialization functions
-init_tray(){
-    RegRead, sysTheme
-    , HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize, SystemUsesLightTheme
-    default_ico:= sysTheme? "resources\default_black.ico" : "resources\default_white.ico"
-    mute_ico:= sysTheme? "resources\mute_black.ico" : "resources\mute_white.ico"
-    if (FileExist(default_ico)) {
-        Menu, Tray, Icon, %default_ico%
-    }
-    Menu, Tray, Tip, MicMute  
-    Menu, Tray, NoStandard
-    Menu, Tray, Add, Edit Config, edit_config
-    Menu, Tray, Add, Help, launch_help
-    Menu, Tray, Add, Exit, exit
-}
-launch_help(){
-    Run, https://github.com/SaifAqqad/AHK_MicMute#usage
-}
-exit(){
-    ExitApp
 }
