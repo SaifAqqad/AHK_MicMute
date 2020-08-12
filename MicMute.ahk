@@ -4,13 +4,14 @@
 #Include, assets.ahk
 OSD_spawn("MicMute", "4BB04F")
 global global_mute:= ;1 muted
+global keys:= StrSplit(hotkey_mute, [" ","#","!","^","+","&",">","<","*","~","$","UP"], " `t")
 init_tray()
 update_state()
 if (sys_update){
     SetTimer, update_state, 500
 }
 if (hotkey_mute=hotkey_unmute){
-    Hotkey, %hotkey_mute%, toggle_hotkey
+    Hotkey,%hotkey_mute% ,% push_to_talk? "ptt_hotkey" : "toggle_hotkey"
 }else{
     Hotkey, %hotkey_mute%, mute_hotkey
     Hotkey, %hotkey_unmute%, unmute_hotkey
@@ -20,6 +21,11 @@ toggle_hotkey(){
     VA_SetMasterMute(!global_mute, device_name)
     update_state()
     show_feedback(global_mute, sound_feedback, OSD_feedback)
+}
+ptt_hotkey(){
+    unmute_hotkey()
+    KeyWait, % keys[keys.Length()]
+    mute_hotkey()
 }
 mute_hotkey(){
     if (global_mute)
