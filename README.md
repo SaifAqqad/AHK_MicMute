@@ -6,12 +6,13 @@
 </p>
 
 ## Usage
-A config file will open the first time you run the application:
+A config file will be created the first time you run the Script:
 ```ini
 [settings]
 Microphone=""
 MuteHotkey=""
 UnmuteHotkey=""
+PushToTalk=
 SoundFeedback=
 OnscreenFeedback=
 ExcludeFullscreen=
@@ -24,22 +25,27 @@ UpdateWithSystem=
    ![](./resources/Controlpaneldialog.png)
 
    </details>
-
+   
+   you can also leave it as `""` to select the default microphone
 ### 
 2. Both `MuteHotkey` and `UnmuteHotkey` can be any hotkey supported by AHK, use this [List of keys](https://www.autohotkey.com/docs/KeyList.htm) as a reference, you can also combine them with [hotkey modifiers](https://www.autohotkey.com/docs/Hotkeys.htm#Symbols).
 
+   You can set both to the same hotkey to make it a toggle.
+
+
    Examples: `"<^M"`: left ctrl+M, `"RShift"`: right shift, `"^!T"`: ctrl+alt+T, `"LControl & XButton1"`: left ctrl+ mouse 4
 
-   Note: If both are set to the same hotkey, it will act as a toggle 
 
-3. Both `SoundFeedback` and `OnscreenFeedback` can be set to either `0` or `1`, you can also set `ExcludeFullscreen` to 1 to stop the OSD from showing on top of fullscreen applications
+3. Set `PushToTalk` to `1` to enable PTT,  `MuteHotkey` and `UnmuteHotkey` need to be set to the same hotkey first.
+
+4. Both `SoundFeedback` and `OnscreenFeedback` can be set to either `0` or `1`, you can also set `ExcludeFullscreen` to 1 to stop the OSD from showing on top of fullscreen applications
    <details><summary>On screen feedback</summary>
 
    ![](./resources/OSD.gif)
 
    </details>
    
-4. If `UpdateWithSystem` is set to 1, the tray icon will update whenever the microphone is muted/unmuted by the OS or other applications, it increases CPU usage by 1% at most
+5. If `UpdateWithSystem` is set to 1, the tray icon will update whenever the microphone is muted/unmuted by the OS or other applications, it increases CPU usage by 1% at most
 
    
 ### 
@@ -50,6 +56,7 @@ UpdateWithSystem=
 Microphone="amazonbasics"
 MuteHotkey="*RShift"
 UnmuteHotkey="*RShift"
+PushToTalk=0
 SoundFeedback=1
 OnscreenFeedback=1
 ExcludeFullscreen=0
