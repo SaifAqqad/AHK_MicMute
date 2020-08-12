@@ -22,7 +22,7 @@ UpdateWithSystem=
 1. `Microphone` can be any substring of your microphone's name or the controller's name as shown in this image:
    <details><summary>image</summary>
 
-   ![](./resources/Controlpaneldialog.png)
+   ![](./assets/Controlpaneldialog.png)
 
    </details>
    
@@ -41,7 +41,7 @@ UpdateWithSystem=
 4. Both `SoundFeedback` and `OnscreenFeedback` can be set to either `0` or `1`, you can also set `ExcludeFullscreen` to 1 to stop the OSD from showing on top of fullscreen applications
    <details><summary>On screen feedback</summary>
 
-   ![](./resources/OSD.gif)
+   ![](./assets/OSD.gif)
 
    </details>
    
