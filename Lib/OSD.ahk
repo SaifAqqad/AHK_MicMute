@@ -9,7 +9,7 @@ OSD_spawn(txt, OSD_Accent, exclude_fullscreen:=0){
         SetFormat, integer, d
         Gui, Color,% OSD_sysTheme? "E6E6E6":"191919" , OSD_Accent
         Gui, +AlwaysOnTop -SysMenu +ToolWindow -caption -Border
-        Gui, Font, s11, Segoe UI
+        Gui, Font, s11 w500, Segoe UI
         Gui, Add, Text, c%OSD_Accent% vOSD_txt W165 Center, %txt%
         SysGet, MonitorWorkArea, MonitorWorkArea, 0
         OSD_yPos:= MonitorWorkAreaBottom * 0.95
