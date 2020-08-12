@@ -1,11 +1,13 @@
 Global OSD_state:= 0 
 Global OSD_txt:=
+Global OSD_sysTheme:=
+OSD_getSysTheme()
 OSD_spawn(txt, OSD_Accent, exclude_fullscreen:=0){
     if (exclude_fullscreen && isActiveWinFullscreen())
         return
     if (OSD_state = 0){
         SetFormat, integer, d
-        Gui, Color, 191919, %OSD_Accent%
+        Gui, Color,% OSD_sysTheme? "E6E6E6":"191919" , OSD_Accent
         Gui, +AlwaysOnTop -SysMenu +ToolWindow -caption -Border
         Gui, Font, s11, Segoe UI
         Gui, Add, Text, c%OSD_Accent% vOSD_txt W165 Center, %txt%
@@ -22,6 +24,10 @@ OSD_destroy(){
     Gui, Destroy
     OSD_state := 0
     SetTimer, OSD_destroy, Off
+}
+OSD_getSysTheme(){
+    RegRead, OSD_sysTheme
+    , HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize, SystemUsesLightTheme
 }
 isActiveWinFullscreen(){ ;returns true if the active window is fullscreen
     winID := WinExist( "A" )
