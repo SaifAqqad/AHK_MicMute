@@ -30,9 +30,12 @@ init_tray(){
     }
     Menu, Tray, Tip, MicMute  
     Menu, Tray, NoStandard
-    Menu, Tray, Add, Edit Config, edit_config
-    Menu, Tray, Add, Help, launch_help
-    Menu, Tray, Add, Exit, exit
+    Menu, Tray, Add, &Toggle Microphone, toggle_hotkey
+    Menu, Tray, Add, &Edit Config, edit_config
+    Menu, Tray, Add, &Help, launch_help
+    Menu, Tray, Add, E&xit, exit
+    Menu, Tray, Click, 1.
+    Menu, Tray, Default, 1&
 }
 launch_help(){
     Run, https://github.com/SaifAqqad/AHK_MicMute#usage
