@@ -10,7 +10,6 @@ show_feedback(state, sound_feedback:=0, OSD_feedback:=0){
         SoundPlay,% state? "assets\mute.mp3" : "assets\unmute.mp3"
     }
     if (OSD_feedback){
-        OSD_destroy()
         if (state)
             OSD_spawn("Microphone Muted", "DC3545", exclude_fullscreen)
         else
