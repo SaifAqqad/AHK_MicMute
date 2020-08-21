@@ -5,20 +5,20 @@ FileInstall, .\assets\default_white.ico, assets\default_white.ico
 FileInstall, .\assets\default_black.ico, assets\default_black.ico 
 FileInstall, .\assets\mute_white.ico, assets\mute_white.ico 
 FileInstall, .\assets\mute_black.ico, assets\mute_black.ico 
-show_feedback(state, sound_feedback:=0, OSD_feedback:=0){
-    if (sound_feedback){
-        SoundPlay,% state? "assets\mute.mp3" : "assets\unmute.mp3"
-    }
+show_feedback(){
     if (OSD_feedback){
-        if (state)
+        if (global_mute)
             OSD_spawn("Microphone Muted", "DC3545", exclude_fullscreen)
         else
             OSD_spawn("Microphone Online", "007BFF", exclude_fullscreen)
     }
+    if (sound_feedback){
+        SoundPlay,% global_mute? "assets\mute.mp3" : "assets\unmute.mp3"
+    }
 }
-update_tray(state){
-    Menu, Tray, Icon, % state? mute_ico : default_ico
-    Menu, Tray, Tip, % state? "Microphone Muted" : "Microphone Online"
+update_tray(){
+    Menu, Tray, Icon, % global_mute? mute_ico : default_ico
+    Menu, Tray, Tip, % global_mute? "Microphone Muted" : "Microphone Online"
 }
 init_tray(){
     RegRead, sysTheme
