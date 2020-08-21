@@ -20,7 +20,7 @@ if (hotkey_mute=hotkey_unmute){
 toggle_hotkey(){
     VA_SetMasterMute(!global_mute, device_name)
     update_state()
-    show_feedback(global_mute, sound_feedback, OSD_feedback)
+    SetTimer, show_feedback, -1
 }
 ptt_hotkey(){
     unmute_hotkey()
@@ -32,19 +32,19 @@ mute_hotkey(){
         return
     VA_SetMasterMute(1, device_name)
     update_state()
-    show_feedback(global_mute, sound_feedback, OSD_feedback)
+    SetTimer, show_feedback, -1
 }
 unmute_hotkey(){
     if (!global_mute)
         return
     VA_SetMasterMute(0, device_name)
     update_state()
-    show_feedback(global_mute, sound_feedback, OSD_feedback)
+    SetTimer, show_feedback, -1
 }
 update_state(){
     state:=VA_GetMasterMute(device_name)
     if (state!=global_mute){
         global_mute:=state
-        update_tray(global_mute)
+        update_tray()
     }
 }
