@@ -3,6 +3,21 @@
 ;
 ; MASTER CONTROLS
 ;
+VA_GetCaptureDeviceList(){
+    dev:= {Name:"",isDefault:0}
+    devList:= Array()
+    defCapture:= VA_GetDeviceName(VA_GetDevice("capture"))
+    Loop {
+        cDev:=VA_GetDevice("capture:" . A_Index)
+        if(!cDev)
+            break
+        dObj:= new dev
+        dObj.Name:=VA_GetDeviceName(cDev)
+        dObj.isDefault:= (defCapture==dObj.Name)
+        devList.push(dObj)
+    }
+    return devList
+}
 
 VA_GetMasterVolume(channel="", device_desc="playback")
 {
