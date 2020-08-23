@@ -1,7 +1,7 @@
 ﻿#Include, <VA>
 #Include, <OSD>
-#Include, config.ahk
 #Include, assets.ahk
+#Include, config.ahk
 OSD_spawn("MicMute", "4BB04F")
 global global_mute:= ;1 muted
 global keys:= StrSplit(hotkey_mute, [" ","#","!","^","+","&",">","<","*","~","$","UP"], " `t")
