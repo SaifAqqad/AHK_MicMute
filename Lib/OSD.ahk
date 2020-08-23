@@ -7,6 +7,7 @@ OSD_spawn(txt, OSD_Accent, exclude_fullscreen:=0){
         return
     if (OSD_state = 0){
         SetFormat, integer, d
+        Gui, OSD:New,,Configuration 
         Gui, Color,% OSD_sysTheme? "E6E6E6":"191919" , OSD_Accent
         Gui, +AlwaysOnTop -SysMenu +ToolWindow -caption -Border
         Gui, Font, s11 w500 c%OSD_Accent%, Segoe UI
@@ -16,6 +17,7 @@ OSD_spawn(txt, OSD_Accent, exclude_fullscreen:=0){
         Gui, Show, AutoSize NoActivate xCenter y%OSD_yPos%
         OSD_state:= 1
     }else{
+        Gui, OSD:Default
         Gui, Font, s11 w500 c%OSD_Accent%
         GuiControl, Font, OSD_txt
         GuiControl, Text, OSD_txt, %txt% 
@@ -23,6 +25,7 @@ OSD_spawn(txt, OSD_Accent, exclude_fullscreen:=0){
     SetTimer, OSD_destroy, 1000
 }
 OSD_destroy(){
+    Gui, OSD:Default
     Gui, Destroy
     OSD_state := 0
     SetTimer, OSD_destroy, Off

@@ -5,6 +5,7 @@ FileInstall, .\assets\default_white.ico, assets\default_white.ico
 FileInstall, .\assets\default_black.ico, assets\default_black.ico 
 FileInstall, .\assets\mute_white.ico, assets\mute_white.ico 
 FileInstall, .\assets\mute_black.ico, assets\mute_black.ico 
+FileInstall, .\assets\MicMute.ico, assets\MicMute.ico 
 show_feedback(){
     if (OSD_feedback){
         if (global_mute)
@@ -30,8 +31,8 @@ init_tray(){
     }
     Menu, Tray, Tip, MicMute  
     Menu, Tray, NoStandard
-    Menu, Tray, Add, &Toggle Microphone, toggle_hotkey
-    Menu, Tray, Add, &Edit Config, edit_config
+    Menu, Tray, Add, &Toggle microphone, toggle_hotkey
+    Menu, Tray, Add, &Edit configuration, edit_config
     Menu, Tray, Add, &Help, launch_help
     Menu, Tray, Add, E&xit, exit
     Menu, Tray, Click, 1.
