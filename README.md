@@ -1,12 +1,65 @@
 <h1 align="center">
-  AHK_MicMute
+ <img src="./assets/MicMute.ico" style="border-radius:20px" ></img> 
+
+ AHK_MicMute
 </h1>
 <p align="center">
   Control your microphone using keyboard/mouse shortcuts.
 </p>
 
+
+## Install using [Scoop](https://scoop.sh)
+
+1. Install scoop using powershell
+    
+        iwr -useb get.scoop.sh | iex
+2. Add my bucket to scoop
+        
+        scoop install git
+        scoop bucket add utils https://github.com/SaifAqqad/utils.git
+3. Install MicMute
+
+        scoop install micmute
+
+#### If you Install the application using scoop, it will run at startup. You can disable this from task manager.
+
 ## Usage
-A config file will be created the first time you run the Script:
+
+The first time you run the script, you will be asked to setup the hotkeys:
+
+![](./assets/firstsetupdialog.png)
+
+Click OK and a new configuration window will open:
+
+![](./assets/configwindow.png)
+
+1. Choose your microphone from the drop down list.
+
+2. Choose whether you want Seprate hotkeys for Mute and Unmute or Toggle/Push To Talk.
+
+3. Based on your choice, you will either need to setup both hotkeys or just one of them.
+        
+   - Click on the empty box for the hotkey then choose the key(s) you want.
+   - Check the "Wildcard" box if you want to fire the hotkey even if extra modifiers are being held down.
+   - Check the "Passthrough key" box if you don't want the key's native function to be blocked (hidden from the system).
+   - Check the "Advanced hotkey" box if you want to enter an AHK hotkey string instead (see [AHK docs](https://www.autohotkey.com/docs/KeyList.htm) for more info).
+   
+4. Choose whether you want the script to give sound feedback when muting/unmuting the microphone or on-screen feedback in the form of an OSD or both.
+
+   <details><summary>On screen feedback</summary>
+   
+   ![](./assets/OSD.gif)
+   
+   </details>
+
+5. Choose whether you want the OSD to exclude fullscreen apps/games (this is needed if the fullscreen app/game loses focus when the OSD is shown)
+
+6. Click "Save Config"
+
+<details><summary><b>You can also write/edit the config file in a text editor:</b></summary> 
+
+###### config.ini
+
 ```ini
 [settings]
 Microphone=""
@@ -65,19 +118,4 @@ UpdateWithSystem=1
 
 </details>
 
-### You can always edit the config file by clicking on *Edit config* from the tray menu.
-
-## Install using [Scoop](https://scoop.sh)
-
-1. Install scoop using powershell
-    
-        iwr -useb get.scoop.sh | iex
-2. Add my bucket to scoop
-        
-        scoop install git
-        scoop bucket add utils https://github.com/SaifAqqad/utils.git
-3. Install MicMute
-
-        scoop install micmute
-
-#### Note: If you Install the application using scoop, it will run at startup, you can disable this from task manager.
+</details>
