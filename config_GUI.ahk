@@ -3,6 +3,8 @@ Global GUI_mute_hotkey, GUI_mute_adv_hotkey, GUI_mute_adv_checkbox, GUI_mute_wil
 Global GUI_unmute_hotkey, GUI_unmute_adv_hotkey, GUI_unmute_adv_checkbox, GUI_unmute_wildcard, GUI_unmute_passthrough
 Global GUI_ptt_radio
 Global GUI_feedback_OSD, GUI_feedback_OSD_exFullscreen, GUI_feedback_sound
+Global GUI_mute_wildcard_TT:="Fire the hotkey even if extra modifiers are being held down." , GUI_mute_passthrough_TT:="When the hotkey fires, its key's native function will not be blocked (hidden from the system)."
+Global GUI_unmute_wildcard_TT:="Fire the hotkey even if extra modifiers are being held down.", GUI_unmute_passthrough_TT:="When the hotkey fires, its key's native function will not be blocked (hidden from the system)."
 GUI_show(){
     Suspend, On
     Menu, Tray, Icon, .\assets\MicMute.ico
@@ -11,7 +13,7 @@ GUI_show(){
     
     Gui, Add, Text, x42 y29 w90 h20 +Left, Microphone
     Gui, Add, DropDownList , vGUI_ddl x152 y29 w250 R5 
-    Gui, Add, Button, x422 y29 w110 h20 gRefreshList , Refresh Devices List
+    Gui, Add, Button, x422 y29 w100 h20 gRefreshList , Refresh Devices
     
     Gui, Add, Text, x62 y79 w80 h20 +Left, Mute hotkey
     Gui, Add, Hotkey, vGUI_mute_hotkey x152 y79 w130 h20 ,
@@ -29,7 +31,7 @@ GUI_show(){
 
     Gui, Add, GroupBox, x42 y59 w410 h160 , Hotkeys
     
-    Gui, Add, Radio, gPtt x472 y89 w160 h30 +Left Checked, Separate hotkeys
+    Gui, Add, Radio, gPtt x472 y89 w160 h30 +Left Checked, Separate%A_Space%hotkeys
     Gui, Add, Radio, gPtt x472 y119 w160 h30 , Toggle
     Gui, Add, Radio, vGUI_ptt_radio gPtt x472 y149 w160 h30 +Left, Push To Talk
     
@@ -42,6 +44,7 @@ GUI_show(){
     Gui, Add, Button, x482 y279 w100 h30 gRestoreConfig , Restore
     restoreConfig()
     Gui, Show, x892 y206 h390 w646, MicMute configuration
+    OnMessage(0x200, "WM_MOUSEMOVE")
     WinWaitClose, MicMute configuration ahk_exe MicMute.exe
     Suspend, Off
 }
@@ -268,4 +271,28 @@ feedback_OSD(){
     else
         GuiControl, Disable, GUI_feedback_OSD_exFullscreen
 
+}
+WM_MOUSEMOVE()
+{
+    static CurrControl, PrevControl, _TT
+    CurrControl := A_GuiControl
+    If (CurrControl <> PrevControl and not InStr(CurrControl, " "))
+    {
+        ToolTip
+        SetTimer, DisplayToolTip, 1000
+        PrevControl := CurrControl
+    }
+    return
+
+    DisplayToolTip:
+    SetTimer, DisplayToolTip, Off
+    CurrControl:= StrReplace(CurrControl, " ")
+    ToolTip % %CurrControl%_TT 
+    SetTimer, RemoveToolTip, 3000
+    return
+
+    RemoveToolTip:
+    SetTimer, RemoveToolTip, Off
+    ToolTip
+    return
 }
