@@ -31,8 +31,8 @@ init_tray(){
     }
     Menu, Tray, Tip, MicMute  
     Menu, Tray, NoStandard
-    Menu, Tray, Add, &Toggle Microphone, toggle_hotkey
-    Menu, Tray, Add, &Edit Configuration, edit_config
+    Menu, Tray, Add, &Toggle microphone, toggle_hotkey
+    Menu, Tray, Add, &Edit configuration, edit_config
     Menu, Tray, Add, &Help, launch_help
     Menu, Tray, Add, E&xit, exit
     Menu, Tray, Click, 1.

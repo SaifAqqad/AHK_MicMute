@@ -36,7 +36,7 @@ GUI_show(){
     Gui, Add, Radio, vGUI_ptt_radio gPtt x472 y149 w160 h30 +Left, Push To Talk
     
     Gui, Add, GroupBox, x42 y229 w410 h120 , Feedback
-    Gui, Add, CheckBox, vGUI_feedback_OSD gfeedback_OSD x62 y259 w120 h20 +Left, On-screen feedback
+    Gui, Add, CheckBox, vGUI_feedback_OSD gfeedback_OSD x62 y259 w130 h20 +Left, On-screen feedback
     Gui, Add, CheckBox, vGUI_feedback_OSD_exFullscreen x202 y259 w150 h20 +Disabled, Exclude fullscreen apps
     Gui, Add, CheckBox, vGUI_feedback_sound x62 y299 w120 h20 , Sound feedback
     
