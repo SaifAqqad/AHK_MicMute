@@ -1,11 +1,15 @@
 FileCreateDir, assets
 FileInstall, .\assets\mute.mp3, assets\mute.mp3 
 FileInstall, .\assets\unmute.mp3, assets\unmute.mp3
+FileInstall, .\assets\ptt_mute.mp3, assets\ptt_mute.mp3
+FileInstall, .\assets\ptt_unmute.mp3, assets\ptt_unmute.mp3
 FileInstall, .\assets\default_white.ico, assets\default_white.ico 
 FileInstall, .\assets\default_black.ico, assets\default_black.ico 
 FileInstall, .\assets\mute_white.ico, assets\mute_white.ico 
 FileInstall, .\assets\mute_black.ico, assets\mute_black.ico 
 FileInstall, .\assets\MicMute.ico, assets\MicMute.ico 
+global mute_ico, default_ico
+global mute_sound:="assets\mute.mp3", unmute_sound:="assets\unmute.mp3"
 show_feedback(){
     if (OSD_feedback){
         if (global_mute)
@@ -14,7 +18,7 @@ show_feedback(){
             OSD_spawn("Microphone Online", "007BFF", exclude_fullscreen)
     }
     if (sound_feedback){
-        SoundPlay,% global_mute? "assets\mute.mp3" : "assets\unmute.mp3"
+        SoundPlay,% global_mute? mute_sound : unmute_sound
     }
 }
 update_tray(){

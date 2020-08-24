@@ -21,6 +21,10 @@ if (hotkey_mute="" || hotkey_unmute=""){
     IfMsgBox, OK
         edit_config()
 }
+if (push_to_talk){
+    mute_sound:="assets\ptt_mute.mp3", unmute_sound:="assets\ptt_unmute.mp3"
+    Menu, Tray, Delete, 1&
+}
 edit_config(){
     GUI_show()
     Reload
