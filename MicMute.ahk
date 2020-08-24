@@ -12,7 +12,7 @@ update_state()
 if (sys_update){
     SetTimer, update_state, 500
 }
-if (afk_timeout){
+if (afk_timeout && !push_to_talk){
     SetTimer, check_activity, 1000
 }
 if (hotkey_mute=hotkey_unmute){
