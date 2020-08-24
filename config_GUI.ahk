@@ -1,45 +1,51 @@
 Global GUI_ddl
 Global GUI_mute_hotkey, GUI_mute_adv_hotkey, GUI_mute_adv_checkbox, GUI_mute_wildcard, GUI_mute_passthrough
 Global GUI_unmute_hotkey, GUI_unmute_adv_hotkey, GUI_unmute_adv_checkbox, GUI_unmute_wildcard, GUI_unmute_passthrough
-Global GUI_ptt_radio
+Global GUI_ptt_radio, GUI_afk_timeout, GUI_afk_timeout_edit
 Global GUI_feedback_OSD, GUI_feedback_OSD_exFullscreen, GUI_feedback_sound
-Global GUI_mute_wildcard_TT:="Fire the hotkey even if extra modifiers are being held down." , GUI_mute_passthrough_TT:="When the hotkey fires, its key's native function will not be blocked (hidden from the system)."
-Global GUI_unmute_wildcard_TT:="Fire the hotkey even if extra modifiers are being held down.", GUI_unmute_passthrough_TT:="When the hotkey fires, its key's native function will not be blocked (hidden from the system)."
+Global GUI_mute_wildcard_TT:="Fire the hotkey even if extra modifiers `nare being held down." , GUI_mute_passthrough_TT:="When the hotkey fires, its key's native function `nwill not be blocked (hidden from the system)."
+Global GUI_unmute_wildcard_TT:=GUI_mute_wildcard_TT, GUI_unmute_passthrough_TT:=GUI_mute_passthrough_TT
+Global GUI_afk_timeout_TT:="Mute the microphone when the user is AFK (idle) `nfor longer than the AFK Timeout. set to 0 to disable it.", GUI_afk_timeout_edit_TT:= GUI_afk_timeout_TT
 GUI_show(){
     Suspend, On
     Menu, Tray, Icon, .\assets\MicMute.ico
     Gui, config:New,,MicMute configuration 
     Gui, Font, S8 CDefault, Segoe UI
     
-    Gui, Add, Text, x42 y29 w90 h20 +Left, Microphone
-    Gui, Add, DropDownList , vGUI_ddl x152 y29 w250 R5 
+    Gui, Add, Text, x42 y29 w70 h20 +Left, Microphone
+    Gui, Add, DropDownList , vGUI_ddl x112 y29 w280 R5 
     Gui, Add, Button, x422 y29 w100 h20 gRefreshList , Refresh Devices
     
     Gui, Add, Text, x62 y79 w80 h20 +Left, Mute hotkey
-    Gui, Add, Hotkey, vGUI_mute_hotkey x152 y79 w130 h20 ,
-    Gui, Add, Edit, vGUI_mute_adv_hotkey Hidden x152 y79 w130 h20 ,
-    Gui, Add, CheckBox, vGUI_mute_adv_checkbox gMute_edit_checkbox x312 y79 w110 h20 , Advanced hotkey
-    Gui, Add, CheckBox, vGUI_mute_wildcard gMute_wildcard x152 y109 w70 h20 , Wildcard
-    Gui, Add, CheckBox, vGUI_mute_passthrough gMute_passthrough x242 y109 w100 h20 , Passthough key
+    Gui, Add, Hotkey, vGUI_mute_hotkey x82 y99 w130 h20 ,
+    Gui, Add, Edit, vGUI_mute_adv_hotkey Hidden  x82 y99 w130 h20 ,
+    Gui, Add, CheckBox, vGUI_mute_adv_checkbox gMute_edit_checkbox x242 y129 w110 h20 , Advanced hotkey
+    Gui, Add, CheckBox, vGUI_mute_wildcard gMute_wildcard x242 y99 w70 h20 , Wildcard
+    Gui, Add, CheckBox, vGUI_mute_passthrough gMute_passthrough x322 y99 w100 h20 , Passthough key
 
-    Gui, Add, Text, x62 y139 w80 h20 +Left, Unmute hotkey
-    Gui, Add, Hotkey, vGUI_unmute_hotkey x152 y139 w130 h20 ,
-    Gui, Add, Edit, vGUI_unmute_adv_hotkey Hidden x152 y139 w130 h20 ,
-    Gui, Add, CheckBox, vGUI_unmute_adv_checkbox gUnmute_edit_checkbox x312 y139 w110 h20 , Advanced hotkey
-    Gui, Add, CheckBox, vGUI_unmute_wildcard gUnmute_wildcard x152 y179 w70 h20 , Wildcard
-    Gui, Add, CheckBox, vGUI_unmute_passthrough gUnmute_passthrough x242 y179 w100 h20 , Passthough key
+    Gui, Add, Text, x62 y159 w80 h20 +Left, Unmute hotkey
+    Gui, Add, Hotkey, vGUI_unmute_hotkey x82 y179 w130 h20 ,
+    Gui, Add, Edit, vGUI_unmute_adv_hotkey Hidden x82 y179 w130 h20 ,
+    Gui, Add, CheckBox, vGUI_unmute_adv_checkbox gUnmute_edit_checkbox x242 y209 w110 h20 , Advanced hotkey
+    Gui, Add, CheckBox, vGUI_unmute_wildcard gUnmute_wildcard x242 y179 w70 h20 , Wildcard
+    Gui, Add, CheckBox, vGUI_unmute_passthrough gUnmute_passthrough x322 y179 w100 h20 , Passthough key
 
-    Gui, Add, GroupBox, x42 y59 w410 h160 , Hotkeys
+    Gui, Add, GroupBox, x42 y59 w410 h180 , Hotkeys
     
-    Gui, Add, Radio, gPtt x472 y89 w160 h30 +Left Checked, Separate%A_Space%hotkeys
+    Gui, Add, Radio, gPtt x472 y89 w160 h30 +Left Checked, Separate hotkeys
     Gui, Add, Radio, gPtt x472 y119 w160 h30 , Toggle
     Gui, Add, Radio, vGUI_ptt_radio gPtt x472 y149 w160 h30 +Left, Push To Talk
     
-    Gui, Add, GroupBox, x42 y229 w410 h120 , Feedback
-    Gui, Add, CheckBox, vGUI_feedback_OSD gfeedback_OSD x62 y259 w130 h20 +Left, On-screen feedback
-    Gui, Add, CheckBox, vGUI_feedback_OSD_exFullscreen x202 y259 w150 h20 +Disabled, Exclude fullscreen apps
-    Gui, Add, CheckBox, vGUI_feedback_sound x62 y299 w120 h20 , Sound feedback
+    Gui, Add, GroupBox, x42 y249 w410 h110 , Feedback
+    Gui, Add, CheckBox, vGUI_feedback_OSD gfeedback_OSD x72 y279 w130 h20 +Left, On-screen feedback
+    Gui, Add, CheckBox, vGUI_feedback_OSD_exFullscreen x222 y279 w150 h20 +Disabled, Exclude fullscreen apps
+    Gui, Add, CheckBox, vGUI_feedback_sound x72 y319 w120 h20 , Sound feedback
     
+    Gui, Add, Text, x462 y209 w70 h20 +Center, AFK Timeout
+    Gui, Add, Edit, x502 y229 w60 h20 vGUI_afk_timeout_edit
+    Gui, Add, UpDown,x542 y229 w20 h20 vGUI_afk_timeout Range0-120, 0
+    Gui, Add, Text, x562 y239 w30 h20 +Center, Min
+
     Gui, Add, Button, x482 y319 w100 h30 gSaveConfig, Save Config
     Gui, Add, Button, x482 y279 w100 h30 gRestoreConfig , Restore
     restoreConfig()
@@ -99,6 +105,7 @@ SaveConfig(){
         }
     }
     push_to_talk:= GUI_ptt_radio>2
+    afk_timeout:= GUI_afk_timeout
     OSD_feedback:= GUI_feedback_OSD
     exclude_fullscreen:= GUI_feedback_OSD_exFullscreen
     sound_feedback:= GUI_feedback_sound
@@ -143,6 +150,10 @@ RestoreConfig(){
         GuiControl,, Separate hotkeys, 1
     }
     Ptt()
+    if (afk_timeout)
+        GuiControl,, GUI_afk_timeout, %afk_timeout%
+    else
+        GuiControl,, GUI_afk_timeout, 0
     if (OSD_feedback)
         GuiControl,, GUI_feedback_OSD, 1
     else
@@ -288,7 +299,7 @@ WM_MOUSEMOVE()
     SetTimer, DisplayToolTip, Off
     CurrControl:= StrReplace(CurrControl, " ")
     ToolTip % %CurrControl%_TT 
-    SetTimer, RemoveToolTip, 3000
+    SetTimer, RemoveToolTip, 5000
     return
 
     RemoveToolTip:

@@ -1,3 +1,5 @@
+﻿#InstallKeybdHook
+#InstallMouseHook
 #Include, <VA>
 #Include, <OSD>
 #Include, assets.ahk
@@ -9,6 +11,9 @@ global keys:= StrSplit(hotkey_mute, [" ","#","!","^","+","&",">","<","*","~","$"
 update_state()
 if (sys_update){
     SetTimer, update_state, 500
+}
+if (afk_timeout){
+    SetTimer, check_activity, 1000
 }
 if (hotkey_mute=hotkey_unmute){
     Hotkey,%hotkey_mute% ,% push_to_talk? "ptt_hotkey" : "toggle_hotkey"
@@ -47,4 +52,8 @@ update_state(){
         global_mute:=state
         update_tray()
     }
+}
+check_activity(){
+    if (A_TimeIdlePhysical > afk_timeout * 60000)
+        mute_hotkey()
 }
