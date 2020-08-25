@@ -11,13 +11,13 @@ FileInstall, .\assets\MicMute.ico, assets\MicMute.ico
 global mute_ico, default_ico
 global mute_sound:="assets\mute.mp3", unmute_sound:="assets\unmute.mp3"
 show_feedback(){
-    if (OSD_feedback){
+    if (current_config.OnscreenFeedback){
         if (global_mute)
-            OSD_spawn("Microphone Muted", "DC3545", exclude_fullscreen)
+            OSD_spawn("Microphone Muted", "DC3545", current_config.ExcludeFullscreen)
         else
-            OSD_spawn("Microphone Online", "007BFF", exclude_fullscreen)
+            OSD_spawn("Microphone Online", "007BFF", current_config.ExcludeFullscreen)
     }
-    if (sound_feedback){
+    if (current_config.SoundFeedback){
         SoundPlay,% global_mute? mute_sound : unmute_sound
     }
 }

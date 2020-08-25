@@ -56,7 +56,7 @@ GUI_show(){
 }
 
 RefreshList(){
-    selected_device:= VA_GetDevice(device_name)
+    selected_device:= VA_GetDevice(current_config.Microphone)
     dList := VA_GetCaptureDeviceList()
     GuiControl,, GUI_ddl, |
     loop % dList.Length()
@@ -71,9 +71,9 @@ RefreshList(){
 }
 SaveConfig(){
     Gui, Submit, NoHide
-    device_name:= GUI_ddl
+    current_config.Microphone:= GUI_ddl
     if (GUI_mute_adv_checkbox){
-        hotkey_mute:= GUI_mute_adv_hotkey , hotkey_unmute:= GUI_mute_adv_hotkey
+        current_config.MuteHotkey:= GUI_mute_adv_hotkey , current_config.UnmuteHotkey:= GUI_mute_adv_hotkey
     }else{
         if (GUI_mute_wildcard){
             GUI_mute_hotkey := "*" . GUI_mute_hotkey
@@ -85,11 +85,11 @@ SaveConfig(){
         }else{
             GUI_mute_hotkey := StrReplace(GUI_mute_hotkey, "~")
         }
-        hotkey_mute:= GUI_mute_hotkey , hotkey_unmute:= GUI_mute_hotkey
+        current_config.MuteHotkey:= GUI_mute_hotkey , current_config.UnmuteHotkey:= GUI_mute_hotkey
     }
     if (GUI_ptt_radio=1){
         if (GUI_unmute_adv_checkbox){
-            hotkey_unmute:= GUI_unmute_adv_hotkey
+            current_config.UnmuteHotkey:= GUI_unmute_adv_hotkey
         }else{
             if (GUI_unmute_wildcard){
                 GUI_unmute_hotkey := "*" . GUI_unmute_hotkey
@@ -101,69 +101,69 @@ SaveConfig(){
             }else{
                 GUI_unmute_hotkey := StrReplace(GUI_unmute_hotkey, "~")
             }
-            hotkey_unmute:= GUI_unmute_hotkey
+            current_config.UnmuteHotkey:= GUI_unmute_hotkey
         }
     }
-    push_to_talk:= GUI_ptt_radio>2
-    afk_timeout:= GUI_afk_timeout
-    OSD_feedback:= GUI_feedback_OSD
-    exclude_fullscreen:= GUI_feedback_OSD_exFullscreen
-    sound_feedback:= GUI_feedback_sound
-    write_config()
+    current_config.PushToTalk:= GUI_ptt_radio>2
+    current_config.afkTimeout:= GUI_afk_timeout
+    current_config.OnscreenFeedback:= GUI_feedback_OSD
+    current_config.ExcludeFullscreen:= GUI_feedback_OSD_exFullscreen
+    current_config.SoundFeedback:= GUI_feedback_sound
+    current_config.writeIni()
     Gui, Destroy
 }
 RestoreConfig(){
     RefreshList()
-    if (hotkey_mute){
+    if (current_config.MuteHotkey){
         GuiControl, Hide, GUI_mute_hotkey
         GuiControl, Show, GUI_mute_adv_hotkey
         GuiControl,, GUI_mute_adv_checkbox, 1
-        GuiControl,,GUI_mute_adv_hotkey, %hotkey_mute%
-        if (InStr(hotkey_mute, "*"))
+        GuiControl,,GUI_mute_adv_hotkey, % current_config.MuteHotkey
+        if (InStr(current_config.MuteHotkey, "*"))
             GuiControl,, GUI_mute_wildcard, 1
         else
             GuiControl,, GUI_mute_wildcard, 0
-        if (InStr(hotkey_mute, "~"))
+        if (InStr(current_config.MuteHotkey, "~"))
             GuiControl,, GUI_mute_passthrough, 1
         else
             GuiControl,, GUI_mute_passthrough, 0
     }
-    if (hotkey_unmute){
+    if (current_config.UnmuteHotkey){
         GuiControl, Hide, GUI_unmute_hotkey
         GuiControl, Show, GUI_unmute_adv_hotkey
         GuiControl,, GUI_unmute_adv_checkbox, 1
-        GuiControl,,GUI_unmute_adv_hotkey, %hotkey_unmute%
-        if (InStr(hotkey_unmute, "*"))
+        GuiControl,,GUI_unmute_adv_hotkey, % current_config.UnmuteHotkey
+        if (InStr(current_config.UnmuteHotkey, "*"))
             GuiControl,, GUI_unmute_wildcard, 1
         else
             GuiControl,, GUI_unmute_wildcard, 0
-        if (InStr(hotkey_unmute, "~"))
+        if (InStr(current_config.UnmuteHotkey, "~"))
             GuiControl,, GUI_unmute_passthrough, 1
         else
             GuiControl,, GUI_unmute_passthrough, 0
     }
-    if (push_to_talk){
+    if (current_config.PushToTalk){
         GuiControl,, GUI_ptt_radio, 1
-    }else if (hotkey_mute && hotkey_mute=hotkey_unmute){
+    }else if (current_config.MuteHotkey && current_config.MuteHotkey=current_config.UnmuteHotkey){
         GuiControl,, Toggle, 1
     }else{
         GuiControl,, Separate hotkeys, 1
     }
     Ptt()
-    if (afk_timeout)
-        GuiControl,, GUI_afk_timeout, %afk_timeout%
+    if (current_config.afkTimeout)
+        GuiControl,, GUI_afk_timeout, % current_config.afkTimeout
     else
         GuiControl,, GUI_afk_timeout, 0
-    if (OSD_feedback)
+    if (current_config.OnscreenFeedback)
         GuiControl,, GUI_feedback_OSD, 1
     else
         GuiControl,, GUI_feedback_OSD, 0
     feedback_OSD()
-    if (exclude_fullscreen)
+    if (current_config.ExcludeFullscreen)
         GuiControl,, GUI_feedback_OSD_exFullscreen, 1
     else
         GuiControl,, GUI_feedback_OSD_exFullscreen, 0
-    if (sound_feedback)
+    if (current_config.SoundFeedback)
         GuiControl,, GUI_feedback_sound, 1
     else
         GuiControl,, GUI_feedback_sound, 0
