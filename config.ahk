@@ -8,8 +8,8 @@ edit_config(){
     Reload
 }
 isFileEmpty(file){
-   FileGetSize, size , %file%
-   return !size
+    FileGetSize, size , %file%
+    return !size
 }
 class config {
     Microphone:="", MuteHotkey:="", UnmuteHotkey:=""
@@ -24,9 +24,9 @@ class config {
         if (!Microphone)
             Microphone:= "capture"
         if (!MuteHotkey || !UnmuteHotkey){
-            MsgBox, 48, MicMute, Mute/Unmute Hotkey need to be setup
+            MsgBox, 48, MicMute, MicMute needs to be set up
             IfMsgBox, OK
-                edit_config()
+            edit_config()
         }
         if (PushToTalk){
             mute_sound:="assets\ptt_mute.mp3", unmute_sound:="assets\ptt_unmute.mp3"

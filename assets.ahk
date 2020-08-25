@@ -33,7 +33,7 @@ init_tray(){
     if (FileExist(default_ico)) {
         Menu, Tray, Icon, %default_ico%
     }
-    Menu, Tray, Tip, MicMute  
+    Menu, Tray, Tip, MicMute 
     Menu, Tray, NoStandard
     Menu, Tray, Add, &Toggle microphone, toggle_hotkey
     Menu, Tray, Add, &Edit configuration, edit_config

@@ -18,18 +18,18 @@ GUI_show(){
     
     Gui, Add, Text, x62 y79 w80 h20 +Left, Mute hotkey
     Gui, Add, Hotkey, vGUI_mute_hotkey x82 y99 w130 h20 ,
-    Gui, Add, Edit, vGUI_mute_adv_hotkey Hidden  x82 y99 w130 h20 ,
-    Gui, Add, CheckBox, vGUI_mute_adv_checkbox gMute_edit_checkbox x242 y129 w110 h20 , Advanced hotkey
+    Gui, Add, Edit, vGUI_mute_adv_hotkey Hidden x82 y99 w130 h20 ,
+    Gui, Add, CheckBox, vGUI_mute_adv_checkbox gMute_adv_checkbox x242 y129 w110 h20 , Advanced hotkey
     Gui, Add, CheckBox, vGUI_mute_wildcard gMute_wildcard x242 y99 w70 h20 , Wildcard
     Gui, Add, CheckBox, vGUI_mute_passthrough gMute_passthrough x322 y99 w100 h20 , Passthough key
-
+    
     Gui, Add, Text, x62 y159 w80 h20 +Left, Unmute hotkey
     Gui, Add, Hotkey, vGUI_unmute_hotkey x82 y179 w130 h20 ,
     Gui, Add, Edit, vGUI_unmute_adv_hotkey Hidden x82 y179 w130 h20 ,
-    Gui, Add, CheckBox, vGUI_unmute_adv_checkbox gUnmute_edit_checkbox x242 y209 w110 h20 , Advanced hotkey
+    Gui, Add, CheckBox, vGUI_unmute_adv_checkbox gUnmute_adv_checkbox x242 y209 w110 h20 , Advanced hotkey
     Gui, Add, CheckBox, vGUI_unmute_wildcard gUnmute_wildcard x242 y179 w70 h20 , Wildcard
     Gui, Add, CheckBox, vGUI_unmute_passthrough gUnmute_passthrough x322 y179 w100 h20 , Passthough key
-
+    
     Gui, Add, GroupBox, x42 y59 w410 h180 , Hotkeys
     
     Gui, Add, Radio, gPtt x472 y89 w160 h30 +Left Checked, Separate hotkeys
@@ -45,7 +45,7 @@ GUI_show(){
     Gui, Add, Edit, x502 y229 w60 h20 vGUI_afk_timeout_edit
     Gui, Add, UpDown,x542 y229 w20 h20 vGUI_afk_timeout Range0-120, 0
     Gui, Add, Text, x562 y239 w30 h20 +Center, Min
-
+    
     Gui, Add, Button, x482 y319 w100 h30 gSaveConfig, Save Config
     Gui, Add, Button, x482 y279 w100 h30 gRestoreConfig , Restore
     restoreConfig()
@@ -87,7 +87,7 @@ SaveConfig(){
         }
         current_config.MuteHotkey:= GUI_mute_hotkey , current_config.UnmuteHotkey:= GUI_mute_hotkey
     }
-    if (GUI_ptt_radio=1){
+    if (GUI_ptt_radio=1){ ; 1 => seperate hotkeys
         if (GUI_unmute_adv_checkbox){
             current_config.UnmuteHotkey:= GUI_unmute_adv_hotkey
         }else{
@@ -168,7 +168,7 @@ RestoreConfig(){
     else
         GuiControl,, GUI_feedback_sound, 0
 }
-Mute_edit_checkbox(){
+Mute_adv_checkbox(){
     Gui, Submit, NoHide
     if (GUI_mute_adv_checkbox){
         GuiControl, Hide, GUI_mute_hotkey
@@ -213,7 +213,7 @@ Mute_passthrough(){
         }
     }
 }
-Unmute_edit_checkbox(){
+Unmute_adv_checkbox(){
     Gui, Submit, NoHide
     if (GUI_unmute_adv_checkbox){
         GuiControl, Hide, GUI_unmute_hotkey
@@ -272,7 +272,7 @@ Ptt(){
         GuiControl, Enable, GUI_unmute_adv_checkbox
         GuiControl, Enable, GUI_unmute_wildcard
         GuiControl, Enable, GUI_unmute_passthrough
-
+        
     }
 }
 feedback_OSD(){
@@ -281,7 +281,7 @@ feedback_OSD(){
         GuiControl, Enable, GUI_feedback_OSD_exFullscreen
     else
         GuiControl, Disable, GUI_feedback_OSD_exFullscreen
-
+    
 }
 WM_MOUSEMOVE()
 {
@@ -294,16 +294,16 @@ WM_MOUSEMOVE()
         PrevControl := CurrControl
     }
     return
-
+    
     DisplayToolTip:
-    SetTimer, DisplayToolTip, Off
-    CurrControl:= StrReplace(CurrControl, " ")
-    ToolTip % %CurrControl%_TT 
-    SetTimer, RemoveToolTip, 5000
+        SetTimer, DisplayToolTip, Off
+        CurrControl:= StrReplace(CurrControl, " ")
+        ToolTip % %CurrControl%_TT 
+        SetTimer, RemoveToolTip, 5000
     return
-
+    
     RemoveToolTip:
-    SetTimer, RemoveToolTip, Off
-    ToolTip
+        SetTimer, RemoveToolTip, Off
+        ToolTip
     return
 }
