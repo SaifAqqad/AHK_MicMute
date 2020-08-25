@@ -1,12 +1,19 @@
 <h1 align="center">
- <img src="./assets/MicMute.ico" style="border-radius:20px" ></img> 
-
- AHK_MicMute
+ <img src="./assets/MicMute.ico" width="32" height="32"></img> 
+MicMute
 </h1>
 <p align="center">
   Control your microphone using keyboard/mouse shortcuts.
 </p>
 
+## Features
+
+   * Seperate hotkeys for Mute/Unmute 
+   * Single toggle/push-to-talk hotkey
+   * Hotkeys can be (optionally) set up using AHK's syntax
+   * Optional sound and on-screen feedback
+   * AFK timeout (auto mute when the user is AFK for longer than a set interval)
+   * Auto-start on boot
 
 ## Install using [Scoop](https://scoop.sh)
 
