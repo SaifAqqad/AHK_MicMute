@@ -1,12 +1,19 @@
 <h1 align="center">
- <img src="./assets/MicMute.ico" style="border-radius:20px" ></img> 
-
- AHK_MicMute
+ <img src="./assets/MicMute.ico" width="32" height="32"></img> 
+MicMute
 </h1>
 <p align="center">
   Control your microphone using keyboard/mouse shortcuts.
 </p>
 
+## Features
+
+   * Separate hotkeys for Mute/Unmute 
+   * Single toggle/push-to-talk hotkey
+   * Hotkeys can be (optionally) set up using AHK's syntax
+   * Optional sound and on-screen feedback
+   * AFK timeout (auto mute when the user is AFK for longer than a set interval)
+   * Auto-start on boot
 
 ## Install using [Scoop](https://scoop.sh)
 
@@ -21,11 +28,10 @@
 
         scoop install micmute
 
-#### If you Install the application using scoop, it will run at startup. You can disable this from task manager.
 
 ## Usage
 
-The first time you run the script, you will be asked to setup the hotkeys:
+On the first run, you will be asked to set up MicMute:
 
 ![](./assets/firstsetupdialog.png)
 
@@ -35,7 +41,7 @@ Click OK and a new configuration window will open:
 
 1. Choose your microphone from the drop down list.
 
-2. Choose whether you want Seprate hotkeys for Mute and Unmute or Toggle/Push To Talk.
+2. Choose whether you want Separate hotkeys for Mute and Unmute or Toggle/Push To Talk.
 
 3. Based on your choice, you will either need to setup both hotkeys or just one of them.
         
@@ -52,9 +58,12 @@ Click OK and a new configuration window will open:
    
    </details>
 
-5. Choose whether you want the OSD to exclude fullscreen apps/games (this is needed if the fullscreen app/game loses focus when the OSD is shown)
+5. Choose whether you want the OSD to exclude fullscreen apps/games (this is needed for games that lose focus when the OSD is shown).
 
-6. Click "Save Config"
+6. Set up "AFK Timeout" if you want it to automatically mute the microphone when you idle for longer than a set interval (in minutes).
+
+7. Click "Save Config"
+
 
 <details><summary><b>You can also write/edit the config file in a text editor:</b></summary> 
 
@@ -70,6 +79,7 @@ SoundFeedback=
 OnscreenFeedback=
 ExcludeFullscreen=
 UpdateWithSystem=
+afkTimeout=
 ```
 
 1. `Microphone` can be any substring of your microphone's name or the controller's name as shown in this image:
@@ -114,6 +124,7 @@ SoundFeedback=1
 OnscreenFeedback=1
 ExcludeFullscreen=0
 UpdateWithSystem=1
+afkTimeout=5
 ```           
 
 </details>

@@ -139,7 +139,7 @@ VA_SetVolume(vol, subunit_desc="1", channel="", device_desc="playback")
         Loop, %channel_count%
         {
             this_vol := vol_max ? channel%A_Index%vol / vol_max * vol : vol
-            this_vol := VA_Scalar2dB(this_vol/100, channel%A_Index%min, channel%A_Index%max)            
+            this_vol := VA_Scalar2dB(this_vol/100, channel%A_Index%min, channel%A_Index%max) 
             VA_IPerChannelDbLevel_SetLevel(avl, A_Index-1, this_vol)
         }
     }
@@ -202,7 +202,7 @@ VA_GetDevicePeriod(device_desc, ByRef default_period, ByRef minimum_period="")
     DllCall(NumGet(NumGet(audioClient+0)+9*A_PtrSize), "ptr",audioClient, "int64*",default_period, "int64*",minimum_period)
     ; Convert 100-nanosecond units to milliseconds.
     default_period /= 10000
-    minimum_period /= 10000    
+    minimum_period /= 10000 
     ObjRelease(audioClient)
     return true
 }
@@ -235,7 +235,7 @@ VA_FindSubunit(device, target_desc, target_iid)
     if !RegExMatch(target_name,"^[^\(]+\)")
         target_name := "i)" target_name
     r := VA_EnumSubunits(device, "VA_FindSubunitCallback", target_name, target_iid
-            , Object(0, target_index ? target_index : 1, 1, 0))
+    , Object(0, target_index ? target_index : 1, 1, 0))
     return r
 }
 
@@ -273,7 +273,7 @@ VA_EnumSubunitsEx(part, data_flow, callback, target_name="", target_iid="", call
     r := 0
     
     VA_IPart_GetPartType(part, type)
-   
+    
     if type = 1 ; Subunit
     {
         VA_IPart_GetName(part, name)
@@ -285,13 +285,13 @@ VA_EnumSubunitsEx(part, data_flow, callback, target_name="", target_iid="", call
                 r := %callback%(part, 0, callback_param)
             else
                 if VA_IPart_Activate(part, 7, target_iid, interface) = 0
-                {
-                    r := %callback%(part, interface, callback_param)
-                    ; The callback is responsible for calling ObjAddRef()
-                    ; if it intends to keep the interface pointer.
-                    ObjRelease(interface)
-                }
-
+            {
+                r := %callback%(part, interface, callback_param)
+                ; The callback is responsible for calling ObjAddRef()
+                ; if it intends to keep the interface pointer.
+                ObjRelease(interface)
+            }
+            
             if r
                 return r ; early termination
         }
@@ -305,7 +305,7 @@ VA_EnumSubunitsEx(part, data_flow, callback, target_name="", target_iid="", call
     VA_IPartsList_GetCount(parts, count)
     Loop %count%
     {
-        VA_IPartsList_GetPart(parts, A_Index-1, subpart)        
+        VA_IPartsList_GetPart(parts, A_Index-1, subpart) 
         r := VA_EnumSubunitsEx(subpart, data_flow, callback, target_name, target_iid, callback_param)
         ObjRelease(subpart)
         if r
@@ -320,7 +320,7 @@ VA_EnumSubunitsEx(part, data_flow, callback, target_name="", target_iid="", call
 VA_GetDevice(device_desc="playback")
 {
     static CLSID_MMDeviceEnumerator := "{BCDE0395-E52F-467C-8E3D-C4579291692E}"
-        , IID_IMMDeviceEnumerator := "{A95664D2-9614-4F35-A746-DE8DB63617E6}"
+    , IID_IMMDeviceEnumerator := "{A95664D2-9614-4F35-A746-DE8DB63617E6}"
     if !(deviceEnumerator := ComObjCreate(CLSID_MMDeviceEnumerator, IID_IMMDeviceEnumerator))
         return 0
     
@@ -345,17 +345,17 @@ VA_GetDevice(device_desc="playback")
         m1 := "", flow := 0 ; eRender
     else if m1 in capture,c
         m1 := "", flow := 1 ; eCapture
-    else if (m1 . m2) = ""  ; no name or number specified
+    else if (m1 . m2) = "" ; no name or number specified
         m1 := "", flow := 0 ; eRender (default)
     else
         flow := 2 ; eAll
     
-    if (m1 . m2) = ""   ; no name or number (maybe "playback" or "capture")
+    if (m1 . m2) = "" ; no name or number (maybe "playback" or "capture")
     {
         VA_IMMDeviceEnumerator_GetDefaultAudioEndpoint(deviceEnumerator, flow, 0, device)
         goto VA_GetDevice_Return
     }
-
+    
     VA_IMMDeviceEnumerator_EnumAudioEndpoints(deviceEnumerator, flow, 1, devices)
     
     if m1 =
@@ -368,16 +368,16 @@ VA_GetDevice(device_desc="playback")
     index := 0
     Loop % count
         if VA_IMMDeviceCollection_Item(devices, A_Index-1, device) = 0
-            if InStr(VA_GetDeviceName(device), m1) && (m2 = "" || ++index = m2)
-                goto VA_GetDevice_Return
-            else
-                ObjRelease(device), device:=0
-
-VA_GetDevice_Return:
-    ObjRelease(deviceEnumerator)
-    if devices
-        ObjRelease(devices)
+        if InStr(VA_GetDeviceName(device), m1) && (m2 = "" || ++index = m2)
+        goto VA_GetDevice_Return
+    else
+        ObjRelease(device), device:=0
     
+    VA_GetDevice_Return:
+        ObjRelease(deviceEnumerator)
+        if devices
+            ObjRelease(devices)
+        
     return device ; may be 0
 }
 
@@ -386,8 +386,8 @@ VA_GetDeviceName(device)
     static PKEY_Device_FriendlyName
     if !VarSetCapacity(PKEY_Device_FriendlyName)
         VarSetCapacity(PKEY_Device_FriendlyName, 20)
-        ,VA_GUID(PKEY_Device_FriendlyName :="{A45C254E-DF1C-4EFD-8020-67D146A850E0}")
-        ,NumPut(14, PKEY_Device_FriendlyName, 16)
+    ,VA_GUID(PKEY_Device_FriendlyName :="{A45C254E-DF1C-4EFD-8020-67D146A850E0}")
+    ,NumPut(14, PKEY_Device_FriendlyName, 16)
     VarSetCapacity(prop, 16)
     VA_IMMDevice_OpenPropertyStore(device, 0, store)
     ; store->GetValue(.., [out] prop)
@@ -405,18 +405,17 @@ VA_SetDefaultEndpoint(device_desc, role)
          eCommunications = 2  ; Default Communications Device
     */
     if ! device := VA_GetDevice(device_desc)
-        return 0
-    if VA_IMMDevice_GetId(device, id) = 0
-    {
-        cfg := ComObjCreate("{294935CE-F637-4E7C-A41B-AB255460B862}"
-                          , "{568b9108-44bf-40b4-9006-86afe5b5a620}")
-        hr := VA_xIPolicyConfigVista_SetDefaultEndpoint(cfg, id, role)
-        ObjRelease(cfg)
-    }
-    ObjRelease(device)
-    return hr = 0
+    return 0
+if VA_IMMDevice_GetId(device, id) = 0
+{
+    cfg := ComObjCreate("{294935CE-F637-4E7C-A41B-AB255460B862}"
+    , "{568b9108-44bf-40b4-9006-86afe5b5a620}")
+    hr := VA_xIPolicyConfigVista_SetDefaultEndpoint(cfg, id, role)
+    ObjRelease(cfg)
 }
-
+ObjRelease(device)
+return hr = 0
+}
 
 ;
 ; HELPERS
@@ -425,12 +424,12 @@ VA_SetDefaultEndpoint(device_desc, role)
 ; Convert string to binary GUID structure.
 VA_GUID(ByRef guid_out, guid_in="%guid_out%") {
     if (guid_in == "%guid_out%")
-        guid_in :=   guid_out
-    if  guid_in is integer
-        return guid_in
-    VarSetCapacity(guid_out, 16, 0)
-	DllCall("ole32\CLSIDFromString", "wstr", guid_in, "ptr", &guid_out)
-	return &guid_out
+        guid_in := guid_out
+    if guid_in is integer
+    return guid_in
+VarSetCapacity(guid_out, 16, 0)
+DllCall("ole32\CLSIDFromString", "wstr", guid_in, "ptr", &guid_out)
+return &guid_out
 }
 
 ; Convert binary GUID structure to string.
@@ -443,7 +442,7 @@ VA_GUIDOut(ByRef guid) {
 ; Convert COM-allocated wide char string pointer to usable string.
 VA_WStrOut(ByRef str) {
     str := StrGet(ptr := str, "UTF-16")
-    DllCall("ole32\CoTaskMemFree", "ptr", ptr)  ; FREES THE STRING.
+    DllCall("ole32\CoTaskMemFree", "ptr", ptr) ; FREES THE STRING.
 }
 
 VA_dB2Scalar(dB, min_dB, max_dB) {
@@ -455,7 +454,6 @@ VA_Scalar2dB(s, min_dB, max_dB) {
     min_s := 10**(min_dB/20), max_s := 10**(max_dB/20)
     return log((max_s-min_s)*s+min_s)*20
 }
-
 
 ;
 ; INTERFACE WRAPPERS
@@ -857,7 +855,6 @@ VA_IControlInterface_GetIID(this, ByRef IID) {
     return hr
 }
 
-
 /*
     INTERFACES REQUIRING WINDOWS 7 / SERVER 2008 R2
 */
@@ -915,7 +912,6 @@ VA_IAudioSessionEnumerator_GetCount(this, ByRef SessionCount) {
 VA_IAudioSessionEnumerator_GetSession(this, SessionCount, ByRef Session) {
     return DllCall(NumGet(NumGet(this+0)+4*A_PtrSize), "ptr", this, "int", SessionCount, "ptr*", Session)
 }
-
 
 /*
     UNDOCUMENTED INTERFACES
