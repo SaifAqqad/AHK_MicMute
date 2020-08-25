@@ -8,7 +8,7 @@ MicMute
 
 ## Features
 
-   * Seperate hotkeys for Mute/Unmute 
+   * Separate hotkeys for Mute/Unmute 
    * Single toggle/push-to-talk hotkey
    * Hotkeys can be (optionally) set up using AHK's syntax
    * Optional sound and on-screen feedback
