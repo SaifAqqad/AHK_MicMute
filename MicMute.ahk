@@ -10,7 +10,7 @@ global global_mute:= ;1 muted
 global keys:= StrSplit(current_config.MuteHotkey, [" ","#","!","^","+","&",">","<","*","~","$","UP"], " `t")
 update_state()
 if (current_config.UpdateWithSystem){
-    SetTimer, update_state, 500
+    SetTimer, update_state, 5000
 }
 if (current_config.afkTimeout && !current_config.PushToTalk){
     SetTimer, check_activity, 1000
