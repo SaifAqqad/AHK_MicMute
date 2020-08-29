@@ -12,7 +12,7 @@ MicMute
    * Single toggle/push-to-talk hotkey
    * Hotkeys can be (optionally) set up using AHK's syntax
    * Optional sound and on-screen feedback
-   * AFK timeout (auto mute when the user is AFK for longer than a set interval)
+   * AFK timeout (auto mute when the user is AFK for longer than a specified time interval)
    * Auto-start on boot
 
 ## Install using [Scoop](https://scoop.sh)
@@ -50,7 +50,7 @@ Click OK and a new configuration window will open:
    - Check the "Passthrough key" box if you don't want the key's native function to be blocked (hidden from the system).
    - Check the "Advanced hotkey" box if you want to enter an AHK hotkey string instead (see [AHK docs](https://www.autohotkey.com/docs/KeyList.htm) for more info).
    
-4. Choose whether you want the script to give sound feedback when muting/unmuting the microphone or on-screen feedback in the form of an OSD or both.
+4. Choose whether you want sound feedback when muting/unmuting the microphone or on-screen feedback or both.
 
    <details><summary>On screen feedback</summary>
    
@@ -130,3 +130,9 @@ afkTimeout=5
 </details>
 
 </details>
+
+## Libraries and resources used:
+
+   * [VA.ahk](https://autohotkey.com/board/topic/21984-vista-audio-control-functions/)
+   * [OSD.ahk](https://github.com/SaifAqqad/AHK_Script/blob/master/src/Lib/OSD.ahk)
+   * [Material Design icons](https://github.com/Templarian/MaterialDesign)
