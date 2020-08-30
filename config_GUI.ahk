@@ -51,7 +51,7 @@ GUI_show(){
     restoreConfig()
     Gui, Show, x892 y206 h390 w646, MicMute configuration
     OnMessage(0x200, "WM_MOUSEMOVE")
-    WinWaitClose, MicMute configuration ahk_exe MicMute.exe
+    WinWaitClose, MicMute configuration ahk_class AutoHotkeyGUI
     Suspend, Off
 }
 
