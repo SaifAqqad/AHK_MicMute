@@ -15,7 +15,7 @@ class AssetsLoader {
     
     show_feedback(){
         if (current_config.SoundFeedback){
-            SoundPlay,% global_mute? mute_sound : unmute_sound
+            SoundPlay,% global_mute? this.mute_sound : this.unmute_sound
         }
         if (current_config.OnscreenFeedback){
             if (global_mute)

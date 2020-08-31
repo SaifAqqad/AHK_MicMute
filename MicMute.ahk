@@ -64,11 +64,8 @@ unmute_hotkey(){
 }
 
 update_state(){
-    state:=VA_GetMasterMute(current_config.Microphone)
-    if (state!=global_mute){
-        global_mute:=state
-        assets.update_tray()
-    }
+    global_mute:= VA_GetMasterMute(current_config.Microphone)
+    assets.update_tray()
 }
 
 check_activity:
