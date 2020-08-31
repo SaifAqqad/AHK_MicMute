@@ -27,9 +27,6 @@ class Config {
             IfMsgBox, OK
             this.edit()
         }
-        if (this.PushToTalk){
-            
-        }
     }
     writeIni(){
         IniDelete, config.ini, settings
