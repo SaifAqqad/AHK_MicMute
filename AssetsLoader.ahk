@@ -38,7 +38,7 @@ class AssetsLoader {
         Menu, Tray, Add, E&xit, exit
         Menu, Tray, Click, 1.
         Menu, Tray, Default, 1&
-        if (!FileExist(this.startup_shortcut))
+        if (!FileExist(AssetsLoader.startup_shortcut))
             Menu, Tray, Uncheck, Start on &boot
         else
             Menu, Tray, Check, Start on &boot
@@ -50,12 +50,12 @@ class AssetsLoader {
         Return
         
         auto_start:
-            if (!FileExist(this.startup_shortcut)){
-                FileCreateShortcut, %A_ScriptFullPath%, % this.startup_shortcut, %A_ScriptDir%
-                Menu, Tray, Check, Start on &boot
+            if (!FileExist(AssetsLoader.startup_shortcut)){
+                FileCreateShortcut, %A_ScriptFullPath%, % AssetsLoader.startup_shortcut, %A_ScriptDir%
+                Menu, Tray, % !ErrorLevel? "Check" : "Uncheck", Start on &boot
             }else{
-                FileDelete, % this.startup_shortcut
-                Menu, Tray, Uncheck, Start on &boot
+                FileDelete, % AssetsLoader.startup_shortcut
+                Menu, Tray, % !ErrorLevel? "Uncheck" : "Check", Start on &boot
             }
         Return
         
