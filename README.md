@@ -19,6 +19,7 @@ MicMute
 
 1. Install scoop using powershell
     
+        Set-ExecutionPolicy RemoteSigned -scope CurrentUser
         iwr -useb get.scoop.sh | iex
 2. Add my bucket to scoop
         
