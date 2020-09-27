@@ -1,4 +1,4 @@
-#Include, config_GUI.ahk
+#Include, GUI.ahk
 class Config {
     Microphone:="", MuteHotkey:="", UnmuteHotkey:=""
     PushToTalk:=0, SoundFeedback:=0, OnscreenFeedback:=0
@@ -12,7 +12,7 @@ class Config {
 
     edit(){
         GUI_show()
-        Reload
+        this.init()
     }
 
     readIni(){

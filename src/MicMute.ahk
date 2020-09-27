@@ -12,7 +12,7 @@ assets.install_assets()
 assets.init_tray()
 current_config.init()
 update_state()
-OSD_spawn("MicMute", "4BB04F")
+OSD_spawn("MicMute", "ff572d")
 
 if (current_config.UpdateWithSystem){
     SetTimer, update_state, 5000

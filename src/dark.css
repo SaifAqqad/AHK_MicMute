@@ -1,0 +1,50 @@
+body {
+    background-color: #232323 !important;
+    scrollbar-base-color: #4d4d4d !important;
+    scrollbar-face-color: #4d4d4d !important;
+    scrollbar-highlight-color: #7a7a7a !important;
+    scrollbar-track-color: #232323 !important;
+    scrollbar-arrow-color: #7a7a7a !important;
+}
+
+header {
+    color: #dbdbdb !important;
+    background: #232323 !important;
+}
+
+.title-btn:hover {
+  background: #191919 !important;
+}
+
+.title-btn-close:hover {
+  background: #e81123 !important;
+}
+
+.box{
+    background-color: #2e2e2e !important;
+    box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
+}
+
+.input-elem {
+    background-color: #363636 !important;
+}
+
+.tag{
+    background-color: #2e2e2e !important;
+    margin: 5px;
+}
+
+.tag.option {
+    border: #ff572d solid 1px;
+}
+
+p,
+body,
+label,
+.input-elem {
+    color: #dbdbdb !important;
+}
+
+input[type="text"]:disabled {
+    color: #a8a8a8 !important;
+}

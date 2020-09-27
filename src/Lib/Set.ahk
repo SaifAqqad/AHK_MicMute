@@ -1,0 +1,30 @@
+;Ordered collection of unique data
+class Set{
+    __New(elements*){
+        this.data:= Array()
+        this.occurrences:= {}
+        for i, val in elements
+            this.push(val)
+    }
+
+    push(p_value){
+        if (this.occurrences.HasKey(p_value)){
+            (this.occurrences[p_value])++
+            return 0
+        }
+        this.data.Push(p_value)
+        this.occurrences[p_value]:=1
+        return 1
+    }
+    
+    pop(){
+        val:= this.data.Pop()
+        this.occurrences.Delete(val)
+        return val
+    }
+
+    exists(p_value){
+        return this.occurrences[p_value]
+    }
+
+}
