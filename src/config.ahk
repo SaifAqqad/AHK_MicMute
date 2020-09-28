@@ -11,7 +11,8 @@ class Config {
     }
 
     edit(){
-        GUI_show()
+        if(!WinExist("MicMute ahk_class AutoHotkeyGUI"))
+            GUI_show()
         this.init()
     }
 

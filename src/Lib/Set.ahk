@@ -1,4 +1,4 @@
-;Ordered collection of unique data
+;Ordered collection of unique values
 class Set{
     __New(elements*){
         this.data:= Array()

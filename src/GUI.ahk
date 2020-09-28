@@ -1,13 +1,15 @@
 #Include, <Neutron>
 #Include, <Set>
+#If, GUI_recording_flag && WinActive("ahk_class AutoHotkeyGUI")
+#If
 ;auto_exec
 Global neutron :=, GUI_mute_hotkey:=new Set(), GUI_unmute_hotkey:=new Set(), GUI_recording_flag:=false, GUI_keys := {}
 , GUI_keys_replacements := {33: "PgUp", 34: "PgDn", 35: "End", 36: "Home", 37: "Left", 38: "Up", 39: "Right"
 , 40: "Down", 45: "Insert", 46: "Delete"}, GUI_modifiers:= {"Alt":"!","RAlt":"!","LAlt":"!","Shift":"+"
-,"RShift":"+","LShift":"+","Control":"^","RControl":"^","LControl":"^"}
+,"RShift":"+","LShift":"+","Control":"^","RControl":"^","LControl":"^","LWin":"#","RWin":"#"}
+,GUI_mute_passthrough:=0,GUI_mute_wildcard:=0,GUI_unmute_passthrough:=0,GUI_unmute_wildcard:=0
+,GUI_mute_adv_hotkey:=0,GUI_unmute_adv_hotkey:=0
 ; end auto_exec
-#If, GUI_recording_flag && WinActive("ahk_class AutoHotkeyGUI")
-#If
 
 GUI_show(){ 
     neutron := new NeutronWindow()
@@ -19,6 +21,7 @@ GUI_show(){
     RestoreConfig(neutron)
     Menu, Tray, Icon, .\assets\MicMute.ico
     neutron.show("w840 h560","MicMute")
+    WinSet, Transparent, 252, ahk_class AutoHotkeyGUI
     WinWaitClose, MicMute ahk_class AutoHotkeyGUI
 }
 
@@ -97,60 +100,96 @@ saveConfig(neutron, event){
 }
 
 RestoreConfig(neutron){
+    neutron.doc.getElementById("form").reset()
     RefreshList(neutron)
-    if (current_config.MuteHotkey){
-        neutron.doc.getElementByID("mute_adv_hotkey").checked:= "true"
-        neutron.doc.getElementByID("mute_input").value:= current_config.MuteHotkey
-        if (InStr(current_config.MuteHotkey, "*"))
-            neutron.doc.getElementByID("mute_wildcard").checked:= "true"
-        else
-            neutron.doc.getElementByID("mute_wildcard").removeAttribute("checked")
-        if (InStr(current_config.MuteHotkey, "~"))
-            neutron.doc.getElementByID("mute_passthrough").checked:= "true"
-        else
-            neutron.doc.getElementByID("mute_passthrough").removeAttribute("checked")
-    }
-    if (current_config.UnmuteHotkey && current_config.UnmuteHotkey != current_config.MuteHotkey){
-        neutron.doc.getElementByID("unmute_adv_hotkey").checked:= "true"
-        neutron.doc.getElementByID("unmute_input").value:= current_config.UnmuteHotkey
-        if (InStr(current_config.UnmuteHotkey, "*"))
-            neutron.doc.getElementByID("unmute_wildcard").checked:= "true"
-        else
-            neutron.doc.getElementByID("unmute_wildcard").removeAttribute("checked")
-        if (InStr(current_config.UnmuteHotkey, "~"))
-            neutron.doc.getElementByID("unmute_passthrough").checked:= "true"
-        else
-            neutron.doc.getElementByID("unmute_passthrough").removeAttribute("checked")
-    }
-    if (current_config.PushToTalk){
-        neutron.doc.getElementByID("ptt_hotkey").checked:= "true"
-    }else if (current_config.MuteHotkey && current_config.MuteHotkey=current_config.UnmuteHotkey){
-        neutron.doc.getElementByID("tog_hotkey").checked:= "true"
-    }else{
-        neutron.doc.getElementByID("sep_hotkey").checked:= "true"
-    }
-    HotkeyType(neutron)
-    if (current_config.afkTimeout)
-        neutron.doc.getElementByID("afk_timeout").value:= current_config.afkTimeout
+    if(current_config.PushToTalk)
+        neutron.doc.getElementById("ptt_hotkey").checked:="true"
+    else if(current_config.MuteHotkey && current_config.MuteHotkey = current_config.UnmuteHotkey)
+        neutron.doc.getElementById("tog_hotkey").checked:="true"
     else
-        neutron.doc.getElementByID("afk_timeout").removeAttribute("value")
-    if (current_config.OnscreenFeedback)
-        neutron.doc.getElementByID("on_screen_fb").checked:= "true"
-    else
-        neutron.doc.getElementByID("on_screen_fb").removeAttribute("checked")
-    feedback_OSD(neutron)
-    if (current_config.ExcludeFullscreen)
-        neutron.doc.getElementByID("on_screen_fb_excl").checked:= "true"
-    else
-        neutron.doc.getElementByID("on_screen_fb_excl").removeAttribute("checked")
+        neutron.doc.getElementById("sep_hotkey").checked:="true"
+    onHotkeyType(neutron)
+    if(current_config.MuteHotkey){
+        neutron.doc.getElementById("mute_adv_hotkey").checked:="true"
+        onOption(neutron,"mute_adv_hotkey",0,0)
+        str:=current_config.MuteHotkey
+        if(InStr(str, "~")){
+            neutron.doc.getElementById("mute_passthrough").checked:="true"
+            onOption(neutron,"mute_passthrough",0,-1)
+            str:= StrReplace(str, "~")
+        }
+        if(InStr(str, "*")){
+            neutron.doc.getElementById("mute_wildcard").checked:="true"
+            onOption(neutron,"mute_wildcard",0,1)
+            str:= StrReplace(str, "*")
+        }
+        neutron.doc.getElementById("mute_input").value:= str
+    }
+    if(current_config.UnmuteHotkey){
+        neutron.doc.getElementById("unmute_adv_hotkey").checked:="true"
+        onOption(neutron,"unmute_adv_hotkey",1,0)
+        str:=current_config.UnmuteHotkey
+        if(InStr(str, "~")){
+            neutron.doc.getElementById("unmute_passthrough").checked:="true"
+            onOption(neutron,"unmute_passthrough",1,-1)
+            str:= StrReplace(str, "~")
+        }
+        if(InStr(str, "*")){
+            neutron.doc.getElementById("unmute_wildcard").checked:="true"
+            onOption(neutron,"unmute_wildcard",1,1)
+            str:= StrReplace(str, "*")
+        }
+        neutron.doc.getElementById("unmute_input").value:= str
+    }
     if (current_config.SoundFeedback)
         neutron.doc.getElementByID("sound_fb").checked:= "true"
-    else
-        neutron.doc.getElementByID("sound_fb").removeAttribute("checked")
+    if (current_config.OnscreenFeedback)
+        neutron.doc.getElementByID("on_screen_fb").checked:= "true"
+    onOSDfb(neutron)
+    if (current_config.ExcludeFullscreen)
+        neutron.doc.getElementByID("on_screen_fb_excl").checked:= "true"
+    if (current_config.afkTimeout)
+        neutron.doc.getElementByID("afk_timeout").value:= current_config.afkTimeout
 }
 
+onOption(neutron, event, p_type, p_option){
+    event:= IsObject(event)? event.target : neutron.doc.getElementById(event)
+    if(p_option<0){ ;passthrough
+        if(p_type)
+            GUI_unmute_passthrough:= event.checked ? 1 : 0
+        else
+            GUI_mute_passthrough:= event.checked ? 1 : 0
+    }else if(p_option){ ;wildcard
+        if(p_type)
+            GUI_unmute_wildcard:= event.checked ? 1 : 0
+        else
+            GUI_mute_wildcard:= event.checked ? 1 : 0
+    }else{ ;adv
+        inputElem:=,recButton:=,stopButton:=
+        if(p_type){
+            inputElem:= neutron.doc.getElementById("unmute_input")
+            recButton:= "unmute_record"
+            stopButton:= "unmute_stop"
+        }else{
+            inputElem:= neutron.doc.getElementById("mute_input")
+            recButton:= "mute_record"
+            stopButton:= "mute_stop"
+        }
+        if(event.checked){
+            hideElemID(neutron,recButton)
+            hideElemID(neutron,stopButton)
+            inputElem.removeAttribute("disabled")
+            inputElem.placeholder:="Enter a hotkey string"
+        }else{
+            showElemID(neutron,recButton)
+            inputElem.disabled:="true"
+            inputElem.placeholder:="Click Record"
+        }
+        inputElem.value:=""
+    }
+}
 
-HotkeyType(neutron){
+onHotkeyType(neutron){
     if(neutron.doc.getElementByID("sep_hotkey").checked){
         showElemID(neutron, "unmute_box")
         showElemID(neutron, "afk_timeout_col")
@@ -169,35 +208,11 @@ HotkeyType(neutron){
     }
 }
 
-feedback_OSD(neutron){
+onOSDfb(neutron){
     if(neutron.doc.getElementByID("on_screen_fb").checked)
         showElemID(neutron, "os_fb_excl_tag")
     else
         hideElemID(neutron, "os_fb_excl_tag")
-}
-
-hideDDL(neutron, mFlag){
-    for i, elem in neutron.Each(neutron.doc.getElementsByClassName(mFlag . "-ddl-col")) {
-        elem.classList.add("is-hidden")
-    }
-}
-
-showDDL(neutron, mFlag){
-    for i, elem in neutron.Each(neutron.doc.getElementsByClassName(mFlag . "-ddl-col")) {
-        elem.classList.remove("is-hidden")
-    }
-}
-
-hideinput(neutron, mFlag){
-    for i, elem in neutron.Each(neutron.doc.getElementsByClassName(mFlag . "-input-col")) {
-        elem.classList.add("is-hidden")
-    }
-}
-
-showInput(neutron, mFlag){
-    for i, elem in neutron.Each(neutron.doc.getElementsByClassName(mFlag . "-input-col")) {
-        elem.classList.remove("is-hidden")
-    }
 }
 
 hideElemID(neutron, id){
@@ -260,14 +275,14 @@ bindKeys(neutron, element_id){
         showElemID(neutron, "unmute_stop")
     }
     inputElem.value:=""
-    inputElem.placeholder:="Recording"
+    inputElem.placeholder:="Recording (Don't hold the keys)"
     Hotkey, If , GUI_recording_flag && WinActive("ahk_class AutoHotkeyGUI")
     for n, in GUI_keys {
         funcObj:= Func("addKey").Bind(n, element_id)
-        Hotkey, %  GetKeyName(n) , % funcObj, On
+        Hotkey, % GetKeyName(n) , % funcObj, On UseErrorLevel
     }
     remFunc := Func("unbindKeys").Bind(neutron, element_id)
-    Hotkey, % GetKeyName("Esc") , % remFunc, On
+    Hotkey, % GetKeyName("Esc") , % remFunc, On UseErrorLevel
     Hotkey, If
 }
 
@@ -275,8 +290,8 @@ unbindKeys(neutron, element_id){
     GUI_recording_flag := false
     Hotkey, If , GUI_recording_flag && WinActive("ahk_class AutoHotkeyGUI")
     for n, in GUI_keys
-        Hotkey, % n , Off
-    Hotkey, % GetKeyName("Esc")  , Off
+        Hotkey, % GetKeyName(n) , Off, UseErrorLevel
+    Hotkey, % GetKeyName("Esc")  , Off, UseErrorLevel
     Hotkey, If
     sanitizeHotkeys(element_id)
     if(element_id = "mute_input"){
@@ -306,44 +321,48 @@ addKey(key_name, element_id){
 sanitizeHotkeys(element_id){
     inputElem:= neutron.doc.getElementByID(element_id)
     inputElem.placeholder:="Click Record"
-    if(element_id = "mute_input"){
-        while(GUI_mute_hotkey.data.Length()>3)
-            GUI_mute_hotkey.pop()
-        modifierCount:=0
-        for i, value in GUI_mute_hotkey.data 
-            modifierCount+= modifiers.HasKey(value)
-        if(modifierCount>2)
-            Goto, clearMuteHotkey
-        str := "", inputElem.value := ""
-        for i, value in GUI_mute_hotkey.data {
-            str.= modifiers.HasKey(value)? modifiers[value] : value
+    hotkey_var:= element_id = "mute_input"? GUI_mute_hotkey : GUI_unmute_hotkey
+    isModifierHotkey:= 0
+    ; check hotkey length
+    while(hotkey_var.data.Length()>3)
+        hotkey_var.pop()
+    ; check modifier count
+    modifierCount:= 0
+    for i, value in hotkey_var.data 
+        modifierCount += GUI_modifiers.HasKey(value)
+    ; if the hotkey contain 3 modifiers or 3 keys it's invalid
+    if(modifierCount > 2 || (modifierCount = 0 && hotkey_var.data.Length() > 2))
+        Goto, clearHotkey
+    ; check whether the hotkey is modifier-only
+    if(modifierCount = hotkey_var.data.Length())
+        isModifierHotkey:= 1
+    ; append hotkey parts
+    str := "", inputElem.value := ""
+    for i, value in hotkey_var.data {
+        ; if the part is a modifier and the hotkey is not a modifier-only hotkey => prepend symbol
+        ; else => append the part
+        if (GUI_modifiers.HasKey(value) && !isModifierHotkey){ 
+            str :=  GUI_modifiers[value] . str
+            inputElem.value := value . " + " . inputElem.value
+        }else{
+            str .= value . " & "
             inputElem.value := inputElem.value . value . " + "
         }
-        inputElem.value := SubStr(inputElem.value,1,-3)
-        GUI_mute_hotkey:= str
-        return
-        clearMuteHotkey:
-        GUI_mute_hotkey:= new Set()
-        inputElem.value:=""
-    }else{
-        while(GUI_unmute_hotkey.data.Length()>3)
-            GUI_unmute_hotkey.pop()
-        modifierCount:=0
-        for i, value in GUI_unmute_hotkey.data {
-            modifierCount+= modifiers.HasKey(value)
-        }
-        if(modifierCount>2)
-            Goto, clearUnmuteHotkey
-        str := "", inputElem.value := ""
-        for i, value in GUI_unmute_hotkey.data {
-            str.= modifiers.HasKey(value)? modifiers[value] : value
-            inputElem.value := inputElem.value . value . " + "
-        }
-        inputElem.value := SubStr(inputElem.value,1,-3)
-        GUI_unmute_hotkey:= str
-        return
-        clearUnmuteHotkey:
-        GUI_unmute_hotkey:= new Set()
-        inputElem.value:=""
     }
+    ; remove trailing " + " and " & "
+    if(SubStr(str, -2) = " & ")
+        str := SubStr(str,1,-3)
+    inputElem.value := SubStr(inputElem.value,1,-3)
+    ; set hotkey var to final string
+    if(element_id = "mute_input")
+        GUI_mute_hotkey := str
+    else
+        GUI_unmute_hotkey := str
+    return
+    clearHotkey:
+    if(element_id = "mute_input")
+        GUI_mute_hotkey := new Set()
+    else
+        GUI_unmute_hotkey := new Set()
+    inputElem.value:=""
 }
