@@ -8,7 +8,7 @@ OSD_spawn(txt, OSD_Accent, exclude_fullscreen:=0){
     if (OSD_state = 0){
         SetFormat, integer, d
         Gui, OSD:New,,Configuration 
-        Gui, Color,% OSD_sysTheme? "E6E6E6":"191919" , OSD_Accent
+        Gui, Color,% OSD_sysTheme? "f2f2f2":"232323" , OSD_Accent
         Gui, +AlwaysOnTop -SysMenu +ToolWindow -caption -Border
         Gui, Font, s11 w500 c%OSD_Accent%, Segoe UI
         Gui, Add, Text, vOSD_txt W165 Center, %txt%
