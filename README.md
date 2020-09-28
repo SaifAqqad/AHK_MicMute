@@ -1,5 +1,5 @@
 <h1 align="center">
- <img src="./assets/MicMute.ico" width="32" height="32"></img> 
+ <img src="./src/assets/MicMute.ico" width="32" height="32"></img> 
 MicMute
 </h1>
 <p align="center">
@@ -15,7 +15,7 @@ MicMute
    * AFK timeout (auto mute when the user is AFK for longer than a specified time interval)
    * Auto-start on boot
 
-## Install using [Scoop](https://scoop.sh)
+## Install using [Scoop](https://scoop.sh) (Recommended)
 
 1. Install scoop using powershell
     
@@ -33,28 +33,32 @@ MicMute
 
 On the first run, you will be asked to set up MicMute:
 
-![](./assets/firstsetupdialog.png)
+![](./src/assets/firstsetupdialog.png)
 
 Click OK and a new configuration window will open:
 
-![](./assets/configwindow.png)
+![](./src/assets/configwindow_1.png)
 
 1. Choose your microphone from the drop down list.
 
-2. Choose whether you want Separate hotkeys for Mute and Unmute or Toggle/Push To Talk.
+2. Choose whether you want separate hotkeys for Mute and Unmute or a single Toggle/Push-to-talk hotkey.
 
 3. Based on your choice, you will either need to setup both hotkeys or just one of them.
         
-   - Click on the empty box for the hotkey then choose the key(s) you want.
-   - Check the "Wildcard" box if you want to fire the hotkey even if extra modifiers are being held down.
-   - Check the "Passthrough key" box if you don't want the key's native function to be blocked (hidden from the system).
-   - Check the "Advanced hotkey" box if you want to enter an AHK hotkey string instead (see [AHK docs](https://www.autohotkey.com/docs/KeyList.htm) for more info).
+   - Click on 'Record' then press the key(s) you want (press without holding them).
+   - Turn on 'Wildcard' if you want the hotkey to be fired even if extra modifiers/keys are held down.
+   - Turn on 'Passthrough' if you don't want the key's native function to be blocked/hidden from the system.
+   - Turn on "Advanced hotkey" if you want to enter a hotkey string using AHK syntax instead (see [AHK docs](https://www.autohotkey.com/docs/KeyList.htm)).
    
 4. Choose whether you want sound feedback when muting/unmuting the microphone or on-screen feedback or both.
 
+      ![](./src/assets/configwindow_2.png)
+
+
    <details><summary>On screen feedback</summary>
    
-   ![](./assets/OSD.gif)
+   ![](./src/assets/OSD.gif)
+   ![](./src/assets/OSD_light.gif)
    
    </details>
 
@@ -85,7 +89,7 @@ afkTimeout=
 1. `Microphone` can be any substring of your microphone's name or the controller's name as shown in this image:
    <details><summary>image</summary>
 
-   ![](./assets/Controlpaneldialog.png)
+   ![](./src/assets/Controlpaneldialog.png)
 
    </details>
    
@@ -104,7 +108,7 @@ afkTimeout=
 4. Both `SoundFeedback` and `OnscreenFeedback` can be set to either `0` or `1`, you can also set `ExcludeFullscreen` to 1 to stop the OSD from showing on top of fullscreen applications
    <details><summary>On screen feedback</summary>
 
-   ![](./assets/OSD.gif)
+   ![](./src/assets/OSD.gif)
 
    </details>
    
@@ -134,5 +138,6 @@ afkTimeout=5
 ## Libraries and resources used:
 
    * [VA.ahk](https://autohotkey.com/board/topic/21984-vista-audio-control-functions/)
+   * [Neutron.ahk](https://github.com/G33kDude/Neutron.ahk)
    * [OSD.ahk](https://github.com/SaifAqqad/AHK_Script/blob/master/src/Lib/OSD.ahk)
    * [Material Design icons](https://github.com/Templarian/MaterialDesign)

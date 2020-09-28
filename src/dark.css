@@ -11,8 +11,12 @@ header {
     color: #dbdbdb !important;
     background: #232323 !important;
 }
+ 
+.title-btn-maximize{
+    color: #666666;
+}
 
-.title-btn:hover {
+.title-btn-minimize:hover {
   background: #191919 !important;
 }
 
@@ -48,4 +52,9 @@ label,
 
 input[type="text"]:disabled {
     color: #a8a8a8 !important;
+}
+
+[data-title]:after {
+    background-color: #2e2e2e;
+    color: #dbdbdb;
 }

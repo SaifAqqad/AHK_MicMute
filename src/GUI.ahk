@@ -8,7 +8,9 @@ Global neutron :=, GUI_mute_hotkey:=new Set(), GUI_unmute_hotkey:=new Set(), GUI
 , 40: "Down", 45: "Insert", 46: "Delete"}, GUI_modifiers:= {"Alt":"!","RAlt":"!","LAlt":"!","Shift":"+"
 ,"RShift":"+","LShift":"+","Control":"^","RControl":"^","LControl":"^","LWin":"#","RWin":"#"}
 ,GUI_mute_passthrough:=0,GUI_mute_wildcard:=0,GUI_unmute_passthrough:=0,GUI_unmute_wildcard:=0
-,GUI_mute_adv_hotkey:=0,GUI_unmute_adv_hotkey:=0
+,GUI_mute_adv_hotkey:=0,GUI_unmute_adv_hotkey:=0, GUI_passthrough_tt:="When the hotkey fires, its keys will not be hidden from the system."
+,GUI_wildcard_tt:= "Fire the hotkey even if extra modifiers are being held down.", GUI_adv_tt:="Enter a hotkey string using AHK syntax"
+,GUI_afk_tt:= "Mute the microphone when idling for longer than the AFK timeout"
 ; end auto_exec
 
 GUI_show(){ 
@@ -18,9 +20,11 @@ GUI_show(){
         load_css("dark.css") 
     }
     getKeys()
+    add_tooltips()
     onRestoreConfig(neutron)
     Menu, Tray, Icon, .\assets\MicMute.ico
-    neutron.show("w840 h560","MicMute")
+    neutron.Gui("-Resize")
+    neutron.show("w740 h560","MicMute")
     WinSet, Transparent, 252, ahk_class AutoHotkeyGUI
     WinWaitClose, MicMute ahk_class AutoHotkeyGUI
 }
@@ -352,6 +356,20 @@ load_css(file){
     link.rel:= "stylesheet"
     link.href:= file
     head.appendChild(link)
+}
+
+add_tooltips(){
+    pt_labels:= neutron.qsa(".passthrough-label")
+    wc_labels:= neutron.qsa(".wildcard-label")
+    adv_labels:= neutron.qsa(".adv-label")
+    afk_label:= neutron.qs(".afk-label")
+    for i, label in neutron.Each(pt_labels)
+        label.setAttribute("data-title", GUI_passthrough_tt)
+    for i, label in neutron.Each(wc_labels)
+        label.setAttribute("data-title", GUI_wildcard_tt)
+    for i, label in neutron.Each(adv_labels)
+        label.setAttribute("data-title", GUI_adv_tt)
+    afk_label.setAttribute("data-title", GUI_afk_tt)
 }
 
 is_darkmode(){

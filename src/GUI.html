@@ -46,8 +46,12 @@
             font-family: Webdings;
             font-size: 11pt;
         }
+        
+        .title-btn-maximize{
+            color: #666666;
+        }
 
-        .title-btn:hover {
+        .title-btn-minimize:hover {
             background: #cacaca;
         }
 
@@ -168,6 +172,38 @@
             color: #ff572d;
             text-decoration: none;
         }
+
+        [data-title]:hover:after {
+            opacity: 1;
+            transition: all 0.1s ease 0.4s;
+            visibility: visible;
+        }
+
+        [data-title]:after {
+            content: attr(data-title);
+            background-color: #ffffff;
+            color: #111;
+            font-family: Arial !important;
+            font-size: 14px;
+            font-weight: 400 !important;
+            position: absolute;
+            padding: 3px 5px 3px 5px;
+            top: -40px;
+            left: 0;
+            width: min-content;
+            white-space: nowrap;
+            box-shadow: 1px 1px 3px #222222;
+            opacity: 0;
+            border: 1px solid #ff572d;
+            border-radius: 5px;
+            z-index: 99999;
+            visibility: hidden;
+            overflow: visible;
+        }
+
+        [data-title] {
+            position: relative;
+        }
     </style>
 </head>
 
@@ -175,8 +211,8 @@
     <header>
         <span class="title-bar" onmousedown="neutron.DragTitleBar()"
             style="margin-left: 4px;"><label>MicMute</label></span>
-        <span class="title-btn" onclick="neutron.Minimize()">0</span>
-        <span class="title-btn" onclick="neutron.Maximize()">1</span>
+        <span class="title-btn title-btn-minimize" onclick="neutron.Minimize()">0</span>
+        <span class="title-btn title-btn-maximize">1</span>
         <span class="title-btn title-btn-close" onclick="neutron.Close()">r</span>
     </header>
     <div class="main ">
@@ -246,21 +282,21 @@
                                 <label class="checkbox">
                                     <input type="checkbox" name="mute_passthrough" id="mute_passthrough"
                                         onchange="ahk.onOption(event,0,-1)">
-                                    <span>Passthrough</span>
+                                    <span class="passthrough-label">Passthrough</span>
                                 </label>
                             </div>
                             <div class="tag is-medium option">
                                 <label class="checkbox">
                                     <input type="checkbox" name="mute_wildcard" id="mute_wildcard"
                                         onchange="ahk.onOption(event,0,1)">
-                                    <span>Wildcard</span>
+                                    <span class="wildcard-label">Wildcard</span>
                                 </label>
                             </div>
                             <div class="tag is-medium option">
                                 <label class="checkbox">
                                     <input type="checkbox" name="mute_adv_hotkey" id="mute_adv_hotkey"
                                         onchange="ahk.onOption(event,0,0)">
-                                    <span>Adv hotkey</span>
+                                    <span class="adv-label">Advanced hotkey</span>
                                 </label>
                             </div>
                         </div>
@@ -291,21 +327,21 @@
                                 <label class="checkbox">
                                     <input type="checkbox" name="unmute_passthrough" id="unmute_passthrough"
                                         onchange="ahk.onOption(event,1,-1)">
-                                    <span>Passthrough</span>
+                                    <span class="passthrough-label">Passthrough</span>
                                 </label>
                             </div>
                             <div class="tag is-medium option">
                                 <label class="checkbox">
                                     <input type="checkbox" name="unmute_wildcard" id="unmute_wildcard"
                                         onchange="ahk.onOption(event,1,1)">
-                                    <span>Wildcard</span>
+                                    <span class="wildcard-label">Wildcard</span>
                                 </label>
                             </div>
                             <div class="tag is-medium option">
                                 <label class="checkbox">
                                     <input type="checkbox" name="unmute_adv_hotkey" id="unmute_adv_hotkey"
                                         onchange="ahk.onOption(event,1,0)">
-                                    <span>Adv hotkey</span>
+                                    <span class="adv-label">Advanced hotkey</span>
                                 </label>
                             </div>
                         </div>
@@ -335,8 +371,8 @@
                         </div>
                     </div>
                     <div class="column is-half" id="afk_timeout_col">
-                        <label unselectable="on" class="label title is-4 noselect">AFK timeout</label>
-                        <input class="input is-primary input-elem " min="0" max="120" placeholder="Minutes (1-120)"
+                        <label unselectable="on" class="label title is-4 noselect afk-label">AFK timeout</label>
+                        <input class="input is-primary input-elem" min="0" max="120" placeholder="Minutes (1-120)"
                             type="number" name="afk_timeout" id="afk_timeout">
                     </div>
                 </div>
