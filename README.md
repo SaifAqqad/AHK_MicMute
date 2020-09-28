@@ -140,4 +140,5 @@ afkTimeout=5
    * [VA.ahk](https://autohotkey.com/board/topic/21984-vista-audio-control-functions/)
    * [Neutron.ahk](https://github.com/G33kDude/Neutron.ahk)
    * [OSD.ahk](https://github.com/SaifAqqad/AHK_Script/blob/master/src/Lib/OSD.ahk)
+   * [Bulma CSS framework](https://bulma.io/)
    * [Material Design icons](https://github.com/Templarian/MaterialDesign)
