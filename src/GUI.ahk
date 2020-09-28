@@ -18,14 +18,14 @@ GUI_show(){
         load_css("dark.css") 
     }
     getKeys()
-    RestoreConfig(neutron)
+    onRestoreConfig(neutron)
     Menu, Tray, Icon, .\assets\MicMute.ico
     neutron.show("w840 h560","MicMute")
     WinSet, Transparent, 252, ahk_class AutoHotkeyGUI
     WinWaitClose, MicMute ahk_class AutoHotkeyGUI
 }
 
-RefreshList(neutron){
+onRefreshList(neutron){
     selected_device:= VA_GetDevice(current_config.Microphone)
     dList := VA_GetCaptureDeviceList()
     micSelect:= neutron.doc.getElementByID("microphone")
@@ -45,205 +45,6 @@ RefreshList(neutron){
         }
         micSelect.appendChild(option)
     }
-}
-
-saveConfig(neutron, event){
-    formData := neutron.GetFormData(event.target)
-    current_config.Microphone:= formData.microphone
-    if (formData.mute_adv_hotkey="on"){
-        current_config.MuteHotkey:= formData.mute_input_hotkey , current_config.UnmuteHotkey:= formData.mute_input_hotkey
-    }else{ ;select elems
-        if (formData.mute_wildcard="on"){
-            GUI_mute_hotkey_string := "*" . GUI_mute_hotkey_string
-        }else{
-            GUI_mute_hotkey_string := StrReplace(GUI_mute_hotkey_string, "*")
-        }
-        if (formData.mute_passthrough="on"){
-            GUI_mute_hotkey_string := "~" . GUI_mute_hotkey_string
-        }else{
-            GUI_mute_hotkey_string := StrReplace(GUI_mute_hotkey_string, "~")
-        }
-        modif_1:= neutron.doc.getElementByID("mute_modifier_1").value
-        modif_2:= neutron.doc.getElementByID("mute_modifier_2").value
-        key:= neutron.doc.getElementByID("mute_key").value
-        GUI_mute_hotkey_string .=  modif_1 . modif_2 . key
-        current_config.MuteHotkey:= GUI_mute_hotkey_string , current_config.UnmuteHotkey:= GUI_mute_hotkey_string
-    }
-    if (formData.hotkeyType=1){ ; 1 => seperate hotkeys => repeat for unmute
-        if (formData.unmute_adv_hotkey="on"){
-            current_config.UnmuteHotkey:= formData.unmute_input_hotkey
-        }else{ ;select elems
-            if (formData.unmute_wildcard="on"){
-                GUI_unmute_hotkey_string := "*" . GUI_unmute_hotkey_string
-            }else{
-                GUI_unmute_hotkey_string := StrReplace(GUI_unmute_hotkey_string, "*")
-            }
-            if (formData.unmute_passthrough="on"){
-                GUI_unmute_hotkey_string := "~" . GUI_unmute_hotkey_string
-            }else{
-                GUI_unmute_hotkey_string := StrReplace(GUI_unmute_hotkey_string, "~")
-            }
-            modif_1:= neutron.doc.getElementByID("unmute_modifier_1").value
-            modif_2:= neutron.doc.getElementByID("unmute_modifier_2").value
-            key:= neutron.doc.getElementByID("unmute_key").value
-            GUI_unmute_hotkey_string .=  modif_1 . modif_2 . key
-            current_config.UnmuteHotkey:= GUI_unmute_hotkey_string
-        }
-    }
-    current_config.PushToTalk:= formData.hotkeyType>2
-    current_config.afkTimeout:= formData.afk_timeout
-    current_config.OnscreenFeedback:= formData.on_screen_fb
-    current_config.ExcludeFullscreen:= formData.on_screen_fb_excl
-    current_config.SoundFeedback:= formData.sound_fb
-    current_config.writeIni()
-    neutron.Destroy()
-}
-
-RestoreConfig(neutron){
-    neutron.doc.getElementById("form").reset()
-    RefreshList(neutron)
-    if(current_config.PushToTalk)
-        neutron.doc.getElementById("ptt_hotkey").checked:="true"
-    else if(current_config.MuteHotkey && current_config.MuteHotkey = current_config.UnmuteHotkey)
-        neutron.doc.getElementById("tog_hotkey").checked:="true"
-    else
-        neutron.doc.getElementById("sep_hotkey").checked:="true"
-    onHotkeyType(neutron)
-    if(current_config.MuteHotkey){
-        neutron.doc.getElementById("mute_adv_hotkey").checked:="true"
-        onOption(neutron,"mute_adv_hotkey",0,0)
-        str:=current_config.MuteHotkey
-        if(InStr(str, "~")){
-            neutron.doc.getElementById("mute_passthrough").checked:="true"
-            onOption(neutron,"mute_passthrough",0,-1)
-            str:= StrReplace(str, "~")
-        }
-        if(InStr(str, "*")){
-            neutron.doc.getElementById("mute_wildcard").checked:="true"
-            onOption(neutron,"mute_wildcard",0,1)
-            str:= StrReplace(str, "*")
-        }
-        neutron.doc.getElementById("mute_input").value:= str
-    }
-    if(current_config.UnmuteHotkey){
-        neutron.doc.getElementById("unmute_adv_hotkey").checked:="true"
-        onOption(neutron,"unmute_adv_hotkey",1,0)
-        str:=current_config.UnmuteHotkey
-        if(InStr(str, "~")){
-            neutron.doc.getElementById("unmute_passthrough").checked:="true"
-            onOption(neutron,"unmute_passthrough",1,-1)
-            str:= StrReplace(str, "~")
-        }
-        if(InStr(str, "*")){
-            neutron.doc.getElementById("unmute_wildcard").checked:="true"
-            onOption(neutron,"unmute_wildcard",1,1)
-            str:= StrReplace(str, "*")
-        }
-        neutron.doc.getElementById("unmute_input").value:= str
-    }
-    if (current_config.SoundFeedback)
-        neutron.doc.getElementByID("sound_fb").checked:= "true"
-    if (current_config.OnscreenFeedback)
-        neutron.doc.getElementByID("on_screen_fb").checked:= "true"
-    onOSDfb(neutron)
-    if (current_config.ExcludeFullscreen)
-        neutron.doc.getElementByID("on_screen_fb_excl").checked:= "true"
-    if (current_config.afkTimeout)
-        neutron.doc.getElementByID("afk_timeout").value:= current_config.afkTimeout
-}
-
-onOption(neutron, event, p_type, p_option){
-    event:= IsObject(event)? event.target : neutron.doc.getElementById(event)
-    if(p_option<0){ ;passthrough
-        if(p_type)
-            GUI_unmute_passthrough:= event.checked ? 1 : 0
-        else
-            GUI_mute_passthrough:= event.checked ? 1 : 0
-    }else if(p_option){ ;wildcard
-        if(p_type)
-            GUI_unmute_wildcard:= event.checked ? 1 : 0
-        else
-            GUI_mute_wildcard:= event.checked ? 1 : 0
-    }else{ ;adv
-        inputElem:=,recButton:=,stopButton:=
-        if(p_type){
-            inputElem:= neutron.doc.getElementById("unmute_input")
-            recButton:= "unmute_record"
-            stopButton:= "unmute_stop"
-        }else{
-            inputElem:= neutron.doc.getElementById("mute_input")
-            recButton:= "mute_record"
-            stopButton:= "mute_stop"
-        }
-        if(event.checked){
-            hideElemID(neutron,recButton)
-            hideElemID(neutron,stopButton)
-            inputElem.removeAttribute("disabled")
-            inputElem.placeholder:="Enter a hotkey string"
-        }else{
-            showElemID(neutron,recButton)
-            inputElem.disabled:="true"
-            inputElem.placeholder:="Click Record"
-        }
-        inputElem.value:=""
-    }
-}
-
-onHotkeyType(neutron){
-    if(neutron.doc.getElementByID("sep_hotkey").checked){
-        showElemID(neutron, "unmute_box")
-        showElemID(neutron, "afk_timeout_col")
-        neutron.doc.getElementByID("mute_label").innerText:= "Mute hotkey"
-    }
-    if(neutron.doc.getElementByID("tog_hotkey").checked){
-        hideElemID(neutron, "unmute_box")
-        neutron.doc.getElementByID("unmute_ghost_box").style.height := "152.52px"
-        showElemID(neutron, "afk_timeout_col")
-        neutron.doc.getElementByID("mute_label").innerText:= "Toggle hotkey"
-    }
-    if(neutron.doc.getElementByID("ptt_hotkey").checked){
-        hideElemID(neutron, "unmute_box")
-        hideElemID(neutron, "afk_timeout_col")
-        neutron.doc.getElementByID("mute_label").innerText:= "Push-to-talk hotkey"
-    }
-}
-
-onOSDfb(neutron){
-    if(neutron.doc.getElementByID("on_screen_fb").checked)
-        showElemID(neutron, "os_fb_excl_tag")
-    else
-        hideElemID(neutron, "os_fb_excl_tag")
-}
-
-hideElemID(neutron, id){
-    elem:= neutron.doc.getElementByID(id)
-    elem.classList.add("is-hidden")
-}
-
-showElemID(neutron, id){
-    elem:= neutron.doc.getElementByID(id)
-    elem.classList.remove("is-hidden")
-}
-
-load_css(file){
-    local head := neutron.doc.querySelector("head"), link
-    link:= neutron.doc.createElement("link")
-    link.rel:= "stylesheet"
-    link.href:= file
-    head.appendChild(link)
-}
-
-is_darkmode(){
-    local sysTheme
-    RegRead, sysTheme
-    , HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize, SystemUsesLightTheme
-    return !sysTheme
-}
-
-installRes(){
-    FileInstall, GUI.html, GUI.html
-    FileInstall, bulma.css, bulma.css
-    FileInstall, dark.css, dark.css
 }
 
 getKeys(){
@@ -330,7 +131,7 @@ sanitizeHotkeys(element_id){
     modifierCount:= 0
     for i, value in hotkey_var.data 
         modifierCount += GUI_modifiers.HasKey(value)
-    ; if the hotkey contain 3 modifiers or 3 keys it's invalid
+    ; if the hotkey contains 3 modifiers or 3 keys it's invalid
     if(modifierCount > 2 || (modifierCount = 0 && hotkey_var.data.Length() > 2))
         Goto, clearHotkey
     ; check whether the hotkey is modifier-only
@@ -365,4 +166,203 @@ sanitizeHotkeys(element_id){
     else
         GUI_unmute_hotkey := new Set()
     inputElem.value:=""
+}
+
+onSaveConfig(neutron, event){
+    formData:= neutron.GetFormData(event.target)
+    current_config.Microphone:= formData.microphone
+    mute_str:="",mute_input:="",unmute_str:="",unmute_input:=""
+    if(GUI_mute_adv_hotkey)
+        mute_input:= formData.mute_input
+    else
+        mute_input:= !IsObject(GUI_mute_hotkey)? GUI_mute_hotkey:""
+    if(mute_input = "")
+        Goto, invalidHotkey
+    mute_str:= GUI_mute_passthrough && !InStr(mute_input, "~")? "~":""
+    mute_str.= GUI_mute_wildcard && !InStr(mute_input, "*")? "*":""
+    mute_str.= mute_input
+    current_config.MuteHotkey:= current_config.UnmuteHotkey:= mute_str
+    if(formData.hotkeyType = 1){
+        if(GUI_unmute_adv_hotkey)
+            unmute_input:= formData.unmute_input
+        else
+            unmute_input:= !IsObject(GUI_unmute_hotkey)? GUI_unmute_hotkey:""
+        if(unmute_input = "")
+            Goto, invalidHotkey
+        unmute_str:= GUI_unmute_passthrough && !InStr(unmute_input, "~")? "~":""
+        unmute_str.= GUI_unmute_wildcard && !InStr(unmute_input, "*")? "*":""
+        unmute_str.= unmute_input
+        current_config.UnmuteHotkey:= unmute_str
+    }
+    current_config.PushToTalk:= formData.hotkeyType > 2
+    current_config.afkTimeout:= formData.afk_timeout? formData.afk_timeout : 0
+    current_config.OnscreenFeedback:= formData.on_screen_fb? 1 : 0
+    current_config.ExcludeFullscreen:= formData.on_screen_fb_excl? 1 : 0
+    current_config.SoundFeedback:= formData.sound_fb? 1 : 0
+    current_config.writeIni()
+    neutron.Destroy()
+    return
+    invalidHotkey:
+    neutron.Destroy()
+}
+
+onRestoreConfig(neutron){
+    neutron.doc.getElementById("form").reset()
+    onRefreshList(neutron)
+    if(current_config.PushToTalk)
+        neutron.doc.getElementById("ptt_hotkey").checked:="true"
+    else if(current_config.MuteHotkey && current_config.MuteHotkey = current_config.UnmuteHotkey)
+        neutron.doc.getElementById("tog_hotkey").checked:="true"
+    else
+        neutron.doc.getElementById("sep_hotkey").checked:="true"
+    onHotkeyType(neutron)
+    if(current_config.MuteHotkey){
+        neutron.doc.getElementById("mute_adv_hotkey").checked:="true"
+        onOption(neutron,"mute_adv_hotkey",0,0)
+        str:=current_config.MuteHotkey
+        if(InStr(str, "~")){
+            neutron.doc.getElementById("mute_passthrough").checked:="true"
+            onOption(neutron,"mute_passthrough",0,-1)
+            str:= StrReplace(str, "~")
+        }
+        if(InStr(str, "*")){
+            neutron.doc.getElementById("mute_wildcard").checked:="true"
+            onOption(neutron,"mute_wildcard",0,1)
+            str:= StrReplace(str, "*")
+        }
+        neutron.doc.getElementById("mute_input").value:= str
+    }
+    if(current_config.UnmuteHotkey){
+        neutron.doc.getElementById("unmute_adv_hotkey").checked:="true"
+        onOption(neutron,"unmute_adv_hotkey",1,0)
+        str:=current_config.UnmuteHotkey
+        if(InStr(str, "~")){
+            neutron.doc.getElementById("unmute_passthrough").checked:="true"
+            onOption(neutron,"unmute_passthrough",1,-1)
+            str:= StrReplace(str, "~")
+        }
+        if(InStr(str, "*")){
+            neutron.doc.getElementById("unmute_wildcard").checked:="true"
+            onOption(neutron,"unmute_wildcard",1,1)
+            str:= StrReplace(str, "*")
+        }
+        neutron.doc.getElementById("unmute_input").value:= str
+    }
+    if (current_config.SoundFeedback)
+        neutron.doc.getElementByID("sound_fb").checked:= "true"
+    if (current_config.OnscreenFeedback)
+        neutron.doc.getElementByID("on_screen_fb").checked:= "true"
+    onOSDfb(neutron)
+    if (current_config.ExcludeFullscreen)
+        neutron.doc.getElementByID("on_screen_fb_excl").checked:= "true"
+    if (current_config.afkTimeout)
+        neutron.doc.getElementByID("afk_timeout").value:= current_config.afkTimeout
+}
+
+onOption(neutron, event, p_type, p_option){
+    event:= IsObject(event)? event.target : neutron.doc.getElementById(event)
+    if(p_option<0){ ;passthrough
+        if(p_type)
+            GUI_unmute_passthrough:= event.checked ? 1 : 0
+        else
+            GUI_mute_passthrough:= event.checked ? 1 : 0
+    }else if(p_option){ ;wildcard
+        if(p_type)
+            GUI_unmute_wildcard:= event.checked ? 1 : 0
+        else
+            GUI_mute_wildcard:= event.checked ? 1 : 0
+    }else{ ;adv
+        inputElem:=,recButton:=,stopButton:=
+        if(p_type){
+            inputElem:= neutron.doc.getElementById("unmute_input")
+            recButton:= "unmute_record"
+            stopButton:= "unmute_stop"
+            inputElem.value:= !IsObject(GUI_unmute_hotkey)? GUI_unmute_hotkey : ""
+        }else{
+            inputElem:= neutron.doc.getElementById("mute_input")
+            recButton:= "mute_record"
+            stopButton:= "mute_stop"
+            inputElem.value:= !IsObject(GUI_mute_hotkey)? GUI_mute_hotkey : ""
+        }
+        if(event.checked){
+            hideElemID(neutron,recButton)
+            hideElemID(neutron,stopButton)
+            inputElem.removeAttribute("disabled")
+            inputElem.placeholder:="Enter a hotkey string"
+            if(p_type)
+                GUI_unmute_adv_hotkey:=1
+            else
+                GUI_mute_adv_hotkey:=1
+        }else{
+            showElemID(neutron,recButton)
+            inputElem.disabled:="true"
+            inputElem.placeholder:="Click Record"
+            inputElem.value:=""
+            if(p_type)
+                GUI_unmute_adv_hotkey:=0
+            else
+                GUI_mute_adv_hotkey:=0
+        }
+    }
+}
+
+onHotkeyType(neutron){
+    if(neutron.doc.getElementByID("sep_hotkey").checked){
+        showElemID(neutron, "unmute_box")
+        showElemID(neutron, "afk_timeout_col")
+        neutron.doc.getElementByID("mute_label").innerText:= "Mute hotkey"
+    }
+    if(neutron.doc.getElementByID("tog_hotkey").checked){
+        hideElemID(neutron, "unmute_box")
+        neutron.doc.getElementByID("unmute_ghost_box").style.height := "152.52px"
+        showElemID(neutron, "afk_timeout_col")
+        neutron.doc.getElementByID("mute_label").innerText:= "Toggle hotkey"
+    }
+    if(neutron.doc.getElementByID("ptt_hotkey").checked){
+        hideElemID(neutron, "unmute_box")
+        hideElemID(neutron, "afk_timeout_col")
+        neutron.doc.getElementByID("mute_label").innerText:= "Push-to-talk hotkey"
+    }
+}
+
+onOSDfb(neutron){
+    if(neutron.doc.getElementByID("on_screen_fb").checked)
+        showElemID(neutron, "os_fb_excl_tag")
+    else
+        hideElemID(neutron, "os_fb_excl_tag")
+}
+
+onclickFooter(neutron){
+    Run, https://github.com/SaifAqqad/AHK_MicMute
+}
+
+hideElemID(neutron, id){
+    elem:= neutron.doc.getElementByID(id)
+    elem.classList.add("is-hidden")
+}
+
+showElemID(neutron, id){
+    elem:= neutron.doc.getElementByID(id)
+    elem.classList.remove("is-hidden")
+}
+
+load_css(file){
+    local head := neutron.doc.querySelector("head"), link
+    link:= neutron.doc.createElement("link")
+    link.rel:= "stylesheet"
+    link.href:= file
+    head.appendChild(link)
+}
+
+is_darkmode(){
+    local sysTheme
+    RegRead, sysTheme
+    , HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize, SystemUsesLightTheme
+    return !sysTheme
+}
+
+installRes(){
+    FileInstall, GUI.html, GUI.html
+    FileInstall, bulma.css, bulma.css
+    FileInstall, dark.css, dark.css
 }

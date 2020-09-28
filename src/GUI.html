@@ -173,15 +173,16 @@
 
 <body unselectable="on" class=" noselect" oncontextmenu="return false">
     <header>
-        <span class="title-bar" onmousedown="neutron.DragTitleBar()" style="margin-left: 4px;">MicMute</span>
+        <span class="title-bar" onmousedown="neutron.DragTitleBar()"
+            style="margin-left: 4px;"><label>MicMute</label></span>
         <span class="title-btn" onclick="neutron.Minimize()">0</span>
         <span class="title-btn" onclick="neutron.Maximize()">1</span>
         <span class="title-btn title-btn-close" onclick="neutron.Close()">r</span>
     </header>
     <div class="main ">
         <div class="container " id="settings">
-            <p unselectable="on" class="title is-2 is-spaced noselect">Configuration</p>
-            <form onsubmit="ahk.saveConfig(event)" id="form">
+            <p unselectable="on" class="title is-2 is-spaced noselect"><label>Configuration</label></p>
+            <form onsubmit="ahk.onSaveConfig(event)" id="form">
                 <label unselectable="on" class="label title is-4 noselect" for="microphone">Microphone</label>
                 <div class="field has-addons ">
                     <div class="control is-expanded ">
@@ -192,28 +193,28 @@
                         </div>
                     </div>
                     <div unselectable="on" class="control">
-                        <button type="button" class="button is-primary" onclick="ahk.RefreshList()">Refresh
+                        <button type="button" class="button is-primary" onclick="ahk.onRefreshList()">Refresh
                             Devices</button>
                     </div>
                 </div>
                 <br>
                 <label unselectable="on" class="label title is-4 noselect">Hotkeys</label>
                 <div class="control type-radio" style="margin-bottom: 10px ;">
-                    <div class="tag is-large" >
+                    <div class="tag is-large">
                         <label unselectable="on" class="radio">
                             <input type="radio" name="hotkeyType" value="1" id="sep_hotkey"
                                 onchange="ahk.onHotkeyType()">
                             <span>Separate hotkeys</span>
                         </label>
                     </div>
-                    <div class="tag is-large" >
+                    <div class="tag is-large">
                         <label unselectable="on" class="radio">
                             <input type="radio" name="hotkeyType" value="2" id="tog_hotkey"
                                 onchange="ahk.onHotkeyType()">
                             <span>Toggle</span>
                         </label>
                     </div>
-                    <div class="tag is-large" >
+                    <div class="tag is-large">
                         <label unselectable="on" class="radio">
                             <input type="radio" name="hotkeyType" value="3" id="ptt_hotkey"
                                 onchange="ahk.onHotkeyType()">
@@ -314,19 +315,19 @@
                 <div class="columns">
                     <div class="column is-half">
                         <label unselectable="on" class="label title is-4 noselect">Feedback</label>
-                        <div class="tag is-medium">
+                        <div class="tag is-medium option">
                             <label class="checkbox">
                                 <input type="checkbox" name="sound_fb" id="sound_fb">
                                 <span>Sound feedback</span>
                             </label>
                         </div>
-                        <div class="tag is-medium">
+                        <div class="tag is-medium option">
                             <label class="checkbox">
                                 <input type="checkbox" name="on_screen_fb" id="on_screen_fb" onchange="ahk.onOSDfb()">
                                 <span>On-screen feedback</span>
                             </label>
                         </div>
-                        <div class="tag is-hidden is-medium" id="os_fb_excl_tag">
+                        <div class="tag is-hidden is-medium option" id="os_fb_excl_tag">
                             <label class="checkbox">
                                 <input type="checkbox" name="on_screen_fb_excl" id="on_screen_fb_excl">
                                 <span>Exclude fullscreen apps</span>
@@ -346,7 +347,7 @@
                     </div>
                     <div class="column is-one-quarter">
                         <button type="button" class="button is-primary is-outlined is-fullwidth"
-                            onclick="ahk.RestoreConfig()">Restore</button>
+                            onclick="ahk.onRestoreConfig()">Restore</button>
                     </div>
                 </div>
             </form>
@@ -354,7 +355,8 @@
         <div class="container">
             <footer>
                 <div class="tag is-small" id="footer-tag">
-                    <p class="content">Created by Saif Aqqad. See source on <a onclick="ahk.runSite()">GitHub</a>.
+                    <p class="content"><label>Created by Saif Aqqad. See source on <a
+                                onclick="ahk.onclickFooter()">GitHub</a>.</label>
                     </p>
                 </div>
             </footer>

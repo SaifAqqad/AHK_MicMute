@@ -15,7 +15,7 @@ update_state()
 OSD_spawn("MicMute", "ff572d")
 
 if (current_config.UpdateWithSystem){
-    SetTimer, update_state, 5000
+    SetTimer, update_state, 2000
 }
 if (current_config.afkTimeout && !current_config.PushToTalk){
     SetTimer, check_activity, 1000
