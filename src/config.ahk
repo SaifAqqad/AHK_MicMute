@@ -11,6 +11,10 @@ class Config {
     }
 
     edit(){
+        if(this.MuteHotkey || this.UnmuteHotkey){
+            Hotkey, % this.MuteHotkey, Off, UseErrorLevel
+            Hotkey, % this.UnmuteHotkey, Off, UseErrorLevel
+        }
         if(!WinExist("MicMute ahk_class AutoHotkeyGUI"))
             GUI_show()
         Reload
