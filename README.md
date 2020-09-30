@@ -10,7 +10,6 @@ MicMute
 
    * Separate hotkeys for Mute/Unmute 
    * Single toggle/push-to-talk hotkey
-   * Hotkeys can be (optionally) set up using AHK's syntax
    * Optional sound and on-screen feedback
    * AFK timeout (auto mute when the user is AFK for longer than a specified time interval)
    * Auto-start on boot
@@ -49,7 +48,7 @@ Click OK and a new configuration window will open:
    - Click on 'Record' then press the key(s) you want (press without holding them).
    - Turn on 'Wildcard' if you want the hotkey to be fired even if extra modifiers/keys are held down.
    - Turn on 'Passthrough' if you don't want the key's native function to be blocked/hidden from the system.
-   - Turn on "Advanced hotkey" if you want to enter a hotkey string using AHK syntax instead (see [AHK docs](https://www.autohotkey.com/docs/KeyList.htm)).
+   - Turn off "Neutral modifiers" if you want to specify which key of the modifier pair to use (i.e. `Left Alt` or `Right Alt` instead of `Alt`) .
    
 4. Choose whether you want sound feedback when muting/unmuting the microphone or on-screen feedback or both.
 
