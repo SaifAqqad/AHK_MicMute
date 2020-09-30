@@ -130,15 +130,27 @@ sanitizeHotkeys(element_id){
     hotkey_var:= element_id = "mute_input"? GUI_mute_hotkey : GUI_unmute_hotkey
     isModifierHotkey:= 0
     ; check hotkey length
-    while(hotkey_var.data.Length()>3)
+    while(hotkey_var.data.Length()>5)
         hotkey_var.pop()
     ; check modifier count
     modifierCount:= 0
     for i, value in hotkey_var.data 
         modifierCount += GUI_modifiers.HasKey(value)
-    ; if the hotkey contains 3 modifiers or 3 keys it's invalid
-    if(modifierCount > 2 || (modifierCount = 0 && hotkey_var.data.Length() > 2))
-        Goto, clearHotkey
+    keyCount:= hotkey_var.data.Length() - modifierCount
+    ; check hotkey validity
+    switch modifierCount {
+        case 0,1: ; (2 keys) | (1 modifier 1 key)
+            while(hotkey_var.data.Length()>2)
+                hotkey_var.pop()
+        case 2: ; (2 modifiers) | (2 modifiers 1 key)
+            if(keyCount>1)
+                Goto, clearHotkey
+        case 3,4: ; (3 modifiers 1 key)
+            if(keyCount!=1)
+                Goto, clearHotkey
+        default: ; (invalid)
+            Goto, clearHotkey
+    }
     ; check whether the hotkey is modifier-only
     if(modifierCount = hotkey_var.data.Length())
         isModifierHotkey:= 1
