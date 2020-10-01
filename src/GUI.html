@@ -269,11 +269,11 @@
                             </div>
                             <div class="control" id="mute_record">
                                 <button type="button" class="button is-primary is-outlined"
-                                    onclick="ahk.bindKeys('mute_input')">Record</button>
+                                    onclick="ahk.onRecord('mute_input')">Record</button>
                             </div>
                             <div class="control is-hidden" id="mute_stop">
                                 <button type="button" class="button is-primary is-outlined"
-                                    onclick="ahk.unbindKeys('mute_input')">Stop</button>
+                                    onclick="ahk.onStop('mute_input')">Stop</button>
                             </div>
                         </div>
                         <div class="column is-one-third">
@@ -314,11 +314,11 @@
                             </div>
                             <div class="control" id="unmute_record">
                                 <button type="button" class="button is-primary is-outlined"
-                                    onclick="ahk.bindKeys('unmute_input')">Record</button>
+                                    onclick="ahk.onRecord('unmute_input')">Record</button>
                             </div>
                             <div class="control is-hidden" id="unmute_stop">
                                 <button type="button" class="button is-primary is-outlined"
-                                    onclick="ahk.unbindKeys('unmute_input')">Stop</button>
+                                    onclick="ahk.onStop('unmute_input')">Stop</button>
                             </div>
                         </div>
                         <div class="column is-one-third">

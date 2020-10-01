@@ -68,9 +68,7 @@ getKeys(nt){
     }
 }
 
-bindKeys(neutron, element_id){
-    inputElem:= neutron.doc.getElementByID(element_id)
-    ,GUI_recording_flag:= true
+onRecord(neutron, element_id){
     if(element_id = "mute_input"){
         getKeys(GUI_mute_nt)
         GUI_mute_hotkey:= new Set()
@@ -82,33 +80,22 @@ bindKeys(neutron, element_id){
         hideElemID(neutron, "unmute_record")
         showElemID(neutron, "unmute_stop")
     }
+    inputElem:= neutron.doc.getElementByID(element_id)
+    ,GUI_recording_flag:= 1
     inputElem.value:=""
     inputElem.placeholder:="Recording (Don't hold the keys)"
+    bindKeys(neutron,element_id)
+}
+
+bindKeys(neutron, element_id){
     Hotkey, If , GUI_recording_flag && WinActive("ahk_class AutoHotkeyGUI")
     for n, in GUI_keys {
         funcObj:= Func("addKey").Bind(n, element_id)
         Hotkey, % "*" . GetKeyName(n) , % funcObj, On UseErrorLevel
     }
-    remFunc := Func("unbindKeys").Bind(neutron, element_id)
+    remFunc := Func("onStop").Bind(neutron, element_id)
     Hotkey, % "*" . GetKeyName("Esc") , % remFunc, On UseErrorLevel
     Hotkey, If
-}
-
-unbindKeys(neutron, element_id){
-    GUI_recording_flag := false
-    Hotkey, If , GUI_recording_flag && WinActive("ahk_class AutoHotkeyGUI")
-    for n, in GUI_keys
-        Hotkey, % "*" . GetKeyName(n) , Off, UseErrorLevel
-    Hotkey, % "*" . GetKeyName("Esc")  , Off, UseErrorLevel
-    Hotkey, If
-    sanitizeHotkeys(element_id)
-    if(element_id = "mute_input"){
-        hideElemID(neutron, "mute_stop")
-        showElemID(neutron, "mute_record")
-    }else{
-        hideElemID(neutron, "unmute_stop")
-        showElemID(neutron, "unmute_record")
-    }
 }
 
 addKey(key_name, element_id){
@@ -126,24 +113,45 @@ addKey(key_name, element_id){
     }
 }
 
-sanitizeHotkeys(element_id){
-    inputElem:= neutron.doc.getElementByID(element_id)
+onStop(neutron, element_id){
+    unbindKeys()
+    GUI_recording_flag:= false, str:="", inputElem:= neutron.doc.getElementByID(element_id)
     inputElem.placeholder:="Click Record"
-    hotkey_var:= element_id = "mute_input"? GUI_mute_hotkey : GUI_unmute_hotkey
+    if(element_id = "mute_input"){
+        hideElemID(neutron, "mute_stop")
+        showElemID(neutron, "mute_record")
+        sanitizeHotkey(GUI_mute_hotkey,str)
+    }else{
+        hideElemID(neutron, "unmute_stop")
+        showElemID(neutron, "unmute_record")
+        sanitizeHotkey(GUI_unmute_hotkey,str)
+    }
+    inputElem.value:= str
+}
+
+unbindKeys(){
+    Hotkey, If , GUI_recording_flag && WinActive("ahk_class AutoHotkeyGUI")
+    for n, in GUI_keys
+        Hotkey, % "*" . GetKeyName(n) , Off, UseErrorLevel
+    Hotkey, % "*" . GetKeyName("Esc")  , Off, UseErrorLevel
+    Hotkey, If
+}
+
+sanitizeHotkey(ByRef hotkey_str, ByRef keys_str){
     isModifierHotkey:= 0
     ; check hotkey length
-    while(hotkey_var.data.Length()>5)
-        hotkey_var.pop()
+    while(hotkey_str.data.Length()>5)
+        hotkey_str.pop()
     ; check modifier count
     modifierCount:= 0
-    for i, value in hotkey_var.data 
+    for i, value in hotkey_str.data 
         modifierCount += GUI_modifiers.HasKey(value)
-    keyCount:= hotkey_var.data.Length() - modifierCount
+    keyCount:= hotkey_str.data.Length() - modifierCount
     ; check hotkey validity
     switch modifierCount {
         case 0,1: ; (2 keys) | (1 modifier 1 key)
-            while(hotkey_var.data.Length()>2)
-                hotkey_var.pop()
+            while(hotkey_str.data.Length()>2)
+                hotkey_str.pop()
         case 2: ; (2 modifiers) | (2 modifiers 1 key)
             if(keyCount>1)
                 Goto, clearHotkey
@@ -154,37 +162,31 @@ sanitizeHotkeys(element_id){
             Goto, clearHotkey
     }
     ; check whether the hotkey is modifier-only
-    if(modifierCount = hotkey_var.data.Length())
+    if(modifierCount = hotkey_str.data.Length())
         isModifierHotkey:= 1
     ; append hotkey parts
-    str := "", inputElem.value := ""
-    for i, value in hotkey_var.data {
+    str := "", keys_str := ""
+    for i, value in hotkey_str.data {
         ; if the part is a modifier and the hotkey is not a modifier-only hotkey => prepend symbol
         ; else => append the part
         if (GUI_modifiers.HasKey(value) && !isModifierHotkey){ 
             str :=  GUI_modifiers[value] . str
-            inputElem.value := value . " + " . inputElem.value
+            keys_str := value . " + " . keys_str
         }else{
             str .= value . " & "
-            inputElem.value := inputElem.value . value . " + "
+            keys_str := keys_str . value . " + "
         }
     }
     ; remove trailing " + " and " & "
     if(SubStr(str, -2) = " & ")
         str := SubStr(str,1,-3)
-    inputElem.value := SubStr(inputElem.value,1,-3)
+    keys_str := SubStr(keys_str,1,-3)
     ; set hotkey var to final string
-    if(element_id = "mute_input")
-        GUI_mute_hotkey := str
-    else
-        GUI_unmute_hotkey := str
+    hotkey_str:= str
     return
     clearHotkey:
-    if(element_id = "mute_input")
-        GUI_mute_hotkey := new Set()
-    else
-        GUI_unmute_hotkey := new Set()
-    inputElem.value:=""
+    hotkey_str:= new Set()
+    keys_str:= ""
 }
 
 onSaveConfig(neutron, event){
