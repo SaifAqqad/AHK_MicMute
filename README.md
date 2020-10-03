@@ -1,9 +1,9 @@
-<table width="100">
+<table width="100" >
     <tr>
         <td width="15%"><img src="src/assets/MicMute.ico" alt="MicMute icon"></td>
-        <td width="75%">
+        <td width="85%">
             <h1>MicMute</h1>
-            <i>Control your microphone using keyboard/mouse shortcuts.</i>
+            <i>Control your microphone using keyboard shortcuts.</i>
         </td>
     </tr>
 </table>
@@ -47,7 +47,7 @@ Click OK and a new configuration window will open:
 
 3. Based on your choice, you will either need to setup both hotkeys or just one of them.
         
-   - Click on 'Record' then press the key(s) you want (press without holding them).
+   - Click on 'Record' then press the key(s) you want.
    - Turn on 'Wildcard' if you want the hotkey to be fired even if extra modifiers/keys are held down.
    - Turn on 'Passthrough' if you don't want the key's native function to be blocked/hidden from the system.
    - Turn off "Neutral modifiers" if you want to specify which key of the modifier pair to use (i.e. `Left Alt` or `Right Alt` instead of `Alt`) .
