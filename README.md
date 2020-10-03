@@ -29,7 +29,11 @@
 3. Install MicMute
 
         scoop install micmute
+   ##### Scoop will allow you to update easily using `scoop update micmute`, and will save your config file between updates.
 
+## Install using Installer script
+   [Download the installer](https://github.com/SaifAqqad/AHK_MicMute/raw/master/installer.exe) and run it.
+   ##### The installer might falsely trigger windows defender as any portable unsigned executable does
 
 ## Usage
 
