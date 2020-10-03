@@ -1,12 +1,10 @@
-<table width="100" >
-    <tr>
-        <td width="15%"><img src="src/assets/MicMute.ico" alt="MicMute icon"></td>
-        <td width="85%">
-            <h1>MicMute</h1>
-            <i>Control your microphone using keyboard shortcuts.</i>
-        </td>
-    </tr>
-</table>
+<h1 align="center">
+ <img src="./src/assets/MicMute.ico" width="32" height="32"></img> 
+MicMute
+</h1>
+<p align="center">
+  Control your microphone using keyboard shortcuts.
+</p>
 
 ## Features
 
