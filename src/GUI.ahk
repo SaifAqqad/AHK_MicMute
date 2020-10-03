@@ -1,20 +1,18 @@
 #Include, <Neutron>
 #Include, <Set>
-#If, GUI_recording_flag && WinActive("ahk_class AutoHotkeyGUI")
-#If
-;auto_exec
-Global neutron :=, GUI_mute_hotkey:=new Set(), GUI_unmute_hotkey:=new Set(), GUI_recording_flag:=false, GUI_keys := {}
-, GUI_keys_replacements := {33: "PgUp", 34: "PgDn", 35: "End", 36: "Home", 37: "Left", 38: "Up", 39: "Right"
-, 40: "Down", 45: "Insert", 46: "Delete"}, GUI_modifiers:= {"Alt":"!","RAlt":">!","LAlt":"<!","Shift":"+"
-,"RShift":">+","LShift":"<+","Control":"^","RControl":">^","LControl":"<^","LWin":"<#","RWin":">#"}
-,GUI_modifier_symbols:={"<^":"LControl",">^":"RControl","^":"Control","<+":"LShift",">+":"RShift"
-,"+":"Shift","<!":"LAlt",">!":"RAlt","!":"Alt","<#":"LWin",">#":"RWin","#":"LWin"}
+;GUI Globals
+Global neutron :=, GUI_mute_hotkey:=new Set(), GUI_unmute_hotkey:=new Set(),GUI_input_hook:= InputHook("L0 M T2","{Enter}{Escape}")
+,GUI_modifiers:= {"Alt":"!","RAlt":">!","LAlt":"<!","Shift":"+","RShift":">+","LShift":"<+","Control":"^"
+,"RControl":">^","LControl":"<^","LWin":"<#","RWin":">#"},GUI_modifier_symbols:={"<^":"LControl",">^":"RControl"
+,"^":"Control","<+":"LShift",">+":"RShift","+":"Shift","<!":"LAlt",">!":"RAlt","!":"Alt","<#":"LWin",">#":"RWin","#":"LWin"}
+,GUI_nt_modifiers:= {"RAlt":"Alt","LAlt":"Alt","RShift":"Shift","LShift":"Shift","RControl":"Control","LControl":"Control"}
 ,GUI_mute_passthrough:=0,GUI_mute_wildcard:=0,GUI_unmute_passthrough:=0,GUI_unmute_wildcard:=0
 ,GUI_mute_nt:=1,GUI_unmute_nt:=1, GUI_passthrough_tt:="When the hotkey fires, its keys will not be hidden from the system."
 ,GUI_wildcard_tt:= "Fire the hotkey even if extra modifiers are held down.", GUI_nt_tt:="Use neutral modifiers (i.e. Alt instead of Left Alt / Right Alt)"
 ,GUI_afk_tt:= "Mute the microphone when idling for longer than the AFK timeout"
-; end auto_exec
+
 GUI_show(){ 
+    Menu, Tray, Icon, .\assets\MicMute.ico
     neutron := new NeutronWindow()
     neutron.load("GUI.html")
     if(is_darkmode()){
@@ -22,7 +20,6 @@ GUI_show(){
     }
     add_tooltips()
     onRestoreConfig(neutron)
-    Menu, Tray, Icon, .\assets\MicMute.ico
     neutron.Gui("-Resize")
     neutron.show("w740 h560","MicMute")
     WinSet, Transparent, 252, ahk_class AutoHotkeyGUI
@@ -51,71 +48,49 @@ onRefreshList(neutron){
     }
 }
 
-getKeys(nt){
-    GUI_keys:={}
-    Loop 350 {
-	    code := Format("{:x}", A_Index)
-        if(A_Index >=158 && A_Index <= ( nt? 165 : 159))
-            continue
-	    if(GUI_keys_replacements.HasKey(A_Index)){
-	    	n := GUI_keys_replacements[A_Index]
-	    } else {
-	    	n := GetKeyName("vk" code)
-	    }
-	    if (n = "Escape" || n = "LButton" || n = "" || GUI_keys.HasKey(n))
-	    	continue
-	    GUI_keys[n] := 1
-    }
-}
-
 onRecord(neutron, element_id){
     if(element_id = "mute_input"){
-        getKeys(GUI_mute_nt)
         GUI_mute_hotkey:= new Set()
         hideElemID(neutron, "mute_record")
         showElemID(neutron, "mute_stop")
     }else{
-        getKeys(GUI_unmute_nt)
         GUI_unmute_hotkey:= new Set()
         hideElemID(neutron, "unmute_record")
         showElemID(neutron, "unmute_stop")
     }
     inputElem:= neutron.doc.getElementByID(element_id)
-    ,GUI_recording_flag:= 1
     inputElem.value:=""
-    inputElem.placeholder:="Recording (Don't hold the keys)"
-    bindKeys(neutron,element_id)
+    inputElem.placeholder:="Recording"
+    GUI_input_hook.KeyOpt("{ALL}", "NI")
+    GUI_input_hook.VisibleText:= false
+    GUI_input_hook.VisibleNonText:= false
+    GUI_input_hook.OnKeyDown:= Func("addKey").Bind(element_id)
+    GUI_input_hook.OnEnd:= Func("onStop").Bind(neutron,element_id)
+    GUI_input_hook.Start()
 }
 
-bindKeys(neutron, element_id){
-    Hotkey, If , GUI_recording_flag && WinActive("ahk_class AutoHotkeyGUI")
-    for n, in GUI_keys {
-        funcObj:= Func("addKey").Bind(n, element_id)
-        Hotkey, % "*" . GetKeyName(n) , % funcObj, On UseErrorLevel
-    }
-    remFunc := Func("onStop").Bind(neutron, element_id)
-    Hotkey, % "*" . GetKeyName("Esc") , % remFunc, On UseErrorLevel
-    Hotkey, If
-}
-
-addKey(key_name, element_id){
+addKey(element_id, InputHook, VK, SC){
+    key_name:= GetKeyName(Format("vk{:x}sc{:x}", VK, SC))
     inputElem:= neutron.doc.getElementByID(element_id)
-    if(inputElem.value = ""){
-        if(element_id = "mute_input")
-            GUI_mute_hotkey.push(key_name) && inputElem.value := key_name . " + "
-        else
-            GUI_unmute_hotkey.push(key_name) && inputElem.value := key_name . " + "
+    if(element_id = "mute_input"){
+        if(GUI_mute_nt){
+            key_name:= GUI_nt_modifiers.HasKey(key_name)? GUI_nt_modifiers[key_name] : key_name
+        }
+        GUI_mute_hotkey.push(key_name) && inputElem.value := inputElem.value . key_name . " + "
     }else{
-        if(element_id = "mute_input")
-            GUI_mute_hotkey.push(key_name) && inputElem.value := inputElem.value . key_name . " + "
-        else
-            GUI_unmute_hotkey.push(key_name) && inputElem.value := inputElem.value . key_name . " + "
+        if(GUI_unmute_nt){
+            key_name:= GUI_nt_modifiers.HasKey(key_name)? GUI_nt_modifiers[key_name] : key_name
+        }
+        GUI_unmute_hotkey.push(key_name) && inputElem.value := inputElem.value . key_name . " + "
     }
 }
 
-onStop(neutron, element_id){
-    unbindKeys()
-    GUI_recording_flag:= false, str:="", inputElem:= neutron.doc.getElementByID(element_id)
+onStop(neutron, element_id, InputHook:=""){
+    if(GUI_input_hook.InProgress){
+        GUI_input_hook.Stop()
+        return
+    }
+    str:="", inputElem:= neutron.doc.getElementByID(element_id)
     inputElem.placeholder:="Click Record"
     if(element_id = "mute_input"){
         hideElemID(neutron, "mute_stop")
@@ -127,14 +102,6 @@ onStop(neutron, element_id){
         sanitizeHotkey(GUI_unmute_hotkey,str)
     }
     inputElem.value:= str
-}
-
-unbindKeys(){
-    Hotkey, If , GUI_recording_flag && WinActive("ahk_class AutoHotkeyGUI")
-    for n, in GUI_keys
-        Hotkey, % "*" . GetKeyName(n) , Off, UseErrorLevel
-    Hotkey, % "*" . GetKeyName("Esc")  , Off, UseErrorLevel
-    Hotkey, If
 }
 
 sanitizeHotkey(ByRef hotkey_str, ByRef keys_str){
