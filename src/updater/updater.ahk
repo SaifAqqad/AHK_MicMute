@@ -40,16 +40,31 @@ getLatestVer(){
     }
 }
 isInstalled(){
-    RegRead, curr_ver, %reg_path%, DisplayVersion
+    RegRead, curr_ver, HKEY_LOCAL_MACHINE, %reg_path%, DisplayVersion
     return curr_ver || FileExist(install_folder . "\MicMute.exe") 
 }
 
+ShellMessage( wParam,lParam ) {
+    if ( wParam = 1 ){
+        WinGetTitle, Title, ahk_id %lParam%, MicMute is installed
+        if  ( Title = "MicMute Updater"){
+             ControlSetText, Button1, &Update   , ahk_id %lParam%
+             ControlSetText, Button2, &Uninstall, ahk_id %lParam%
+         }
+    }
+}
+
 update(){
-    MsgBox, 67, MicMute Updater, MicMute is installed`n`nClick Yes to update or No to uninstall
+    Gui +LastFound
+    hWnd := WinExist()
+    DllCall( "RegisterShellHookWindow", UInt,hWnd )
+    MsgNum := DllCall( "RegisterWindowMessage", Str,"SHELLHOOK" )
+    OnMessage( MsgNum, "ShellMessage" )
+    MsgBox, 67, MicMute Updater, MicMute is installed
     IfMsgBox, No
         uninstall()
     IfMsgBox, Cancel
-    ExitApp
+        ExitApp
     if(curr_ver=latest_ver){
         MsgBox, 64, MicMute Updater, You already have the latest verison installed
         ExitApp
