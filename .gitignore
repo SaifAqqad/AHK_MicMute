@@ -1,5 +1,4 @@
-installer
-MicMute.exe
+*.exe
 *.zip
 .vscode
 VA-2.3
