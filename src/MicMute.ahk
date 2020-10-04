@@ -1,5 +1,6 @@
 ﻿#InstallKeybdHook
 #InstallMouseHook
+#SingleInstance, ignore
 
 #Include, <VA>
 #Include, <OSD>
