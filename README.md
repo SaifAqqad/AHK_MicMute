@@ -16,22 +16,15 @@ MicMute
 
 ## Install using [Scoop](https://scoop.sh) (Recommended)
 
-1. Install scoop using powershell
-    
-        Set-ExecutionPolicy RemoteSigned -scope CurrentUser
-        iwr -useb get.scoop.sh | iex
-2. Add my bucket to scoop
-        
-        scoop install git
-        scoop bucket add utils https://github.com/SaifAqqad/utils.git
-3. Install MicMute
-
-        scoop install micmute
+   ```powershell
+      # Run this in powershell, it will install scoop, add my bucket and then install MicMute 
+      Set-ExecutionPolicy RemoteSigned -scope CurrentUser;iwr -useb get.scoop.sh | iex;scoop install git;scoop bucket add utils https://github.com/SaifAqqad/utils.git;scoop install micmute;
+   ```
    ##### Scoop will allow you to update easily using `scoop update micmute`, and will save your config file between updates.
 
 ## Install using the updater script
    Download the [updater](https://github.com/SaifAqqad/AHK_MicMute/releases/latest/download/updater.exe) and run it.
-   ##### The updater might falsely trigger windows defender as any portable unsigned executable does
+   ##### The updater might falsely trigger windows defender as any portable unsigned executable does.
 
 ## Usage
 
