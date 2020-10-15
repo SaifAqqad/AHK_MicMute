@@ -91,8 +91,8 @@ uninstall(){
     prog+=30
     Sleep, 800
     GUI_spawn(prog,"Removing Shortcuts")
-    if(FileExist(A_StartMenu . "\SaifAqqad\MicMute"))
-        FileRemoveDir, %A_StartMenu%\SaifAqqad\MicMute\, 1
+    if(FileExist(A_Programs . "\SaifAqqad\MicMute"))
+        FileRemoveDir, %A_Programs%\SaifAqqad\MicMute\, 1
     if(FileExist(A_Startup . "\MicMute.lnk"))
         FileDelete, %A_Startup%\MicMute.lnk
     Sleep, 800
@@ -115,9 +115,9 @@ install(){
     Sleep, 500
     prog+=30
     GUI_spawn(prog,"Creating shortcuts")
-    FileCreateDir, %A_StartMenu%\SaifAqqad\MicMute
-    FileCreateShortcut, %install_folder%\MicMute.exe, %A_StartMenu%\SaifAqqad\MicMute\MicMute.lnk, %install_folder%
-    FileCreateShortcut, %install_folder%\updater.exe,%A_StartMenu%\SaifAqqad\MicMute\MicMute Updater.lnk, %install_folder%
+    FileCreateDir, %A_Programs%\SaifAqqad\MicMute
+    FileCreateShortcut, %install_folder%\MicMute.exe, %A_Programs%\SaifAqqad\MicMute\MicMute.lnk, %install_folder%
+    FileCreateShortcut, %install_folder%\updater.exe,%A_Programs%\SaifAqqad\MicMute\MicMute Updater.lnk, %install_folder%
     prog+=10
     GUI_spawn(prog,"Creating shortcuts")
     FileGetSize, size, %install_folder%\MicMute.exe, K
