@@ -1,47 +1,93 @@
-#Include, GUI.ahk
+#Include, <JSON>
 class Config {
-    Microphone:="", MuteHotkey:="", UnmuteHotkey:=""
-    PushToTalk:=0, SoundFeedback:=0, OnscreenFeedback:=0
-    ExcludeFullscreen:=0, UpdateWithSystem:=1, afkTimeout:=0
-    
-    init(){
-        if (!FileExist("config.ini") || isFileEmpty("config.ini"))
-            this.writeIni()
-        this.readIni()
+    DefaultProfile:=""
+    Profiles:=Array()
+
+    __New(p_DefaultProfile:=""){
+        if(!FileExist("config.json")||isFileEmpty("config.json")){
+            if(FileExist("config.ini")){
+                this.importIniConfig()
+            }else{
+                this.DefaultProfile:= this.createProfile("Default").ProfileName
+                this.exportConfig()
+            }
+        }else{
+            this.importConfig()
+        }
+        if(p_DefaultProfile)
+            this.DefaultProfile := p_DefaultProfile
     }
 
-    edit(){
-        if(this.MuteHotkey || this.UnmuteHotkey){
-            Hotkey, % this.MuteHotkey, Off, UseErrorLevel
-            Hotkey, % this.UnmuteHotkey, Off, UseErrorLevel
-            SetTimer, update_state, Off
-            SetTimer, check_activity, Off
-        }
-        if(!WinExist("MicMute ahk_class AutoHotkeyGUI"))
-            GUI_show()
-        Reload
+    importConfig(){
+        jsonFile:=FileOpen("config.json", "R")
+        jsonStr:=jsonFile.Read()
+        jsonFile.Close()
+        jsonObj:= JSON.Load(jsonStr)
+        this.DefaultProfile:= jsonObj.DefaultProfile
+        this.Profiles:= jsonObj.Profiles
     }
 
-    readIni(){
-        For key in this {
-            IniRead, %key%, config.ini, settings, %key%, %A_Space%
-            this[key]:= %key%
+    importIniConfig(){
+        dfProfile:= this.createProfile("Default")
+        this.DefaultProfile:= dfProfile.ProfileName
+        for key in dfProfile {
+            IniRead, %key%, config.ini, settings, %key%, % dfProfile[key]? dfProfile[key] : A_Space
+            dfProfile[key]:= %key%
         }
-        if (!this.Microphone)
-            Microphone:= "capture"
-        if (!this.MuteHotkey || !this.UnmuteHotkey){
-            MsgBox, 48, MicMute, MicMute needs to be set up
-            IfMsgBox, OK
-            this.edit()
-        }
+        this.exportConfig()
+        FileDelete, config.ini
     }
-    writeIni(){
-        IniDelete, config.ini, settings
-        For key, value in this 
-            IniWrite, %value%, config.ini, settings, %Key% 
+
+    exportConfig(){
+        jsonStr:=JSON.Dump(this)
+        jsonFile:=FileOpen("config.json", "w")
+        jsonFile.Write(jsonStr)
+        jsonFile.Close()
+    }
+
+    getProfile(p_name:=""){
+        if(!p_name)
+            p_name:= this.DefaultProfile
+        for i, profile in this.Profiles {
+            if(profile.ProfileName = p_name)
+                return profile
+        }
+        Throw, Exception(Format("Profile '{}' not found", p_name))
+    }
+
+    deleteProfile(p_name){
+        if(p_name = this.DefaultProfile){
+            Throw, Exception("Default profile can't be deleted")
+            return
+        }
+        profArr:= Array()
+        for i, prof in this.Profiles {
+            if(prof.ProfileName != p_name)
+                profArr.Push(prof)
+        }
+        this.Profiles:= profArr
+        this.exportConfig()
+    }
+
+    createProfile(p_Name){
+        this.Profiles.Push(new ProfileTemplate(p_Name))
+        this.exportConfig()
+        return this.Profiles[this.Profiles.Length()]
     }
 }
-isFileEmpty(file){
-    FileGetSize, size , %file%
-    return !size
+
+class ProfileTemplate{
+    __New(p_name){
+        this.ProfileName:= p_name
+        this.Microphone:="capture"
+        this.MuteHotkey:=""
+        this.UnmuteHotkey:=""
+        this.SoundFeedback:=0
+        this.OnscreenFeedback:=0
+        this.ExcludeFullscreen:=0
+        this.UpdateWithSystem:=1
+        this.afkTimeout:=0
+        this.LinkedApp:=""
+        this.PushToTalk:=0
+    }
 }

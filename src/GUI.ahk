@@ -1,7 +1,7 @@
 #Include, <Neutron>
-#Include, <Set>
+#Include, <UStack>
 ;GUI Globals
-Global neutron :=, GUI_mute_hotkey:=new Set(), GUI_unmute_hotkey:=new Set(),GUI_input_hook:= InputHook("L0 M T2","{Enter}{Escape}")
+Global neutron :=, GUI_mute_hotkey:=new UStack(), GUI_unmute_hotkey:=new UStack(),GUI_input_hook:= InputHook("L0 M T2","{Enter}{Escape}")
 ,GUI_modifiers:= {"Alt":"!","RAlt":">!","LAlt":"<!","Shift":"+","RShift":">+","LShift":"<+","Control":"^"
 ,"RControl":">^","LControl":"<^","LWin":"<#","RWin":">#"},GUI_modifier_symbols:={"<^":"LControl",">^":"RControl"
 ,"^":"Control","<+":"LShift",">+":"RShift","+":"Shift","<!":"LAlt",">!":"RAlt","!":"Alt","<#":"LWin",">#":"RWin","#":"LWin"}
@@ -10,64 +10,69 @@ Global neutron :=, GUI_mute_hotkey:=new Set(), GUI_unmute_hotkey:=new Set(),GUI_
 ,GUI_mute_nt:=1,GUI_unmute_nt:=1, GUI_passthrough_tt:="When the hotkey fires, its keys will not be hidden from the system."
 ,GUI_wildcard_tt:= "Fire the hotkey even if extra modifiers are held down.", GUI_nt_tt:="Use neutral modifiers (i.e. Alt instead of Left Alt / Right Alt)"
 ,GUI_afk_tt:= "Mute the microphone when idling for longer than the AFK timeout"
-
+,GUI_profile_tag_template:= "
+(
+    <div class=""tag is-large"" id=""tag_profile_{1:}"">
+        <label unselectable=""on"" class=""radio"">
+            <input type=""radio"" name=""profiles_radio"" value=""{1:}"" id=""profile_{1:}"" onclick=""ahk.onProfileSelect(event)"">
+            <span>{1:}</span>
+        </label>
+    </div>
+)"
+;------init-functions------
 GUI_show(){ 
-    Menu, Tray, Icon, .\assets\MicMute.ico
+    Menu, Tray, Icon, %A_ScriptFullPath%, 1
     neutron := new NeutronWindow()
     neutron.load("GUI.html")
-    if(is_darkmode()){
+    if(sys_theme){
         load_css("dark.css") 
     }
     add_tooltips()
-    onRestoreConfig(neutron)
-    neutron.Gui("-Resize")
-    neutron.show("w740 h560","MicMute")
-    WinSet, Transparent, 252, ahk_class AutoHotkeyGUI
-    WinWaitClose, MicMute ahk_class AutoHotkeyGUI
+    restoreConfig()
+    neutron.show("w830 h650","MicMute")
+    WinSet, Transparent, 252, % "ahk_id " . neutron.hWnd
+    WinWaitClose, % "ahk_id " . neutron.hWnd
+    neutron.Destroy()
 }
 
-onRefreshList(neutron){
-    selected_device:= VA_GetDevice(current_config.Microphone)
+restoreConfig(){
+    neutron.doc.getElementById("def_profile").innerHTML:=""
+    for i, prfl in conf.Profiles {
+        addDefProfileOpt(prfl.ProfileName)
+        addProfileTag(prfl.ProfileName)
+    }
+    checkProfileTag(current_profile.ProfileName)
+    fetchDeviceList(neutron)
+    onRestoreProfile(neutron)
+}
+
+fetchDeviceList(neutron){
+    selected_device:= current_profile.Microphone
     dList := VA_GetCaptureDeviceList()
     micSelect:= neutron.doc.getElementByID("microphone")
     micSelect.innerHTML:=""
-    loop % dList.Length()
-    {
-        deviceName:= dList[A_Index].Name
+    ;add default option
+    option:= neutron.doc.createElement("option")
+    option.id:= "mic_capture"
+    option.value:= "capture"
+    option.innerText:= "Default"
+    if(!selected_device || selected_device = "capture")
+        option.selected:= "true"
+    micSelect.appendChild(option)
+    ;add mics
+    for i, device in dList {
         option:= neutron.doc.createElement("option")
-        option.value:= deviceName
-        option.innerText:= deviceName
-        if(dList[A_Index].isDefault){
-            option.innerText:= "(Default) " . option.innerText
-            option.selected:= "true"
-        }
-        if(selected_device && VA_GetDeviceName(selected_device)=deviceName){
+        option.id:= "mic_" . device.Name
+        option.value:= device.Name
+        option.innerText:= device.Name
+        if(selected_device && InStr(device.Name, selected_device)){
             option.selected:= "true"
         }
         micSelect.appendChild(option)
     }
 }
 
-onRecord(neutron, element_id){
-    if(element_id = "mute_input"){
-        GUI_mute_hotkey:= new Set()
-        hideElemID(neutron, "mute_record")
-        showElemID(neutron, "mute_stop")
-    }else{
-        GUI_unmute_hotkey:= new Set()
-        hideElemID(neutron, "unmute_record")
-        showElemID(neutron, "unmute_stop")
-    }
-    inputElem:= neutron.doc.getElementByID(element_id)
-    inputElem.value:=""
-    inputElem.placeholder:="Recording"
-    GUI_input_hook.KeyOpt("{ALL}", "NI")
-    GUI_input_hook.VisibleText:= false
-    GUI_input_hook.VisibleNonText:= false
-    GUI_input_hook.OnKeyDown:= Func("addKey").Bind(element_id)
-    GUI_input_hook.OnEnd:= Func("onStop").Bind(neutron,element_id)
-    GUI_input_hook.Start()
-}
+;------hotkey-generation-functions------
 
 addKey(element_id, InputHook, VK, SC){
     key_name:= GetKeyName(Format("vk{:x}sc{:x}", VK, SC))
@@ -83,6 +88,27 @@ addKey(element_id, InputHook, VK, SC){
         }
         GUI_unmute_hotkey.push(key_name) && inputElem.value := inputElem.value . key_name . " + "
     }
+}
+
+onRecord(neutron, element_id){
+    if(element_id = "mute_input"){
+        GUI_mute_hotkey:= new UStack()
+        hideElemID(neutron, "mute_record")
+        showElemID(neutron, "mute_stop")
+    }else{
+        GUI_unmute_hotkey:= new UStack()
+        hideElemID(neutron, "unmute_record")
+        showElemID(neutron, "unmute_stop")
+    }
+    inputElem:= neutron.doc.getElementByID(element_id)
+    inputElem.value:=""
+    inputElem.placeholder:="Recording"
+    GUI_input_hook.KeyOpt("{ALL}", "NI")
+    GUI_input_hook.VisibleText:= false
+    GUI_input_hook.VisibleNonText:= false
+    GUI_input_hook.OnKeyDown:= Func("addKey").Bind(element_id)
+    GUI_input_hook.OnEnd:= Func("onStop").Bind(neutron,element_id)
+    GUI_input_hook.Start()
 }
 
 onStop(neutron, element_id, InputHook:=""){
@@ -122,7 +148,7 @@ sanitizeHotkey(ByRef hotkey_str, ByRef keys_str){
         case 2: ; (2 modifiers) | (2 modifiers 1 key)
             if(keyCount>1)
                 Goto, clearHotkey
-        case 3,4: ; (3 modifiers 1 key)
+        case 3,4: ; (3 modifiers 1 key) | (4 modifiers 1 key)
             if(keyCount!=1)
                 Goto, clearHotkey
         default: ; (invalid)
@@ -152,54 +178,123 @@ sanitizeHotkey(ByRef hotkey_str, ByRef keys_str){
     hotkey_str:= str
     return
     clearHotkey:
-    hotkey_str:= new Set()
+    notify(neutron, "Invalid Hotkey")
+    hotkey_str:= new UStack()
     keys_str:= ""
 }
 
-onSaveConfig(neutron, event){
-    formData:= neutron.GetFormData(event.target)
-    current_config.Microphone:= formData.microphone
+parseHotkeyString(str){
+    finalStr:="",lastIndex:=0
+    while(pos:=InStr(str, "<")){
+        modifier:= SubStr(str, pos, 2)
+        finalStr.= GUI_modifier_symbols.HasKey(modifier)? GUI_modifier_symbols[modifier] . " + " : ""
+        str:= StrReplace(str, modifier,,, 1)
+    }
+    while(pos:=InStr(str, ">")){
+        modifier:= SubStr(str, pos, 2)
+        finalStr.= GUI_modifier_symbols.HasKey(modifier)? GUI_modifier_symbols[modifier] . " + " : ""
+        str:= StrReplace(str, modifier,,, 1)
+    }
+    Loop, Parse, str 
+    {
+        if(GUI_modifier_symbols.HasKey(A_LoopField)){
+            finalStr.= GUI_modifier_symbols[A_LoopField] . " + "
+            lastIndex:=A_Index
+        }
+    }
+    str := SubStr(str, lastIndex+1)
+    str:= StrSplit(str, "&"," `t")
+    for i,val in str {
+        finalStr.= val . " + "
+    }
+    return SubStr(finalStr,1,-3) 
+}
+
+;------profile-handler-functions------
+
+onCreateProfile(neutron){
+    static new_profiles:=0
+    newProf:= conf.createProfile("Profile" . ++new_profiles)
+    addDefProfileOpt(newProf.ProfileName)
+    addProfileTag(newProf.ProfileName)
+    checkProfileTag(newProf.ProfileName)
+    notify(neutron, "New profile created")
+}
+
+onProfileSelect(neutron, event:="", p_name:=""){
+    profile_name:= event? event.target.value : p_name
+    current_profile:= conf.getProfile(profile_name)
+    onRestoreProfile(neutron)
+}
+
+onChangeProfileName(neutron, event){
+    txt:= event.target.value:= Trim(event.target.value)
+    Try{
+        if(txt=""){
+            txt:= event.target.value:= "Profile"
+        }else{
+            conf.getProfile(txt)
+            notify(neutron, Format("Profile ``{}`` already exists",txt))
+            event.target.value:= current_profile.ProfileName
+            return
+        }
+    }
+    changeProfileTagName(txt)
+    changeDefProfileOptName(txt)
+    current_profile.ProfileName:= txt
+    conf.exportConfig()
+    notify(neutron, "Profile name saved")
+}
+
+onSaveProfile(neutron){
+    formElem:= neutron.doc.getElementById("form")
+    formData:= neutron.GetFormData(formElem)
+    current_profile.Microphone:= formData.microphone
     mute_str:="",mute_input:="",unmute_str:="",unmute_input:=""
     mute_input:= !IsObject(GUI_mute_hotkey)? GUI_mute_hotkey:""
-    if(mute_input = "")
-        Goto, invalidHotkey
+    if(mute_input = ""){
+        notify(neutron,"Hotkeys need to be setup")
+        return
+    }
     mute_str:= GUI_mute_passthrough && !InStr(mute_input, "~")? "~":""
     mute_str.= GUI_mute_wildcard && !InStr(mute_input, "&") ? "*":""
     mute_str.= mute_input
-    current_config.MuteHotkey:= current_config.UnmuteHotkey:= mute_str
+    current_profile.MuteHotkey:= current_profile.UnmuteHotkey:= mute_str
     if(formData.hotkeyType = 1){
         unmute_input:= !IsObject(GUI_unmute_hotkey)? GUI_unmute_hotkey:""
-        if(unmute_input = "")
-            Goto, invalidHotkey
+        if(unmute_input = ""){
+            notify(neutron,"Hotkeys need to be setup")
+            return
+        }
         unmute_str:= GUI_unmute_passthrough && !InStr(unmute_input, "~")? "~":""
         unmute_str.= GUI_unmute_wildcard && !InStr(unmute_input, "&")? "*":""
         unmute_str.= unmute_input
-        current_config.UnmuteHotkey:= unmute_str
+        current_profile.UnmuteHotkey:= unmute_str
     }
-    current_config.PushToTalk:= formData.hotkeyType > 2
-    current_config.afkTimeout:= formData.afk_timeout? formData.afk_timeout : 0
-    current_config.OnscreenFeedback:= formData.on_screen_fb? 1 : 0
-    current_config.ExcludeFullscreen:= formData.on_screen_fb_excl? 1 : 0
-    current_config.SoundFeedback:= formData.sound_fb? 1 : 0
-    current_config.writeIni()
-    neutron.Destroy()
-    return
-    invalidHotkey:
-    neutron.Destroy()
+    current_profile.PushToTalk:= formData.hotkeyType > 2
+    current_profile.afkTimeout:= formData.afk_timeout? formData.afk_timeout : 0
+    current_profile.OnscreenFeedback:= formData.on_screen_fb? 1 : 0
+    current_profile.ExcludeFullscreen:= formData.on_screen_fb_excl? 1 : 0
+    current_profile.SoundFeedback:= formData.sound_fb? 1 : 0
+    current_profile.LinkedApp:= formData.linked_app
+    conf.exportConfig()
+    notify(neutron,Format("Profile ``{}`` saved", formData.profile_name_field))
+    ControlSend,, {Home}, % "ahk_id " . neutron.hWnd
 }
 
-onRestoreConfig(neutron){
+onRestoreProfile(neutron, event:=""){
     neutron.doc.getElementById("form").reset()
-    onRefreshList(neutron)
-    if(current_config.PushToTalk)
+    neutron.doc.getElementById("profile_name_field").value:= current_profile.ProfileName
+    fetchDeviceList(neutron)
+    if(current_profile.PushToTalk)
         neutron.doc.getElementById("ptt_hotkey").checked:="true"
-    else if(current_config.MuteHotkey && current_config.MuteHotkey = current_config.UnmuteHotkey)
+    else if(current_profile.MuteHotkey && current_profile.MuteHotkey = current_profile.UnmuteHotkey)
         neutron.doc.getElementById("tog_hotkey").checked:="true"
     else
         neutron.doc.getElementById("sep_hotkey").checked:="true"
     onHotkeyType(neutron)
-    if(current_config.MuteHotkey){
-        str:=current_config.MuteHotkey
+    if(current_profile.MuteHotkey){
+        str:=current_profile.MuteHotkey
         if(InStr(str, "~")){
             neutron.doc.getElementById("mute_passthrough").checked:="true"
             onOption(neutron,"mute_passthrough",0,-1)
@@ -222,8 +317,8 @@ onRestoreConfig(neutron){
     }else{
         neutron.doc.getElementById("mute_nt").checked:="true"
     }
-    if(current_config.UnmuteHotkey){
-        str:=current_config.UnmuteHotkey
+    if(current_profile.UnmuteHotkey){
+        str:=current_profile.UnmuteHotkey
         if(InStr(str, "~")){
             neutron.doc.getElementById("unmute_passthrough").checked:="true"
             onOption(neutron,"unmute_passthrough",0,-1)
@@ -246,16 +341,93 @@ onRestoreConfig(neutron){
     }else{
         neutron.doc.getElementById("unmute_nt").checked:="true"
     }
-    if (current_config.SoundFeedback)
+    if (current_profile.SoundFeedback)
         neutron.doc.getElementByID("sound_fb").checked:= "true"
-    if (current_config.OnscreenFeedback)
+    if (current_profile.OnscreenFeedback)
         neutron.doc.getElementByID("on_screen_fb").checked:= "true"
     onOSDfb(neutron)
-    if (current_config.ExcludeFullscreen)
+    if (current_profile.ExcludeFullscreen)
         neutron.doc.getElementByID("on_screen_fb_excl").checked:= "true"
-    if (current_config.afkTimeout)
-        neutron.doc.getElementByID("afk_timeout").value:= current_config.afkTimeout
+    if (current_profile.afkTimeout)
+        neutron.doc.getElementByID("afk_timeout").value:= current_profile.afkTimeout
+    if (current_profile.linkedApp)
+        neutron.doc.getElementByID("linked_app").value:= current_profile.linkedApp
+    if(event)
+        notify(neutron, Format("Profile ``{}`` restored",current_profile.ProfileName ))
 }
+
+onDeleteProfile(neutron){
+    prfName:= current_profile.ProfileName
+    Try conf.deleteProfile(prfName)
+    Catch {
+        notify(neutron, "Can't delete default profile")
+        return
+    }
+    removeProfileTag(prfName)
+    removeDefProfileOpt(prfName)
+    checkProfileTag(conf.DefaultProfile)
+    notify(neutron,Format("Profile ``{}`` deleted",prfName))
+    ControlSend,, {Home}, % "ahk_id " . neutron.hWnd
+}
+
+addProfileTag(profile_name){
+    profileTag:= Format(GUI_profile_tag_template,profile_name)
+    profiles:= neutron.doc.getElementByID("profiles")
+    profiles.insertAdjacentHTML("beforeend",profileTag)
+}
+
+removeProfileTag(profile_name){
+    profileTag:= neutron.doc.getElementByID("tag_profile_" . profile_name)
+    profiles:= neutron.doc.getElementByID("profiles")
+    profiles.removeChild(profileTag)
+}
+
+checkProfileTag(profile_name){
+    neutron.doc.getElementByID("profile_" . profile_name).checked:=1
+    onProfileSelect(neutron,,profile_name)
+}
+
+changeProfileTagName(profile_name){
+    origProfName:= current_profile.ProfileName
+    profTag:= neutron.doc.getElementByID("tag_profile_" . origProfName)
+    profTag.id:= "tag_profile_" . profile_name
+    profTag.firstElementChild.firstElementChild.value:= profile_name
+    profTag.firstElementChild.lastElementChild.innerText:= profile_name
+}
+
+addDefProfileOpt(profile_name){
+    defProfileSelect:= neutron.doc.getElementById("def_profile")
+    profOption:= neutron.doc.createElement("option")
+    profOption.value:= profile_name
+    profOption.id:= "def_profile_" . profile_name
+    profOption.innerText:= profile_name
+    defProfileSelect.appendChild(profOption)
+}
+
+removeDefProfileOpt(profile_name){
+    defProfileSelect:= neutron.doc.getElementById("def_profile")
+    profOption:= neutron.doc.getElementById("def_profile_" . profile_name)
+    defProfileSelect.removeChild(profOption)
+}
+
+changeDefProfileOptName(profile_name){
+    origProfName:= current_profile.ProfileName
+    if(conf.DefaultProfile = origProfName)
+        conf.DefaultProfile:= profile_name    
+    profOption:= neutron.doc.getElementById("def_profile_" . origProfName)
+    profOption.value:= profile_name
+    profOption.id:= "def_profile_" . profile_name
+    profOption.innerText:= profile_name
+}
+
+onChangeDefault(neutron){
+    defProfileSelect:= neutron.doc.getElementById("def_profile")
+    conf.DefaultProfile:= defProfileSelect.value
+    conf.exportConfig()
+    notify(neutron, "Default profile saved")
+}
+
+;------options-handler-functions------
 
 onOption(neutron, event, p_type, p_option){
     event:= IsObject(event)? event.target : neutron.doc.getElementById(event)
@@ -303,9 +475,22 @@ onOSDfb(neutron){
         hideElemID(neutron, "os_fb_excl_tag")
 }
 
+onSelectApp(neutron){
+    FileSelectFile, fileName, 3,, Select an application - MicMute, Application (*.exe)
+    SplitPath, fileName, fileName,, fileExt
+    linkedAppField:=neutron.doc.getElementById("linked_app")
+    if(fileName){
+        linkedAppField.value:= fileName
+        if(fileExt!= "exe")
+            linkedAppField.value:=""
+    }
+}
+
 onclickFooter(neutron){
     Run, https://github.com/SaifAqqad/AHK_MicMute
 }
+
+;------elements-functions------
 
 hideElemID(neutron, id){
     elem:= neutron.doc.getElementByID(id)
@@ -339,42 +524,14 @@ add_tooltips(){
     afk_label.setAttribute("data-title", GUI_afk_tt)
 }
 
-is_darkmode(){
-    local sysTheme
-    RegRead, sysTheme
-    , HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize, SystemUsesLightTheme
-    return !sysTheme
+notify(neutron, txt){
+    notif:= neutron.doc.getElementById("notification")
+    notif.firstElementChild.innerText:= txt
+    notif.classList.remove("hidden")
+    SetTimer, dismissNotif, -1000
 }
 
-installRes(){
-    FileInstall, GUI.html, GUI.html
-    FileInstall, bulma.css, bulma.css
-    FileInstall, dark.css, dark.css
-}
-
-parseHotkeyString(str){
-    finalStr:="",lastIndex:=0
-    while(pos:=InStr(str, "<")){
-        modifier:= SubStr(str, pos, 2)
-        finalStr.= GUI_modifier_symbols.HasKey(modifier)? GUI_modifier_symbols[modifier] . " + " : ""
-        str:= StrReplace(str, modifier,,, 1)
-    }
-    while(pos:=InStr(str, ">")){
-        modifier:= SubStr(str, pos, 2)
-        finalStr.= GUI_modifier_symbols.HasKey(modifier)? GUI_modifier_symbols[modifier] . " + " : ""
-        str:= StrReplace(str, modifier,,, 1)
-    }
-    Loop, Parse, str 
-    {
-        if(GUI_modifier_symbols.HasKey(A_LoopField)){
-            finalStr.= GUI_modifier_symbols[A_LoopField] . " + "
-            lastIndex:=A_Index
-        }
-    }
-    str := SubStr(str, lastIndex+1)
-    str:= StrSplit(str, "&"," `t")
-    for i,val in str {
-        finalStr.= val . " + "
-    }
-    return SubStr(finalStr,1,-3) 
+dismissNotif(){
+    notif:= neutron.doc.getElementById("notification")
+    notif.classList.add("hidden")
 }
