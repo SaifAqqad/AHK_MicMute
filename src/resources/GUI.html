@@ -47,17 +47,14 @@
             font-size: 11pt;
         }
 
-        .title-btn-maximize {
-            color: #666666;
-        }
-
-        .title-btn-minimize:hover {
+        .title-btn-minimize:hover,
+        .title-btn-maximize:hover {
             background: #cacaca;
         }
 
         .title-btn-close:hover {
             background: #e81123;
-            color:#f2f2f2
+            color: #f2f2f2
         }
 
         .main {
@@ -163,14 +160,26 @@
             box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.055), 0px 0px 20px 0px #ff572d, 0px 9px 46px 8px rgba(0, 0, 0, 0.055);
         }
 
+        img#MicMute_icon {
+            width: 44px;
+            border-radius: 10px;
+            transition: box-shadow 0.23s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1), 0 0px 0 1px rgba(10, 10, 10, 0.02);
+        }
+
+        img#MicMute_icon:hover,
+        label:hover>img#MicMute_icon {
+            box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.055), 0px 0px 20px 0px #ff572d, 0px 9px 46px 8px rgba(0, 0, 0, 0.055);
+        }
+
         .tag.option {
             border: #ff572d solid 1px;
         }
 
         .notification {
             position: absolute;
-            top: 35px;
-            right: 20px;
+            top: 38px;
+            right: 25px;
         }
 
         .row {
@@ -244,12 +253,13 @@
         <span class="title-bar" onmousedown="neutron.DragTitleBar()"
             style="margin-left: 4px;"><label>MicMute</label></span>
         <span class="title-btn title-btn-minimize" onclick="neutron.Minimize()">0</span>
-        <span class="title-btn title-btn-maximize">1</span>
+        <span class="title-btn title-btn-maximize" onclick="neutron.Maximize()">1</span>
         <span class="title-btn title-btn-close" onclick="neutron.Close()">r</span>
     </header>
     <div class="main">
         <div class="container " id="settings">
-            <p unselectable="on" class="title is-2 is-spaced noselect"><label><img src="MicMute.png" style="width: 44px;"> MicMute</label></p>
+            <p unselectable="on" class="title is-2 is-spaced noselect"><label><img src="MicMute.png" id="MicMute_icon">
+                    MicMute</label></p>
             <label unselectable="on" class="label title is-4 noselect" for="def_profile">Default Profile</label>
             <div class="control is-expanded ">
                 <div class="select is-fullwidth is-primary">
@@ -274,7 +284,6 @@
                         <input class="input is-primary input-elem" placeholder="Profile name" name="profile_name_field"
                             id="profile_name_field" onchange="ahk.onChangeProfileName(event)">
                     </div>
-                    <br>
                     <label unselectable="on" class="label title is-4 noselect" for="microphone">Microphone</label>
                     <div class="field has-addons ">
                         <div class="control is-expanded ">
@@ -289,7 +298,6 @@
                                 Devices</button>
                         </div>
                     </div>
-                    <br>
                     <label unselectable="on" class="label title is-4 noselect">Hotkeys</label>
                     <div class="control type-radio" style="margin-bottom: 10px ;">
                         <div class="tag is-large">
@@ -337,21 +345,21 @@
                                 <div class="tag is-medium option">
                                     <label class="checkbox">
                                         <input type="checkbox" name="mute_passthrough" id="mute_passthrough"
-                                            onchange="ahk.onOption(event,0,-1)">
+                                            onchange="ahk.onUpdateOption(event)">
                                         <span class="passthrough-label">Passthrough</span>
                                     </label>
                                 </div>
                                 <div class="tag is-medium option">
                                     <label class="checkbox">
                                         <input type="checkbox" name="mute_wildcard" id="mute_wildcard"
-                                            onchange="ahk.onOption(event,0,1)">
+                                            onchange="ahk.onUpdateOption(event)">
                                         <span class="wildcard-label">Wildcard</span>
                                     </label>
                                 </div>
                                 <div class="tag is-medium option">
                                     <label class="checkbox">
                                         <input type="checkbox" name="mute_nt" id="mute_nt"
-                                            onchange="ahk.onOption(event,0,0)">
+                                            onchange="ahk.onUpdateOption(event)">
                                         <span class="nt-label">Neutral modifiers</span>
                                     </label>
                                 </div>
@@ -382,21 +390,21 @@
                                 <div class="tag is-medium option">
                                     <label class="checkbox">
                                         <input type="checkbox" name="unmute_passthrough" id="unmute_passthrough"
-                                            onchange="ahk.onOption(event,1,-1)">
+                                            onchange="ahk.onUpdateOption(event)">
                                         <span class="passthrough-label">Passthrough</span>
                                     </label>
                                 </div>
                                 <div class="tag is-medium option">
                                     <label class="checkbox">
                                         <input type="checkbox" name="unmute_wildcard" id="unmute_wildcard"
-                                            onchange="ahk.onOption(event,1,1)">
+                                            onchange="ahk.onUpdateOption(event)">
                                         <span class="wildcard-label">Wildcard</span>
                                     </label>
                                 </div>
                                 <div class="tag is-medium option">
                                     <label class="checkbox">
                                         <input type="checkbox" name="unmute_nt" id="unmute_nt"
-                                            onchange="ahk.onOption(event,1,0)">
+                                            onchange="ahk.onUpdateOption(event)">
                                         <span class="nt-label">Neutral modifiers</span>
                                     </label>
                                 </div>
@@ -437,12 +445,12 @@
                             <div class="field has-addons">
                                 <div class="control is-expanded">
                                     <input class="input is-primary input-elem" type="text"
-                                        placeholder="Link the profile to an application" readonly onclick="return false" name="linked_app"
-                                        id="linked_app">
+                                        placeholder="Link the profile to an application" readonly onclick="return false"
+                                        name="linked_app" id="linked_app">
                                 </div>
                                 <div class="control">
-                                    <button class="button is-primary" type="button"
-                                        onclick="ahk.onSelectApp()">Select app</button>
+                                    <button class="button is-primary" type="button" onclick="ahk.onSelectApp()">Select
+                                        app</button>
                                 </div>
                             </div>
                         </div>

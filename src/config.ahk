@@ -61,10 +61,9 @@ class Config {
             return
         }
         profArr:= Array()
-        for i, prof in this.Profiles {
+        for i, prof in this.Profiles 
             if(prof.ProfileName != p_name)
                 profArr.Push(prof)
-        }
         this.Profiles:= profArr
         this.exportConfig()
     }

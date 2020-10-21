@@ -1,7 +1,7 @@
 #Include, <Neutron>
 #Include, <UStack>
 ;GUI Globals
-Global neutron :=, GUI_mute_hotkey:=new UStack(), GUI_unmute_hotkey:=new UStack(),GUI_input_hook:= InputHook("L0 M T2","{Enter}{Escape}")
+Global neutron :=, GUI_mute_hotkey:=new UStack(), GUI_unmute_hotkey:=new UStack(),GUI_input_hook:= 
 ,GUI_modifiers:= {"Alt":"!","RAlt":">!","LAlt":"<!","Shift":"+","RShift":">+","LShift":"<+","Control":"^"
 ,"RControl":">^","LControl":"<^","LWin":"<#","RWin":">#"},GUI_modifier_symbols:={"<^":"LControl",">^":"RControl"
 ,"^":"Control","<+":"LShift",">+":"RShift","+":"Shift","<!":"LAlt",">!":"RAlt","!":"Alt","<#":"LWin",">#":"RWin","#":"LWin"}
@@ -29,6 +29,7 @@ GUI_show(){
     }
     add_tooltips()
     restoreConfig()
+    neutron.Gui("+MinSize700x440")
     neutron.show("w830 h650","MicMute")
     WinSet, Transparent, 252, % "ahk_id " . neutron.hWnd
     WinWaitClose, % "ahk_id " . neutron.hWnd
@@ -78,13 +79,13 @@ addKey(element_id, InputHook, VK, SC){
     key_name:= GetKeyName(Format("vk{:x}sc{:x}", VK, SC))
     inputElem:= neutron.doc.getElementByID(element_id)
     if(element_id = "mute_input"){
-        if(GUI_mute_nt){
-            key_name:= GUI_nt_modifiers.HasKey(key_name)? GUI_nt_modifiers[key_name] : key_name
+        if(GUI_mute_nt && GUI_nt_modifiers.HasKey(key_name)){
+            key_name:= GUI_nt_modifiers[key_name]
         }
         GUI_mute_hotkey.push(key_name) && inputElem.value := inputElem.value . key_name . " + "
     }else{
-        if(GUI_unmute_nt){
-            key_name:= GUI_nt_modifiers.HasKey(key_name)? GUI_nt_modifiers[key_name] : key_name
+        if(GUI_unmute_nt && GUI_nt_modifiers.HasKey(key_name)){
+            key_name:= GUI_nt_modifiers[key_name]
         }
         GUI_unmute_hotkey.push(key_name) && inputElem.value := inputElem.value . key_name . " + "
     }
@@ -103,6 +104,7 @@ onRecord(neutron, element_id){
     inputElem:= neutron.doc.getElementByID(element_id)
     inputElem.value:=""
     inputElem.placeholder:="Recording"
+    GUI_input_hook:= InputHook("L0 T2.5","{Enter}{Escape}")
     GUI_input_hook.KeyOpt("{ALL}", "NI")
     GUI_input_hook.VisibleText:= false
     GUI_input_hook.VisibleNonText:= false
@@ -174,6 +176,11 @@ sanitizeHotkey(ByRef hotkey_str, ByRef keys_str){
     if(SubStr(str, -2) = " & ")
         str := SubStr(str,1,-3)
     keys_str := SubStr(keys_str,1,-3)
+    ; add tilde to a modifier-only hotkey that uses neutral modifiers
+    switch str {
+        case "Shift","Alt","Control":
+            str:= "~" . str
+    }
     ; set hotkey var to final string
     hotkey_str:= str
     return
@@ -215,6 +222,8 @@ parseHotkeyString(str){
 onCreateProfile(neutron){
     static new_profiles:=0
     newProf:= conf.createProfile("Profile" . ++new_profiles)
+    GUI_mute_hotkey:=""
+    GUI_unmute_hotkey:=""
     addDefProfileOpt(newProf.ProfileName)
     addProfileTag(newProf.ProfileName)
     checkProfileTag(newProf.ProfileName)
@@ -225,6 +234,12 @@ onProfileSelect(neutron, event:="", p_name:=""){
     profile_name:= event? event.target.value : p_name
     current_profile:= conf.getProfile(profile_name)
     onRestoreProfile(neutron)
+    onUpdateOption(neutron,"mute_passthrough")
+    onUpdateOption(neutron,"mute_wildcard")
+    onUpdateOption(neutron,"mute_nt")
+    onUpdateOption(neutron,"unmute_passthrough")
+    onUpdateOption(neutron,"mute_wildcard")
+    onUpdateOption(neutron,"unmute_nt")
 }
 
 onChangeProfileName(neutron, event){
@@ -234,7 +249,7 @@ onChangeProfileName(neutron, event){
             txt:= event.target.value:= "Profile"
         }else{
             conf.getProfile(txt)
-            notify(neutron, Format("Profile ``{}`` already exists",txt))
+            notify(neutron, Format("Profile '{}' already exists",txt))
             event.target.value:= current_profile.ProfileName
             return
         }
@@ -249,13 +264,13 @@ onChangeProfileName(neutron, event){
 onSaveProfile(neutron){
     formElem:= neutron.doc.getElementById("form")
     formData:= neutron.GetFormData(formElem)
-    current_profile.Microphone:= formData.microphone
     mute_str:="",mute_input:="",unmute_str:="",unmute_input:=""
-    mute_input:= !IsObject(GUI_mute_hotkey)? GUI_mute_hotkey:""
+    mute_input:= IsObject(GUI_mute_hotkey)? "" : GUI_mute_hotkey
     if(mute_input = ""){
         notify(neutron,"Hotkeys need to be setup")
         return
     }
+    current_profile.Microphone:= formData.microphone
     mute_str:= GUI_mute_passthrough && !InStr(mute_input, "~")? "~":""
     mute_str.= GUI_mute_wildcard && !InStr(mute_input, "&") ? "*":""
     mute_str.= mute_input
@@ -264,6 +279,7 @@ onSaveProfile(neutron){
         unmute_input:= !IsObject(GUI_unmute_hotkey)? GUI_unmute_hotkey:""
         if(unmute_input = ""){
             notify(neutron,"Hotkeys need to be setup")
+            current_profile.UnmuteHotkey:=""
             return
         }
         unmute_str:= GUI_unmute_passthrough && !InStr(unmute_input, "~")? "~":""
@@ -278,7 +294,8 @@ onSaveProfile(neutron){
     current_profile.SoundFeedback:= formData.sound_fb? 1 : 0
     current_profile.LinkedApp:= formData.linked_app
     conf.exportConfig()
-    notify(neutron,Format("Profile ``{}`` saved", formData.profile_name_field))
+    onRestoreProfile(neutron)
+    notify(neutron,Format("Profile '{}' saved", formData.profile_name_field))
     ControlSend,, {Home}, % "ahk_id " . neutron.hWnd
 }
 
@@ -297,12 +314,12 @@ onRestoreProfile(neutron, event:=""){
         str:=current_profile.MuteHotkey
         if(InStr(str, "~")){
             neutron.doc.getElementById("mute_passthrough").checked:="true"
-            onOption(neutron,"mute_passthrough",0,-1)
+            onUpdateOption(neutron,"mute_passthrough")
             str:= StrReplace(str, "~")
         }
         if(InStr(str, "*") || InStr(str, "&")){
             neutron.doc.getElementById("mute_wildcard").checked:="true"
-            onOption(neutron,"mute_wildcard",0,1)
+            onUpdateOption(neutron,"mute_wildcard")
             str:= StrReplace(str, "*")
         }
         if(!InStr(str, ">") && !InStr(str, "<")
@@ -311,7 +328,7 @@ onRestoreProfile(neutron, event:=""){
            && !InStr(str, "RA") && !InStr(str, "LA")){
             neutron.doc.getElementById("mute_nt").checked:="true"
         }
-        onOption(neutron,"mute_nt",0,0)
+        onUpdateOption(neutron,"mute_nt")
         GUI_mute_hotkey:= str
         neutron.doc.getElementById("mute_input").value:= parseHotkeyString(str)
     }else{
@@ -321,12 +338,12 @@ onRestoreProfile(neutron, event:=""){
         str:=current_profile.UnmuteHotkey
         if(InStr(str, "~")){
             neutron.doc.getElementById("unmute_passthrough").checked:="true"
-            onOption(neutron,"unmute_passthrough",0,-1)
+            onUpdateOption(neutron,"unmute_passthrough")
             str:= StrReplace(str, "~")
         }
         if(InStr(str, "*")){
             neutron.doc.getElementById("unmute_wildcard").checked:="true"
-            onOption(neutron,"mute_wildcard",0,1)
+            onUpdateOption(neutron,"mute_wildcard")
             str:= StrReplace(str, "*")
         }
         if(!InStr(str, ">") && !InStr(str, "<")
@@ -335,7 +352,7 @@ onRestoreProfile(neutron, event:=""){
            && !InStr(str, "RA") && !InStr(str, "LA")){
             neutron.doc.getElementById("unmute_nt").checked:="true"
         }
-        onOption(neutron,"unmute_nt",1,0)
+        onUpdateOption(neutron,"unmute_nt")
         GUI_unmute_hotkey:= str
         neutron.doc.getElementById("unmute_input").value:= parseHotkeyString(str)
     }else{
@@ -352,8 +369,6 @@ onRestoreProfile(neutron, event:=""){
         neutron.doc.getElementByID("afk_timeout").value:= current_profile.afkTimeout
     if (current_profile.linkedApp)
         neutron.doc.getElementByID("linked_app").value:= current_profile.linkedApp
-    if(event)
-        notify(neutron, Format("Profile ``{}`` restored",current_profile.ProfileName ))
 }
 
 onDeleteProfile(neutron){
@@ -366,7 +381,7 @@ onDeleteProfile(neutron){
     removeProfileTag(prfName)
     removeDefProfileOpt(prfName)
     checkProfileTag(conf.DefaultProfile)
-    notify(neutron,Format("Profile ``{}`` deleted",prfName))
+    notify(neutron,Format("Profile '{}' deleted",prfName))
     ControlSend,, {Home}, % "ahk_id " . neutron.hWnd
 }
 
@@ -429,24 +444,10 @@ onChangeDefault(neutron){
 
 ;------options-handler-functions------
 
-onOption(neutron, event, p_type, p_option){
-    event:= IsObject(event)? event.target : neutron.doc.getElementById(event)
-    if(p_option<0){ ;passthrough
-        if(p_type)
-            GUI_unmute_passthrough:= event.checked ? 1 : 0
-        else
-            GUI_mute_passthrough:= event.checked ? 1 : 0
-    }else if(p_option){ ;wildcard
-        if(p_type)
-            GUI_unmute_wildcard:= event.checked ? 1 : 0
-        else
-            GUI_mute_wildcard:= event.checked ? 1 : 0
-    }else{ ;nt
-        if(p_type)
-            GUI_unmute_nt:= event.checked ? 1 : 0
-        else
-            GUI_mute_nt:= event.checked ? 1 : 0
-    }
+onUpdateOption(neutron, event){
+    targetElem:= IsObject(event)? event.target : neutron.doc.getElementById(event)
+    varName:= targetElem.id
+    GUI_%varName%:= targetElem.checked ? 1 : 0
 }
 
 onHotkeyType(neutron){
@@ -483,6 +484,8 @@ onSelectApp(neutron){
         linkedAppField.value:= fileName
         if(fileExt!= "exe")
             linkedAppField.value:=""
+    }else{
+        linkedAppField.value:=""
     }
 }
 

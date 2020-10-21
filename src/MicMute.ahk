@@ -1,20 +1,21 @@
 ﻿;compiler directives
-;@Ahk2Exe-Let Assets = %A_ScriptDir%\assets
-;@Ahk2Exe-SetMainIcon %U_Assets%\MicMute.ico
+;@Ahk2Exe-Let Res = %A_ScriptDir%\resources
+;@Ahk2Exe-SetMainIcon %U_Res%\MicMute.ico
 ;@Ahk2Exe-SetVersion 0.7
 ;@Ahk2Exe-SetName MicMute
-;@Ahk2Exe-AddResource %U_Assets%\defaultBlack.ico, 3080
-;@Ahk2Exe-AddResource %U_Assets%\muteBlack.ico, 4080
-;@Ahk2Exe-AddResource %U_Assets%\defaultWhite.ico, 3090
-;@Ahk2Exe-AddResource %U_Assets%\muteWhite.ico, 4090
-;@Ahk2Exe-AddResource %U_Assets%\mute.wav
-;@Ahk2Exe-AddResource %U_Assets%\unmute.wav
-;@Ahk2Exe-AddResource %U_Assets%\ptt_off.wav
-;@Ahk2Exe-AddResource %U_Assets%\ptt_on.wav
-;@Ahk2Exe-AddResource *10 %U_Assets%\GUI.html
-;@Ahk2Exe-AddResource %U_Assets%\bulma.css
-;@Ahk2Exe-AddResource %U_Assets%\dark.css
-;@Ahk2Exe-AddResource %U_Assets%\MicMute.png
+;@Ahk2Exe-ExeName %A_ScriptDir%\updater\MicMute.exe
+;@Ahk2Exe-AddResource %U_Res%\defaultBlack.ico, 3080
+;@Ahk2Exe-AddResource %U_Res%\muteBlack.ico, 4080
+;@Ahk2Exe-AddResource %U_Res%\defaultWhite.ico, 3090
+;@Ahk2Exe-AddResource %U_Res%\muteWhite.ico, 4090
+;@Ahk2Exe-AddResource %U_Res%\mute.wav
+;@Ahk2Exe-AddResource %U_Res%\unmute.wav
+;@Ahk2Exe-AddResource %U_Res%\ptt_off.wav
+;@Ahk2Exe-AddResource %U_Res%\ptt_on.wav
+;@Ahk2Exe-AddResource *10 %U_Res%\GUI.html
+;@Ahk2Exe-AddResource %U_Res%\bulma.css
+;@Ahk2Exe-AddResource %U_Res%\dark.css
+;@Ahk2Exe-AddResource %U_Res%\MicMute.png
 
 
 #InstallKeybdHook
@@ -103,7 +104,7 @@ switchProfile(p_name:=""){
     }
     Try initHotkeys()
     catch {
-        MsgBox, 64, MicMute, % Format("``{}`` profile needs to be setup",current_profile.ProfileName)
+        MsgBox, 64, MicMute, % Format("'{}' profile needs to be setup",current_profile.ProfileName)
         editConfig()
     }
     OSD_spawn(Format("Profile: '{}'", current_profile.ProfileName),OSD_MAIN_ACCENT,current_profile.ExcludeFullscreen)
@@ -121,6 +122,7 @@ initHotkeys(){
     Menu, Tray, Default, Toggle microphone
     if (current_profile.MuteHotkey=current_profile.UnmuteHotkey){
         if(current_profile.PushToTalk){
+            VA_SetMasterMute(1, current_profile.Microphone)
             ptt_key:= (StrSplit(current_profile.MuteHotkey, [" ","#","!","^","+","&",">","<","*","~","$","UP"], " `t")).Pop()
             resRead(mute_sound, Format("{:U}", "ptt_off.wav"))
             resRead(unmute_sound, Format("{:U}","ptt_on.wav"))

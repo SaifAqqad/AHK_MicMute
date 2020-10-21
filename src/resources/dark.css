@@ -11,12 +11,9 @@ header {
     color: #dbdbdb !important;
     background: #232323 !important;
 }
- 
-.title-btn-maximize{
-    color: #666666;
-}
 
-.title-btn-minimize:hover {
+.title-btn-minimize:hover,
+.title-btn-maximize:hover {
   background: #191919 !important;
 }
 
