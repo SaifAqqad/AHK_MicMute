@@ -220,14 +220,21 @@ parseHotkeyString(str){
 ;------profile-handler-functions------
 
 onCreateProfile(neutron){
-    static new_profiles:=0
-    newProf:= conf.createProfile("Profile" . ++new_profiles)
-    GUI_mute_hotkey:=""
-    GUI_unmute_hotkey:=""
-    addDefProfileOpt(newProf.ProfileName)
-    addProfileTag(newProf.ProfileName)
-    checkProfileTag(neutron,newProf.ProfileName)
-    notify(neutron, "New profile created")
+    static new_profiles:=0,newProf:=""
+    Try conf.getProfile("Profile" . new_profiles+1)
+    catch {
+        newProf:= conf.createProfile("Profile" . ++new_profiles)
+        GUI_mute_hotkey:=""
+        GUI_unmute_hotkey:=""
+        addDefProfileOpt(newProf.ProfileName)
+        addProfileTag(newProf.ProfileName)
+        checkProfileTag(neutron,newProf.ProfileName)
+        notify(neutron, "New profile created")
+        return
+    }
+    ;if no error is thrown -> profile%num% already exists
+    new_profiles++
+    onCreateProfile(neutron)
 }
 
 onProfileSelect(neutron, event:="", p_name:=""){
@@ -406,7 +413,9 @@ changeProfileTagName(profile_name){
     origProfName:= current_profile.ProfileName
     profTag:= neutron.doc.getElementByID("tag_profile_" . origProfName)
     profTag.id:= "tag_profile_" . profile_name
+    profTag.setAttribute("onclick", Format("ahk.checkProfileTag('{}')", profile_name))
     profTag.firstElementChild.firstElementChild.value:= profile_name
+    profTag.firstElementChild.firstElementChild.id:= "profile_" . profile_name
     profTag.firstElementChild.lastElementChild.innerText:= profile_name
 }
 
