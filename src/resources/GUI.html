@@ -300,21 +300,24 @@
                     </div>
                     <label unselectable="on" class="label title is-4 noselect">Hotkeys</label>
                     <div class="control type-radio" style="margin-bottom: 10px ;">
-                        <div class="tag is-large">
+                        <div class="tag is-large"
+                            onclick="document.getElementById('sep_hotkey').checked=1;ahk.onHotkeyType()">
                             <label unselectable="on" class="radio">
                                 <input type="radio" name="hotkeyType" value="1" id="sep_hotkey"
                                     onchange="ahk.onHotkeyType()">
                                 <span>Separate hotkeys</span>
                             </label>
                         </div>
-                        <div class="tag is-large">
+                        <div class="tag is-large"
+                            onclick="document.getElementById('tog_hotkey').checked=1;ahk.onHotkeyType()">
                             <label unselectable="on" class="radio">
                                 <input type="radio" name="hotkeyType" value="2" id="tog_hotkey"
                                     onchange="ahk.onHotkeyType()">
                                 <span>Toggle</span>
                             </label>
                         </div>
-                        <div class="tag is-large">
+                        <div class="tag is-large"
+                            onclick="document.getElementById('ptt_hotkey').checked=1;ahk.onHotkeyType()">
                             <label unselectable="on" class="radio">
                                 <input type="radio" name="hotkeyType" value="3" id="ptt_hotkey"
                                     onchange="ahk.onHotkeyType()">
@@ -342,21 +345,24 @@
                             </div>
                             <div class="row is-one-third">
                                 <label class="noselect label">Options</label>
-                                <div class="tag is-medium option">
+                                <div class="tag is-medium option"
+                                    onclick="document.getElementById('mute_passthrough').checked ^= 1;ahk.onUpdateOption('mute_passthrough')">
                                     <label class="checkbox">
                                         <input type="checkbox" name="mute_passthrough" id="mute_passthrough"
                                             onchange="ahk.onUpdateOption(event)">
                                         <span class="passthrough-label">Passthrough</span>
                                     </label>
                                 </div>
-                                <div class="tag is-medium option">
+                                <div class="tag is-medium option"
+                                    onclick="document.getElementById('mute_wildcard').checked ^= 1;ahk.onUpdateOption('mute_wildcard')">
                                     <label class="checkbox">
                                         <input type="checkbox" name="mute_wildcard" id="mute_wildcard"
                                             onchange="ahk.onUpdateOption(event)">
                                         <span class="wildcard-label">Wildcard</span>
                                     </label>
                                 </div>
-                                <div class="tag is-medium option">
+                                <div class="tag is-medium option"
+                                    onclick="document.getElementById('mute_nt').checked ^= 1;ahk.onUpdateOption('mute_nt')">
                                     <label class="checkbox">
                                         <input type="checkbox" name="mute_nt" id="mute_nt"
                                             onchange="ahk.onUpdateOption(event)">
@@ -387,21 +393,24 @@
                             </div>
                             <div class="row is-one-third">
                                 <label class="noselect label">Options</label>
-                                <div class="tag is-medium option">
+                                <div class="tag is-medium option"
+                                    onclick="document.getElementById('unmute_passthrough').checked ^= 1;ahk.onUpdateOption('unmute_passthrough')">
                                     <label class="checkbox">
                                         <input type="checkbox" name="unmute_passthrough" id="unmute_passthrough"
                                             onchange="ahk.onUpdateOption(event)">
                                         <span class="passthrough-label">Passthrough</span>
                                     </label>
                                 </div>
-                                <div class="tag is-medium option">
+                                <div class="tag is-medium option"
+                                    onclick="document.getElementById('unmute_wildcard').checked ^= 1;ahk.onUpdateOption('unmute_wildcard')">
                                     <label class="checkbox">
                                         <input type="checkbox" name="unmute_wildcard" id="unmute_wildcard"
                                             onchange="ahk.onUpdateOption(event)">
                                         <span class="wildcard-label">Wildcard</span>
                                     </label>
                                 </div>
-                                <div class="tag is-medium option">
+                                <div class="tag is-medium option"
+                                    onclick="document.getElementById('unmute_nt').checked ^= 1;ahk.onUpdateOption('unmute_nt')">
                                     <label class="checkbox">
                                         <input type="checkbox" name="unmute_nt" id="unmute_nt"
                                             onchange="ahk.onUpdateOption(event)">
@@ -414,20 +423,23 @@
                     <div class="rows">
                         <div class="row is-half">
                             <label unselectable="on" class="label title is-4 noselect">Feedback</label>
-                            <div class="tag is-medium option">
+                            <div class="tag is-medium option"
+                                onclick="document.getElementById('sound_fb').checked ^= 1;">
                                 <label class="checkbox">
                                     <input type="checkbox" name="sound_fb" id="sound_fb">
                                     <span>Sound feedback</span>
                                 </label>
                             </div>
-                            <div class="tag is-medium option">
+                            <div class="tag is-medium option"
+                                onclick="document.getElementById('on_screen_fb').checked ^= 1;ahk.onOSDfb()">
                                 <label class="checkbox">
                                     <input type="checkbox" name="on_screen_fb" id="on_screen_fb"
                                         onchange="ahk.onOSDfb()">
                                     <span>On-screen feedback</span>
                                 </label>
                             </div>
-                            <div class="tag is-hidden is-medium option" id="os_fb_excl_tag">
+                            <div class="tag is-hidden is-medium option" id="os_fb_excl_tag"
+                                onclick="document.getElementById('on_screen_fb_excl').checked ^= 1;">
                                 <label class="checkbox">
                                     <input type="checkbox" name="on_screen_fb_excl" id="on_screen_fb_excl">
                                     <span>Exclude fullscreen apps</span>

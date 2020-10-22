@@ -12,7 +12,7 @@ Global neutron :=, GUI_mute_hotkey:=new UStack(), GUI_unmute_hotkey:=new UStack(
 ,GUI_afk_tt:= "Mute the microphone when idling for longer than the AFK timeout"
 ,GUI_profile_tag_template:= "
 (
-    <div class=""tag is-large"" id=""tag_profile_{1:}"">
+    <div class=""tag is-large"" id=""tag_profile_{1:}"" onClick=""ahk.checkProfileTag('{1:}')"">
         <label unselectable=""on"" class=""radio"">
             <input type=""radio"" name=""profiles_radio"" value=""{1:}"" id=""profile_{1:}"" onclick=""ahk.onProfileSelect(event)"">
             <span>{1:}</span>
@@ -42,7 +42,7 @@ restoreConfig(){
         addDefProfileOpt(prfl.ProfileName)
         addProfileTag(prfl.ProfileName)
     }
-    checkProfileTag(current_profile.ProfileName)
+    checkProfileTag(neutron,current_profile.ProfileName)
     fetchDeviceList(neutron)
     onRestoreProfile(neutron)
 }
@@ -226,7 +226,7 @@ onCreateProfile(neutron){
     GUI_unmute_hotkey:=""
     addDefProfileOpt(newProf.ProfileName)
     addProfileTag(newProf.ProfileName)
-    checkProfileTag(newProf.ProfileName)
+    checkProfileTag(neutron,newProf.ProfileName)
     notify(neutron, "New profile created")
 }
 
@@ -380,7 +380,7 @@ onDeleteProfile(neutron){
     }
     removeProfileTag(prfName)
     removeDefProfileOpt(prfName)
-    checkProfileTag(conf.DefaultProfile)
+    checkProfileTag(neutron,conf.DefaultProfile)
     notify(neutron,Format("Profile '{}' deleted",prfName))
     ControlSend,, {Home}, % "ahk_id " . neutron.hWnd
 }
@@ -397,7 +397,7 @@ removeProfileTag(profile_name){
     profiles.removeChild(profileTag)
 }
 
-checkProfileTag(profile_name){
+checkProfileTag(neutron,profile_name){
     neutron.doc.getElementByID("profile_" . profile_name).checked:=1
     onProfileSelect(neutron,,profile_name)
 }
