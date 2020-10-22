@@ -14,18 +14,17 @@ MicMute
    * AFK timeout (auto mute when the user is AFK for longer than a specified time interval)
    * Auto-start on boot
 
-## Install using [Scoop](https://scoop.sh) (Recommended)
+## Install using [Scoop](https://scoop.sh)
 
    ```powershell
       # Run this in powershell, it will install scoop, add my bucket and then install MicMute 
       Set-ExecutionPolicy RemoteSigned -scope CurrentUser;iwr -useb get.scoop.sh | iex;scoop install git;scoop bucket add utils https://github.com/SaifAqqad/utils.git;scoop install micmute;
    ```
-   ##### You can update MicMute using `scoop update micmute`, your config file will be saved between updates.
+   ###### You can update MicMute using `scoop update micmute`, your config file will be saved between updates.
 
 ## Install using the updater script
    Download the [updater](https://github.com/SaifAqqad/AHK_MicMute/releases/latest/download/updater.exe) and run it.
-   ##### The updater might falsely trigger windows defender as any portable unsigned executable does.
-
+  ###### The updater might falsely trigger windows defender as any portable unsigned executable does.
 ## Usage
 
 On the first run, you'll be asked to set up a profile:
