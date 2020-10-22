@@ -32,6 +32,7 @@
 SetWorkingDir %A_ScriptDir%
 Global conf, watched_profiles, current_profile, watched_profile
 , global_mute, ptt_key, mute_sound, unmute_sound, sys_theme
+Try Run, %A_ScriptDir%\updater.exe -check-update, %A_ScriptDir%
 init()
 ;auto_exec end
 
