@@ -112,6 +112,10 @@ onRecord(neutron, element_id){
     GUI_input_hook.OnKeyDown:= Func("addKey").Bind(element_id)
     GUI_input_hook.OnEnd:= Func("onStop").Bind(neutron,element_id)
     GUI_input_hook.Start()
+    funcObj:= Func("addKey").Bind(element_id,"",0x5, 0x0)
+    Hotkey, *XButton1, % funcObj, On
+    funcObj:= Func("addKey").Bind(element_id,"",0x6, 0x0)
+    Hotkey, *XButton2, % funcObj, On 
 }
 
 onStop(neutron, element_id, InputHook:=""){
@@ -119,6 +123,8 @@ onStop(neutron, element_id, InputHook:=""){
         GUI_input_hook.Stop()
         return
     }
+    Hotkey, *XButton1, Off, UseErrorLevel
+    Hotkey, *XButton2, Off, UseErrorLevel
     str:="", inputElem:= neutron.doc.getElementByID(element_id)
     inputElem.placeholder:="Click Record"
     if(element_id = "mute_input"){
