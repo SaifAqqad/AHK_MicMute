@@ -39,7 +39,7 @@ class Config {
     }
 
     exportConfig(){
-        jsonStr:=JSON.Dump(this)
+        jsonStr:=JSON.Dump(this,,4)
         jsonFile:=FileOpen("config.json", "w")
         jsonFile.Write(jsonStr)
         jsonFile.Close()
