@@ -18,7 +18,8 @@ is_silent:= (A_Args[1] = "-silent" || A_Args[2] = "-silent")
 ;tray
 Menu, Tray, Icon 
 Menu, Tray, NoStandard
-Menu, Tray, Add, Close updater, u_exit
+exObj:= Func("u_exit").bind(-1)
+Menu, Tray, Add, Close updater, % exObj
 Menu, Tray, Tip , MicMute Updater
 
 getInstalledVer()
@@ -39,7 +40,7 @@ if(curr_ver)
     update()
 MsgBox, 68, MicMute Updater, Install MicMute?
 IfMsgBox, No
-    u_exit()
+    u_exit(-1)
 install()
 GUI_spawn(100,"MicMute Installed")
 Sleep, 1000
@@ -78,7 +79,7 @@ relaunch(args*){
         str.= arg . " "
     FileCopy, %A_ScriptFullPath%, %A_Temp%\*, 1
     Run, *RunAs %A_Temp%\%A_ScriptName% %str%
-    ExitApp
+    u_exit()
 }
 
 ShellMessage( wParam,lParam ) {
@@ -94,12 +95,14 @@ ShellMessage( wParam,lParam ) {
 checkUpdate(){
     getLatestVer()
     getInstalledVer()
-    if(curr_ver=latest_ver || latest_ver < 0)
-        u_exit()
+    if(curr_ver=latest_ver)
+        u_exit(-2)
+    if(latest_ver = -5)
+        u_exit(-5)
     MsgBox, 68, MicMute updater, An update is available for MicMute`nInstall the update?
     IfMsgBox, Yes
         relaunch("-update","-silent")
-    u_exit()
+    u_exit(-1)
 }
 
 update(p_is_silent:=0){
@@ -111,16 +114,16 @@ update(p_is_silent:=0){
         OnMessage( MsgNum, "ShellMessage" )
         MsgBox, 67, MicMute Updater, MicMute is installed
         IfMsgBox, No
-            uninstall()
+            uninstall(p_is_silent)
         IfMsgBox, Cancel
-            u_exit()
+            u_exit(-1)
     }
     if(latest_ver=-5){
         MsgBox, 16, MicMute updater, A network error occurred
-        u_exit()
+        u_exit(-5)
     }else if(curr_ver=latest_ver){
         MsgBox, 64, MicMute Updater, You already have the latest verison installed
-        u_exit()
+        u_exit(-2)
     }
     Process, close, MicMute.exe
     Try FileCopy, %install_folder%\config.ini, %A_Temp%\MicMuteConfig.ini, 1
@@ -137,7 +140,7 @@ uninstall(p_is_silent:=0){
     if(!p_is_silent){
         MsgBox, 68, MicMute Updater, Uninstall MicMute?
         IfMsgBox, No
-            u_exit()
+            u_exit(-1)
     }
     Menu, Tray, Tip, % GUI_spawn(prog,"Closing MicMute")
     Process, close, MicMute.exe
@@ -159,7 +162,7 @@ uninstall(p_is_silent:=0){
     RegDelete, HKEY_LOCAL_MACHINE, %reg_path%
     Menu, Tray, Tip, % GUI_spawn(100, "MicMute Uninstalled")
     Sleep, 1000
-    ExitApp
+    u_exit()
 }
 
 install(p_is_silent:=0){
