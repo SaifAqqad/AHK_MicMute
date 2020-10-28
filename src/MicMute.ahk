@@ -32,8 +32,8 @@
 SetWorkingDir %A_ScriptDir%
 Global conf, watched_profiles, current_profile, watched_profile
 , global_mute, ptt_key, mute_sound, unmute_sound, sys_theme
-Try Run, %A_ScriptDir%\updater.exe -check-update, %A_ScriptDir%
 init()
+SetTimer, runUpdater, -1
 ;auto_exec end
 
 init(){
@@ -237,4 +237,12 @@ UpdateSysTheme(){
 isFileEmpty(file){
     FileGetSize, size , %file%
     return !size
+}
+
+runUpdater(p_silent:=1){
+    if(FileExist(A_ScriptDir . "\updater.exe")){
+        RunWait, %A_ScriptDir%\updater.exe -check-update, %A_ScriptDir%, UseErrorLevel
+        if(ErrorLevel=-2 && !p_silent)
+            MsgBox, 64, MicMute, You already have the latest verison installed
+    }
 }
