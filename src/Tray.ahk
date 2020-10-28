@@ -12,6 +12,9 @@ tray_init(){
     tray_add("Exit",Func("tray_exit"))
     tray_add("Help",Func("tray_launchHelp"))
     tray_add("Start on boot",Func("tray_autoStart"))
+    if(FileExist(A_ScriptDir . "\updater.exe"))
+        tray_add("Check for updates",Func("tray_checkUpdate"))
+    Menu, Tray, Insert, 1&
     tray_add("Edit configuration",Func("editConfig"))
     tray_createProfilesMenu()
     tray_add("Profile", ":profiles")
@@ -53,6 +56,11 @@ tray_createProfilesMenu(){
         funcObj:= Func("switchProfile").bind(p_profile.ProfileName)
         Menu, profiles, Add, % p_profile.ProfileName, % funcObj, +Radio
     }
+}
+
+tray_checkUpdate(){
+    funcObj:= Func("runUpdater").bind(0)
+    SetTimer, % funcObj, -1
 }
 
 tray_launchHelp(){
