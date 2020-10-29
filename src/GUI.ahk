@@ -14,7 +14,7 @@ Global neutron :=, GUI_mute_hotkey:=new UStack(), GUI_unmute_hotkey:=new UStack(
 (
     <div class=""tag is-large"" id=""tag_profile_{1:}"" onClick=""ahk.checkProfileTag('{1:}')"">
         <label unselectable=""on"" class=""radio"">
-            <input type=""radio"" name=""profiles_radio"" value=""{1:}"" id=""profile_{1:}"" onclick=""ahk.onProfileSelect(event)"">
+            <input type=""radio"" name=""profiles_radio"" value=""{1:}"" id=""profile_{1:}"">
             <span>{1:}</span>
         </label>
     </div>
@@ -314,6 +314,9 @@ onSaveProfile(neutron){
 }
 
 onRestoreProfile(neutron, event:=""){
+    innerCont:= neutron.doc.getElementById("profile")
+    innerCont.classList.add("hidden")
+    sleep, 100
     neutron.doc.getElementById("form").reset()
     neutron.doc.getElementById("profile_name_field").value:= current_profile.ProfileName
     fetchDeviceList(neutron)
@@ -383,6 +386,7 @@ onRestoreProfile(neutron, event:=""){
         neutron.doc.getElementByID("afk_timeout").value:= current_profile.afkTimeout
     if (current_profile.linkedApp)
         neutron.doc.getElementByID("linked_app").value:= current_profile.linkedApp
+    innerCont.classList.remove("hidden")
 }
 
 onDeleteProfile(neutron){
@@ -467,29 +471,31 @@ onUpdateOption(neutron, event){
 }
 
 onHotkeyType(neutron){
+    u_box:= neutron.doc.getElementById("unmute_box")
     if(neutron.doc.getElementByID("sep_hotkey").checked){
-        showElemID(neutron, "unmute_box")
+        u_box.classList.remove("box-hidden")
         showElemID(neutron, "afk_timeout_col")
         neutron.doc.getElementByID("mute_label").innerText:= "Mute hotkey"
     }
     if(neutron.doc.getElementByID("tog_hotkey").checked){
-        hideElemID(neutron, "unmute_box")
-        neutron.doc.getElementByID("unmute_ghost_box").style.height := "152.52px"
+        u_box.classList.add("box-hidden")
         showElemID(neutron, "afk_timeout_col")
         neutron.doc.getElementByID("mute_label").innerText:= "Toggle hotkey"
     }
     if(neutron.doc.getElementByID("ptt_hotkey").checked){
-        hideElemID(neutron, "unmute_box")
+        u_box.classList.add("box-hidden")
         hideElemID(neutron, "afk_timeout_col")
         neutron.doc.getElementByID("mute_label").innerText:= "Push-to-talk hotkey"
     }
 }
 
 onOSDfb(neutron){
-    if(neutron.doc.getElementByID("on_screen_fb").checked)
-        showElemID(neutron, "os_fb_excl_tag")
-    else
-        hideElemID(neutron, "os_fb_excl_tag")
+    tag:= neutron.doc.getElementByID("os_fb_excl_tag")
+    if(neutron.doc.getElementByID("on_screen_fb").checked){
+        tag.classList.remove("hidden")
+    }else{
+        tag.classList.add("hidden")
+    }
 }
 
 onSelectApp(neutron){
@@ -547,7 +553,7 @@ notify(neutron, txt){
     notif:= neutron.doc.getElementById("notification")
     notif.firstElementChild.innerText:= txt
     notif.classList.remove("hidden")
-    SetTimer, dismissNotif, -1000
+    SetTimer, dismissNotif, -1200
 }
 
 dismissNotif(){
