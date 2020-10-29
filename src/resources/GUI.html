@@ -75,16 +75,27 @@
             -ms-transform: scale(0.95, 0.95);
         }
 
-        .visible {
-            visibility: visible;
-            opacity: 1;
-            transition: opacity 0.5s linear;
+        .box-visible {
+            visibility: visible !important;
+            opacity: 1 !important;
+            padding-top: 5px !important;
+            border-radius: 0.8rem;
+            transition: box-shadow 0.23s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.1s linear !important;
+            margin-bottom: 20px !important;
+            width: 80%;
+        }
+        
+        .box-visible:hover {
+            box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.055), 0px 0px 20px 1px #ff572d, 0px 9px 46px 8px rgba(0, 0, 0, 0.055);
         }
 
-        .hidden {
+        .box-hidden {
             visibility: hidden !important;
+            height: 0 !important;
             opacity: 0 !important;
-            transition: visibility 0s 0.5s, opacity 0.5s linear !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            transition: visibility 0s 0.1s, opacity 0.1s linear, height 0.1s 0.1s !important;
         }
 
         .noselect {
@@ -104,20 +115,6 @@
             font-weight: 900;
             letter-spacing: -1px;
             line-height: 40px;
-        }
-
-        .box {
-            padding-top: 5px !important;
-            border-radius: 0.8rem;
-            transition: box-shadow 0.23s cubic-bezier(0.4, 0, 0.2, 1);
-            margin-bottom: 20px !important;
-            font-family: sans-serif;
-            width: 80%;
-        }
-
-        .box:hover {
-            box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.055), 0px 0px 20px 1px #ff572d, 0px 9px 46px 8px rgba(0, 0, 0, 0.055);
-
         }
 
         .radio {
@@ -149,10 +146,12 @@
         }
 
         .tag {
+            visibility: visible !important;
+            opacity: 1 !important;
             background-color: white !important;
             margin: 5px;
             border-radius: 5px;
-            transition: box-shadow 0.23s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: box-shadow 0.23s cubic-bezier(0.4, 0, 0.2, 1),opacity 0.1s linear !important;
             box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1), 0 0px 0 1px rgba(10, 10, 10, 0.02);
         }
 
@@ -245,6 +244,19 @@
         [data-title] {
             position: relative;
         }
+
+        .visible {
+            visibility: visible !important;
+            opacity: 1 !important;
+            transition: opacity 0.1s linear !important;
+        }
+
+        .hidden {
+            visibility: hidden !important;
+            opacity: 0 !important;
+            transition: visibility 0s 0.1s, opacity 0.1s linear !important;
+        }
+
     </style>
 </head>
 
@@ -276,7 +288,7 @@
             </label>
             <div class="control type-radio" id="profiles">
             </div>
-            <div class="inner-container " id="profile">
+            <div class="inner-container visible" id="profile">
                 <form id="form">
                     <label unselectable="on" class="label title is-4 noselect" for="profile_name_field">Profile
                         name</label>
@@ -303,29 +315,26 @@
                         <div class="tag is-large"
                             onclick="document.getElementById('sep_hotkey').checked=1;ahk.onHotkeyType()">
                             <label unselectable="on" class="radio">
-                                <input type="radio" name="hotkeyType" value="1" id="sep_hotkey"
-                                    onchange="ahk.onHotkeyType()">
+                                <input type="radio" name="hotkeyType" value="1" id="sep_hotkey">
                                 <span>Separate hotkeys</span>
                             </label>
                         </div>
                         <div class="tag is-large"
                             onclick="document.getElementById('tog_hotkey').checked=1;ahk.onHotkeyType()">
                             <label unselectable="on" class="radio">
-                                <input type="radio" name="hotkeyType" value="2" id="tog_hotkey"
-                                    onchange="ahk.onHotkeyType()">
+                                <input type="radio" name="hotkeyType" value="2" id="tog_hotkey">
                                 <span>Toggle</span>
                             </label>
                         </div>
                         <div class="tag is-large"
                             onclick="document.getElementById('ptt_hotkey').checked=1;ahk.onHotkeyType()">
                             <label unselectable="on" class="radio">
-                                <input type="radio" name="hotkeyType" value="3" id="ptt_hotkey"
-                                    onchange="ahk.onHotkeyType()">
+                                <input type="radio" name="hotkeyType" value="3" id="ptt_hotkey">
                                 <span>Push-to-talk</span>
                             </label>
                         </div>
                     </div>
-                    <div class="box">
+                    <div class="box box-visible">
                         <div class="rows">
                             <div class="row is-two-thirds mute-ddl-col">
                                 <label unselectable="on" for="mute_input" class="noselect label" id="mute_label">Mute
@@ -372,7 +381,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="box" id="unmute_box">
+                    <div class="box box-visible box-hidden" id="unmute_box">
                         <div class="rows">
                             <div class="row is-two-thirds unmute-ddl-col">
                                 <label unselectable="on" for="unmute_input" class="noselect label"
@@ -438,7 +447,7 @@
                                     <span>On-screen feedback</span>
                                 </label>
                             </div>
-                            <div class="tag is-hidden is-medium option" id="os_fb_excl_tag"
+                            <div class="tag hidden is-medium option" id="os_fb_excl_tag"
                                 onclick="document.getElementById('on_screen_fb_excl').checked ^= 1;">
                                 <label class="checkbox">
                                     <input type="checkbox" name="on_screen_fb_excl" id="on_screen_fb_excl">
@@ -447,7 +456,8 @@
                             </div>
                         </div>
                         <div class="row" id="afk_timeout_col">
-                            <label unselectable="on" class="label title is-4 noselect afk-label">AFK timeout</label>
+                            <label unselectable="on" class="label title is-4 noselect afk-label" for="afk_timeout">AFK
+                                timeout</label>
                             <input class="input is-primary input-elem" min="0" max="120" placeholder="Minutes (1-120)"
                                 type="number" name="afk_timeout" id="afk_timeout">
                         </div>
