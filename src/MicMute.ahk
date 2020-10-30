@@ -49,15 +49,10 @@ init(){
     for i, prof in conf.Profiles 
         if(prof.LinkedApp)
             watched_profiles.Push(prof)
-    if(watched_profiles.Length()){
-        SetTimer, checkProfiles, 3000
-    }else{
-        Try SetTimer, checkProfiles, Off
-    }
+    Try SetTimer, checkProfiles, % watched_profiles.Length()? 3000 : "Off"
     UpdateSysTheme()
     tray_init()
     switchProfile()
-    updateState()
 }
 
 tgl(){
@@ -109,6 +104,7 @@ switchProfile(p_name:=""){
         editConfig()
     }
     OSD_spawn(Format("Profile: '{}'", current_profile.ProfileName),OSD_MAIN_ACCENT,current_profile.ExcludeFullscreen)
+    updateState()
 }
 
 disableHotkeys(){
