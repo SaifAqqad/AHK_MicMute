@@ -40,7 +40,7 @@ GUI_show(){
 restoreConfig(){
     neutron.doc.getElementById("def_profile").innerHTML:=""
     for i, prfl in conf.Profiles {
-        addDefProfileOpt(prfl.ProfileName)
+        addDefProfileOpt(prfl.ProfileName,(conf.DefaultProfile=prfl.ProfileName))
         addProfileTag(prfl.ProfileName)
     }
     checkProfileTag(neutron,current_profile.ProfileName)
@@ -430,12 +430,14 @@ changeProfileTagName(profile_name){
     profTag.firstElementChild.lastElementChild.innerText:= profile_name
 }
 
-addDefProfileOpt(profile_name){
+addDefProfileOpt(profile_name, pre_selected:=0){
     defProfileSelect:= neutron.doc.getElementById("def_profile")
     profOption:= neutron.doc.createElement("option")
     profOption.value:= profile_name
     profOption.id:= "def_profile_" . profile_name
     profOption.innerText:= profile_name
+    if(pre_selected)
+        profOption.selected:=1
     defProfileSelect.appendChild(profOption)
 }
 
