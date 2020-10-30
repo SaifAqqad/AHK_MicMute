@@ -183,6 +183,18 @@
 
         .row {
             padding-top: 12px !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            transition: opacity 0.1s linear !important;
+        }
+
+        .row-hidden{
+            visibility: hidden !important;
+            height: 0 !important;
+            opacity: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            transition: visibility 0s 0.1s, opacity 0.1s linear, height 0.1s 0.1s !important;
         }
 
         :-ms-input-placeholder {
@@ -455,13 +467,13 @@
                                 </label>
                             </div>
                         </div>
-                        <div class="row" id="afk_timeout_col">
+                        <div class="row" id="afk_timeout_row">
                             <label unselectable="on" class="label title is-4 noselect afk-label" for="afk_timeout">AFK
                                 timeout</label>
                             <input class="input is-primary input-elem" min="0" max="120" placeholder="Minutes (1-120)"
                                 type="number" name="afk_timeout" id="afk_timeout">
                         </div>
-                        <div class="row" id="linked_app_col">
+                        <div class="row" id="linked_app_row">
                             <label unselectable="on" class="label title is-4 noselect linked-app-label">Linked
                                 application</label>
                             <div class="field has-addons">

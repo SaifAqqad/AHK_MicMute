@@ -474,19 +474,20 @@ onUpdateOption(neutron, event){
 
 onHotkeyType(neutron){
     u_box:= neutron.doc.getElementById("unmute_box")
+    afk_row:= neutron.doc.getElementById("afk_timeout_row")
     if(neutron.doc.getElementByID("sep_hotkey").checked){
         u_box.classList.remove("box-hidden")
-        showElemID(neutron, "afk_timeout_col")
+        afk_row.classList.remove("row-hidden")
         neutron.doc.getElementByID("mute_label").innerText:= "Mute hotkey"
     }
     if(neutron.doc.getElementByID("tog_hotkey").checked){
         u_box.classList.add("box-hidden")
-        showElemID(neutron, "afk_timeout_col")
+        afk_row.classList.remove("row-hidden")
         neutron.doc.getElementByID("mute_label").innerText:= "Toggle hotkey"
     }
     if(neutron.doc.getElementByID("ptt_hotkey").checked){
         u_box.classList.add("box-hidden")
-        hideElemID(neutron, "afk_timeout_col")
+        afk_row.classList.add("row-hidden")
         neutron.doc.getElementByID("mute_label").innerText:= "Push-to-talk hotkey"
     }
 }
