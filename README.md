@@ -5,6 +5,8 @@ MicMute
 <p align="center">
   Control your microphone using keyboard shortcuts.
 </p>
+<p align="center">
+<img alt="GitHub release (latest SemVer)" src="https://img.shields.io/github/v/release/SaifAqqad/AHK_MicMute?label=latest&sort=semver&style=flat-square">  <img src="https://img.shields.io/github/downloads/SaifAqqad/AHK_MicMute/total?style=flat-square"></img>  <img src="https://img.shields.io/badge/AHK-v1.1.33.02-brightgreen?style=flat-square"></img>
 
 ## Features
 
