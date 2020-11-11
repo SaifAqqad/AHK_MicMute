@@ -1,12 +1,22 @@
 <h1 align="center">
- <img src="./src/resources/MicMute.ico" width="32" height="32"></img> 
-MicMute
+    <img src="./src/resources/MicMute.ico" width="32" height="32"></img>
+    MicMute
 </h1>
 <p align="center">
-  Control your microphone using keyboard shortcuts.
+    Control your microphone using keyboard shortcuts.
 </p>
 <p align="center">
-<img alt="GitHub release (latest SemVer)" src="https://img.shields.io/github/v/release/SaifAqqad/AHK_MicMute?label=latest&sort=semver&style=flat-square">  <img src="https://img.shields.io/github/downloads/SaifAqqad/AHK_MicMute/total?style=flat-square"></img>  <img src="https://img.shields.io/badge/AHK-v1.1.33.02-brightgreen?style=flat-square"></img>
+    <a href="https://github.com/SaifAqqad/AHK_MicMute/releases/latest">
+        <img alt="GitHub release(latest SemVer)"
+            src="https://img.shields.io/github/v/release/SaifAqqad/AHK_MicMute?label=latest&sort=semver&style=flat-square">
+    </a>
+    <a href="https://github.com/SaifAqqad/AHK_MicMute/releases/latest">
+        <img src="https://img.shields.io/github/downloads/SaifAqqad/AHK_MicMute/total?style=flat-square"></img>
+    </a>
+    <a href="https://www.autohotkey.com/docs/AHKL_ChangeLog.htm">
+        <img src="https://img.shields.io/badge/AHK-v1.1.33.02-brightgreen?style=flat-square"></img>
+    </a>
+</p>
 
 ## Features
 
