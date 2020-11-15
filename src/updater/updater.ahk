@@ -42,8 +42,10 @@ MsgBox, 68, MicMute Updater, Install MicMute?
 IfMsgBox, No
     u_exit(-1)
 install()
-GUI_spawn(100,"MicMute Installed")
-Sleep, 1000
+GUI_destroy()
+MsgBox, 68, MicMute Updater, MicMute is installed!`nRun it now?
+IfMsgBox, Yes
+    Run, %install_folder%\MicMute.exe, %install_folder%, UseErrorLevel
 u_exit()
 return
 
@@ -133,6 +135,7 @@ update(p_is_silent:=0){
     Try FileCopy, %A_Temp%\MicMuteConfig.json, %install_folder%\config.json, 1
     Menu, Tray, Tip, % GUI_spawn(100, "MicMute Updated")
     Sleep, 1000
+    Run, %install_folder%\MicMute.exe, %install_folder%, UseErrorLevel
     u_exit()
 }
 
@@ -160,6 +163,7 @@ uninstall(p_is_silent:=0){
         FileDelete, %A_Startup%\MicMute.lnk
     Sleep, 800
     RegDelete, HKEY_LOCAL_MACHINE, %reg_path%
+    Run, powershell.exe "Remove-MpPreference -ExclusionPath '%install_folder%' ",, Hide UseErrorLevel
     Menu, Tray, Tip, % GUI_spawn(100, "MicMute Uninstalled")
     Sleep, 1000
     u_exit()
@@ -181,8 +185,8 @@ install(p_is_silent:=0){
     FileCreateDir, %A_Programs%\SaifAqqad\MicMute
     FileCreateShortcut, %install_folder%\MicMute.exe, %A_Programs%\SaifAqqad\MicMute\MicMute.lnk, %install_folder%
     FileCreateShortcut, %install_folder%\updater.exe,%A_Programs%\SaifAqqad\MicMute\MicMute Updater.lnk, %install_folder%
-    prog+=10
-    Menu, Tray, Tip, % GUI_spawn(prog,"Creating shortcuts")
+    prog+=20
+    Menu, Tray, Tip, % GUI_spawn(prog,"Adding MicMute to registry")
     FileGetSize, size, %install_folder%\MicMute.exe, K
     RegWrite, REG_SZ, HKEY_LOCAL_MACHINE, %reg_path%
     RegWrite, REG_SZ, HKEY_LOCAL_MACHINE, %reg_path%, DisplayIcon, %install_folder%\MicMute.exe
@@ -192,6 +196,12 @@ install(p_is_silent:=0){
     RegWrite, REG_DWORD, HKEY_LOCAL_MACHINE, %reg_path%, EstimatedSize, %size%
     RegWrite, REG_SZ, HKEY_LOCAL_MACHINE, %reg_path%, UninstallString, "%install_folder%\updater.exe" -uninstall
     RegWrite, REG_SZ, HKEY_LOCAL_MACHINE, %reg_path%, InstallLocation, %install_folder%
+    MsgBox, 68, MicMute Updater
+    , Allow MicMute to add an exclusion to Windows defender to prevent it from being falsely triggered?
+    IfMsgBox, Yes
+        Run, powershell.exe "Add-MpPreference -ExclusionPath '%install_folder%' ",, Hide UseErrorLevel
+    IfMsgBox, No
+        Run, powershell.exe "Remove-MpPreference -ExclusionPath '%install_folder%' ",, Hide UseErrorLevel
 }
 
 GUI_spawn(prog,txt){
