@@ -1,11 +1,12 @@
 #Include, JSON.ahk
 #NoTrayIcon
-global install_folder:= A_AppData . "\..\Local\SaifAqqad\MicMute"
+global install_folder:=, lg_install_folder:= A_AppData . "\..\Local\SaifAqqad\MicMute"
 ,api_url:= "https://api.github.com/repos/SaifAqqad/AHK_MicMute/releases/latest"
 ,prog:=10, reg_path:="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MicMute"
-,excl_reg_path:="SOFTWARE\Microsoft\Windows Defender\Exclusions\Paths" 
 ,latest_ver:=,curr_ver:=,latest_url:=,latest_updater_url:=
 ,GUI_state:=0,GUI_prog:=,GUI_txt:=,is_silent:=0
+EnvGet, install_folder, LOCALAPPDATA
+install_folder .= "\SaifAqqad\MicMute"
 
 if(A_Args[1] = "-check-update")
     checkUpdate()
@@ -129,6 +130,7 @@ update(p_is_silent:=0){
         u_exit(-2)
     }
     Process, close, MicMute.exe
+    was_running:= ErrorLevel? 1:0
     Try FileCopy, %install_folder%\config.ini, %A_Temp%\MicMuteConfig.ini, 1
     Try FileCopy, %install_folder%\config.json, %A_Temp%\MicMuteConfig.json, 1
     install(p_is_silent)
@@ -136,7 +138,8 @@ update(p_is_silent:=0){
     Try FileCopy, %A_Temp%\MicMuteConfig.json, %install_folder%\config.json, 1
     Menu, Tray, Tip, % GUI_spawn(100, "MicMute Updated")
     Sleep, 1000
-    Run, %install_folder%\MicMute.exe, %install_folder%, UseErrorLevel
+    if(was_running)
+        Run, %install_folder%\MicMute.exe, %install_folder%, UseErrorLevel
     u_exit()
 }
 
@@ -164,7 +167,7 @@ uninstall(p_is_silent:=0){
         FileDelete, %A_Startup%\MicMute.lnk
     Sleep, 800
     RegDelete, HKEY_LOCAL_MACHINE, %reg_path%
-    RegDelete, HKEY_LOCAL_MACHINE, %excl_reg_path%, %install_folder%
+    Run, powershell.exe "Remove-MpPreference -ExclusionPath '%install_folder%';Remove-MpPreference -ExclusionPath '%lg_install_folder%'",, Hide UseErrorLevel
     Menu, Tray, Tip, % GUI_spawn(100, "MicMute Uninstalled")
     Sleep, 1000
     u_exit()
@@ -197,12 +200,11 @@ install(p_is_silent:=0){
     RegWrite, REG_DWORD, HKEY_LOCAL_MACHINE, %reg_path%, EstimatedSize, %size%
     RegWrite, REG_SZ, HKEY_LOCAL_MACHINE, %reg_path%, UninstallString, "%install_folder%\updater.exe" -uninstall
     RegWrite, REG_SZ, HKEY_LOCAL_MACHINE, %reg_path%, InstallLocation, %install_folder%
-    Try RegRead, excl, HKEY_LOCAL_MACHINE, %excl_reg_path%, %install_folder%
-    Catch {
+    if(!is_excluded()){
         MsgBox, 68, MicMute Updater
         , Allow MicMute to add an exclusion to Windows defender to prevent it from being falsely triggered?
         IfMsgBox, Yes
-            RegWrite, REG_DWORD, HKEY_LOCAL_MACHINE, %excl_reg_path%, %install_folder%, 0x0
+            Run, powershell.exe "Add-MpPreference -ExclusionPath '%install_folder%' ",, Hide UseErrorLevel
     }
 }
 
@@ -231,9 +233,16 @@ GUI_spawn(prog,txt){
     }
     return prog . "% " . txt
 }
+
 GUI_destroy(){
     Gui, Destroy
     GUI_state := 0
+}
+
+is_excluded(){
+    RunWait, powershell.exe "(Get-MpPreference).ExclusionPath | Out-File '%A_Temp%\ps_out.tmp'",, Hide UseErrorLevel
+    output:= FileOpen(A_Temp . "\ps_out.tmp", "R").Read()
+    return InStr(output, install_folder)
 }
 
 u_exit(code:=0){
