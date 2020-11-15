@@ -1,10 +1,13 @@
 body {
     background-color: #232323 !important;
-    scrollbar-base-color: #4d4d4d !important;
-    scrollbar-face-color: #4d4d4d !important;
-    scrollbar-highlight-color: #7a7a7a !important;
-    scrollbar-track-color: #232323 !important;
-    scrollbar-arrow-color: #7a7a7a !important;
+    scrollbar-base-color: #232323;
+    scrollbar-face-color: #4d4d4d;
+    scrollbar-3dlight-color: #4d4d4d;
+    scrollbar-highlight-color: #4d4d4d;
+    scrollbar-track-color: #232323;
+    scrollbar-arrow-color: #232323;
+    scrollbar-shadow-color: #4d4d4d;
+    scrollbar-dark-shadow-color: #4d4d4d;        
 }
 
 header {
