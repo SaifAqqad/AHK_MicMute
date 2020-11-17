@@ -9,7 +9,7 @@ Global neutron :=, GUI_mute_hotkey:=new UStack(), GUI_unmute_hotkey:=new UStack(
 ,GUI_mute_passthrough:=0,GUI_mute_wildcard:=0,GUI_unmute_passthrough:=0,GUI_unmute_wildcard:=0
 ,GUI_mute_nt:=1,GUI_unmute_nt:=1, GUI_passthrough_tt:="When the hotkey fires, its keys will not be hidden from the system."
 ,GUI_wildcard_tt:= "Fire the hotkey even if extra modifiers are held down.", GUI_nt_tt:="Use neutral modifiers (i.e. Alt instead of Left Alt / Right Alt)"
-,GUI_afk_tt:= "Mute the microphone when idling for longer than the AFK timeout"
+,GUI_afk_tt:= "Mute the microphone when idling for longer than the AFK timeout", GUI_timer_ref:=
 ,GUI_profile_tag_template:= "
 (
     <div class=""tag is-large"" id=""tag_profile_{1:}"" onClick=""ahk.checkProfileTag('{1:}')"">
@@ -92,81 +92,66 @@ addKey(element_id, InputHook, VK, SC){
     }
 }
 
-onRecord(neutron, element_id){
+onRecord(neutron, elemType){
     if(GUI_input_hook.InProgress){
         GUI_input_hook.Stop()
         sleep 30
     }
-    if(element_id = "mute_input"){
+    if(elemType = "mute")
         GUI_mute_hotkey:= new UStack()
-        hideElemID(neutron, "mute_record")
-        showElemID(neutron, "mute_stop")
-        funcObj:= Func("updateTimer").Bind("mute_stop")
-        funcObj.Call()
-        SetTimer, % funcObj, 1000
-    }else{
+    else
         GUI_unmute_hotkey:= new UStack()
-        hideElemID(neutron, "unmute_record")
-        showElemID(neutron, "unmute_stop")
-        funcObj:= Func("updateTimer").Bind("unmute_stop")
-        funcObj.Call()
-        SetTimer, % funcObj, 1000
-    }
-    inputElem:= neutron.doc.getElementByID(element_id)
+
+    hideElemID(neutron, elemType . "_record")
+    showElemID(neutron, elemType . "_stop")
+    GUI_timer_ref:= Func("updateTimer").Bind(elemType . "_stop")
+    GUI_timer_ref.Call()
+    SetTimer, % GUI_timer_ref, 1000
+
+    inputElem:= neutron.doc.getElementByID(elemType . "_input")
     inputElem.value:=""
     inputElem.placeholder:="Recording"
+
     GUI_input_hook:= InputHook("L0 T3","{Enter}{Escape}")
     GUI_input_hook.KeyOpt("{ALL}", "NI")
     GUI_input_hook.VisibleText:= false
     GUI_input_hook.VisibleNonText:= false
-    GUI_input_hook.OnKeyDown:= Func("addKey").Bind(element_id)
-    GUI_input_hook.OnEnd:= Func("onStop").Bind(neutron,element_id)
+    GUI_input_hook.OnKeyDown:= Func("addKey").Bind(elemType . "_input")
+    GUI_input_hook.OnEnd:= Func("onStop").Bind(neutron,elemType)
     GUI_input_hook.Start()
-    funcObj:= Func("addKey").Bind(element_id,"",0x5, 0x0)
+
+    funcObj:= Func("addKey").Bind(elemType . "_input","",0x5, 0x0)
     Hotkey, *XButton1, % funcObj, On
-    funcObj:= Func("addKey").Bind(element_id,"",0x6, 0x0)
+    funcObj:= Func("addKey").Bind(elemType . "_input","",0x6, 0x0)
     Hotkey, *XButton2, % funcObj, On 
 }
 
-onStop(neutron, element_id, InputHook:=""){
+onStop(neutron, elemType, InputHook:=""){
     if(GUI_input_hook.InProgress){
         GUI_input_hook.Stop()
         return
     }
     Hotkey, *XButton1, Off, UseErrorLevel
     Hotkey, *XButton2, Off, UseErrorLevel
-    str:="", inputElem:= neutron.doc.getElementByID(element_id)
+    str:="", inputElem:= neutron.doc.getElementByID(elemType . "_input")
+    ,stopElem:= neutron.doc.getElementById(elemType . "_stop").firstElementChild
     inputElem.placeholder:="Click Record"
-    if(element_id = "mute_input"){
-        hideElemID(neutron, "mute_stop")
-        showElemID(neutron, "mute_record")
-        sanitizeHotkey(GUI_mute_hotkey,str)
-    }else{
-        hideElemID(neutron, "unmute_stop")
-        showElemID(neutron, "unmute_record")
-        sanitizeHotkey(GUI_unmute_hotkey,str)
-    }
+    stopElem.value:= 3
+    stopElem.innerText:="Stop"
+    SetTimer, % GUI_timer_ref, Off
+    hideElemID(neutron, elemType . "_stop")
+    showElemID(neutron, elemType . "_record")
+    sanitizeHotkey(elemType = "mute"? GUI_mute_hotkey : GUI_unmute_hotkey,str)
     inputElem.value:= str
 }
 
 updateTimer(id){
-    static sec_mute := 3, sec_unmute := 3
-    buttonElem:= neutron.doc.getElementById(id)
-    if(id = "mute_stop"){
-        if(sec_mute = 0 || buttonElem.classList.contains("is-hidden")){
-            SetTimer,, Off
-            sec_mute := 3
-            return
-        }
-        buttonElem.firstElementChild.innerText:= Format("Stop ({})",sec_mute--)
-    }
-    else{
-        if(sec_unmute = 0 || buttonElem.classList.contains("is-hidden")){
-            SetTimer,, Off
-            sec_unmute := 3
-            return
-        }
-        buttonElem.firstElementChild.innerText:= Format("Stop ({})",sec_unmute--)
+    buttonElem:= neutron.doc.getElementById(id).firstElementChild
+    buttonElem.innerText:= Format("Stop ({})", buttonElem.value)
+    buttonElem.value := buttonElem.value - 1
+    if(buttonElem.value = 0){
+        Try SetTimer,, Off
+        buttonElem.value := 3
     }
 }
 
@@ -507,6 +492,8 @@ onHotkeyType(neutron){
     u_box:= neutron.doc.getElementById("unmute_box")
     afk_row:= neutron.doc.getElementById("afk_timeout_row")
     if(neutron.doc.getElementByID("sep_hotkey").checked){
+        u_box.classList.remove("is-hidden")
+        Sleep, 10
         u_box.classList.remove("box-hidden")
         afk_row.classList.remove("row-hidden")
         neutron.doc.getElementByID("mute_label").innerText:= "Mute hotkey"
@@ -515,11 +502,15 @@ onHotkeyType(neutron){
         u_box.classList.add("box-hidden")
         afk_row.classList.remove("row-hidden")
         neutron.doc.getElementByID("mute_label").innerText:= "Toggle hotkey"
+        funcObj:= Func("hideElemID").Bind(neutron, "unmute_box")
+        SetTimer, % funcObj, -100
     }
     if(neutron.doc.getElementByID("ptt_hotkey").checked){
         u_box.classList.add("box-hidden")
         afk_row.classList.add("row-hidden")
         neutron.doc.getElementByID("mute_label").innerText:= "Push-to-talk hotkey"
+        funcObj:= Func("hideElemID").Bind(neutron, "unmute_box")
+        SetTimer, % funcObj, -100
     }
 }
 
