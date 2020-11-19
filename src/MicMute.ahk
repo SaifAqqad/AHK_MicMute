@@ -188,11 +188,10 @@ editConfig(){
     Menu, Tray, Icon, %A_ScriptFullPath%, 1
     OSD_destroy()
     if(GetKeyState("Shift", "P")){
-        Try Run, open "config.json",,,procId
-        catch
-            Run notepad.exe "config.json",,,procId
-        WinWait, ahk_pid %procId%
-        WinWaitClose, ahk_pid %procId%
+        if(progPath:=getFileAssoc())   
+            Run, %ProgPath% %A_ScriptDir%\config.json
+        else
+            Run, notepad.exe %A_ScriptDir%\config.json
     }else{
         if(current_profile){
             disableHotkeys()
@@ -204,6 +203,19 @@ editConfig(){
         GUI_show()
         init()
     }
+}
+
+getFileAssoc(ext:="json"){
+    VarSetCapacity(numChars, 4)
+    DllCall("Shlwapi.dll\AssocQueryStringW"
+    , "UInt", 0x0, "UInt", 0x2, "WStr", "." . ext, "Ptr", 0, "Ptr", 0, "Ptr", &numChars)
+    numChars:= NumGet(&numChars, 0, "UInt")
+    VarSetCapacity(progPath, numChars*2)
+    DllCall("Shlwapi.dll\AssocQueryStringW"
+    , "UInt", 0x0, "UInt", 0x2, "WStr", "." . ext, "Ptr", 0, "Ptr", &progPath, "Ptr", &numChars)
+    return StrGet(&progPath,NumGet(&numChars, 0, "UInt"),"UTF-16")
+}
+
 checkChanges(){
     static last_modif_time:= ""
     FileGetTime, modif_time, config.json
