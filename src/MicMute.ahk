@@ -185,14 +185,8 @@ showFeedback(){
 }
 
 editConfig(){
-    OSD_destroy()
-    if(current_profile){
-        disableHotkeys()
-        SetTimer, updateState, Off
-        SetTimer, checkActivity, Off
-        SetTimer, checkProfiles, Off
-    }
     Menu, Tray, Icon, %A_ScriptFullPath%, 1
+    OSD_destroy()
     if(GetKeyState("Shift", "P")){
         Try Run, open "config.json",,,procId
         catch
@@ -200,10 +194,16 @@ editConfig(){
         WinWait, ahk_pid %procId%
         WinWaitClose, ahk_pid %procId%
     }else{
+        if(current_profile){
+            disableHotkeys()
+            SetTimer, updateState, Off
+            SetTimer, checkActivity, Off
+            SetTimer, checkProfiles, Off
+        }
         disableCheckChanges()
         GUI_show()
+        init()
     }
-    init()
 checkChanges(){
     static last_modif_time:= ""
     FileGetTime, modif_time, config.json
@@ -223,7 +223,7 @@ disableCheckChanges(){
 }
 
 playSound( ByRef Sound ) {
-    return DllCall( "winmm.dll\PlaySoundA", Ptr,&Sound, UInt,0, UInt, 0x7 )
+    return DllCall( "winmm.dll\PlaySoundW", Ptr,&Sound, UInt,0, UInt, 0x7 )
 }
 
 ResRead( ByRef Var, Key ) { 
