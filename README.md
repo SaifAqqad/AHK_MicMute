@@ -145,8 +145,8 @@ Click OK and a new configuration window will open:
 
 ## Libraries and resources used:
 
-   * [VA.ahk](https://autohotkey.com/board/topic/21984-vista-audio-control-functions/)
-   * [Neutron.ahk](https://github.com/G33kDude/Neutron.ahk)
+   * [VA.ahk](https://autohotkey.com/board/topic/21984-vista-audio-control-functions/) ([public domain](https://autohotkey.com/board/topic/36032-lexikos-default-copyright-license/))
+   * [Neutron.ahk](https://github.com/G33kDude/Neutron.ahk) ([MIT License](https://github.com/G33kDude/Neutron.ahk/blob/master/LICENSE))
    * [OSD.ahk](https://github.com/SaifAqqad/AHK_Script/blob/master/src/Lib/OSD.ahk)
-   * [Bulma CSS framework](https://bulma.io/)
-   * [Material Design icons](https://github.com/Templarian/MaterialDesign)
+   * [Bulma CSS framework](https://bulma.io/) ([MIT License](https://github.com/jgthms/bulma/blob/master/LICENSE))
+   * [Material Design icons](https://github.com/Templarian/MaterialDesign) ([Apache 2.0](https://github.com/Templarian/MaterialDesign/blob/master/LICENSE))
