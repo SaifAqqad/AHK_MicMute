@@ -50,6 +50,7 @@ init(){
         if(prof.LinkedApp)
             watched_profiles.Push(prof)
     Try SetTimer, checkProfiles, % watched_profiles.Length()? 3000 : "Off"
+    enableCheckChanges()
     UpdateSysTheme()
     tray_init()
     switchProfile()
@@ -199,9 +200,26 @@ editConfig(){
         WinWait, ahk_pid %procId%
         WinWaitClose, ahk_pid %procId%
     }else{
+        disableCheckChanges()
         GUI_show()
     }
     init()
+checkChanges(){
+    static last_modif_time:= ""
+    FileGetTime, modif_time, config.json
+    if(last_modif_time && modif_time!=last_modif_time)
+        init()
+    last_modif_time:= modif_time
+}
+
+enableCheckChanges(){
+    static ccObj:= Func("checkChanges")
+    setTimer, % ccObj, 3000
+}
+
+disableCheckChanges(){
+    static ccObj:= Func("checkChanges")
+    setTimer, % ccObj, Off
 }
 
 playSound( ByRef Sound ) {
