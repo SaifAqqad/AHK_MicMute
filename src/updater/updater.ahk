@@ -242,7 +242,7 @@ GUI_destroy(){
 is_excluded(){
     RunWait, powershell.exe "(Get-MpPreference).ExclusionPath | Out-File '%A_Temp%\ps_out.tmp'",, Hide UseErrorLevel
     output:= FileOpen(A_Temp . "\ps_out.tmp", "R").Read()
-    return InStr(output, install_folder)
+    return InStr(output, install_folder) || InStr(output, lg_install_folder)
 }
 
 u_exit(code:=0){
