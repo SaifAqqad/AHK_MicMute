@@ -1,7 +1,7 @@
 ﻿;compiler directives
 ;@Ahk2Exe-Let Res = %A_ScriptDir%\resources
 ;@Ahk2Exe-SetMainIcon %U_Res%\MicMute.ico
-;@Ahk2Exe-SetVersion 0.7.4
+;@Ahk2Exe-SetVersion 0.7.5
 ;@Ahk2Exe-SetName MicMute
 ;@Ahk2Exe-ExeName %A_ScriptDir%\updater\MicMute.exe
 ;@Ahk2Exe-AddResource %U_Res%\defaultBlack.ico, 3080
