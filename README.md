@@ -6,16 +6,9 @@
     Control your microphone using keyboard shortcuts.
 </p>
 <p align="center">
-    <a href="https://github.com/SaifAqqad/AHK_MicMute/releases/latest">
-        <img alt="GitHub release(latest SemVer)"
-            src="https://img.shields.io/github/v/release/SaifAqqad/AHK_MicMute?label=latest&sort=semver&style=flat-square">
-    </a>
-    <a href="https://github.com/SaifAqqad/AHK_MicMute/releases/latest">
-        <img src="https://img.shields.io/github/downloads/SaifAqqad/AHK_MicMute/total?style=flat-square"></img>
-    </a>
-    <a href="https://www.autohotkey.com/docs/AHKL_ChangeLog.htm">
-        <img src="https://img.shields.io/badge/AHK-v1.1.33.02-brightgreen?style=flat-square"></img>
-    </a>
+    <a href="https://github.com/SaifAqqad/AHK_MicMute/releases/latest"><img alt="GitHub release(latest SemVer)"src="https://img.shields.io/github/v/release/SaifAqqad/AHK_MicMute?label=latest&sort=semver&style=flat-square"></a>
+    <a href="https://github.com/SaifAqqad/AHK_MicMute/releases/latest"><img src="https://img.shields.io/github/downloads/SaifAqqad/AHK_MicMute/total?style=flat-square"></img></a>
+    <a href="https://www.autohotkey.com/docs/AHKL_ChangeLog.htm"><img src="https://img.shields.io/badge/AHK-v1.1.33.02-brightgreen?style=flat-square"></img></a>
 </p>
 
 ## Features
@@ -29,8 +22,10 @@
 ## Install using [Scoop](https://scoop.sh)
 
    ```powershell
-      # Run this in powershell, it will install scoop, add my bucket and then install MicMute 
-      Set-ExecutionPolicy RemoteSigned -scope CurrentUser;iwr -useb get.scoop.sh | iex;scoop install git;scoop bucket add utils https://github.com/SaifAqqad/utils.git;scoop install micmute;
+      # Add my bucket
+      scoop bucket add utils https://github.com/SaifAqqad/utils.git
+      # Install Micmute
+      scoop install micmute
    ```
    ###### You can update MicMute using `scoop update micmute`, your config file will be saved between updates.
 
