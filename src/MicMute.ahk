@@ -85,7 +85,7 @@ unmute(){
 }
 
 switchProfile(p_name:=""){
-    if(current_profile){
+    Try{
         disableHotkeys()
         SetTimer, updateState, Off
         SetTimer, checkActivity, Off
