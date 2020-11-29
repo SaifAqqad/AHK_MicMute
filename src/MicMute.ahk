@@ -34,6 +34,7 @@ Global conf, watched_profiles, current_profile, watched_profile
 , global_mute, ptt_key, mute_sound, unmute_sound, sys_theme
 init()
 SetTimer, runUpdater, -1
+OnExit("unmute")
 ;auto_exec end
 
 init(){
