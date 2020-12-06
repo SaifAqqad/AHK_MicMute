@@ -537,7 +537,7 @@ onSelectApp(neutron){
 }
 
 onclickFooter(neutron){
-    Run, https://github.com/SaifAqqad/AHK_MicMute
+    Run, https://github.com/SaifAqqad/AHK_MicMute, %A_Desktop%
 }
 
 ;------elements-functions------
