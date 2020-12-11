@@ -26,7 +26,7 @@ jobs:
           scoop install autohotkey;
           $ahk_path = scoop prefix autohotkey;
           Set-Location -Path $ahk_path\Compiler;
-          .\Ahk2Exe.exe /in "$GITHUB_WORKSPACE\src\MicMute.ahk" /out "$GITHUB_WORKSPACE\src\out\MicMute.exe" /icon "$GITHUB_WORKSPACE\src\MicMute.ico" | more;
+          .\Ahk2Exe.exe /in "$GITHUB_WORKSPACE\src\MicMute.ahk" /out "$GITHUB_WORKSPACE\src\out\MicMute.exe" /icon "$GITHUB_WORKSPACE\src\MicMute.ico";
       - name: Upload artifacts
         uses: actions/upload-release-asset@v1
         env:
