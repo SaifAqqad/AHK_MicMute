@@ -1,0 +1,40 @@
+name: compile_prerelease
+on:
+  push:
+  workflow_dispatch:
+jobs:
+  compile:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Scoop and AHK
+        shell: pwsh
+        run: |
+          Set-ExecutionPolicy RemoteSigned -scope CurrentUser -Force;
+          Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')
+          scoop bucket add extras;
+          scoop install autohotkey;
+      - name: Compile MicMute
+        shell: pwsh
+        run: |
+          Set-Location -Path $GITHUB_WORKSPACE;
+          ahk2exe.exe /in ".\src\MicMute.ahk" /out ".\src\out\MicMute.exe" /icon ".\src\MicMute.ico";
+      - name: Compile updater script
+        shell: pwsh
+        run: |
+          Set-Location -Path $GITHUB_WORKSPACE;
+          ahk2exe.exe /in ".\src\updater\updater.ahk" /out ".\src\out\updater.exe" /icon ".\src\updater\updater.ico";
+      - name: Recreate release
+        uses: GongT/actions-recreate-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: latest_commit
+          release_name: Build at commit ${{ github.sha }}
+          draft: false
+          prerelease: false
+      - name: Upload artifacts
+        uses: fnkr/github-action-ghr@v1
+        env:
+          GHR_PATH: src/out/
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
