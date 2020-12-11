@@ -35,3 +35,4 @@ jobs:
           upload_url: ${{ steps.recreate_release.outputs.upload_url }} 
           asset_path: ./src/out/MicMute.exe
           asset_name: MicMute.exe
+          asset_content_type: application/octet-stream
