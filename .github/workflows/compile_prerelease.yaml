@@ -6,7 +6,9 @@ jobs:
   compile:
     runs-on: windows-latest
     steps:
+
       - uses: actions/checkout@v2
+      
       - name: Recreate release
         id: recreate_release
         uses: GongT/actions-recreate-release@v1
@@ -17,17 +19,18 @@ jobs:
           release_name: Build at latest commit
           draft: false
           prerelease: true
+      
       - name: Build artifacts
+        id: build_artifacts
         shell: pwsh
         run: |
           Set-ExecutionPolicy RemoteSigned -scope CurrentUser -Force;
           Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')
           scoop bucket add extras;
           scoop install autohotkey;
-          $ahk_path = scoop prefix autohotkey;
-          Set-Location -Path $ahk_path\Compiler;
-          .\Ahk2Exe.exe /in "$GITHUB_WORKSPACE\src\MicMute.ahk" /out "$GITHUB_WORKSPACE\src\out\MicMute.exe" /icon "$GITHUB_WORKSPACE\src\MicMute.ico";
-      - name: Upload artifacts
+          ahk2exe.exe /in ".\src\MicMute.ahk" /out ".\src\out\MicMute.exe" /icon ".\src\MicMute.ico";
+
+      - name: Upload release artifacts
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
