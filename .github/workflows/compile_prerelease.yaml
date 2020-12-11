@@ -14,17 +14,9 @@ jobs:
           Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')
           scoop bucket add extras;
           scoop install autohotkey;
-      - name: Compile MicMute
-        shell: pwsh
-        run: |
           $ahk_path = scoop prefix autohotkey;
           Set-Location -Path $ahk_path\Compiler;
           .\Ahk2Exe.exe /in "$GITHUB_WORKSPACE\src\MicMute.ahk" /out "$GITHUB_WORKSPACE\src\out\MicMute.exe" /icon "$GITHUB_WORKSPACE\src\MicMute.ico";
-      - name: Compile updater script
-        shell: pwsh
-        run: |
-          $ahk_path = scoop prefix autohotkey;
-          Set-Location -Path $ahk_path\Compiler;
           .\Ahk2Exe.exe /in "$GITHUB_WORKSPACE\src\updater\updater.ahk" /out "$GITHUB_WORKSPACE\src\out\updater.exe" /icon "$GITHUB_WORKSPACE.\src\updater\updater.ico";
       - name: Recreate release
         uses: GongT/actions-recreate-release@v1
