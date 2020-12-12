@@ -28,14 +28,15 @@ jobs:
           scoop bucket add utils https://github.com/SaifAqqad/utils.git;
           scoop install utils/autohotkey;
           echo "Running Ahk2Exe";
-          & "$(scoop prefix autohotkey)\Compiler\Ahk2Exe.exe" /in ".\src\MicMute.ahk" /out ".\src\out\MicMute.exe" /icon ".\src\MicMute.ico" | more
-          echo "Finished with $LASTEXITCODE";
-      - name: Upload release artifacts
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          & "$(scoop prefix autohotkey)\Compiler\Ahk2Exe.exe" /in ".\src\MicMute.ahk" /out "MicMute.exe" /icon ".\src\MicMute.ico" | more
+          echo "MicMute compiled: $LASTEXITCODE"
+          & "$(scoop prefix autohotkey)\Compiler\Ahk2Exe.exe" /in ".\src\updater\updater.ahk" /out "updater.exe" /icon ".\src\MicMute.ico" | more
+          echo "updater compiled: $LASTEXITCODE"
+      - name: Upload files to a GitHub release
+        uses: svenstaro/upload-release-action@2.2.0
         with:
-          upload_url: ${{ steps.recreate_release.outputs.upload_url }} 
-          asset_path: ./src/out/MicMute.exe
-          asset_name: MicMute.exe
-          asset_content_type: application/octet-stream
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: "*.exe"
+          tag: latest_commit
+          overwrite: true
+          file_glob: true
