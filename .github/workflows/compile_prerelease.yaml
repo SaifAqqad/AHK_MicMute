@@ -25,8 +25,8 @@ jobs:
         run: |
           Set-ExecutionPolicy RemoteSigned -scope CurrentUser -Force;
           Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')
-          scoop bucket add extras;
-          scoop install autohotkey;
+          scoop bucket add utils https://github.com/SaifAqqad/utils.git;
+          scoop install utils/autohotkey;
           echo "Running Ahk2Exe";
           & "$(scoop prefix autohotkey)\Compiler\Ahk2Exe.exe" /in ".\src\MicMute.ahk" /out ".\src\out\MicMute.exe" /icon ".\src\MicMute.ico" | more
           echo "Finished with $LASTEXITCODE";
