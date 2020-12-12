@@ -1,6 +1,5 @@
 name: compile_prerelease
 on:
-  push:
   workflow_dispatch:
 jobs:
   compile:
@@ -28,8 +27,9 @@ jobs:
           Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')
           scoop bucket add extras;
           scoop install autohotkey;
-          ahk2exe.exe /in ".\src\MicMute.ahk" /out ".\src\out\MicMute.exe" /icon ".\src\MicMute.ico";
-
+          echo "Running Ahk2Exe";
+          & "$(scoop prefix autohotkey)\Compiler\Ahk2Exe.exe /in '.\src\MicMute.ahk' /out '.\src\out\MicMute.exe' /icon '.\src\MicMute.ico' | more;"
+          echo "Finished with $LASTEXITCODE";
       - name: Upload release artifacts
         uses: actions/upload-release-asset@v1
         env:
