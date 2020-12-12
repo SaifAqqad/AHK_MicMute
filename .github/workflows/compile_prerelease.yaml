@@ -28,7 +28,7 @@ jobs:
           scoop bucket add extras;
           scoop install autohotkey;
           echo "Running Ahk2Exe";
-          & "$(scoop prefix autohotkey)\Compiler\Ahk2Exe.exe /in '.\src\MicMute.ahk' /out '.\src\out\MicMute.exe' /icon '.\src\MicMute.ico' | more;"
+          & "$(scoop prefix autohotkey)\Compiler\Ahk2Exe.exe" /in ".\src\MicMute.ahk" /out ".\src\out\MicMute.exe" /icon ".\src\MicMute.ico" | more
           echo "Finished with $LASTEXITCODE";
       - name: Upload release artifacts
         uses: actions/upload-release-asset@v1
