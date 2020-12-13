@@ -1,12 +1,18 @@
-#Include, JSON.ahk
+#Include, ..\Lib\JSON.ahk
 #NoTrayIcon
-global install_folder:=, lg_install_folder:= A_AppData . "\..\Local\SaifAqqad\MicMute"
+EnvGet, localAppData, LOCALAPPDATA
+global install_folder:= localAppData . "\SaifAqqad\MicMute", lg_install_folder:= A_AppData . "\..\Local\SaifAqqad\MicMute"
 ,api_url:= "https://api.github.com/repos/SaifAqqad/AHK_MicMute/releases/latest"
 ,prog:=10, reg_path:="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MicMute"
 ,latest_ver:=,curr_ver:=,latest_url:=,latest_updater_url:=
 ,GUI_state:=0,GUI_prog:=,GUI_txt:=,is_silent:=0
-EnvGet, install_folder, LOCALAPPDATA
-install_folder .= "\SaifAqqad\MicMute"
+
+;  0 finished successfully
+; -1 Cancelled by user
+; -2 Latest version already installed
+; -3 Error writing/deleting files
+; -4 Relaunching updater
+; -5 Network error
 
 if(A_Args[1] = "-check-update")
     checkUpdate()
@@ -59,12 +65,11 @@ getLatestVer(){
         whr.WaitForResponse()
         response := JSON.Load(whr.ResponseText)
         latest_ver:= response.tag_name
-        if(response.assets[1].name="MicMute.exe"){
-            latest_url:= response.assets[1].browser_download_url
-            latest_updater_url:= response.assets[2].browser_download_url
-        }else{
-            latest_url:= response.assets[2].browser_download_url
-            latest_updater_url:= response.assets[1].browser_download_url
+        for i, asset in response.assets {
+            if(asset.name = "MicMute.exe")
+                latest_url:= asset.browser_download_url
+            else if(asset.name = "updater.exe")
+                latest_updater_url:= asset.browser_download_url
         }
     } catch {
         latest_ver:= -5
@@ -83,7 +88,7 @@ relaunch(args*){
         str.= arg . " "
     FileCopy, %A_ScriptFullPath%, %A_Temp%\*, 1
     Run, *RunAs %A_Temp%\%A_ScriptName% %str%
-    u_exit()
+    u_exit(-4)
 }
 
 ShellMessage( wParam,lParam ) {
@@ -154,8 +159,13 @@ uninstall(p_is_silent:=0){
     Sleep, 800
     prog+=30
     Menu, Tray, Tip, % GUI_spawn(prog,"Removing MicMute")
-    if(FileExist(install_folder))
-        FileRemoveDir, %install_folder%, 1
+    Try FileRemoveDir, %install_folder%, 1
+    Catch, err {
+        MsgBox, 16, MicMute Updater
+        , % "An error occured while removing MicMute:`n" . err.What . " returned " . err.Message
+        u_exit(-3)
+    }
+    Try FileRemoveDir, %localAppData%\SaifAqqad, 0
     Menu, Tray, Tip, % prog+=30
     Sleep, 800
     Menu, Tray, Tip, % GUI_spawn(prog,"Removing Shortcuts")
@@ -190,7 +200,7 @@ install(p_is_silent:=0){
     FileCreateShortcut, %install_folder%\MicMute.exe, %A_Programs%\SaifAqqad\MicMute\MicMute.lnk, %install_folder%
     FileCreateShortcut, %install_folder%\updater.exe,%A_Programs%\SaifAqqad\MicMute\MicMute Updater.lnk, %install_folder%
     prog+=20
-    Menu, Tray, Tip, % GUI_spawn(prog,"Adding MicMute to registry")
+    Menu, Tray, Tip, % GUI_spawn(prog,"Creating shortcuts")
     FileGetSize, size, %install_folder%\MicMute.exe, K
     RegWrite, REG_SZ, HKEY_LOCAL_MACHINE, %reg_path%
     RegWrite, REG_SZ, HKEY_LOCAL_MACHINE, %reg_path%, DisplayIcon, %install_folder%\MicMute.exe
@@ -245,6 +255,11 @@ is_excluded(){
     return InStr(output, install_folder) || InStr(output, lg_install_folder)
 }
 
+rmFileOnBoot(dir){
+    return DllCall("MoveFileExW", "Str", dir, "Str", 0, "UInt", 4)
+}
+
 u_exit(code:=0){
+    rmFileOnBoot(A_ScriptFullPath)
     ExitApp, % code
 }
