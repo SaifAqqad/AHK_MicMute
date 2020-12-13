@@ -3,7 +3,6 @@
 ;@Ahk2Exe-SetMainIcon %U_Res%\MicMute.ico
 ;@Ahk2Exe-SetVersion 0.7.5
 ;@Ahk2Exe-SetName MicMute
-;@Ahk2Exe-ExeName %A_ScriptDir%\updater\MicMute.exe
 ;@Ahk2Exe-AddResource %U_Res%\defaultBlack.ico, 3080
 ;@Ahk2Exe-AddResource %U_Res%\muteBlack.ico, 4080
 ;@Ahk2Exe-AddResource %U_Res%\defaultWhite.ico, 3090
