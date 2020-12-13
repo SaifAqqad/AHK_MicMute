@@ -1,5 +1,6 @@
 name: compile_prerelease
 on:
+  push:
   workflow_dispatch:
 jobs:
   compile:
@@ -26,11 +27,11 @@ jobs:
           Set-ExecutionPolicy RemoteSigned -scope CurrentUser -Force;
           Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')
           scoop bucket add utils https://github.com/SaifAqqad/utils.git;
-          scoop install utils/autohotkey;
+          scoop install utils/autohotkey sudo;
           echo "Running Ahk2Exe";
-          & "$(scoop prefix autohotkey)\Compiler\Ahk2Exe.exe" /in ".\src\MicMute.ahk" /out "MicMute.exe" /icon ".\src\MicMute.ico" | more
+          sudo "$(scoop prefix autohotkey)\Compiler\Ahk2Exe.exe" /in ".\src\MicMute.ahk" /out ".\MicMute.exe" /icon ".\src\MicMute.ico" | more
           echo "MicMute compiled: $LASTEXITCODE"
-          & "$(scoop prefix autohotkey)\Compiler\Ahk2Exe.exe" /in ".\src\updater\updater.ahk" /out "updater.exe" /icon ".\src\MicMute.ico" | more
+          sudo "$(scoop prefix autohotkey)\Compiler\Ahk2Exe.exe" /in ".\src\updater\updater.ahk" /out ".\updater.exe" /icon ".\src\updater\updater.ico" | more
           echo "updater compiled: $LASTEXITCODE"
       - name: Upload files to a GitHub release
         uses: svenstaro/upload-release-action@2.2.0
