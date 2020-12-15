@@ -8,10 +8,18 @@ jobs:
     steps:
 
       - uses: actions/checkout@v2
-      
-      - name: Recreate release
+
+      - uses: dev-drprasad/delete-tag-and-release@v0.1.2
+        name: Delete tag and release
+        with:
+          delete_release: true
+          tag_name: latest_commit
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Recreate tag and release
         id: recreate_release
-        uses: GongT/actions-recreate-release@v1
+        uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -30,9 +38,17 @@ jobs:
           scoop install utils/autohotkey sudo;
           echo "Running Ahk2Exe";
           sudo "$(scoop prefix autohotkey)\Compiler\Ahk2Exe.exe" /in ".\src\MicMute.ahk" /out ".\MicMute.exe" /icon ".\src\MicMute.ico" | more
-          echo "MicMute compiled: $LASTEXITCODE"
+          If ($LASTEXITCODE){
+            throw "MicMute failed to compile: $LASTEXITCODE"
+          }else{
+            echo "MicMute compiled: $LASTEXITCODE"
+          }
           sudo "$(scoop prefix autohotkey)\Compiler\Ahk2Exe.exe" /in ".\src\updater\updater.ahk" /out ".\updater.exe" /icon ".\src\updater\updater.ico" | more
-          echo "updater compiled: $LASTEXITCODE"
+          If ($LASTEXITCODE){
+            throw "updater failed to compile: $LASTEXITCODE"
+          }else{
+            echo "updater compiled: $LASTEXITCODE"
+          }
       - name: Upload files to a GitHub release
         uses: svenstaro/upload-release-action@2.2.0
         with:
