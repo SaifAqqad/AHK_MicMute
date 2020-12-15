@@ -101,8 +101,11 @@ switchProfile(p_name:=""){
     }
     Try initHotkeys()
     catch {
-        MsgBox, 64, MicMute, % Format("'{}' profile needs to be setup",current_profile.ProfileName)
-        editConfig()
+        MsgBox, 65, MicMute, % Format("'{}' profile needs to be setup",current_profile.ProfileName)
+        IfMsgBox, OK
+            editConfig()
+        IfMsgBox, Cancel
+            ExitApp, -2
     }
     OSD_spawn(Format("Profile: '{}'", current_profile.ProfileName),OSD_MAIN_ACCENT,current_profile.ExcludeFullscreen)
     updateState()
