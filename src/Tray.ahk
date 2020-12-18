@@ -64,7 +64,7 @@ tray_checkUpdate(){
 }
 
 tray_launchHelp(){
-    Run, https://github.com/SaifAqqad/AHK_MicMute#usage
+    Run, https://github.com/SaifAqqad/AHK_MicMute#usage, %A_Desktop%
 }
 
 tray_exit(){

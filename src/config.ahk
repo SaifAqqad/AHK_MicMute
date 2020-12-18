@@ -78,7 +78,7 @@ class Config {
 
 class ProfileTemplate{
     __New(p_name_Obj){
-        this.ProfileName:= p_name
+        this.ProfileName:= p_name_Obj
         this.Microphone:="capture"
         this.MuteHotkey:=""
         this.UnmuteHotkey:=""
