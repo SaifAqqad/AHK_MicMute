@@ -24,7 +24,8 @@ class Config {
         jsonFile.Close()
         jsonObj:= JSON.Load(jsonStr)
         this.DefaultProfile:= jsonObj.DefaultProfile
-        this.Profiles:= jsonObj.Profiles
+        for i, profile in jsonObj.Profiles ; to ensure new props are added to existing configs
+            this.Profiles.Push(new ProfileTemplate(profile))
     }
 
     importIniConfig(){
@@ -76,7 +77,7 @@ class Config {
 }
 
 class ProfileTemplate{
-    __New(p_name){
+    __New(p_name_Obj){
         this.ProfileName:= p_name
         this.Microphone:="capture"
         this.MuteHotkey:=""
@@ -88,5 +89,11 @@ class ProfileTemplate{
         this.afkTimeout:=0
         this.LinkedApp:=""
         this.PushToTalk:=0
+        this.OSDPos:={x:-1,y:-1}
+        if(IsObject(p_name_Obj)){
+            for prop, val in p_name_Obj{
+                this[prop]:= val
+            }
+        }
     }
 }

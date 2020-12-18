@@ -1,4 +1,4 @@
-;compiler directives
+﻿;compiler directives
 ;@Ahk2Exe-Let Res = %A_ScriptDir%\resources
 ;@Ahk2Exe-SetMainIcon %U_Res%\MicMute.ico
 ;@Ahk2Exe-SetVersion 0.7.6
@@ -107,7 +107,9 @@ switchProfile(p_name:=""){
         IfMsgBox, Cancel
             ExitApp, -2
     }
-    OSD_spawn(Format("Profile: '{}'", current_profile.ProfileName),OSD_MAIN_ACCENT,current_profile.ExcludeFullscreen)
+    OSD_x:= current_profile.OSDPos.x
+    OSD_y:= current_profile.OSDPos.y
+    OSD_show(Format("Profile: {}", current_profile.ProfileName),OSD_MAIN_ACCENT,current_profile.ExcludeFullscreen)
     updateState()
 }
 
@@ -178,9 +180,9 @@ checkProfiles(){
 showFeedback(){
     if (current_profile.OnscreenFeedback){
         if (global_mute)
-            OSD_spawn("Microphone Muted", OSD_RED_ACCENT, current_profile.ExcludeFullscreen)
+            OSD_show("Microphone Muted", OSD_MUTE_ACCENT, current_profile.ExcludeFullscreen)
         else
-            OSD_spawn("Microphone Online", OSD_BLUE_ACCENT, current_profile.ExcludeFullscreen)
+            OSD_show("Microphone Online", OSD_UNMUTE_ACCENT, current_profile.ExcludeFullscreen)
     }
     if (current_profile.SoundFeedback){
         playSound(global_mute? mute_sound : unmute_sound)
