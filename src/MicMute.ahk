@@ -1,4 +1,4 @@
-﻿;compiler directives
+;compiler directives
 ;@Ahk2Exe-Let Res = %A_ScriptDir%\resources
 ;@Ahk2Exe-SetMainIcon %U_Res%\MicMute.ico
 ;@Ahk2Exe-SetVersion 0.7.6
@@ -204,7 +204,8 @@ editConfig(){
         }
         disableCheckChanges()
         GUI_show()
-        init()
+        if(!checkChanges())
+            init()
     }
 }
 
@@ -222,9 +223,12 @@ getFileAssoc(ext:="json"){
 checkChanges(){
     static last_modif_time:= ""
     FileGetTime, modif_time, config.json
-    if(last_modif_time && modif_time!=last_modif_time)
+    if(last_modif_time && modif_time!=last_modif_time){
         init()
+        ret:= 1
+    }
     last_modif_time:= modif_time
+    return ret
 }
 
 enableCheckChanges(){
