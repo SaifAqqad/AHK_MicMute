@@ -107,8 +107,7 @@ switchProfile(p_name:=""){
         IfMsgBox, Cancel
             ExitApp, -2
     }
-    OSD_x:= current_profile.OSDPos.x
-    OSD_y:= current_profile.OSDPos.y
+    OSD_setPos(current_profile.OSDPos.x,current_profile.OSDPos.y)
     OSD_show(Format("Profile: {}", current_profile.ProfileName),OSD_MAIN_ACCENT,current_profile.ExcludeFullscreen)
     updateState()
 }
@@ -193,10 +192,10 @@ editConfig(){
     Menu, Tray, Icon, %A_ScriptFullPath%, 1
     OSD_destroy()
     if(GetKeyState("Shift", "P")){
-        if(progPath:=getFileAssoc())   
-            Run, %ProgPath% %A_ScriptDir%\config.json
+        if(progPath:=getFileAssoc("json"))
+            Run, %ProgPath% "%A_ScriptDir%\config.json",
         else
-            Run, notepad.exe %A_ScriptDir%\config.json
+            Run, notepad.exe "%A_ScriptDir%\config.json",
     }else{
         if(current_profile){
             disableHotkeys()
@@ -211,14 +210,14 @@ editConfig(){
     }
 }
 
-getFileAssoc(ext:="json"){
+getFileAssoc(extension){
     VarSetCapacity(numChars, 4)
     DllCall("Shlwapi.dll\AssocQueryStringW"
-    , "UInt", 0x0, "UInt", 0x2, "WStr", "." . ext, "Ptr", 0, "Ptr", 0, "Ptr", &numChars)
+    , "UInt", 0x0, "UInt", 0x2, "WStr", "." . extension, "Ptr", 0, "Ptr", 0, "Ptr", &numChars)
     numChars:= NumGet(&numChars, 0, "UInt")
     VarSetCapacity(progPath, numChars*2)
     DllCall("Shlwapi.dll\AssocQueryStringW"
-    , "UInt", 0x0, "UInt", 0x2, "WStr", "." . ext, "Ptr", 0, "Ptr", &progPath, "Ptr", &numChars)
+    , "UInt", 0x0, "UInt", 0x2, "WStr", "." . extension, "Ptr", 0, "Ptr", &progPath, "Ptr", &numChars)
     return StrGet(&progPath,NumGet(&numChars, 0, "UInt"),"UTF-16")
 }
 
