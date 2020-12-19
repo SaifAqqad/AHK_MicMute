@@ -464,6 +464,26 @@
                                 <span>Exclude fullscreen apps</span>
                             </label>
                         </div>
+                        <div class="row is-half row-hidden" id="osd_pos_row">
+                            <label unselectable="on" class="label title is-4 noselect">OSD position</label>
+                            <div class="columns">
+                                <div class="column is-3">
+                                    <button type="button" class="button is-primary is-fullwidth"
+                                    onclick="ahk.onOSDset()">Set Position</button>
+                                </div>
+                                <div class="column is-2">
+                                    <input class="input is-primary input-elem" id="osd_pos_x" disabled placeholder="X" style="text-align: center;" type="number">
+                                </div>
+                                <div class="column is-2">
+                                    <input class="input is-primary input-elem" id="osd_pos_y" disabled placeholder="Y" style="text-align: center;" type="number">
+                                </div>
+                                <div class="column is-3">
+                                    <button type="button" class="button is-primary is-fullwidth"
+                                    onclick="ahk.onOSDset(1)">Reset Position</button>
+                                </div>
+                            </div>
+                            
+                        </div>
                     </div>
                     <div class="row" id="afk_timeout_row">
                         <label unselectable="on" class="label title is-4 noselect afk-label" for="afk_timeout">AFK

@@ -323,6 +323,10 @@ onSaveProfile(neutron){
     current_profile.ExcludeFullscreen:= formData.on_screen_fb_excl? 1 : 0
     current_profile.SoundFeedback:= formData.sound_fb? 1 : 0
     current_profile.LinkedApp:= formData.linked_app
+    pos_x:= neutron.doc.getElementByID("osd_pos_x")
+    pos_y:= neutron.doc.getElementByID("osd_pos_y")
+    current_profile.OSDPos.x:= pos_x.value=""? -1 : pos_x.value
+    current_profile.OSDPos.y:= pos_y.value=""? -1 : pos_y.value
     conf.exportConfig()
     onRestoreProfile(neutron)
     notify(neutron,Format("Profile '{}' saved", formData.profile_name_field))
@@ -398,6 +402,8 @@ onRestoreProfile(neutron, event:=""){
     onOSDfb(neutron)
     if (current_profile.ExcludeFullscreen)
         neutron.doc.getElementByID("on_screen_fb_excl").checked:= "true"
+    neutron.doc.getElementByID("osd_pos_x").value:= current_profile.OSDPos.x != -1? current_profile.OSDPos.x : ""
+    neutron.doc.getElementByID("osd_pos_y").value:= current_profile.OSDPos.y != -1? current_profile.OSDPos.y : ""
     if (current_profile.afkTimeout)
         neutron.doc.getElementByID("afk_timeout").value:= current_profile.afkTimeout
     if (current_profile.linkedApp)
@@ -515,12 +521,34 @@ onHotkeyType(neutron){
 }
 
 onOSDfb(neutron){
-    tag:= neutron.doc.getElementByID("os_fb_excl_tag")
+    excl_tag:= neutron.doc.getElementByID("os_fb_excl_tag")
+    pos_row:= neutron.doc.getElementByID("osd_pos_row")
     if(neutron.doc.getElementByID("on_screen_fb").checked){
-        tag.classList.remove("hidden")
+        excl_tag.classList.remove("hidden")
+        pos_row.classList.remove("row-hidden")
     }else{
-        tag.classList.add("hidden")
+        excl_tag.classList.add("hidden")
+        pos_row.classList.add("row-hidden")
     }
+}
+
+onOSDset(neutron,is_reset:=0){
+    pox_x:=neutron.doc.getElementByID("osd_pos_x")
+    pox_y:=neutron.doc.getElementByID("osd_pos_y")
+    if(is_reset){
+        pox_x.value:=""
+        pox_y.value:=""
+        return
+    }
+    MsgBox, 64, MicMute, Drag the OSD to the desired position`nthen right click it.
+    neutron.Minimize()
+    OSD_showPosEditor(Func("onConfirmOSDPos"))
+}
+
+onConfirmOSDPos(x,y){
+    neutron.doc.getElementByID("osd_pos_x").value:= x
+    neutron.doc.getElementByID("osd_pos_y").value:= y
+    Gui, % neutron.hWnd ":Restore"
 }
 
 onSelectApp(neutron){

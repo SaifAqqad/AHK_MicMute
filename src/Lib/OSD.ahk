@@ -4,6 +4,7 @@ Global OSD_state:= 0
 , OSD_MUTE_ACCENT:= "DC3545"
 , OSD_UNMUTE_ACCENT:= "007BFF"
 , OSD_POS:= { x:-1, y:-1 }
+, OSD_PosEditorFunc:=""
 
 OSD_show(txt, OSD_Accent, exclude_fullscreen:=0){
     if (exclude_fullscreen && OSD_isActiveWinFullscreen())
@@ -41,12 +42,17 @@ OSD_destroy(){
     OSD_state := 0
     SetTimer, OSD_destroy, Off
 }
+OSD_showPosEditor(funcObj:=""){
+    OSD_spawn("RClick to confirm",OSD_MAIN_ACCENT,1)
+    OSD_PosEditorFunc:= funcObj
+    Gui, OSD:Default
+    OnMessage(0x204, "WM_RBUTTONDOWN")
+}
 OSD_setPos(x:="",y:=""){
     SysGet, mon, Monitor, 0
-    if(OSD_POS.x = -1)
-        OSD_POS.x := monRight/2 - 105
-    if(OSD_POS.y = -1)
-        OSD_POS.y := monBottom * 0.9
+    OSD_POS.x := !x? monRight/2 - 105 : x
+    OSD_POS.y := !y? monBottom * 0.9 : y
+    return OSD_POS
 }
 OSD_isActiveWinFullscreen(){
     winID := WinExist( "A" )
@@ -63,4 +69,15 @@ WM_LBUTTONDOWN(wParam, lParam, msg, hwnd){
     Checkhwnd := WinExist()
     if(hwnd = Checkhwnd)
         PostMessage, 0xA1, 2 
+}
+WM_RBUTTONDOWN(wParam, lParam, msg, hwnd){
+    Gui, OSD:Default 
+    Gui, +LastFound
+    Checkhwnd := WinExist()
+    if(hwnd != Checkhwnd)
+        return
+    WinGetPos, xPos,yPos
+    OSD_destroy() 
+    if(IsFunc(OSD_PosEditorFunc))
+        OSD_PosEditorFunc.Call(xPos,yPos)
 } 
