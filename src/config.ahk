@@ -50,7 +50,7 @@ class Config {
         if(!p_name)
             p_name:= this.DefaultProfile
         for i, profile in this.Profiles {
-            if(profile.ProfileName = p_name)
+            if(profile.ProfileName == p_name)
                 return profile
         }
         Throw, Exception(Format("Profile '{}' not found", p_name))
