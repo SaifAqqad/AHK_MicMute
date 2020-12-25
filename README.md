@@ -33,6 +33,9 @@
 ## Install using the updater script
    Download the [updater](https://github.com/SaifAqqad/AHK_MicMute/releases/latest/download/updater.exe) and run it.
   ###### The updater might falsely trigger windows defender as any portable unsigned executable does.
+## Use standalone executable
+   You can [download MicMute](https://github.com/SaifAqqad/AHK_MicMute/releases/latest/download/MicMute.exe) and use it standalone; however, the installation methods above will allow you to update more easily and will take care of creating shortcuts, uninstallation.. etc.
+
 ## Usage
 
 On the first run, you'll be asked to set up a profile:
@@ -43,16 +46,15 @@ Click OK and a new configuration window will open:
 
 ![](./src/resources/configwindow_1.png)
 
-1. Enter a profile name
 
-2. Choose your microphone from the drop down list.
+1. Choose your microphone from the drop down list.
 
-3. Choose whether you want separate hotkeys for Mute and Unmute or a single Toggle/Push-to-talk hotkey.
+2. Choose whether you want separate hotkeys for Mute and Unmute or a single Toggle/Push-to-talk hotkey.
 
       ![](./src/resources/configwindow_2.png)
 
 
-4. Based on your choice, you will either need to setup both hotkeys or just one of them.
+3. Based on your choice, you will either need to setup both hotkeys or just one of them.
         
    - Click on 'Record' then press the key(s) you want.
    - Turn on 'Wildcard' if you want the hotkey to be fired even if extra modifiers/keys are held down.
@@ -61,18 +63,17 @@ Click OK and a new configuration window will open:
       
       ##### Using a neutral modifier (i.e. Alt) alone as a hotkey will turn on passthrough
    
-5. Choose whether you want sound feedback when muting/unmuting the microphone or on-screen feedback or both.
+4. Choose whether you want sound feedback when muting/unmuting the microphone or on-screen feedback or both.
 
 
 
    <details><summary>On screen feedback</summary>
    
    ![](./src/resources/OSD.gif)
-   ![](./src/resources/OSD_light.gif)
    
    </details>
 
-6. Choose whether you want the OSD to exclude fullscreen apps/games (this is needed for games that lose focus when the OSD is shown).
+5. Choose whether you want the OSD to exclude fullscreen apps/games (this is needed for games that lose focus when the OSD is shown).
 
 7. Set up "AFK Timeout" if you want the microphone to be muted when you idle for longer than a set interval (in minutes).
 
@@ -109,40 +110,11 @@ Click OK and a new configuration window will open:
 }
 ```
 
-1. `Microphone` can be any substring of your microphone's name or the controller's name as shown in this image:
-   <details><summary>image</summary>
-
-   ![](./src/resources/Controlpaneldialog.png)
-
-   </details>
-   
-   you can also leave it as `"capture"` to select the default microphone
-### 
-2. Both `MuteHotkey` and `UnmuteHotkey` can be any hotkey supported by AHK, use this [List of keys](https://www.autohotkey.com/docs/KeyList.htm) as a reference, you can also combine them with [hotkey modifiers](https://www.autohotkey.com/docs/Hotkeys.htm#Symbols).
-
-   You can set both to the same hotkey to make it a toggle.
-
-
-   Examples: `"<^M"`: left ctrl+M, `"RShift"`: right shift, `"^!T"`: ctrl+alt+T, `"LControl & XButton1"`: left ctrl+ mouse 4
-
-
-3. Set `PushToTalk` to `1` to enable PTT,  `MuteHotkey` and `UnmuteHotkey` need to be set to the same hotkey first.
-
-4. Both `SoundFeedback` and `OnscreenFeedback` can be set to either `0` or `1`, you can also set `ExcludeFullscreen` to 1 to stop the OSD from showing on top of fullscreen applications
-   <details><summary>On screen feedback</summary>
-
-   ![](./src/resources/OSD.gif)
-
-   </details>
-   
-5. If `UpdateWithSystem` is set to 1, the tray icon will update whenever the microphone is muted/unmuted by the OS or other applications.
-
 </details>
 
 ## Libraries and resources used:
 
    * [VA.ahk](https://autohotkey.com/board/topic/21984-vista-audio-control-functions/) ([public domain](https://autohotkey.com/board/topic/36032-lexikos-default-copyright-license/))
    * [Neutron.ahk](https://github.com/G33kDude/Neutron.ahk) ([MIT License](https://github.com/G33kDude/Neutron.ahk/blob/master/LICENSE))
-   * [OSD.ahk](https://github.com/SaifAqqad/AHK_Script/blob/master/src/Lib/OSD.ahk)
    * [Bulma CSS framework](https://bulma.io/) ([MIT License](https://github.com/jgthms/bulma/blob/master/LICENSE))
    * [Material Design icons](https://github.com/Templarian/MaterialDesign) ([Apache 2.0](https://github.com/Templarian/MaterialDesign/blob/master/LICENSE))
