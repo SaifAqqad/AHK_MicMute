@@ -13,6 +13,7 @@
 ;@Ahk2Exe-AddResource %U_Res%\ptt_on.wav
 ;@Ahk2Exe-AddResource *10 %U_Res%\GUI.html
 ;@Ahk2Exe-AddResource %U_Res%\bulma.css
+;@Ahk2Exe-AddResource %U_Res%\base.css
 ;@Ahk2Exe-AddResource %U_Res%\dark.css
 ;@Ahk2Exe-AddResource %U_Res%\MicMute.png
 

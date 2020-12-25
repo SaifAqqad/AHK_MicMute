@@ -30,6 +30,8 @@ OSD_spawn(txt, OSD_Accent,is_draggable:=0){
         WinSet, Region, w220 h38 0-0 R15-15, ahk_id %GuiHwnd%
         if(is_draggable)
             OnMessage(0x201, "onDrag")
+        else
+            OnMessage(0x201, "")
         OSD_state:= 1
     }else{
         Gui, OSD:Default
