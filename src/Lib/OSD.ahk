@@ -26,8 +26,12 @@ OSD_spawn(txt, OSD_Accent,is_draggable:=0){
         if(OSD_POS.x = -1 || OSD_POS.y = -1)
             OSD_setPos()
         Gui, Show, % Format("w220 h38 NoActivate x{} y{}", OSD_POS.x, OSD_POS.y)
+        Gui, +HwndGuiHwnd
+        WinSet, Region, w220 h38 0-0 R15-15, ahk_id %GuiHwnd%
         if(is_draggable)
-            OnMessage(0x201, "WM_LBUTTONDOWN")
+            OnMessage(0x201, "onDrag")
+        else
+            OnMessage(0x201, "")
         OSD_state:= 1
     }else{
         Gui, OSD:Default
@@ -46,7 +50,7 @@ OSD_showPosEditor(funcObj:=""){
     OSD_spawn("RClick to confirm",OSD_MAIN_ACCENT,1)
     OSD_PosEditorFunc:= funcObj
     Gui, OSD:Default
-    OnMessage(0x204, "WM_RBUTTONDOWN")
+    OnMessage(0x205, "onRClick")
 }
 OSD_setPos(x:="",y:=""){
     SysGet, mon, Monitor, 0
@@ -63,14 +67,14 @@ OSD_isActiveWinFullscreen(){
     return !((style & 0x20800000) or WinActive("ahk_class Progman") 
     or WinActive("ahk_class WorkerW") or winH < A_ScreenHeight or winW < A_ScreenWidth)
 }
-WM_LBUTTONDOWN(wParam, lParam, msg, hwnd){
+onDrag(wParam, lParam, msg, hwnd){
     Gui, OSD:Default 
     Gui, +LastFound
     Checkhwnd := WinExist()
     if(hwnd = Checkhwnd)
         PostMessage, 0xA1, 2 
 }
-WM_RBUTTONDOWN(wParam, lParam, msg, hwnd){
+onRClick(wParam, lParam, msg, hwnd){
     Gui, OSD:Default 
     Gui, +LastFound
     Checkhwnd := WinExist()

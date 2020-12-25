@@ -7,15 +7,18 @@ Global neutron :=, GUI_mute_hotkey:=new UStack(), GUI_unmute_hotkey:=new UStack(
 ,"^":"Control","<+":"LShift",">+":"RShift","+":"Shift","<!":"LAlt",">!":"RAlt","!":"Alt","<#":"LWin",">#":"RWin","#":"LWin"}
 ,GUI_nt_modifiers:= {"RAlt":"Alt","LAlt":"Alt","RShift":"Shift","LShift":"Shift","RControl":"Control","LControl":"Control"}
 ,GUI_mute_passthrough:=0,GUI_mute_wildcard:=0,GUI_unmute_passthrough:=0,GUI_unmute_wildcard:=0
-,GUI_mute_nt:=1,GUI_unmute_nt:=1, GUI_passthrough_tt:="When the hotkey fires, its keys will not be hidden from the system."
-,GUI_wildcard_tt:= "Fire the hotkey even if extra modifiers are held down.", GUI_nt_tt:="Use neutral modifiers (i.e. Alt instead of Left Alt / Right Alt)"
-,GUI_afk_tt:= "Mute the microphone when idling for longer than the AFK timeout", GUI_timer_ref:=
-,GUI_profile_tag_template:= "
+,GUI_mute_nt:=1,GUI_unmute_nt:=1,GUI_timer_ref:=
+,GUI_tt:= [{selector:".passthrough-label",string:"The hotkey's keystrokes won't be hidden from the OS"}
+,{selector:".wildcard-label",string:"Fire the hotkey even if extra modifiers are held down"}
+,{selector:".nt-label",string:"Use neutral modifiers (i.e. Alt instead of Left Alt / Right Alt)"}
+,{selector:".afk-label",string:"Auto mute the microphone when idling for a length of time"}
+,{selector:".linked-app-label",string:"Link the profile to an application"}]
+, GUI_profile_tag_template:= "
 (
-    <div class=""tag is-large"" id=""tag_profile_{1:}"" onClick=""ahk.checkProfileTag('{1:}')"">
+    <div class=""tag is-large"" id=""tag_profile_{1:}"" oncontextmenu=""ahk.displayProfileRename('{1:}')"" onClick=""ahk.checkProfileTag('{1:}')"">
         <label unselectable=""on"" class=""radio"">
             <input type=""radio"" name=""profiles_radio"" value=""{1:}"" id=""profile_{1:}"">
-            <span>{1:}</span>
+            <span data-title=""Rclick to edit the profile name"" >{1:}</span>
         </label>
     </div>
 )"
@@ -25,15 +28,15 @@ GUI_show(){
     Menu, Tray, Icon, %A_ScriptFullPath%, 1
     neutron := new NeutronWindow()
     neutron.load("GUI.html")
-    if(sys_theme){
-        load_css("dark.css") 
-    }
-    add_tooltips()
     restoreConfig()
+    add_tooltips()
+    checkSysTheme()
     neutron.Gui("+MinSize700x440")
     neutron.show("w830 h650","MicMute")
     WinSet, Transparent, 252, % "ahk_id " . neutron.hWnd
+    SetTimer, checkSysTheme, 1500
     WinWaitClose, % "ahk_id " . neutron.hWnd
+    SetTimer, checkSysTheme, Off
     neutron.Destroy()
 }
 
@@ -275,12 +278,14 @@ onProfileSelect(neutron, event:="", p_name:=""){
 onChangeProfileName(neutron, event){
     txt:= event.target.value:= Trim(event.target.value)
     Try{
-        if(txt=""){
+        if(txt == current_profile.ProfileName){
+            return
+        }else if(txt=""){
             txt:= event.target.value:= "Profile"
         }else{
-            conf.getProfile(txt)
+            conf.getProfile(txt) ;if this fails then txt is unique, otherwise user gets notified
             notify(neutron, Format("Profile '{}' already exists",txt))
-            event.target.value:= current_profile.ProfileName
+            event.target.value:= current_profile.ProfileName ; reset changes
             return
         }
     }
@@ -289,6 +294,34 @@ onChangeProfileName(neutron, event){
     current_profile.ProfileName:= txt
     conf.exportConfig()
     notify(neutron, "Profile name saved")
+}
+
+displayProfileRename(neutron,profile_name:=""){
+    if(profile_name && profile_name!=current_profile.ProfileName){
+        checkProfileTag(neutron,profile_name)
+        Sleep, 100
+    }
+    neutron.doc.getElementById("page_mask").classList.remove("hidden")
+    neutron.doc.getElementById("profile_name").classList.remove("hidden")
+    field:=neutron.doc.getElementById("profile_name_field")
+    field.focus()
+    field.setSelectionRange(ln:=StrLen(field.value),ln)
+}
+
+hideProfileRename(neutron,event:=""){
+    maskElem:=neutron.doc.getElementById("page_mask")
+    pElem:=neutron.doc.getElementById("profile_name")
+    if(!event){
+        maskElem.classList.add("hidden")
+        pElem.classList.add("hidden")
+        return
+    }
+    switch event.keyCode {
+        case 0x1B,0x0D:
+            pElem.firstElementChild.blur()
+            maskElem.classList.add("hidden")
+            pElem.classList.add("hidden")
+    }
 }
 
 onSaveProfile(neutron){
@@ -329,7 +362,7 @@ onSaveProfile(neutron){
     current_profile.OSDPos.y:= pos_y.value=""? -1 : pos_y.value
     conf.exportConfig()
     onRestoreProfile(neutron)
-    notify(neutron,Format("Profile '{}' saved", formData.profile_name_field))
+    notify(neutron,Format("{} saved", current_profile.ProfileName))
     ControlSend,, {Home}, % "ahk_id " . neutron.hWnd
 }
 
@@ -421,7 +454,7 @@ onDeleteProfile(neutron){
     removeProfileTag(prfName)
     removeDefProfileOpt(prfName)
     checkProfileTag(neutron,conf.DefaultProfile)
-    notify(neutron,Format("Profile '{}' deleted",prfName))
+    notify(neutron,Format("{} deleted",prfName))
     ControlSend,, {Home}, % "ahk_id " . neutron.hWnd
 }
 
@@ -447,6 +480,7 @@ changeProfileTagName(profile_name){
     profTag:= neutron.doc.getElementByID("tag_profile_" . origProfName)
     profTag.id:= "tag_profile_" . profile_name
     profTag.setAttribute("onclick", Format("ahk.checkProfileTag('{}')", profile_name))
+    profTag.setAttribute("oncontextmenu", Format("ahk.displayProfileRename('{}')", profile_name))
     profTag.firstElementChild.firstElementChild.value:= profile_name
     profTag.firstElementChild.firstElementChild.id:= "profile_" . profile_name
     profTag.firstElementChild.lastElementChild.innerText:= profile_name
@@ -501,19 +535,19 @@ onHotkeyType(neutron){
         u_box.classList.remove("is-hidden")
         Sleep, 10
         u_box.classList.remove("box-hidden")
-        afk_row.classList.remove("row-hidden")
+        afk_row.classList.remove("is-hidden")
         neutron.doc.getElementByID("mute_label").innerText:= "Mute hotkey"
     }
     if(neutron.doc.getElementByID("tog_hotkey").checked){
         u_box.classList.add("box-hidden")
-        afk_row.classList.remove("row-hidden")
+        afk_row.classList.remove("is-hidden")
         neutron.doc.getElementByID("mute_label").innerText:= "Toggle hotkey"
         funcObj:= Func("hideElemID").Bind(neutron, "unmute_box")
         SetTimer, % funcObj, -100
     }
     if(neutron.doc.getElementByID("ptt_hotkey").checked){
         u_box.classList.add("box-hidden")
-        afk_row.classList.add("row-hidden")
+        afk_row.classList.add("is-hidden")
         neutron.doc.getElementByID("mute_label").innerText:= "Push-to-talk hotkey"
         funcObj:= Func("hideElemID").Bind(neutron, "unmute_box")
         SetTimer, % funcObj, -100
@@ -564,6 +598,13 @@ onSelectApp(neutron){
     }
 }
 
+clearLinkedApp(neutron,event){
+    switch event.keyCode {
+        case 0x2E,0x08 :
+            neutron.doc.getElementById("linked_app").value:=""
+    }
+}
+
 onclickFooter(neutron){
     Run, https://github.com/SaifAqqad/AHK_MicMute, %A_Desktop%
 }
@@ -580,26 +621,22 @@ showElemID(neutron, id){
     elem.classList.remove("is-hidden")
 }
 
-load_css(file){
-    local head := neutron.doc.querySelector("head"), link
-    link:= neutron.doc.createElement("link")
-    link.rel:= "stylesheet"
-    link.href:= file
-    head.appendChild(link)
+checkSysTheme(){
+    UpdateSysTheme()
+    dCSS := neutron.doc.getElementByID("css_dark")
+    if(sys_theme)
+        dCSS.removeAttribute("disabled")
+    else{
+        dCSS.setAttribute("disabled",1)
+    }
 }
 
 add_tooltips(){
-    pt_labels:= neutron.qsa(".passthrough-label")
-    wc_labels:= neutron.qsa(".wildcard-label")
-    nt_labels:= neutron.qsa(".nt-label")
-    afk_label:= neutron.qs(".afk-label")
-    for i, label in neutron.Each(pt_labels)
-        label.setAttribute("data-title", GUI_passthrough_tt)
-    for i, label in neutron.Each(wc_labels)
-        label.setAttribute("data-title", GUI_wildcard_tt)
-    for i, label in neutron.Each(nt_labels)
-        label.setAttribute("data-title", GUI_nt_tt)
-    afk_label.setAttribute("data-title", GUI_afk_tt)
+    for i,tt in GUI_tt {
+        elemList:= neutron.qsa(tt.selector)
+        for i, element in neutron.Each(elemList)
+            element.setAttribute("data-title",tt.string)
+    }
 }
 
 notify(neutron, txt){
