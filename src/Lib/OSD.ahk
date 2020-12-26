@@ -28,6 +28,7 @@ OSD_spawn(txt, OSD_Accent,is_draggable:=0){
         Gui, Show, % Format("w220 h38 NoActivate x{} y{}", OSD_POS.x, OSD_POS.y)
         Gui, +HwndGuiHwnd
         WinSet, Region, w220 h38 0-0 R15-15, ahk_id %GuiHwnd%
+        WinSet, Transparent, 248, ahk_id %GuiHwnd%
         if(is_draggable)
             OnMessage(0x201, "onDrag")
         else
