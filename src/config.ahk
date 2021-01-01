@@ -2,6 +2,7 @@
 class Config {
     DefaultProfile:=""
     Profiles:=Array()
+    MuteOnStartup:=0
 
     __New(p_DefaultProfile:=""){
         if(!FileExist("config.json")||isFileEmpty("config.json")){
@@ -24,6 +25,8 @@ class Config {
         jsonFile.Close()
         jsonObj:= JSON.Load(jsonStr)
         this.DefaultProfile:= jsonObj.DefaultProfile
+        if(jsonObj.MuteOnStartup)
+            this.MuteOnStartup:= jsonObj.MuteOnStartup
         for i, profile in jsonObj.Profiles ; to ensure new props are added to existing configs
             this.Profiles.Push(new ProfileTemplate(profile))
     }
