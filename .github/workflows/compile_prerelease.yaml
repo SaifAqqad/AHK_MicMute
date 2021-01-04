@@ -35,15 +35,17 @@ jobs:
           Set-ExecutionPolicy RemoteSigned -scope CurrentUser -Force;
           Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')
           scoop bucket add utils https://github.com/SaifAqqad/utils.git;
-          scoop install utils/autohotkey sudo;
+          scoop install utils/autohotkey sudo upx;
+          echo "Copying upx"
+          Copy-Item -Path "$(scoop prefix upx)\upx.exe" -Destination "$(scoop prefix autohotkey)\Compiler\"
           echo "Running Ahk2Exe";
-          sudo "$(scoop prefix autohotkey)\Compiler\Ahk2Exe.exe" /in ".\src\MicMute.ahk" /out ".\MicMute.exe" /icon ".\src\MicMute.ico" | more
+          sudo "$(scoop prefix autohotkey)\Compiler\Ahk2Exe.exe" /in ".\src\MicMute.ahk" /out ".\MicMute.exe" /icon ".\src\MicMute.ico" /compress "2" | more
           If ($LASTEXITCODE){
             throw "MicMute failed to compile: $LASTEXITCODE"
           }else{
             echo "MicMute compiled: $LASTEXITCODE"
           }
-          sudo "$(scoop prefix autohotkey)\Compiler\Ahk2Exe.exe" /in ".\src\updater\updater.ahk" /out ".\updater.exe" /icon ".\src\updater\updater.ico" | more
+          sudo "$(scoop prefix autohotkey)\Compiler\Ahk2Exe.exe" /in ".\src\updater\updater.ahk" /out ".\updater.exe" /icon ".\src\updater\updater.ico" /compress "2" | more
           If ($LASTEXITCODE){
             throw "updater failed to compile: $LASTEXITCODE"
           }else{
