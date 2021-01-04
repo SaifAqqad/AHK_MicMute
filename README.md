@@ -19,7 +19,7 @@
    * Optional sound and on-screen feedback
    * AFK timeout (auto mute when the user is AFK for longer than a specified time interval)
    * Auto-start on boot
-
+   * Very lightweight ( File size ≈ 1MB, CPU usage ≤ 1%, Memory usage ≤ 20MB )
 ## Install using [Scoop](https://scoop.sh)
 
    ```powershell
@@ -81,9 +81,14 @@ Click OK and a new configuration window will open:
 
 9. Click "Save profile"
 
+<details><summary><b>You can change the profile's name by right clicking the profile tag</b></summary> 
 
-<details><summary><b>You can also write/edit the config file in a text editor:</b></summary> 
+![](./src/resources/edit_name.gif)
+</details>
 
+#### Some options are not available in the GUI but can be changed in the [config file](#editing-the-config-file)
+* Mute on startup
+* Use custom sounds
 ## Editing the config file
  Hold shift when asked to setup a profile or when clicking "Edit configuration" from the tray menu, and the config file will open in a text editor
 
@@ -92,9 +97,10 @@ Click OK and a new configuration window will open:
 ```json
 {
     "DefaultProfile": "Default",
+    "MuteOnStartup": 0,
     "Profiles": [
         {
-            "afkTimeout": "2",
+            "afkTimeout": 2,
             "ExcludeFullscreen": 1,
             "LinkedApp": "",
             "Microphone": "Microphone (AmazonBasics Desktop Mini Mic)",
@@ -110,11 +116,20 @@ Click OK and a new configuration window will open:
             "UnmuteHotkey": "*RShift",
             "UpdateWithSystem": 1
         }
-    ]
+    ],
+    "UseCustomSounds": 0
 }
 ```
+### Custom sounds
+To use custom sounds, set `UseCustomSounds` to `1` then put the sound files (`mp3`,`wav`...) in the same directory as `MicMute.exe` and rename them as:
 
-</details>
+**Mute sound**: `mute.wav` 
+
+**Unmute sound**: `unmute.wav` 
+
+**PTT on**: `ptt_on.wav` 
+
+**PTT off**: `ptt_off.wav`
 
 ## Libraries and resources used:
 
