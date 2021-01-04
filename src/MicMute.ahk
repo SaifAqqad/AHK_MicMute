@@ -32,12 +32,12 @@
 SetWorkingDir %A_ScriptDir%
 Global conf, watched_profiles, current_profile, watched_profile
 , global_mute, ptt_key, mute_sound, unmute_sound, ptt_on_sound, ptt_off_sound, sys_theme
+SetTimer, runUpdater, -1
+SetTimer, GUI_create, -1
 init()
 conf.exportConfig()
 if(conf.MuteOnStartup)
     mute()
-SetTimer, runUpdater, -1
-SetTimer, GUI_create, -1
 OnExit("unmute")
 ;auto_exec end
 
