@@ -39,17 +39,21 @@ jobs:
           echo "Copying upx"
           Copy-Item -Path "$(scoop prefix upx)\upx.exe" -Destination "$(scoop prefix autohotkey)\Compiler\"
           echo "Running Ahk2Exe";
-          sudo "$(scoop prefix autohotkey)\Compiler\Ahk2Exe.exe" /in ".\src\MicMute.ahk" /out ".\MicMute.exe" /icon ".\src\MicMute.ico" /compress "2" | more
-          If ($LASTEXITCODE){
-            throw "MicMute failed to compile: $LASTEXITCODE"
+          sudo "$(scoop prefix autohotkey)\Compiler\Ahk2Exe.exe" /in ".\src\MicMute.ahk" /out ".\MicMute.exe" /icon ".\src\MicMute.ico" /compress "2" | more;
+          $err = $LASTEXITCODE
+          sudo Wait-Process -Name Ahk2Exe
+          If ($err){
+            throw "MicMute failed to compile: $err"
           }else{
-            echo "MicMute compiled: $LASTEXITCODE"
+            echo "MicMute compiled: $err"
           }
           sudo "$(scoop prefix autohotkey)\Compiler\Ahk2Exe.exe" /in ".\src\updater\updater.ahk" /out ".\updater.exe" /icon ".\src\updater\updater.ico" /compress "2" | more
-          If ($LASTEXITCODE){
-            throw "updater failed to compile: $LASTEXITCODE"
+          $err = $LASTEXITCODE
+          sudo Wait-Process -Name Ahk2Exe
+          If ($err){
+            throw "updater failed to compile: $err"
           }else{
-            echo "updater compiled: $LASTEXITCODE"
+            echo "updater compiled: $err"
           }
       - name: Upload files to a GitHub release
         uses: svenstaro/upload-release-action@2.2.0
