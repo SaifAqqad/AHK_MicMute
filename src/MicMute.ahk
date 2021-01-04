@@ -31,7 +31,7 @@
 ;auto_exec begin
 SetWorkingDir %A_ScriptDir%
 Global conf, watched_profiles, current_profile, watched_profile
-, global_mute, ptt_key, mute_sound, unmute_sound, sys_theme
+, global_mute, ptt_key, mute_sound, unmute_sound, ptt_on_sound, ptt_off_sound, sys_theme
 init()
 conf.exportConfig()
 if(conf.MuteOnStartup)
@@ -50,11 +50,14 @@ init(){
     , ptt_key:=""
     , mute_sound:=""
     , unmute_sound:=""
+    , ptt_on_sound:=""
+    , ptt_off_sound:=""
     , sys_theme:=""
     for i, prof in conf.Profiles 
         if(prof.LinkedApp)
             watched_profiles.Push(prof)
     Try SetTimer, checkProfiles, % watched_profiles.Length()? 3000 : "Off"
+    initSounds()
     enableCheckChanges()
     UpdateSysTheme()
     tray_init()
@@ -123,16 +126,12 @@ disableHotkeys(){
 }
 
 initHotkeys(){
-    resRead(mute_sound, Format("{:U}", "mute.wav"))
-    resRead(unmute_sound, Format("{:U}","unmute.wav"))
     Menu, Tray, Enable, Toggle microphone
     Menu, Tray, Default, Toggle microphone
     if (current_profile.MuteHotkey=current_profile.UnmuteHotkey){
         if(current_profile.PushToTalk){
             VA_SetMasterMute(1, current_profile.Microphone)
             ptt_key:= (StrSplit(current_profile.MuteHotkey, [" ","#","!","^","+","&",">","<","*","~","$","UP"], " `t")).Pop()
-            resRead(mute_sound, Format("{:U}", "ptt_off.wav"))
-            resRead(unmute_sound, Format("{:U}","ptt_on.wav"))
             Hotkey, % current_profile.MuteHotkey , ptt, On
             Menu, Tray, Disable, Toggle microphone
             Menu, Tray, NoDefault
@@ -143,6 +142,23 @@ initHotkeys(){
         Hotkey, % current_profile.MuteHotkey, mute, On
         Hotkey, % current_profile.UnmuteHotkey, unmute, On
     } 
+}
+
+initSounds(){
+    resRead(mute_sound, Format("{:U}", "mute.wav"))
+    resRead(unmute_sound, Format("{:U}","unmute.wav"))
+    resRead(ptt_on_sound, Format("{:U}", "ptt_off.wav"))
+    resRead(ptt_off_sound, Format("{:U}","ptt_on.wav"))
+    if(conf.UseCustomSounds){
+        resRead(mute_sound,"mute.mp3" ,0)
+        || resRead(mute_sound, "mute.wav",0)
+        resRead(unmute_sound,"unmute.mp3" ,0)
+        || resRead(unmute_sound, "unmute.wav",0)
+        resRead(ptt_on_sound,"ptt_on.mp3" ,0)
+        || resRead(ptt_on_sound, "ptt_on.wav",0)
+        resRead(ptt_off_sound,"ptt_off.mp3" ,0)
+        || resRead(ptt_off_sound, "ptt_off.wav",0)
+    }
 }
 
 updateState(){
@@ -189,7 +205,10 @@ showFeedback(){
             OSD_show("Microphone Online", OSD_UNMUTE_ACCENT, current_profile.ExcludeFullscreen)
     }
     if (current_profile.SoundFeedback){
-        playSound(global_mute? mute_sound : unmute_sound)
+        if(current_profile.PushToTalk)
+            playSound(global_mute? ptt_off_sound : ptt_on_sound)
+        else
+            playSound(global_mute? mute_sound : unmute_sound)
     }
 }
 
@@ -247,26 +266,36 @@ disableCheckChanges(){
     setTimer, % ccObj, Off
 }
 
-playSound( ByRef Sound ) {
+playSound(ByRef sound) {
     DllCall( "winmm.dll\PlaySoundW", Ptr,0, UInt,0, UInt, 0 )
+    Try SoundPlay, Nonexistent.notype
     Sleep, 10
-    return DllCall( "winmm.dll\PlaySoundW", Ptr,&Sound, UInt,0, UInt, 0x7 )
+    if(IsObject(sound)){
+        SoundPlay, % sound.path
+        return 1
+    }
+    return DllCall( "winmm.dll\PlaySoundW", Ptr,&sound, UInt,0, UInt, 0x7 )
 }
 
-ResRead( ByRef Var, Key ) { 
-    VarSetCapacity( Var, 128 ), VarSetCapacity( Var, 0 )
-    if ! ( A_IsCompiled ) {
-        FileGetSize, nSize, %Key%
-        FileRead, Var, *c %Key%
-        return nSize
+resRead(ByRef Var, Key, is_res:=1) { 
+    if(!is_res) {
+        if(!FileExist(key))
+            return 0
+        SplitPath, key,,, ext,,
+        if(ext = "wav")
+            FileRead, Var, *c %Key%
+        else
+            Var:= {path:Key}
+        return 1
     }
+    VarSetCapacity(Var, 128), VarSetCapacity(Var, 0)
     if hMod := DllCall( "GetModuleHandle", UInt,0,PTR )
         if hRes := DllCall( "FindResource", UInt,hMod, Str,Key, UInt,10,PTR )
             if hData := DllCall( "LoadResource", UInt,hMod, UInt,hRes,PTR )
                 if pData := DllCall( "LockResource", UInt,hData,PTR )
                     return VarSetCapacity( Var, nSize := DllCall( "SizeofResource", UInt,hMod, UInt,hRes,PTR ) )
                         , DllCall( "RtlMoveMemory", Str,Var, UInt,pData, UInt,nSize )
-    return 0 
+    return 1
 }
 
 UpdateSysTheme(){

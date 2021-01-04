@@ -3,6 +3,7 @@ class Config {
     DefaultProfile:=""
     Profiles:=Array()
     MuteOnStartup:=0
+    UseCustomSounds:=0
 
     __New(p_DefaultProfile:=""){
         if(!FileExist("config.json")||isFileEmpty("config.json")){
@@ -27,6 +28,8 @@ class Config {
         this.DefaultProfile:= jsonObj.DefaultProfile
         if(jsonObj.MuteOnStartup)
             this.MuteOnStartup:= jsonObj.MuteOnStartup
+        if(jsonObj.UseCustomSounds)
+            this.UseCustomSounds:= jsonObj.UseCustomSounds
         for i, profile in jsonObj.Profiles ; to ensure new props are added to existing configs
             this.Profiles.Push(new ProfileTemplate(profile))
     }
