@@ -6,10 +6,10 @@
     Control your microphone using keyboard shortcuts.
 </p>
 <p align="center">
-    <a href="https://github.com/SaifAqqad/AHK_MicMute/actions?query=workflow%3Acompile_prerelease"><img src="https://img.shields.io/github/workflow/status/SaifAqqad/AHK_MicMute/compile_prerelease?style=for-the-badge"></img></a>
-    <a href="https://github.com/SaifAqqad/AHK_MicMute/releases/latest"><img alt="GitHub release(latest SemVer)"src="https://img.shields.io/github/v/release/SaifAqqad/AHK_MicMute?label=Latest&style=for-the-badge"></a>
-    <a href="https://github.com/SaifAqqad/AHK_MicMute/releases/latest"><img src="https://img.shields.io/github/downloads/SaifAqqad/AHK_MicMute/total?style=for-the-badge"></img></a>
-    <a href="https://www.autohotkey.com/docs/AHKL_ChangeLog.htm#v1.1.33.02"><img src="https://img.shields.io/badge/AHK-v1.1.33.02-brightgreen?style=for-the-badge"></img></a>
+    <a href="https://github.com/SaifAqqad/AHK_MicMute/actions?query=workflow%3Acompile_prerelease"><img src="https://img.shields.io/github/workflow/status/SaifAqqad/AHK_MicMute/compile_prerelease/master?color=%23FC4C20&logo=ahk&style=for-the-badge"></img></a>
+    <a href="https://github.com/SaifAqqad/AHK_MicMute/releases/latest"><img alt="GitHub release(latest SemVer)"src="https://img.shields.io/github/v/release/SaifAqqad/AHK_MicMute?color=%23FF5B20&label=Latest&style=for-the-badge"></a>
+    <a href="https://github.com/SaifAqqad/AHK_MicMute/releases/latest"><img src="https://img.shields.io/github/downloads/SaifAqqad/AHK_MicMute/total?color=%23FF6920&style=for-the-badge"></img></a>
+    <a href="https://www.autohotkey.com/docs/AHKL_ChangeLog.htm#v1.1.33.02"><img src="https://img.shields.io/badge/AHK-v1.1.33.02-%23FF7720?style=for-the-badge"></img></a>
 </p>
 
 ## Features
