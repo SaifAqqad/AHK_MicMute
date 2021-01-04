@@ -37,6 +37,7 @@ conf.exportConfig()
 if(conf.MuteOnStartup)
     mute()
 SetTimer, runUpdater, -1
+SetTimer, GUI_create, -1
 OnExit("unmute")
 ;auto_exec end
 
@@ -247,6 +248,8 @@ disableCheckChanges(){
 }
 
 playSound( ByRef Sound ) {
+    DllCall( "winmm.dll\PlaySoundW", Ptr,0, UInt,0, UInt, 0 )
+    Sleep, 10
     return DllCall( "winmm.dll\PlaySoundW", Ptr,&Sound, UInt,0, UInt, 0x7 )
 }
 

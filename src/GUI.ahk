@@ -23,25 +23,29 @@ Global neutron :=, GUI_mute_hotkey:=new UStack(), GUI_unmute_hotkey:=new UStack(
     </div>
 )"
 ;------init-functions------
-GUI_show(){ 
+GUI_create(){
     RegWrite, REG_DWORD, HKEY_CURRENT_USER, SOFTWARE\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_GPU_RENDERING, MicMute.exe, 0x1
     Menu, Tray, Icon, %A_ScriptFullPath%, 1
     neutron := new NeutronWindow()
     neutron.load("GUI.html")
+}
+
+GUI_show(){ 
     restoreConfig()
     add_tooltips()
     checkSysTheme()
     neutron.Gui("+MinSize700x440")
-    neutron.show("w830 h650","MicMute")
+    neutron.show("Center w830 h650","MicMute")
     WinSet, Transparent, 252, % "ahk_id " . neutron.hWnd
     SetTimer, checkSysTheme, 1500
     WinWaitClose, % "ahk_id " . neutron.hWnd
     SetTimer, checkSysTheme, Off
-    neutron.Destroy()
+    neutron.Close()
 }
 
 restoreConfig(){
     neutron.doc.getElementById("def_profile").innerHTML:=""
+    neutron.doc.getElementById("profiles").innerHTML:=""
     for i, prfl in conf.Profiles {
         addDefProfileOpt(prfl.ProfileName,(conf.DefaultProfile=prfl.ProfileName))
         addProfileTag(prfl.ProfileName)
