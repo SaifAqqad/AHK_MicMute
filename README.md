@@ -131,7 +131,28 @@ To use custom sounds, set `UseCustomSounds` to `1` then put the sound files (`mp
 
 **PTT off**: `ptt_off.wav`
 
-## Libraries and resources used:
+## Compile instructions:
+##### Run these commands in powershell
+1. Clone the repository
+    ```powershell
+    git clone https://github.com/SaifAqqad/AHK_MicMute.git;
+    cd .\AHK_MicMute\;
+    ```
+2. Install autohotkey
+    ```powershell
+    scoop bucket add extras;
+    scoop install autohotkey;
+    ```
+3. Install upx (optional)
+    ```powershell
+    scoop install upx;
+    cp "$(scoop prefix upx)\upx.exe" -Destination "$(scoop prefix autohotkey)\Compiler\";
+    ```
+4. Run ahk2exe
+    ```powershell
+    ahk2exe /in ".\src\MicMute.ahk" /out ".\src\MicMute.exe";    # add `/compress 2` if upx was installed
+    ```
+## Libraries and resources used
 
    * [VA.ahk](https://autohotkey.com/board/topic/21984-vista-audio-control-functions/) ([public domain](https://autohotkey.com/board/topic/36032-lexikos-default-copyright-license/))
    * [Neutron.ahk](https://github.com/G33kDude/Neutron.ahk) ([MIT License](https://github.com/G33kDude/Neutron.ahk/blob/master/LICENSE))
