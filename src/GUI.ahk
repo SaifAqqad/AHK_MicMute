@@ -24,7 +24,7 @@ Global neutron :=, GUI_mute_hotkey:=new UStack(), GUI_unmute_hotkey:=new UStack(
 )"
 ;------init-functions------
 GUI_create(){
-    RegWrite, REG_DWORD, HKEY_CURRENT_USER, SOFTWARE\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_GPU_RENDERING, MicMute.exe, 0x1
+    RegWrite, REG_DWORD, HKEY_CURRENT_USER, SOFTWARE\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_GPU_RENDERING, %A_ScriptName%, 0x1
     Menu, Tray, Icon, %A_ScriptFullPath%, 1
     neutron := new NeutronWindow()
     neutron.load("GUI.html")
@@ -34,6 +34,7 @@ GUI_show(){
     restoreConfig()
     add_tooltips()
     checkSysTheme()
+    neutron.doc.getElementById("top").scrollIntoView()
     neutron.Gui("+MinSize700x440")
     neutron.show("Center w830 h650","MicMute")
     WinSet, Transparent, 252, % "ahk_id " . neutron.hWnd
@@ -367,7 +368,7 @@ onSaveProfile(neutron){
     conf.exportConfig()
     onRestoreProfile(neutron)
     notify(neutron,Format("{} saved", current_profile.ProfileName))
-    ControlSend,, {Home}, % "ahk_id " . neutron.hWnd
+    neutron.doc.getElementById("top").scrollIntoView()
 }
 
 onRestoreProfile(neutron, event:=""){
@@ -459,7 +460,7 @@ onDeleteProfile(neutron){
     removeDefProfileOpt(prfName)
     checkProfileTag(neutron,conf.DefaultProfile)
     notify(neutron,Format("{} deleted",prfName))
-    ControlSend,, {Home}, % "ahk_id " . neutron.hWnd
+    neutron.doc.getElementById("top").scrollIntoView()
 }
 
 addProfileTag(profile_name){
