@@ -1,4 +1,4 @@
-;compiler directives
+﻿;compiler directives
 ;@Ahk2Exe-Let Res = %A_ScriptDir%\resources
 ;@Ahk2Exe-SetMainIcon %U_Res%\MicMute.ico
 ;@Ahk2Exe-SetVersion 0.7.8
@@ -74,7 +74,7 @@ setMuteState(state){
     switch state {
         case global_state: return
         case -1: state:= !global_state
-}
+    }
     VA_SetMasterMute(state, current_profile.Microphone)
     updateGlobalState()
     SetTimer, showFeedback, -1, 5
@@ -104,7 +104,8 @@ switchProfile(p_name:=""){
             ExitApp, -2
     }
     OSD_setPos(current_profile.OSDPos.x,current_profile.OSDPos.y)
-    OSD_show(Format("Profile: {}", current_profile.ProfileName),OSD_MAIN_ACCENT,current_profile.ExcludeFullscreen)
+    if(conf.SwitchProfileOSD)
+        OSD_show(Format("Profile: {}", current_profile.ProfileName),OSD_MAIN_ACCENT,current_profile.ExcludeFullscreen)
     updateGlobalState()
 }
 

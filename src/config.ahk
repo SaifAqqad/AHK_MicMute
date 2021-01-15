@@ -4,6 +4,7 @@ class Config {
     Profiles:=Array()
     MuteOnStartup:=0
     UseCustomSounds:=0
+    SwitchProfileOSD:=1
 
     __New(p_DefaultProfile:=""){
         if(!FileExist("config.json")||isFileEmpty("config.json")){
@@ -28,7 +29,7 @@ class Config {
         for prop,val in jsonObj { ; apply json object props over config object props
             if(prop = "profiles")
                 for i, profile in val ; to ensure new props are added to existing profiles
-            this.Profiles.Push(new ProfileTemplate(profile))
+                    this.Profiles.Push(new ProfileTemplate(profile))
             else 
                 this[prop] := jsonObj[prop] 
         }
