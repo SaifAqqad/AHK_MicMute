@@ -1,4 +1,4 @@
-﻿;compiler directives
+;compiler directives
 ;@Ahk2Exe-Let Res = %A_ScriptDir%\resources
 ;@Ahk2Exe-SetMainIcon %U_Res%\MicMute.ico
 ;@Ahk2Exe-SetVersion 0.7.8
@@ -31,14 +31,14 @@
 ;auto_exec begin
 SetWorkingDir %A_ScriptDir%
 Global conf, watched_profiles, current_profile, watched_profile
-, global_mute, ptt_key, mute_sound, unmute_sound, ptt_on_sound, ptt_off_sound, sys_theme
+, global_state, ptt_key, mute_sound, unmute_sound, ptt_on_sound, ptt_off_sound, sys_theme
 SetTimer, runUpdater, -1
 SetTimer, GUI_create, -1
 init()
 conf.exportConfig()
 if(conf.MuteOnStartup)
-    mute()
-OnExit("unmute")
+    setMuteState(1)
+OnExit(Func("setMuteState").bind(0))
 ;auto_exec end
 
 init(){
@@ -46,7 +46,7 @@ init(){
     , watched_profiles:= Array()
     , current_profile:=""
     , watched_profile:=""
-    , global_mute:=""
+    , global_state:=""
     , ptt_key:=""
     , mute_sound:=""
     , unmute_sound:=""
@@ -64,45 +64,33 @@ init(){
     switchProfile()
 }
 
-tgl(){
-    VA_SetMasterMute(!global_mute, current_profile.Microphone)
-    updateState()
-    SetTimer, showFeedback, -1, 5
-}
-
 ptt(){
-    unmute()
+    setMuteState(0)
     KeyWait, %ptt_key%
-    mute()
+    setMuteState(1)
 }
 
-mute(){
-    if (global_mute)
-        Return
-    VA_SetMasterMute(1, current_profile.Microphone)
-    updateState()
-    SetTimer, showFeedback, -1, 5
+setMuteState(state){
+    switch state {
+        case global_state: return
+        case -1: state:= !global_state
 }
-
-unmute(){
-    if (!global_mute)
-        return
-    VA_SetMasterMute(0, current_profile.Microphone)
-    updateState()
+    VA_SetMasterMute(state, current_profile.Microphone)
+    updateGlobalState()
     SetTimer, showFeedback, -1, 5
 }
 
 switchProfile(p_name:=""){
     Try{
         disableHotkeys()
-        SetTimer, updateState, Off
+        SetTimer, updateGlobalState, Off
         SetTimer, checkActivity, Off
         Menu, profiles, Uncheck, % current_profile.ProfileName
     }
     current_profile:= conf.getProfile(p_name)
     Menu, profiles, Check, % current_profile.ProfileName
     if (current_profile.UpdateWithSystem){
-        SetTimer, updateState, 1500
+        SetTimer, updateGlobalState, 1500
     }
     if (current_profile.afkTimeout && !current_profile.PushToTalk){
         SetTimer, checkActivity, 1000
@@ -117,7 +105,7 @@ switchProfile(p_name:=""){
     }
     OSD_setPos(current_profile.OSDPos.x,current_profile.OSDPos.y)
     OSD_show(Format("Profile: {}", current_profile.ProfileName),OSD_MAIN_ACCENT,current_profile.ExcludeFullscreen)
-    updateState()
+    updateGlobalState()
 }
 
 disableHotkeys(){
@@ -136,11 +124,14 @@ initHotkeys(){
             Menu, Tray, Disable, Toggle microphone
             Menu, Tray, NoDefault
         }else{
-            Hotkey, % current_profile.MuteHotkey , tgl, On
+            funcObj:= Func("setMuteState").bind(-1)
+            Hotkey, % current_profile.MuteHotkey , % funcObj, On
         }
     }else{
-        Hotkey, % current_profile.MuteHotkey, mute, On
-        Hotkey, % current_profile.UnmuteHotkey, unmute, On
+        funcObj:= Func("setMuteState").bind(1)
+        Hotkey, % current_profile.MuteHotkey, % funcObj, On
+        funcObj:= Func("setMuteState").bind(0)
+        Hotkey, % current_profile.UnmuteHotkey, % funcObj, On
     } 
 }
 
@@ -161,10 +152,10 @@ initSounds(){
     }
 }
 
-updateState(){
-    global_mute:= VA_GetMasterMute(current_profile.Microphone)
+updateGlobalState(){
+    global_state:= VA_GetMasterMute(current_profile.Microphone)
     UpdateSysTheme()
-    if(global_mute){
+    if(global_state){
         tooltipTxt:= "Microphone Muted"
         tray_update(sys_theme? U_muteWhite : U_muteBlack, tooltipTxt)
     }else{
@@ -175,7 +166,7 @@ updateState(){
 
 checkActivity(){
     if (A_TimeIdlePhysical > current_profile.afkTimeout * 60000)
-        mute()
+        setMuteState(1)
 }
 
 checkProfiles(){
@@ -199,16 +190,16 @@ checkProfiles(){
 
 showFeedback(){
     if (current_profile.OnscreenFeedback){
-        if (global_mute)
+        if (global_state)
             OSD_show("Microphone Muted", OSD_MUTE_ACCENT, current_profile.ExcludeFullscreen)
         else
             OSD_show("Microphone Online", OSD_UNMUTE_ACCENT, current_profile.ExcludeFullscreen)
     }
     if (current_profile.SoundFeedback){
         if(current_profile.PushToTalk)
-            playSound(global_mute? ptt_off_sound : ptt_on_sound)
+            playSound(global_state? ptt_off_sound : ptt_on_sound)
         else
-            playSound(global_mute? mute_sound : unmute_sound)
+            playSound(global_state? mute_sound : unmute_sound)
     }
 }
 
@@ -223,7 +214,7 @@ editConfig(){
     }else{
         if(current_profile){
             disableHotkeys()
-            SetTimer, updateState, Off
+            SetTimer, updateGlobalState, Off
             SetTimer, checkActivity, Off
             SetTimer, checkProfiles, Off
         }

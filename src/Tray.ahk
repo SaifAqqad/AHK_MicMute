@@ -18,7 +18,7 @@ tray_init(){
     tray_add("Edit configuration",Func("editConfig"))
     tray_createProfilesMenu()
     tray_add("Profile", ":profiles")
-    tray_add("Toggle microphone", Func("tgl"))
+    tray_add("Toggle microphone", Func("setMuteState").bind(-1))
     Menu, Tray, Click, 1
     Menu, Tray, Default, 1&
     if (!FileExist(startup_shortcut))
@@ -64,7 +64,14 @@ tray_checkUpdate(){
 }
 
 tray_launchHelp(){
-    Run, https://github.com/SaifAqqad/AHK_MicMute#usage, %A_Desktop%
+    if(GetKeyState("Shift", "P"))
+        ListHotkeys
+    else if(GetKeyState("LWin", "P"))
+        ListLines
+    else if(GetKeyState("Ctrl", "P"))
+        ListVars
+    else
+        Run, https://github.com/SaifAqqad/AHK_MicMute#usage, %A_Desktop%
 }
 
 tray_exit(){
