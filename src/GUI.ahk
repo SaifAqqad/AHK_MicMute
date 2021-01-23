@@ -363,8 +363,8 @@ onSaveProfile(neutron){
     current_profile.LinkedApp:= formData.linked_app
     pos_x:= neutron.doc.getElementByID("osd_pos_x")
     pos_y:= neutron.doc.getElementByID("osd_pos_y")
-    current_profile.OSDPos.x:= pos_x.value=""? -1 : pos_x.value
-    current_profile.OSDPos.y:= pos_y.value=""? -1 : pos_y.value
+    current_profile.OSDPos.x:= pos_x.value=""? -1 : pos_x.value+0
+    current_profile.OSDPos.y:= pos_y.value=""? -1 : pos_y.value+0
     conf.exportConfig()
     onRestoreProfile(neutron)
     notify(neutron,Format("{} saved", current_profile.ProfileName))
