@@ -18,9 +18,8 @@
 ;@Ahk2Exe-AddResource %U_Res%\MicMute.png
 
 
-#InstallKeybdHook
-#InstallMouseHook
-#SingleInstance, ignore
+#UseHook On
+#SingleInstance force
 
 #Include, <VA>
 #Include, <OSD>
@@ -77,7 +76,7 @@ setMuteState(state){
     }
     VA_SetMasterMute(state, current_profile.Microphone)
     updateGlobalState()
-    SetTimer, showFeedback, -1, 5
+    showFeedback()
 }
 
 switchProfile(p_name:=""){
