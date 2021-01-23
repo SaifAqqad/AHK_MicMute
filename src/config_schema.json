@@ -4,13 +4,13 @@
     "definitions": {
         "Config": {
             "type": "object",
-            "additionalProperties": false,
+            "additionalProperties": true,
             "properties": {
                 "DefaultProfile": {
                     "type": "string"
                 },
                 "MuteOnStartup": {
-                    "type": "integer"
+                    "type": ["integer","boolean"]
                 },
                 "Profiles": {
                     "type": "array",
@@ -19,10 +19,10 @@
                     }
                 },
                 "SwitchProfileOSD": {
-                    "type": "integer"
+                    "type": ["integer","boolean"]
                 },
                 "UseCustomSounds": {
-                    "type": "integer"
+                    "type": ["integer","boolean"]
                 }
             },
             "required": [
@@ -36,10 +36,10 @@
             "additionalProperties": false,
             "properties": {
                 "afkTimeout": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "ExcludeFullscreen": {
-                    "type": "integer"
+                    "type": ["integer","boolean"]
                 },
                 "LinkedApp": {
                     "type": "string"
@@ -51,7 +51,7 @@
                     "type": "string"
                 },
                 "OnscreenFeedback": {
-                    "type": "integer"
+                    "type": ["integer","boolean"]
                 },
                 "OSDPos": {
                     "$ref": "#/definitions/OSDPos"
@@ -60,16 +60,16 @@
                     "type": "string"
                 },
                 "PushToTalk": {
-                    "type": "integer"
+                    "type": ["integer","boolean"]
                 },
                 "SoundFeedback": {
-                    "type": "integer"
+                    "type": ["integer","boolean"]
                 },
                 "UnmuteHotkey": {
                     "type": "string"
                 },
                 "UpdateWithSystem": {
-                    "$ref": "#/definitions/UpdateWithSystem"
+                    "type": ["integer","boolean"]
                 }
             },
             "required": [
@@ -86,10 +86,10 @@
             "additionalProperties": false,
             "properties": {
                 "x": {
-                    "$ref": "#/definitions/UpdateWithSystem"
+                    "type": "integer"
                 },
                 "y": {
-                    "$ref": "#/definitions/UpdateWithSystem"
+                    "type": "integer"
                 }
             },
             "required": [
@@ -97,18 +97,6 @@
                 "y"
             ],
             "title": "OSDPos"
-        },
-        "UpdateWithSystem": {
-            "anyOf": [
-                {
-                    "type": "integer"
-                },
-                {
-                    "type": "string",
-                    "format": "integer"
-                }
-            ],
-            "title": "UpdateWithSystem"
         }
     }
 }
