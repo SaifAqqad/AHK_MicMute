@@ -10,6 +10,10 @@ tray_init(){
     Menu, Tray, Icon, %A_ScriptFullPath%, 1
     Menu, Tray, Tip, MicMute 
     tray_add("Exit",Func("tray_exit"))
+    if(A_Args[1] = "/debug"){
+        tray_createDebugMenu()
+        tray_add("Debug", ":Debug")
+    }
     tray_add("Help",Func("tray_launchHelp"))
     tray_add("Start on boot",Func("tray_autoStart"))
     if(FileExist(A_ScriptDir . "\updater.exe"))
@@ -42,7 +46,7 @@ tray_remove(item){
 
 tray_autoStart(){
     if (!FileExist(startup_shortcut)){
-        FileCreateShortcut, %A_ScriptFullPath%, % startup_shortcut, %A_ScriptDir%
+        FileCreateShortcut, %A_ScriptFullPath%, % startup_shortcut, %A_ScriptDir%, % A_Args[1]
         Menu, Tray, % !ErrorLevel? "Check" : "Uncheck", Start on boot
     }else{
         FileDelete, % startup_shortcut
@@ -63,15 +67,25 @@ tray_checkUpdate(){
     SetTimer, % funcObj, -1
 }
 
-tray_launchHelp(){
-    if(GetKeyState("Shift", "P"))
+tray_createDebugMenu(){
+    Menu, Debug, Add, List Hotkeys, lh
+    Menu, Debug, Add, List Lines, ll
+    Menu, Debug, Add, List Vars, lv
+    return
+    lh:
         ListHotkeys
-    else if(GetKeyState("LWin", "P"))
+    return
+    ll:
         ListLines
-    else if(GetKeyState("Ctrl", "P"))
+    return
+    lv:
         ListVars
-    else
-        Run, https://github.com/SaifAqqad/AHK_MicMute#usage, %A_Desktop%
+    return
+
+}
+
+tray_launchHelp(){
+    Run, https://github.com/SaifAqqad/AHK_MicMute#usage, %A_Desktop%
 }
 
 tray_exit(){
