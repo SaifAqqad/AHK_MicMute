@@ -1,0 +1,114 @@
+{
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "$ref": "#/definitions/Config",
+    "definitions": {
+        "Config": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "DefaultProfile": {
+                    "type": "string"
+                },
+                "MuteOnStartup": {
+                    "type": "integer"
+                },
+                "Profiles": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Profile"
+                    }
+                },
+                "SwitchProfileOSD": {
+                    "type": "integer"
+                },
+                "UseCustomSounds": {
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "DefaultProfile",
+                "Profiles"
+            ],
+            "title": "Config"
+        },
+        "Profile": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "afkTimeout": {
+                    "type": "integer"
+                },
+                "ExcludeFullscreen": {
+                    "type": "integer"
+                },
+                "LinkedApp": {
+                    "type": "string"
+                },
+                "Microphone": {
+                    "type": "string"
+                },
+                "MuteHotkey": {
+                    "type": "string"
+                },
+                "OnscreenFeedback": {
+                    "type": "integer"
+                },
+                "OSDPos": {
+                    "$ref": "#/definitions/OSDPos"
+                },
+                "ProfileName": {
+                    "type": "string"
+                },
+                "PushToTalk": {
+                    "type": "integer"
+                },
+                "SoundFeedback": {
+                    "type": "integer"
+                },
+                "UnmuteHotkey": {
+                    "type": "string"
+                },
+                "UpdateWithSystem": {
+                    "$ref": "#/definitions/UpdateWithSystem"
+                }
+            },
+            "required": [
+                "Microphone",
+                "MuteHotkey",
+                "ProfileName",
+                "PushToTalk",
+                "UnmuteHotkey"
+            ],
+            "title": "Profile"
+        },
+        "OSDPos": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "x": {
+                    "$ref": "#/definitions/UpdateWithSystem"
+                },
+                "y": {
+                    "$ref": "#/definitions/UpdateWithSystem"
+                }
+            },
+            "required": [
+                "x",
+                "y"
+            ],
+            "title": "OSDPos"
+        },
+        "UpdateWithSystem": {
+            "anyOf": [
+                {
+                    "type": "integer"
+                },
+                {
+                    "type": "string",
+                    "format": "integer"
+                }
+            ],
+            "title": "UpdateWithSystem"
+        }
+    }
+}
