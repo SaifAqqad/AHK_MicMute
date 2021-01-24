@@ -70,12 +70,14 @@ ptt(){
 }
 
 setMuteState(state){
+    Critical, On
     switch state {
         case global_state: return
         case -1: state:= !global_state
     }
     VA_SetMasterMute(state, current_profile.Microphone)
     updateGlobalState()
+    Critical, Off
     showFeedback()
 }
 
@@ -260,7 +262,6 @@ disableCheckChanges(){
 playSound(ByRef sound) {
     DllCall( "winmm.dll\PlaySoundW", Ptr,0, UInt,0, UInt, 0 )
     Try SoundPlay, Nonexistent.notype
-    Sleep, 10
     if(IsObject(sound)){
         SoundPlay, % sound.path
         return 1
