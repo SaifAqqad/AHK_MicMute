@@ -18,7 +18,7 @@ Global neutron :=, GUI_mute_hotkey:=new UStack(), GUI_unmute_hotkey:=new UStack(
     <div class=""tag is-large"" id=""tag_profile_{1:}"" oncontextmenu=""ahk.displayProfileRename('{1:}')"" onClick=""ahk.checkProfileTag('{1:}')"">
         <label unselectable=""on"" class=""radio"">
             <input type=""radio"" name=""profiles_radio"" value=""{1:}"" id=""profile_{1:}"">
-            <span data-title=""Rclick to edit the profile name"" >{1:}</span>
+            <span data-title=""Right click to edit profile name"" >{1:}</span>
         </label>
     </div>
 )"
