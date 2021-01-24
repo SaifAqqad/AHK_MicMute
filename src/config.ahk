@@ -39,9 +39,13 @@ class Config {
     importIniConfig(){
         dfProfile:= this.createProfile("Default")
         this.DefaultProfile:= dfProfile.ProfileName
-        for key in dfProfile {
-            IniRead, %key%, config.ini, settings, %key%, % dfProfile[key]? dfProfile[key] : A_Space
-            dfProfile[key]:= %key%
+        for key, val in dfProfile {
+            IniRead, iniVal, config.ini, settings, %key%
+            if(iniVal = "ERROR")
+                continue
+            if val is number
+                iniVal+=0
+            dfProfile[key]:= iniVal
         }
         this.exportConfig()
         FileDelete, config.ini
