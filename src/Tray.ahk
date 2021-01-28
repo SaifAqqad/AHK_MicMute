@@ -71,6 +71,7 @@ tray_createDebugMenu(){
     Menu, Debug, Add, List Hotkeys, lh
     Menu, Debug, Add, List Lines, ll
     Menu, Debug, Add, List Vars, lv
+    Menu, Debug, Add, List Keys, ks
     return
     lh:
         ListHotkeys
@@ -81,7 +82,9 @@ tray_createDebugMenu(){
     lv:
         ListVars
     return
-
+    ks:
+        listKeys()
+    return
 }
 
 tray_launchHelp(){
@@ -90,4 +93,32 @@ tray_launchHelp(){
 
 tray_exit(){
     ExitApp
+}
+
+listKeys(){
+    static replacements := {33: "PgUp", 34: "PgDn", 35: "End", 36: "Home", 37: "Left", 38: "Up", 39: "Right", 40: "Down", 45: "Insert", 46: "Delete"}
+    Gui, listkeys:New, ,List keys
+    Gui, Add, ListView, w200 h300, Key|State
+    Gui, Add, Button,grefreshLK,Refresh
+    Gui, Show
+    Goto, refreshLK
+    return
+    refreshLK:
+        keys := {}
+        LV_Delete()
+        Loop 350 {
+            ; Get the key name
+            code := Format("{:x}", A_Index)
+            if(ObjHasKey(replacements, A_Index)){
+                n := replacements[A_Index]
+            } else {
+                n := GetKeyName("vk" code)
+            }
+            if (n = "" || n = "Escape" || ObjHasKey(keys, n))
+                continue
+            LV_Add(,n, GetKeyState("vk" code))
+            keys[n] := 1
+        }
+        LV_ModifyCol()
+    return
 }
