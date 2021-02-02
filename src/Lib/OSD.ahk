@@ -17,7 +17,7 @@ OSD_spawn(txt, OSD_Accent,is_draggable:=0){
         txt:= SubStr(txt, 1, 16) . "..."
     if (OSD_state = 0){
         SetFormat, integer, d
-        Gui, OSD:New,,Configuration 
+        Gui, OSD:New,,OSD 
         Gui, Color,% sys_theme? "232323":"f2f2f2" , OSD_Accent
         Gui, +AlwaysOnTop -SysMenu +ToolWindow -caption -Border
         Gui, Margin, 30
@@ -28,7 +28,7 @@ OSD_spawn(txt, OSD_Accent,is_draggable:=0){
         Gui, Show, % Format("w220 h38 NoActivate x{} y{}", OSD_POS.x, OSD_POS.y)
         Gui, +HwndGuiHwnd
         WinSet, Region, w220 h38 0-0 R15-15, ahk_id %GuiHwnd%
-        WinSet, Transparent, 248, ahk_id %GuiHwnd%
+        WinSet, Transparent, 252, ahk_id %GuiHwnd%
         if(is_draggable)
             OnMessage(0x201, "onDrag")
         else
