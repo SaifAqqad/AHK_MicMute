@@ -11,8 +11,7 @@ Global neutron :=, GUI_mute_hotkey:=new UStack(), GUI_unmute_hotkey:=new UStack(
 ,GUI_tt:= [{selector:".passthrough-label",string:"The hotkey's keystrokes won't be hidden from the OS"}
 ,{selector:".wildcard-label",string:"Fire the hotkey even if extra modifiers are held down"}
 ,{selector:".nt-label",string:"Use neutral modifiers (i.e. Alt instead of Left Alt / Right Alt)"}
-,{selector:".afk-label",string:"Auto mute the microphone when idling for a length of time"}
-,{selector:".linked-app-label",string:"Link the profile to an application"}]
+,{selector:".afk-label",string:"Auto mute the microphone when idling for a length of time"}]
 , GUI_profile_tag_template:= "
 (
     <div class=""tag is-large"" id=""tag_profile_{1:}"" oncontextmenu=""ahk.displayProfileRename('{1:}')"" onClick=""ahk.checkProfileTag('{1:}')"">
@@ -25,6 +24,7 @@ Global neutron :=, GUI_mute_hotkey:=new UStack(), GUI_unmute_hotkey:=new UStack(
 ;------init-functions------
 GUI_create(){
     RegWrite, REG_DWORD, HKEY_CURRENT_USER, SOFTWARE\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_GPU_RENDERING, %A_ScriptName%, 0x1
+    RegWrite, REG_DWORD, HKEY_CURRENT_USER, SOFTWARE\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_BROWSER_EMULATION, %A_ScriptName%, 0x2AF8
     Menu, Tray, Icon, %A_ScriptFullPath%, 1
     neutron := new NeutronWindow()
     neutron.load("GUI.html")
