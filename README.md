@@ -25,16 +25,13 @@
    ```powershell
       # Add my bucket
       scoop bucket add utils https://github.com/SaifAqqad/utils.git
-      # Install Micmute
+      # Install MicMute
       scoop install micmute
    ```
    ###### You can update MicMute using `scoop update micmute`, your config file will be saved between updates.
 
-## Install using the updater script
-   Download the [updater](https://github.com/SaifAqqad/AHK_MicMute/releases/latest/download/updater.exe) and run it.
-  ###### The updater might falsely trigger windows defender as any portable unsigned executable does.
 ## Use standalone executable
-   You can [download MicMute](https://github.com/SaifAqqad/AHK_MicMute/releases/latest/download/MicMute.exe) and use it standalone; however, the installation methods above will allow you to update more easily and will take care of creating shortcuts, uninstallation.. etc.
+   You can [download MicMute](https://github.com/SaifAqqad/AHK_MicMute/releases/latest/download/MicMute.exe) and use it standalone.
 
 ## Usage
 
