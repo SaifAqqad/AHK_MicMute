@@ -1,8 +1,9 @@
 ﻿;compiler directives
 ;@Ahk2Exe-Let Res = %A_ScriptDir%\resources
 ;@Ahk2Exe-SetMainIcon %U_Res%\MicMute.ico
-;@Ahk2Exe-SetVersion 0.7.9
+;@Ahk2Exe-SetVersion 0.8.0
 ;@Ahk2Exe-SetName MicMute
+;@Ahk2Exe-SetDescription MicMute
 ;@Ahk2Exe-AddResource %U_Res%\defaultBlack.ico, 3080
 ;@Ahk2Exe-AddResource %U_Res%\muteBlack.ico, 4080
 ;@Ahk2Exe-AddResource %U_Res%\defaultWhite.ico, 3090
@@ -23,6 +24,7 @@
 
 #Include, <VA>
 #Include, <OSD>
+#Include, utils.ahk
 #Include, GUI.ahk
 #Include, Config.ahk
 #Include, Tray.ahk
@@ -138,19 +140,19 @@ initHotkeys(){
 }
 
 initSounds(){
-    resRead(mute_sound, Format("{:U}", "mute.wav"))
-    resRead(unmute_sound, Format("{:U}","unmute.wav"))
-    resRead(ptt_on_sound, Format("{:U}", "ptt_off.wav"))
-    resRead(ptt_off_sound, Format("{:U}","ptt_on.wav"))
+    util_ResRead(mute_sound, Format("{:U}", "mute.wav"))
+    util_ResRead(unmute_sound, Format("{:U}","unmute.wav"))
+    util_ResRead(ptt_on_sound, Format("{:U}", "ptt_off.wav"))
+    util_ResRead(ptt_off_sound, Format("{:U}","ptt_on.wav"))
     if(conf.UseCustomSounds){
-        resRead(mute_sound,"mute.mp3" ,0)
-        || resRead(mute_sound, "mute.wav",0)
-        resRead(unmute_sound,"unmute.mp3" ,0)
-        || resRead(unmute_sound, "unmute.wav",0)
-        resRead(ptt_on_sound,"ptt_on.mp3" ,0)
-        || resRead(ptt_on_sound, "ptt_on.wav",0)
-        resRead(ptt_off_sound,"ptt_off.mp3" ,0)
-        || resRead(ptt_off_sound, "ptt_off.wav",0)
+        util_ResRead(mute_sound,"mute.mp3" ,0)
+        || util_ResRead(mute_sound, "mute.wav",0)
+        util_ResRead(unmute_sound,"unmute.mp3" ,0)
+        || util_ResRead(unmute_sound, "unmute.wav",0)
+        util_ResRead(ptt_on_sound,"ptt_on.mp3" ,0)
+        || util_ResRead(ptt_on_sound, "ptt_on.wav",0)
+        util_ResRead(ptt_off_sound,"ptt_off.mp3" ,0)
+        || util_ResRead(ptt_off_sound, "ptt_off.wav",0)
     }
 }
 
@@ -199,9 +201,9 @@ showFeedback(){
     }
     if (current_profile.SoundFeedback){
         if(current_profile.PushToTalk)
-            playSound(global_state? ptt_off_sound : ptt_on_sound)
+            util_PlaySound(global_state? ptt_off_sound : ptt_on_sound)
         else
-            playSound(global_state? mute_sound : unmute_sound)
+            util_PlaySound(global_state? mute_sound : unmute_sound)
     }
 }
 
@@ -209,7 +211,7 @@ editConfig(){
     Menu, Tray, Icon, %A_ScriptFullPath%, 1
     OSD_destroy()
     if(GetKeyState("Shift", "P")){
-        if(progPath:=getFileAssoc("json"))
+        if(progPath:=util_GetFileAssoc("json"))
             Run, %ProgPath% "%A_ScriptDir%\config.json",
         else
             Run, notepad.exe "%A_ScriptDir%\config.json",
@@ -225,17 +227,6 @@ editConfig(){
         if(!checkChanges())
             init()
     }
-}
-
-getFileAssoc(extension){
-    VarSetCapacity(numChars, 4)
-    DllCall("Shlwapi.dll\AssocQueryStringW"
-    , "UInt", 0x0, "UInt", 0x2, "WStr", "." . extension, "Ptr", 0, "Ptr", 0, "Ptr", &numChars)
-    numChars:= NumGet(&numChars, 0, "UInt")
-    VarSetCapacity(progPath, numChars*2)
-    DllCall("Shlwapi.dll\AssocQueryStringW"
-    , "UInt", 0x0, "UInt", 0x2, "WStr", "." . extension, "Ptr", 0, "Ptr", &progPath, "Ptr", &numChars)
-    return StrGet(&progPath,NumGet(&numChars, 0, "UInt"),"UTF-16")
 }
 
 checkChanges(){
@@ -259,46 +250,10 @@ disableCheckChanges(){
     setTimer, % ccObj, Off
 }
 
-playSound(ByRef sound) {
-    DllCall( "winmm.dll\PlaySoundW", Ptr,0, UInt,0, UInt, 0 )
-    Try SoundPlay, Nonexistent.notype
-    if(IsObject(sound)){
-        SoundPlay, % sound.path
-        return 1
-    }
-    return DllCall( "winmm.dll\PlaySoundW", Ptr,&sound, UInt,0, UInt, 0x7 )
-}
-
-resRead(ByRef Var, Key, is_res:=1) { 
-    if(!is_res) {
-        if(!FileExist(key))
-            return 0
-        SplitPath, key,,, ext,,
-        if(ext = "wav")
-            FileRead, Var, *c %Key%
-        else
-            Var:= {path:Key}
-        return 1
-    }
-    VarSetCapacity(Var, 128), VarSetCapacity(Var, 0)
-    if hMod := DllCall( "GetModuleHandle", UInt,0,PTR )
-        if hRes := DllCall( "FindResource", UInt,hMod, Str,Key, UInt,10,PTR )
-            if hData := DllCall( "LoadResource", UInt,hMod, UInt,hRes,PTR )
-                if pData := DllCall( "LockResource", UInt,hData,PTR )
-                    return VarSetCapacity( Var, nSize := DllCall( "SizeofResource", UInt,hMod, UInt,hRes,PTR ) )
-                        , DllCall( "RtlMoveMemory", Str,Var, UInt,pData, UInt,nSize )
-    return 1
-}
-
 UpdateSysTheme(){
     RegRead, reg
     , HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize, SystemUsesLightTheme
     sys_theme:= !reg
-}
-
-isFileEmpty(file){
-    FileGetSize, size , %file%
-    return !size
 }
 
 runUpdater(p_silent:=1){

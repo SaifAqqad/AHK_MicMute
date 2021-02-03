@@ -8,7 +8,7 @@ class Config {
 
     __New(p_DefaultProfile:=""){
         this["$schema"]:= "https://raw.githubusercontent.com/SaifAqqad/AHK_MicMute/master/src/config_schema.json"
-        if(!FileExist("config.json")||isFileEmpty("config.json")){
+        if(!FileExist("config.json") || util_IsFileEmpty("config.json")){
             if(FileExist("config.ini")){
                 this.importIniConfig()
             }else{
