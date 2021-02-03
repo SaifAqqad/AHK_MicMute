@@ -81,13 +81,14 @@ header {
     opacity: 1 !important;
     padding-top: 5px !important;
     border-radius: 0.8rem;
+    box-shadow: rgba(0, 0, 0, 0.18) 0px 2px 4px, rgba(0, 0, 0, 0.15) 0px 0.5px 1px !important;
     transition: box-shadow 0.23s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.1s linear !important;
     margin-bottom: 20px !important;
     width: 80%;
 }
 
 .box-visible:hover {
-    box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.055), 0px 0px 20px 1px #ff572d, 0px 9px 46px 8px rgba(0, 0, 0, 0.055);
+    box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.055), 0px 0px 20px 1px rgba(255, 87, 45, 0.63), 0px 9px 46px 8px rgba(0, 0, 0, 0.055) !important;
 }
 
 .box-hidden {
@@ -153,11 +154,11 @@ input[type="checkbox"]:checked+span {
     margin: 5px;
     border-radius: 5px;
     transition: box-shadow 0.23s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.1s linear !important;
-    box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1), 0 0px 0 1px rgba(10, 10, 10, 0.02);
+    box-shadow: rgba(0, 0, 0, 0.18) 0px 2px 4px, rgba(0, 0, 0, 0.15) 0px 0.5px 1px ;
 }
 
 .tag:hover {
-    box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.055), 0px 0px 20px 0px #ff572d, 0px 9px 46px 8px rgba(0, 0, 0, 0.055);
+    box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.055), 0px 0px 20px 0px rgba(255, 87, 45, 0.63), 0px 9px 46px 8px rgba(0, 0, 0, 0.055);
 }
 
 img#MicMute_icon {
@@ -169,7 +170,7 @@ img#MicMute_icon {
 
 img#MicMute_icon:hover,
 label:hover>img#MicMute_icon {
-    box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.055), 0px 0px 20px 0px #ff572d, 0px 9px 46px 8px rgba(0, 0, 0, 0.055);
+    box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.055), 0px 0px 20px 0px rgba(255, 87, 45, 0.63), 0px 9px 46px 8px rgba(0, 0, 0, 0.055);
 }
 
 .tag.option {
@@ -180,6 +181,9 @@ label:hover>img#MicMute_icon {
     position: absolute;
     top: 38px;
     right: 25px;
+    width: 200px;
+    text-align: center;
+    font-size: 14px;
 }
 
 .row {
