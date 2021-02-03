@@ -25,10 +25,10 @@ tray_init(){
     tray_add("Toggle microphone", Func("setMuteState").bind(-1))
     Menu, Tray, Click, 1
     Menu, Tray, Default, 1&
-    if (!FileExist(startup_shortcut))
-        Menu, Tray, Uncheck, Start on boot
-    else
+    if (util_StartupTaskExists())
         Menu, Tray, Check, Start on boot
+    else
+        Menu, Tray, Uncheck, Start on boot
 }
 
 tray_update(icon_group, tooltip_txt){
@@ -45,12 +45,16 @@ tray_remove(item){
 }
 
 tray_autoStart(){
-    if (!FileExist(startup_shortcut)){
-        FileCreateShortcut, %A_ScriptFullPath%, % startup_shortcut, %A_ScriptDir%, % A_Args[1]
-        Menu, Tray, % !ErrorLevel? "Check" : "Uncheck", Start on boot
+    if (util_StartupTaskExists()){
+        Menu, Tray, % util_DeleteStartupTask()? "Uncheck" : "Check", Start on boot
     }else{
-        FileDelete, % startup_shortcut
-        Menu, Tray, % !ErrorLevel? "Uncheck" : "Check", Start on boot
+        if(FileExist(startup_shortcut)){
+            MsgBox, 36, MicMute, A startup shortcut in '%A_Programs%\Startup\' was found`nDo you want to replace it with a scheduled task?
+            IfMsgBox, No
+                return
+            Try FileDelete, %startup_shortcut%
+        }
+        Menu, Tray, % util_CreateStartupTask()? "Check" : "Uncheck", Start on boot
     }
 }
 

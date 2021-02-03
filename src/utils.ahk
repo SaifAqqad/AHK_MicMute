@@ -49,3 +49,34 @@ util_IsFileEmpty(file){
     return !size
 }
 
+; Creates a scheduled task to run micmute at user login
+util_CreateStartupTask(){
+    scheduler:= ComObjCreate("Schedule.Service")
+    scheduler.Connect()
+    task:= scheduler.NewTask(0)
+    task.RegistrationInfo.Description:= "Launch MicMute on startup"
+    task.Settings.ExecutionTimeLimit:= "PT0S" ;enable the task to run indefinitely
+    task.Triggers.Create(9).UserId:= A_ComputerName . "\" . A_UserName ;onLogon trigger = 9
+    task.Actions.Create(0).Path:= A_ScriptFullPath ; action run executable = 0
+    Try scheduler.GetFolder("\").RegisterTaskDefinition("MicMute",task,6,"","",3)
+    Catch {
+        return 0
+    }
+    return 1
+}
+
+; Deletes the scheduled task
+util_DeleteStartupTask(){
+    scheduler:= ComObjCreate("Schedule.Service")
+    scheduler.Connect()
+    Try scheduler.GetFolder("\").DeleteTask("MicMute",0)
+    return 1
+}
+
+; Returns 1 if the scheduled task exists
+util_StartupTaskExists(){
+    scheduler:= ComObjCreate("Schedule.Service")
+    scheduler.Connect()
+    Try task:= scheduler.GetFolder("\").GetTask("MicMute")
+    return task? 1:0
+}
