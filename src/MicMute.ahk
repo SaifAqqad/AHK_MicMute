@@ -19,7 +19,8 @@
 ;@Ahk2Exe-AddResource %U_Res%\MicMute.png
 
 
-#UseHook On
+#InstallMouseHook
+#InstallKeybdHook
 #SingleInstance force
 
 #Include, <VA>

@@ -53,10 +53,13 @@ util_IsFileEmpty(file){
 util_CreateStartupTask(){
     scheduler:= ComObjCreate("Schedule.Service")
     scheduler.Connect()
-    task:= scheduler.NewTask(0)
+    task:= scheduler.NewTask(0) ;TaskDefinition object
     task.RegistrationInfo.Description:= "Launch MicMute on startup"
     task.Settings.ExecutionTimeLimit:= "PT0S" ;enable the task to run indefinitely
-    task.Triggers.Create(9).UserId:= A_ComputerName . "\" . A_UserName ;onLogon trigger = 9
+    trigger:= task.Triggers.Create(9) ;onLogon trigger = 9
+    trigger.UserId:= A_ComputerName . "\" . A_UserName
+    trigger.Delay:= "PT10S"
+    task.Principal.RunLevel:= A_IsAdmin
     task.Actions.Create(0).Path:= A_ScriptFullPath ; action run executable = 0
     Try scheduler.GetFolder("\").RegisterTaskDefinition("MicMute",task,6,"","",3)
     Catch {

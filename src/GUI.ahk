@@ -281,7 +281,7 @@ onProfileSelect(neutron, event:="", p_name:=""){
 }
 
 onChangeProfileName(neutron, event){
-    txt:= event.target.value:= Trim(event.target.value)
+    txt:= event.target.value:= StrReplace(Trim(event.target.value), "\")
     Try{
         if(txt == current_profile.ProfileName){
             return
@@ -356,7 +356,7 @@ onSaveProfile(neutron){
         current_profile.UnmuteHotkey:= unmute_str
     }
     current_profile.PushToTalk:= formData.hotkeyType > 2
-    current_profile.afkTimeout:= formData.afk_timeout? formData.afk_timeout : 0
+    current_profile.afkTimeout:= formData.afk_timeout? formData.afk_timeout+0 : 0
     current_profile.OnscreenFeedback:= formData.on_screen_fb? 1 : 0
     current_profile.ExcludeFullscreen:= formData.on_screen_fb_excl? 1 : 0
     current_profile.SoundFeedback:= formData.sound_fb? 1 : 0
