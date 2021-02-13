@@ -23,8 +23,8 @@
 ## Install using [Scoop](https://scoop.sh)
 
    ```powershell
-      # Add my bucket
-      scoop bucket add utils https://github.com/SaifAqqad/utils.git
+      # Add the extras bucket
+      scoop bucket add extras
       # Install MicMute
       scoop install micmute
    ```
