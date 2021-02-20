@@ -357,6 +357,7 @@ onSaveProfile(neutron){
     }
     current_profile.PushToTalk:= formData.hotkeyType > 2
     current_profile.afkTimeout:= formData.afk_timeout? formData.afk_timeout+0 : 0
+    current_profile.PTTDelay:= neutron.doc.getElementByID("ptt_delay").value+0
     current_profile.OnscreenFeedback:= formData.on_screen_fb? 1 : 0
     current_profile.ExcludeFullscreen:= formData.on_screen_fb_excl? 1 : 0
     current_profile.SoundFeedback:= formData.sound_fb? 1 : 0
@@ -444,6 +445,8 @@ onRestoreProfile(neutron, event:=""){
     neutron.doc.getElementByID("osd_pos_y").value:= current_profile.OSDPos.y != -1? current_profile.OSDPos.y : ""
     if (current_profile.afkTimeout)
         neutron.doc.getElementByID("afk_timeout").value:= current_profile.afkTimeout
+    neutron.doc.getElementByID("ptt_delay").value:= current_profile.PTTDelay
+    neutron.doc.getElementByID("ptt_delay_text").value:= current_profile.PTTDelay . " ms"
     if (current_profile.linkedApp)
         neutron.doc.getElementByID("linked_app").value:= current_profile.linkedApp
     innerCont.classList.remove("hidden")
@@ -536,16 +539,19 @@ onUpdateOption(neutron, event){
 onHotkeyType(neutron){
     u_box:= neutron.doc.getElementById("unmute_box")
     afk_row:= neutron.doc.getElementById("afk_timeout_row")
+    delay_row:= neutron.doc.getElementById("ptt_delay_row")
     if(neutron.doc.getElementByID("sep_hotkey").checked){
         u_box.classList.remove("is-hidden")
         Sleep, 10
         u_box.classList.remove("box-hidden")
         afk_row.classList.remove("is-hidden")
+        delay_row.classList.add("is-hidden")
         neutron.doc.getElementByID("mute_label").innerText:= "Mute hotkey"
     }
     if(neutron.doc.getElementByID("tog_hotkey").checked){
         u_box.classList.add("box-hidden")
         afk_row.classList.remove("is-hidden")
+        delay_row.classList.add("is-hidden")
         neutron.doc.getElementByID("mute_label").innerText:= "Toggle hotkey"
         funcObj:= Func("hideElemID").Bind(neutron, "unmute_box")
         SetTimer, % funcObj, -100
@@ -553,6 +559,7 @@ onHotkeyType(neutron){
     if(neutron.doc.getElementByID("ptt_hotkey").checked){
         u_box.classList.add("box-hidden")
         afk_row.classList.add("is-hidden")
+        delay_row.classList.remove("is-hidden")
         neutron.doc.getElementByID("mute_label").innerText:= "Push-to-talk hotkey"
         funcObj:= Func("hideElemID").Bind(neutron, "unmute_box")
         SetTimer, % funcObj, -100
@@ -601,6 +608,12 @@ onSelectApp(neutron){
     }else{
         linkedAppField.value:=""
     }
+}
+
+onChangeDelay(neutron){
+    delaySlider:= neutron.doc.getElementById("ptt_delay")
+    delayText:= neutron.doc.getElementById("ptt_delay_text")
+    delayText.value:= delaySlider.value . " ms"
 }
 
 clearLinkedApp(neutron,event){

@@ -50,10 +50,18 @@ label,
 }
 
 input[type="text"]:disabled {
-    color: #a8a8a8 !important;
+    color: #d6d6d6 !important;
 }
 
 [data-title]:after {
     background-color: #191919 !important;
     color: #c9c9c9;
+}
+
+input[type=range].slider::-ms-fill-upper {
+    background: #383838;
+}
+
+input[type=range].slider:focus::-ms-fill-upper {
+    background: #383838;
 }

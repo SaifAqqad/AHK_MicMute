@@ -230,11 +230,25 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="column" id="afk_timeout_row">
+                        <div class="column is-hidden" id="afk_timeout_row">
                             <label unselectable="on" class="label title is-4 noselect afk-label" for="afk_timeout">AFK
                                 timeout</label>
                             <input class="input is-primary input-elem" min="0" max="120" placeholder="Minutes"
                                 type="number" name="afk_timeout" id="afk_timeout">
+                        </div>
+                        <div class="column" id="ptt_delay_row">
+                            <label unselectable="on" class="label title is-4 noselect ptt-delay-label"
+                                for="ptt_delay">PTT release delay</label>
+                            <div class="columns is-mobile">
+                                <div class="column is-5">
+                                    <input class="input is-primary input-elem" placeholder="ms"
+                                        disabled type="text" name="ptt_delay_text" id="ptt_delay_text" value="100 ms">
+                                </div>
+                                <div class="column">
+                                    <input class="slider" min="0" max="500" step="100" value="100" type="range"
+                                        name="ptt_delay" id="ptt_delay" onchange="ahk.onChangeDelay()">
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <br>
