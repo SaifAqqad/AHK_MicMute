@@ -11,6 +11,7 @@ Global neutron :=, GUI_mute_hotkey:=new UStack(), GUI_unmute_hotkey:=new UStack(
 ,GUI_tt:= [{selector:".passthrough-label",string:"The hotkey's keystrokes won't be hidden from the OS"}
 ,{selector:".wildcard-label",string:"Fire the hotkey even if extra modifiers are held down"}
 ,{selector:".nt-label",string:"Use neutral modifiers (i.e. Alt instead of Left Alt / Right Alt)"}
+,{selector:".ptt-delay-label",string:"Delay muting the microphone when the key is released"}
 ,{selector:".afk-label",string:"Auto mute the microphone when idling for a length of time"}]
 , GUI_profile_tag_template:= "
 (
