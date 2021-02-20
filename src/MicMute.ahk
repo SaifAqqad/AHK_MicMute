@@ -69,6 +69,8 @@ init(){
 ptt(){
     setMuteState(0)
     KeyWait, %ptt_key%
+    if(ms:=current_profile.PTTDelay)
+        sleep, %ms%
     setMuteState(1)
 }
 
