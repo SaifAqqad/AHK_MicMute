@@ -101,6 +101,7 @@ class ProfileTemplate{
         this.afkTimeout:=0
         this.LinkedApp:=""
         this.PushToTalk:=0
+        this.PTTDelay:=100
         this.OSDPos:={x:-1,y:-1}
         if(IsObject(p_name_Obj)){
             for prop, val in p_name_Obj{

@@ -33,7 +33,7 @@
         },
         "Profile": {
             "type": "object",
-            "additionalProperties": false,
+            "additionalProperties": true,
             "properties": {
                 "afkTimeout": {
                     "type": "number"
@@ -61,6 +61,9 @@
                 },
                 "PushToTalk": {
                     "type": ["integer","boolean"]
+                },
+                "PTTDelay": {
+                    "type": "number"
                 },
                 "SoundFeedback": {
                     "type": ["integer","boolean"]
