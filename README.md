@@ -120,13 +120,13 @@ Click OK and a new configuration window will open:
 ### Custom sounds
 To use custom sounds, set `UseCustomSounds` to `1` then put the sound files (`mp3`,`wav`...) in the same directory as `MicMute.exe` and rename them as:
 
-**Mute sound**: `mute.wav` 
+**Mute sound**: `mute` 
 
-**Unmute sound**: `unmute.wav` 
+**Unmute sound**: `unmute` 
 
-**PTT on**: `ptt_on.wav` 
+**PTT on**: `ptt_on` 
 
-**PTT off**: `ptt_off.wav`
+**PTT off**: `ptt_off`
 
 ## Compile instructions:
 ##### Run these commands in powershell
