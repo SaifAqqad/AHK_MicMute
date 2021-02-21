@@ -128,7 +128,7 @@ To use custom sounds, set `UseCustomSounds` to `1` then put the sound files (`mp
 
 **PTT off**: `ptt_off`
 
-## Compile instructions:
+## Compile instructions
 ##### Run these commands in powershell
 1. Clone the repository
     ```powershell
@@ -149,6 +149,10 @@ To use custom sounds, set `UseCustomSounds` to `1` then put the sound files (`mp
     ```powershell
     ahk2exe /in ".\src\MicMute.ahk" /out ".\src\MicMute.exe";    # add `/compress 2` if upx was installed
     ```
+
+## Known issues
+* When running MicMute alongside [Microsoft powertoys](https://github.com/microsoft/PowerToys), powertoys might conflict with MicMute and the hotkeys will stop working.
+
 ## Libraries and resources used
 
    * [VA.ahk](https://autohotkey.com/board/topic/21984-vista-audio-control-functions/) ([public domain](https://autohotkey.com/board/topic/36032-lexikos-default-copyright-license/))
