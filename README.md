@@ -151,7 +151,7 @@ To use custom sounds, set `UseCustomSounds` to `1` then put the sound files (`mp
     ```
 
 ## Known issues
-* When running MicMute alongside [Microsoft powertoys](https://github.com/microsoft/PowerToys), powertoys might conflict with MicMute and the hotkeys will stop working.
+* When running MicMute alongside [Microsoft powertoys](https://github.com/microsoft/PowerToys), powertoys might conflict with MicMute and the hotkeys will stop working. [microsoft/PowerToys#2132](https://github.com/microsoft/PowerToys/issues/2132)
 
 ## Libraries and resources used
 
