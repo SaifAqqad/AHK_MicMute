@@ -50,7 +50,7 @@ label,
 }
 
 input[type="text"]:disabled {
-    color: #d6d6d6 !important;
+    color: #d6d6d6;
 }
 
 [data-title]:after {

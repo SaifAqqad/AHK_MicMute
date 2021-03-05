@@ -139,6 +139,11 @@ input[type="checkbox"]:checked+span {
     color: #ff572d !important;
 }
 
+input[type="text"]:disabled,
+input[type="number"]:disabled {
+    background-color: #ffffff;
+}
+
 .title {
     margin-top: 5px;
 }
@@ -287,8 +292,9 @@ a {
     bottom: 0;
     left: 0;
 }
+
 input[type=range].slider {
-    width: 100%;
+    width: 90%;
     margin: 2px 0.5px;
     background-color: transparent;
 }
@@ -302,9 +308,7 @@ input[type=range].slider::-ms-track {
     border-color: transparent;
     border-width: 5px;
     color: transparent;
-    width: 100%;
     height: 8.2px;
-    cursor: pointer;
 }
 input[type=range].slider::-ms-fill-lower {
     background: #ff4f23;
@@ -312,7 +316,7 @@ input[type=range].slider::-ms-fill-lower {
     border-radius: 42.8px;
 }
 input[type=range].slider::-ms-fill-upper {
-    background: #ffffff;
+    background: rgba(156, 156, 156, 0.315);
     border: 0;
     border-radius: 42.8px;
 }
@@ -325,12 +329,10 @@ input[type=range].slider::-ms-thumb {
     cursor: pointer;
     margin-top: 0px;
 }
-input[type=range].slider:focus::-ms-fill-lower {
-    background: #ff4f23;
-}
-input[type=range].slider:focus::-ms-fill-upper {
-    background: #ffffff;
-}
 input[type=range].slider::-ms-tooltip{
     display: none;
- }
+}
+
+div.tabs{
+    margin-bottom: 0 !important;
+}
