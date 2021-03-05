@@ -1,7 +1,7 @@
 ﻿;compiler directives
 ;@Ahk2Exe-Let Res = %A_ScriptDir%\resources
 ;@Ahk2Exe-SetMainIcon %U_Res%\MicMute.ico
-;@Ahk2Exe-SetVersion 0.8.1
+;@Ahk2Exe-SetVersion 0.8.2
 ;@Ahk2Exe-SetName MicMute
 ;@Ahk2Exe-SetDescription MicMute
 ;@Ahk2Exe-AddResource %U_Res%\defaultBlack.ico, 3080
@@ -103,7 +103,7 @@ switchProfile(p_name:=""){
     }
     Try initHotkeys()
     catch {
-        MsgBox, 65, MicMute, % Format("'{}' profile needs to be setup",current_profile.ProfileName)
+        MsgBox, 65, MicMute, % Format("'{}' profile needs to be set up",current_profile.ProfileName)
         IfMsgBox, OK
             editConfig()
         IfMsgBox, Cancel
