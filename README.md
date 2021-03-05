@@ -83,15 +83,15 @@ Click OK and a new configuration window will open:
 ![](./src/resources/edit_name.gif)
 </details>
 
-#### Some options are not available in the GUI but can be changed in the [config file](#editing-the-config-file)
-* Mute on startup
-* Use custom sounds
+#### Some options are not available in the GUI but can be changed in the [config file](#editing-the-config-file):
+* Mute on startup [#13](https://github.com/SaifAqqad/AHK_MicMute/issues/13)
+* Use custom sounds [#14](https://github.com/SaifAqqad/AHK_MicMute/issues/14)
+* Turn off switching-profile-osd [#15](https://github.com/SaifAqqad/AHK_MicMute/discussions/15)
 ## Editing the config file
  Hold shift when asked to setup a profile or when clicking "Edit configuration" from the tray menu, and the config file will open in a text editor
 
-![](./src/resources/firstsetupdialog.png)
-
 ```json
+//config.json example 
 {
     "DefaultProfile": "Default",
     "MuteOnStartup": 0,
@@ -114,11 +114,12 @@ Click OK and a new configuration window will open:
             "UpdateWithSystem": 1
         }
     ],
+    "SwitchProfileOSD": 1,
     "UseCustomSounds": 0
 }
 ```
 ### Custom sounds
-To use custom sounds, set `UseCustomSounds` to `1` then put the sound files (`mp3`,`wav`...) in the same directory as `MicMute.exe` and rename them as:
+To use custom feedback sounds, set `UseCustomSounds` to `1` then put the sound files (`mp3`,`wav`...) in the same directory as `MicMute.exe` and rename them as:
 
 **Mute sound**: `mute` 
 
@@ -129,7 +130,7 @@ To use custom sounds, set `UseCustomSounds` to `1` then put the sound files (`mp
 **PTT off**: `ptt_off`
 
 ## Compile instructions
-##### Run these commands in powershell
+##### Install [Scoop](https://scoop.sh) then run these commands in powershell
 1. Clone the repository
     ```powershell
     git clone https://github.com/SaifAqqad/AHK_MicMute.git;
@@ -151,7 +152,7 @@ To use custom sounds, set `UseCustomSounds` to `1` then put the sound files (`mp
     ```
 
 ## Known issues
-* When running MicMute alongside [Microsoft powertoys](https://github.com/microsoft/PowerToys), powertoys might conflict with MicMute and the hotkeys will stop working. [microsoft/PowerToys#2132](https://github.com/microsoft/PowerToys/issues/2132)
+* When running MicMute alongside [Microsoft Powertoys](https://github.com/microsoft/PowerToys), they might conflict with each other, which may result in the hotkeys not working at all. see [microsoft/PowerToys#2132](https://github.com/microsoft/PowerToys/issues/2132)
 
 ## Libraries and resources used
 
