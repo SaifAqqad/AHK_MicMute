@@ -156,7 +156,10 @@ To use custom feedback sounds, set `UseCustomSounds` to `1` then put the sound f
 
 ## Libraries and resources used
 
-   * [VA.ahk](https://autohotkey.com/board/topic/21984-vista-audio-control-functions/) ([public domain](https://autohotkey.com/board/topic/36032-lexikos-default-copyright-license/))
-   * [Neutron.ahk](https://github.com/G33kDude/Neutron.ahk) ([MIT License](https://github.com/G33kDude/Neutron.ahk/blob/master/LICENSE))
-   * [Bulma CSS framework](https://bulma.io/) ([MIT License](https://github.com/jgthms/bulma/blob/master/LICENSE))
-   * [Material Design icons](https://github.com/Templarian/MaterialDesign) ([Apache 2.0](https://github.com/Templarian/MaterialDesign/blob/master/LICENSE))
+| Library                                                                | License                                                                        |
+|------------------------------------------------------------------------|--------------------------------------------------------------------------------|
+| [G33kDude/Neutron.ahk](https://github.com/G33kDude/Neutron.ahk)        | [MIT](https://github.com/G33kDude/Neutron.ahk/blob/master/LICENSE)     |
+| [cocobelgica/JSON.ahk](https://github.com/cocobelgica/AutoHotkey-JSON) | [WTFPL](https://github.com/cocobelgica/AutoHotkey-JSON#json-and-jxon)          |
+| [Lexikos/VA.ahk](https://github.com/ahkscript/VistaAudio)              | [License](https://github.com/ahkscript/VistaAudio/blob/master/LICENSE)         |
+| [Bulma CSS framework](https://bulma.io/)                               | [MIT](https://github.com/jgthms/bulma/blob/master/LICENSE)             |
+| [Material Design icons](https://github.com/Templarian/MaterialDesign)  | [Apache 2.0](https://github.com/Templarian/MaterialDesign/blob/master/LICENSE) |
