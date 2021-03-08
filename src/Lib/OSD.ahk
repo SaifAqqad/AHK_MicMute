@@ -25,7 +25,7 @@ Class OSD {
         this.posEditorCallback:= posEditorCallback
 
         ;set the initial OSD theme
-        this.setTheme()
+        this.setTheme(0)
         ;create the OSD window
         this.create()
     }
@@ -67,7 +67,7 @@ Class OSD {
         Gui, Font,% Format("s{:i} w500 c{}", 12*this.scale, accent)
         GuiControl, Font, % this.hwndTxt
         ;set the OSD text
-        text:= this.getText(text)
+        text:= this.processText(text)
         GuiControl, Text, % this.hwndTxt, %text%
         ;show the OSD
         Gui, Show, % Format("w{} h{} NoActivate x{} y{}", this.width, this.height, this.pos.x, this.pos.y)
@@ -115,12 +115,13 @@ Class OSD {
     }
 
     setTheme(theme:=""){
-        this.theme:= theme? (theme=1? "232323" : theme) : "f2f2f2"
+        if(theme != this.theme)
+            this.theme:= theme? (theme=1? "232323" : theme) : "f2f2f2"
     }
 
-    getText(text){
+    processText(text){
         if (StrLen(text)>20)
-            text:= SubStr(text, 1, 18) . "..."
+            text:= SubStr(text, 1, 18) . Chr(0x2026) ; fix overflow with ellipsis
         return text
     }
 
