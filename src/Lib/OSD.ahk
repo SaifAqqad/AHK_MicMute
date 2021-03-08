@@ -1,88 +1,159 @@
-Global OSD_state:= 0 
-, OSD_txt:=
-, OSD_MAIN_ACCENT:= "FF572D"
-, OSD_MUTE_ACCENT:= "DC3545"
-, OSD_UNMUTE_ACCENT:= "007BFF"
-, OSD_POS:= { x:-1, y:-1 }
-, OSD_PosEditorFunc:=""
+Class OSD {
+    static ACCENT:= {"-1":"FF572D" ; MAIN ACCENT
+    ,"0":"DC3545" ; OFF ACCENT
+    ,"1":"007BFF"} ; ON ACCENT
 
-OSD_show(txt, OSD_Accent, exclude_fullscreen:=0){
-    if (exclude_fullscreen && OSD_isActiveWinFullscreen())
-        return
-    OSD_spawn(txt, OSD_Accent)
-    SetTimer, OSD_destroy, 1000
-}
-OSD_spawn(txt, OSD_Accent,is_draggable:=0){
-    if (StrLen(txt)>20)
-        txt:= SubStr(txt, 1, 16) . "..."
-    if (OSD_state = 0){
-        SetFormat, integer, d
-        Gui, OSD:New,,OSD 
-        Gui, Color,% sys_theme? "232323":"f2f2f2" , OSD_Accent
-        Gui, +AlwaysOnTop -SysMenu +ToolWindow -caption -Border
+    __New(pos:="", excludeFullscreen:=0, posEditorCallback:=""){      
+        this.excludeFullscreen:= excludeFullscreen
+        this.state:= 0
+        ;get the primary monitor resolution
+        SysGet, res, Monitor
+        this.screenHeight:= resBottom
+        ;set the default pos object
+        pos:= pos? pos : {x:-1,y:-1}
+        ;get the final pos object
+        this.pos:= this.getPosObj(pos.x, pos.y)
+        ;get the monitor scaling
+        this.scale:= A_ScreenDPI/96
+        ;set the OSD width and height
+        this.width:= Format("{:i}", 220 * this.scale)
+        this.height:= Format("{:i}", 38 * this.scale)
+        ;set up bound func objects 
+        this.hideFunc:= objBindMethod(this, "hide")
+        this.onDragFunc:= objBindMethod(this, "__onDrag")
+        this.onRClickFunc:= objBindMethod(this, "__onRClick")
+        this.posEditorCallback:= posEditorCallback
+
+        ;set the initial OSD theme
+        this.setTheme()
+        ;create the OSD window
+        this.create()
+    }
+
+    ; creates the OSD window
+    create(){
+        Gui, New, +Hwndhwnd, OSD 
+        this.hwnd:= hwnd
+        Gui, +AlwaysOnTop -SysMenu +ToolWindow -caption -Border 
         Gui, Margin, 30
-        Gui, Font, s12 w500 c%OSD_Accent%, Segoe UI
-        Gui, Add, Text, vOSD_txt w155 r1 Center, %txt%
-        if(OSD_POS.x = -1 || OSD_POS.y = -1)
-            OSD_setPos()
-        Gui, Show, % Format("w220 h38 NoActivate x{} y{}", OSD_POS.x, OSD_POS.y)
-        Gui, +HwndGuiHwnd
-        WinSet, Region, w220 h38 0-0 R15-15, ahk_id %GuiHwnd%
-        WinSet, Transparent, 252, ahk_id %GuiHwnd%
-        if(is_draggable)
-            OnMessage(0x201, "onDrag")
-        else
-            OnMessage(0x201, "")
-        OSD_state:= 1
-    }else{
-        Gui, OSD:Default
-        Gui, Font, s12 w500 c%OSD_Accent%
-        GuiControl, Font, OSD_txt
-        GuiControl, Text, OSD_txt, %txt% 
+        Gui, Color, % this.theme, % OSD.ACCENT["-1"]
+        Gui, Font,% Format("s{:i} w500 c{}", 12*this.scale, OSD.ACCENT["-1"]), Segoe UI
+        Gui, Add, Text,% Format("HwndtxtHwnd w{} r1 Center", this.width-60)
+        this.hwndTxt:= txtHwnd
+    }
+
+    ; hides and destroys the OSD window
+    destroy(){
+        Gui,% this.hwnd ":Default"
+        this.hide()
+        Gui, Destroy
+        this.hwnd:= ""
+        this.hwndTxt:=""
+    }
+
+    ; shows the OSD window with the specified text and accent
+    show(text,accent:=-1){
+        ;if the window can't be shown -> return
+        if(!this.canShow())
+            return
+        ;if the window does not exist -> create it first
+        if(!this.hwnd)
+            this.create()
+        Gui, % this.hwnd ":Default" ;set the default window
+        ;set the accent/theme colors
+        if(color:=OSD.ACCENT[accent ""])
+            accent:=color
+        Gui, Color, % this.theme, % accent
+        Gui, Font,% Format("s{:i} w500 c{}", 12*this.scale, accent)
+        GuiControl, Font, % this.hwndTxt
+        ;set the OSD text
+        text:= this.getText(text)
+        GuiControl, Text, % this.hwndTxt, %text%
+        ;show the OSD
+        Gui, Show, % Format("w{} h{} NoActivate x{} y{}", this.width, this.height, this.pos.x, this.pos.y)
+        ;make the OSD corners rounded
+        WinGetPos,,,Width, Height, % "ahk_id " . this.hwnd
+        WinSet, Region, % Format("w{} h{} 0-0 R{3:i}-{3:i}", Width, Height, 15*this.scale ), % "ahk_id " . this.hwnd
+        ;set the OSD transparency
+        WinSet, Transparent, 252, % "ahk_id " . this.hwnd
+        return this.state:= 1
+    }
+
+    ; shows the OSD window with the specified text and accent
+    ; and activates a timer to hide it
+    showAndHide(text, accent:=-1, seconds:=1){
+        hideFunc:= this.hideFunc
+        this.show(text,accent)
+        SetTimer, % hideFunc,% "-" . seconds*1000
+    }
+
+    ; shows a draggable OSD window with the specified text and accent
+    showdraggable(text, accent:=-1){
+        Gui,% this.hwnd ":Default"
+        this.show(text, accent)
+        OnMessage(0x201, this.onDragFunc)
+    }
+
+    ; shows a draggable OSD window to set the position
+    showPosEditor(){
+        Gui,% this.hwnd ":Default"
+        this.showdraggable("RClick to confirm")
+        OnMessage(0x205, this.onRClickFunc)
+    }
+
+    ; hides the OSD window
+    hide(){
+        Gui, % this.hwnd ":Default"
+        OnMessage(0x201, this.onDragFunc, 0)
+        OnMessage(0x205, this.onRClickFunc, 0)
+        Gui, Hide
+        this.state:= 0
+    }
+
+    canShow(){
+        return this.excludeFullscreen? !this.isWindowFullscreen() : 1
+    }
+
+    setTheme(theme:=""){
+        this.theme:= theme? (theme=1? "232323" : theme) : "f2f2f2"
+    }
+
+    getText(text){
+        if (StrLen(text)>20)
+            text:= SubStr(text, 1, 18) . "..."
+        return text
+    }
+
+    isWindowFullscreen(win:="A"){
+        winID := WinExist(win)
+        if(!winID)
+            return 0
+        WinGet style, Style, ahk_id %WinID%
+        WinGetPos ,,,winW,winH, %winTitle%
+        return !((style & 0x20800000) or WinActive("ahk_class Progman") 
+            or WinActive("ahk_class WorkerW") or winH < A_ScreenHeight or winW < A_ScreenWidth)
+    }
+
+    getPosObj(x:=-1,y:=-1){
+        p_obj:= {}
+        p_obj.x:= x=-1? "Center": x
+        p_obj.y:= y=-1? this.screenHeight * 0.9 : y
+        return p_obj
+    }
+
+    __onDrag(wParam, lParam, msg, hwnd){
+        if(hwnd = this.hwnd)
+            PostMessage, 0xA1, 2,,, % "ahk_id " this.hwnd
+    }
+
+    __onRClick(wParam, lParam, msg, hwnd){
+        if(hwnd != this.hwnd)
+            return
+        WinGetPos, xPos,yPos
+        this.hide()
+        this.pos.x:= xPos
+        this.pos.y:= yPos
+        if(IsFunc(this.posEditorCallback))
+            this.posEditorCallback.Call(xPos,yPos)
     }
 }
-OSD_destroy(){
-    Gui, OSD:Default
-    Gui, Destroy
-    OSD_state := 0
-    SetTimer, OSD_destroy, Off
-}
-OSD_showPosEditor(funcObj:=""){
-    OSD_spawn("RClick to confirm",OSD_MAIN_ACCENT,1)
-    OSD_PosEditorFunc:= funcObj
-    Gui, OSD:Default
-    OnMessage(0x205, "onRClick")
-}
-OSD_setPos(x:="",y:=""){
-    SysGet, mon, Monitor, 0
-    OSD_POS.x := !x? monRight/2 - 105 : x
-    OSD_POS.y := !y? monBottom * 0.9 : y
-    return OSD_POS
-}
-OSD_isActiveWinFullscreen(){
-    winID := WinExist( "A" )
-    if ( !winID )
-        Return false
-    WinGet style, Style, ahk_id %WinID%
-    WinGetPos ,,,winW,winH, %winTitle%
-    return !((style & 0x20800000) or WinActive("ahk_class Progman") 
-    or WinActive("ahk_class WorkerW") or winH < A_ScreenHeight or winW < A_ScreenWidth)
-}
-onDrag(wParam, lParam, msg, hwnd){
-    Gui, OSD:Default 
-    Gui, +LastFound
-    Checkhwnd := WinExist()
-    if(hwnd = Checkhwnd)
-        PostMessage, 0xA1, 2 
-}
-onRClick(wParam, lParam, msg, hwnd){
-    Gui, OSD:Default 
-    Gui, +LastFound
-    Checkhwnd := WinExist()
-    if(hwnd != Checkhwnd)
-        return
-    WinGetPos, xPos,yPos
-    OSD_destroy() 
-    if(IsFunc(OSD_PosEditorFunc))
-        OSD_PosEditorFunc.Call(xPos,yPos)
-} 
