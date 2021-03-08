@@ -24,7 +24,7 @@
 #SingleInstance force
 
 #Include, <VA>
-#Include, <OSD>
+#Include, OSD.ahk
 #Include, utils.ahk
 #Include, GUI.ahk
 #Include, Config.ahk
@@ -198,7 +198,7 @@ checkProfiles(){
 
 showFeedback(){
     if (current_profile.OnscreenFeedback){
-        osd_obj.showAndHide("Microphone " . (global_state? "Muted" : "Online"), global_state)
+        osd_obj.showAndHide("Microphone " . (global_state? "Muted" : "Online"), !global_state)
     }
     if (current_profile.SoundFeedback){
         if(current_profile.PushToTalk)
