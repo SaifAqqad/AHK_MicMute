@@ -33,7 +33,7 @@
 ;auto_exec begin
 SetWorkingDir %A_ScriptDir%
 Global conf, watched_profiles, current_profile, watched_profile
-, global_state, ptt_key, mute_sound, unmute_sound, ptt_on_sound, ptt_off_sound, sys_theme
+, global_state, ptt_key, mute_sound, unmute_sound, ptt_on_sound, ptt_off_sound, sys_theme, osd_obj
 SetTimer, runUpdater, -1
 SetTimer, GUI_create, -1
 init()
@@ -45,6 +45,7 @@ OnExit(Func("setMuteState").bind(0))
 
 init(){
     conf:= new Config
+    , osd_obj:=""
     , watched_profiles:= Array()
     , current_profile:=""
     , watched_profile:=""
@@ -109,10 +110,10 @@ switchProfile(p_name:=""){
         IfMsgBox, Cancel
             ExitApp, -2
     }
-    OSD_setPos(current_profile.OSDPos.x,current_profile.OSDPos.y)
-    if(conf.SwitchProfileOSD)
-        OSD_show(Format("Profile: {}", current_profile.ProfileName),OSD_MAIN_ACCENT,current_profile.ExcludeFullscreen)
+    osd_obj:= new OSD(current_profile.OSDPos, current_profile.ExcludeFullscreen)
     updateGlobalState()
+    if(conf.SwitchProfileOSD)
+        osd_obj.showAndHide(Format("Profile: {}", current_profile.ProfileName))
 }
 
 disableHotkeys(){
@@ -197,10 +198,7 @@ checkProfiles(){
 
 showFeedback(){
     if (current_profile.OnscreenFeedback){
-        if (global_state)
-            OSD_show("Microphone Muted", OSD_MUTE_ACCENT, current_profile.ExcludeFullscreen)
-        else
-            OSD_show("Microphone Online", OSD_UNMUTE_ACCENT, current_profile.ExcludeFullscreen)
+        osd_obj.showAndHide("Microphone " . (global_state? "Muted" : "Online"), global_state)
     }
     if (current_profile.SoundFeedback){
         if(current_profile.PushToTalk)
@@ -212,7 +210,7 @@ showFeedback(){
 
 editConfig(){
     Menu, Tray, Icon, %A_ScriptFullPath%, 1
-    OSD_destroy()
+    osd_obj.destroy()
     if(GetKeyState("Shift", "P")){
         if(progPath:=util_GetFileAssoc("json"))
             Run, %ProgPath% "%A_ScriptDir%\config.json",
@@ -257,6 +255,7 @@ UpdateSysTheme(){
     RegRead, reg
     , HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize, SystemUsesLightTheme
     sys_theme:= !reg
+    osd_obj.setTheme(sys_theme)
 }
 
 runUpdater(p_silent:=1){

@@ -589,7 +589,9 @@ onOSDset(neutron,is_reset:=0){
     }
     MsgBox, 64, MicMute, Drag the OSD to the desired position`nthen right click it.
     neutron.Minimize()
-    OSD_showPosEditor(Func("onConfirmOSDPos"))
+    editor_osd:= new OSD(current_profile.OSDPos,,Func("onConfirmOSDPos"))
+    editor_osd.setTheme(sys_theme)
+    editor_osd.showPosEditor()
 }
 
 onConfirmOSDPos(x,y){
