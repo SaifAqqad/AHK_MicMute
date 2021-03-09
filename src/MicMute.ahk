@@ -1,7 +1,7 @@
 ﻿;compiler directives
 ;@Ahk2Exe-Let Res = %A_ScriptDir%\resources
 ;@Ahk2Exe-SetMainIcon %U_Res%\MicMute.ico
-;@Ahk2Exe-SetVersion 0.8.2
+;@Ahk2Exe-SetVersion 0.8.3
 ;@Ahk2Exe-SetName MicMute
 ;@Ahk2Exe-SetDescription MicMute
 ;@Ahk2Exe-AddResource %U_Res%\defaultBlack.ico, 3080
@@ -210,7 +210,7 @@ showFeedback(){
 
 editConfig(){
     Menu, Tray, Icon, %A_ScriptFullPath%, 1
-    osd_obj.destroy()
+    Try osd_obj.destroy()
     if(GetKeyState("Shift", "P")){
         if(progPath:=util_GetFileAssoc("json"))
             Run, %ProgPath% "%A_ScriptDir%\config.json",
