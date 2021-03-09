@@ -7,7 +7,7 @@ Global neutron :=, GUI_mute_hotkey:=new UStack(), GUI_unmute_hotkey:=new UStack(
 ,"^":"Control","<+":"LShift",">+":"RShift","+":"Shift","<!":"LAlt",">!":"RAlt","!":"Alt","<#":"LWin",">#":"RWin","#":"LWin"}
 ,GUI_nt_modifiers:= {"RAlt":"Alt","LAlt":"Alt","RShift":"Shift","LShift":"Shift","RControl":"Control","LControl":"Control"}
 ,GUI_mute_passthrough:=0,GUI_mute_wildcard:=0,GUI_unmute_passthrough:=0,GUI_unmute_wildcard:=0
-,GUI_mute_nt:=1,GUI_unmute_nt:=1,GUI_timer_ref:=
+,GUI_mute_nt:=1,GUI_unmute_nt:=1,GUI_timer_ref:=,GUI_scale:= A_ScreenDPI/96
 ,GUI_tt:= [{selector:".passthrough-label",string:"The hotkey's keystrokes won't be hidden from the OS"}
 ,{selector:".wildcard-label",string:"Fire the hotkey even if extra modifiers are held down"}
 ,{selector:".nt-label",string:"Use neutral modifiers (i.e. Alt instead of Left Alt / Right Alt)"}
@@ -26,6 +26,7 @@ Global neutron :=, GUI_mute_hotkey:=new UStack(), GUI_unmute_hotkey:=new UStack(
 GUI_create(){
     RegWrite, REG_DWORD, HKEY_CURRENT_USER, SOFTWARE\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_GPU_RENDERING, %A_ScriptName%, 0x1
     RegWrite, REG_DWORD, HKEY_CURRENT_USER, SOFTWARE\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_BROWSER_EMULATION, %A_ScriptName%, 0x2AF8
+    RegWrite, REG_DWORD, HKEY_CURRENT_USER, SOFTWARE\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_96DPI_PIXEL, %A_ScriptName%, 0x1
     Menu, Tray, Icon, %A_ScriptFullPath%, 1
     neutron := new NeutronWindow()
     neutron.load("GUI.html")
@@ -36,8 +37,8 @@ GUI_show(){
     add_tooltips()
     checkSysTheme()
     neutron.doc.getElementById("top").scrollIntoView()
-    neutron.Gui("+MinSize700x440")
-    neutron.show("Center w830 h650","MicMute")
+    neutron.Gui(Format("+MinSize{:i}x{:i}",700*GUI_scale,440*GUI_scale))
+    neutron.show(Format("Center w{:i} h{:i}",830*GUI_scale,650*GUI_scale),"MicMute")
     WinSet, Transparent, 252, % "ahk_id " . neutron.hWnd
     SetTimer, checkSysTheme, 1500
     WinWaitClose, % "ahk_id " . neutron.hWnd
