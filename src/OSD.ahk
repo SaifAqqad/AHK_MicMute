@@ -9,15 +9,16 @@ Class OSD {
         ;get the primary monitor resolution
         SysGet, res, Monitor
         this.screenHeight:= resBottom
-        ;set the default pos object
-        pos:= pos? pos : {x:-1,y:-1}
-        ;get the final pos object
-        this.pos:= this.getPosObj(pos.x, pos.y)
-        ;get the monitor scaling
+        this.screenWidth:= resRight
+        ;get the primary monitor scaling
         this.scale:= A_ScreenDPI/96
         ;set the OSD width and height
         this.width:= Format("{:i}", 220 * this.scale)
         this.height:= Format("{:i}", 38 * this.scale)
+        ;set the default pos object
+        pos:= pos? pos : {x:-1,y:-1}
+        ;get the final pos object
+        this.pos:= this.getPosObj(pos.x, pos.y)
         ;set up bound func objects 
         this.hideFunc:= objBindMethod(this, "hide")
         this.onDragFunc:= objBindMethod(this, "__onDrag")
@@ -137,7 +138,7 @@ Class OSD {
 
     getPosObj(x:=-1,y:=-1){
         p_obj:= {}
-        p_obj.x:= x=-1? "Center": x
+        p_obj.x:= x=-1? Round(this.screenWidth/2 - this.width/2) : x
         p_obj.y:= y=-1? this.screenHeight * 0.9 : y
         return p_obj
     }
