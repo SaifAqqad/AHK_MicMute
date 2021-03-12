@@ -1,4 +1,3 @@
-#Include, <JSON>
 class Config {
     DefaultProfile:=""
     Profiles:=Array()
@@ -37,8 +36,7 @@ class Config {
     }
 
     importIniConfig(){
-        dfProfile:= this.createProfile("Default")
-        this.DefaultProfile:= dfProfile.ProfileName
+        dfProfile:= new ProfileTemplate("Default")
         for key, val in dfProfile {
             IniRead, iniVal, config.ini, settings, %key%
             if(iniVal = "ERROR")
@@ -47,6 +45,8 @@ class Config {
                 iniVal+=0
             dfProfile[key]:= iniVal
         }
+        dfProfile:= this.createProfile(dfProfile)
+        this.DefaultProfile:= dfProfile.ProfileName
         this.exportConfig()
         FileDelete, config.ini
     }
@@ -91,21 +91,26 @@ class Config {
 class ProfileTemplate{
     __New(p_name_Obj){
         this.ProfileName:= p_name_Obj
-        this.Microphone:="capture"
-        this.MuteHotkey:=""
-        this.UnmuteHotkey:=""
+        this.Microphone:= [{Name:"capture"
+        ,MuteHotkey:=""
+        ,UnmuteHotkey:=""
+        ,PushToTalk:=0}]
         this.SoundFeedback:=0
         this.OnscreenFeedback:=0
         this.ExcludeFullscreen:=0
         this.UpdateWithSystem:=1
         this.afkTimeout:=0
         this.LinkedApp:=""
-        this.PushToTalk:=0
         this.PTTDelay:=100
         this.OSDPos:={x:-1,y:-1}
         if(IsObject(p_name_Obj)){
             for prop, val in p_name_Obj{
                 this[prop]:= val
+            }
+            if(!IsObject(this.Microphone)){
+                this.Microphone:= [{Name:this.Delete("Microphone")
+                ,MuteHotkey:this.Delete("MuteHotkey")
+                ,UnmuteHotkey:this.Delete("UnmuteHotkey")}]
             }
         }
     }
