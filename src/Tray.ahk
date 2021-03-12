@@ -22,7 +22,7 @@ tray_init(){
     tray_add("Edit configuration",Func("editConfig"))
     tray_createProfilesMenu()
     tray_add("Profile", ":profiles")
-    tray_add("Toggle microphone", Func("setMuteState").bind(-1))
+    tray_add("Toggle microphone", Func("setMuteState").bind("",-1))
     Menu, Tray, Click, 1
     Menu, Tray, Default, 1&
     if (util_StartupTaskExists())
@@ -56,6 +56,11 @@ tray_autoStart(){
         }
         Menu, Tray, % util_CreateStartupTask()? "Check" : "Uncheck", Start on boot
     }
+}
+
+tray_toggleMic(onOff){
+    Menu, Tray, % onOff? "Enable" : "Disable", Toggle microphone
+    Menu, Tray, % onOff? "Default" : "NoDefault", Toggle microphone
 }
 
 tray_createProfilesMenu(){
