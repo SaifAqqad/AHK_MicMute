@@ -24,16 +24,31 @@
 #SingleInstance force
 
 #Include, <VA>
-#Include, OSD.ahk
+#Include, <JSON>
+#Include, <Neutron>
+#Include, <StackSet>
+
 #Include, utils.ahk
+#Include, OSD.ahk
 #Include, GUI.ahk
 #Include, Config.ahk
 #Include, Tray.ahk
 
 ;auto_exec begin
 SetWorkingDir %A_ScriptDir%
-Global conf, watched_profiles, current_profile, watched_profile
-, global_state, ptt_key, mute_sound, unmute_sound, ptt_on_sound, ptt_off_sound, sys_theme, osd_obj
+Global conf
+, watched_profiles
+, current_profile
+, watched_profile
+, global_state
+, ptt_key
+, mute_sound
+, unmute_sound
+, ptt_on_sound
+, ptt_off_sound
+, sys_theme
+, osd_obj
+, hotkeys_set
 SetTimer, runUpdater, -1
 SetTimer, GUI_create, -1
 init()
@@ -56,6 +71,7 @@ init(){
     , ptt_on_sound:=""
     , ptt_off_sound:=""
     , sys_theme:=""
+    , hotkeys_set:= ""
     for i, prof in conf.Profiles 
         if(prof.LinkedApp)
             watched_profiles.Push(prof)
@@ -67,25 +83,6 @@ init(){
     switchProfile()
 }
 
-ptt(){
-    setMuteState(0)
-    KeyWait, %ptt_key%
-    if(ms:=current_profile.PTTDelay)
-        sleep, %ms%
-    setMuteState(1)
-}
-
-setMuteState(state){
-    Critical, On
-    switch state {
-        case global_state: return
-        case -1: state:= !global_state
-    }
-    VA_SetMasterMute(state, current_profile.Microphone)
-    updateGlobalState()
-    Critical, Off
-    showFeedback()
-}
 
 switchProfile(p_name:=""){
     Try{
@@ -94,54 +91,30 @@ switchProfile(p_name:=""){
         SetTimer, checkActivity, Off
         Menu, profiles, Uncheck, % current_profile.ProfileName
     }
-    current_profile:= conf.getProfile(p_name)
     Menu, profiles, Check, % current_profile.ProfileName
-    if (current_profile.UpdateWithSystem){
+    current_profile:= conf.getProfile(p_name)
+    osd_obj:= new OSD(current_profile.OSDPos, current_profile.ExcludeFullscreen)
+    hotkeys_set:= new StackSet
+    if (current_profile.UpdateWithSystem)
         SetTimer, updateGlobalState, 1500
-    }
-    if (current_profile.afkTimeout && !current_profile.PushToTalk){
+    if (current_profile.afkTimeout)
         SetTimer, checkActivity, 1000
-    }
     Try initHotkeys()
-    catch {
-        MsgBox, 65, MicMute, % Format("'{}' profile needs to be set up",current_profile.ProfileName)
+    catch err{
+        MsgBox, 65, MicMute, % err
         IfMsgBox, OK
             editConfig()
         IfMsgBox, Cancel
             ExitApp, -2
+        return
     }
-    osd_obj:= new OSD(current_profile.OSDPos, current_profile.ExcludeFullscreen)
     updateGlobalState()
     if(conf.SwitchProfileOSD)
         osd_obj.showAndHide(Format("Profile: {}", current_profile.ProfileName))
 }
 
-disableHotkeys(){
-    Try Hotkey, % current_profile.MuteHotkey , Off, Off
-    Try Hotkey, % current_profile.UnmuteHotkey, Off, Off
-}
 
-initHotkeys(){
-    Menu, Tray, Enable, Toggle microphone
-    Menu, Tray, Default, Toggle microphone
-    if (current_profile.MuteHotkey=current_profile.UnmuteHotkey){
-        if(current_profile.PushToTalk){
-            VA_SetMasterMute(1, current_profile.Microphone)
-            ptt_key:= (StrSplit(current_profile.MuteHotkey, [" ","#","!","^","+","&",">","<","*","~","$","UP"], " `t")).Pop()
-            Hotkey, % current_profile.MuteHotkey , ptt, On
-            Menu, Tray, Disable, Toggle microphone
-            Menu, Tray, NoDefault
-        }else{
-            funcObj:= Func("setMuteState").bind(-1)
-            Hotkey, % current_profile.MuteHotkey , % funcObj, On
-        }
-    }else{
-        funcObj:= Func("setMuteState").bind(1)
-        Hotkey, % current_profile.MuteHotkey, % funcObj, On
-        funcObj:= Func("setMuteState").bind(0)
-        Hotkey, % current_profile.UnmuteHotkey, % funcObj, On
-    } 
-}
+
 
 initSounds(){
     util_ResRead(mute_sound, Format("{:U}", "mute.wav"))
@@ -173,10 +146,12 @@ updateGlobalState(){
 }
 
 checkActivity(){
-    if (A_TimeIdlePhysical > current_profile.afkTimeout * 60000)
-        setMuteState(1)
+    if (A_TimeIdlePhysical > current_profile.afkTimeout * 60000){
+        ;TODO: for each mic -> setMuteState(1)
+    }
 }
 
+;TODO REWRITE FEATURE
 checkProfiles(){
     static last_profile:=
     if(watched_profile){
@@ -196,7 +171,8 @@ checkProfiles(){
     }
 }
 
-showFeedback(){
+;TODO REWRITE FEATURE
+showFeedback(mic_obj){
     if (current_profile.OnscreenFeedback){
         osd_obj.showAndHide("Microphone " . (global_state? "Muted" : "Online"), !global_state)
     }
