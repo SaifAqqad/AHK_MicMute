@@ -89,7 +89,7 @@ Class OSD {
     }
 
     ; shows a draggable OSD window with the specified text and accent
-    showdraggable(text, accent:=-1){
+    showDraggable(text, accent:=-1){
         Gui,% this.hwnd ":Default"
         this.show(text, accent)
         OnMessage(0x201, this.onDragFunc)
