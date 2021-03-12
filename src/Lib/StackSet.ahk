@@ -1,5 +1,5 @@
 ;Ordered collection of unique values
-class UStack{
+class StackSet{
     __New(elements*){
         this.data:= Array()
         this.occurrences:= {}
