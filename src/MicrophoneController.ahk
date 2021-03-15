@@ -1,7 +1,7 @@
 Class MicrophoneController {
     static hotkeys_set
 
-    __New(mic_obj, ptt_delay:=0, feedback_func){
+    __New(mic_obj, ptt_delay:=0, feedback_func:=""){
         this.state:=0
         this.ptt_key:=""
         this.microphone:= mic_obj.Name
@@ -29,7 +29,8 @@ Class MicrophoneController {
         VA_SetMasterMute(state, this.microphone)
         this.updateState()
         Critical, Off
-        this.feedback_func.Call(this)
+        if(IsFunc(this.feedback_func))
+            this.feedback_func.Call(this)
     }
     
 
@@ -45,7 +46,6 @@ Class MicrophoneController {
                     funcObj:= ObjBindMethod(this,"ptt")
                     Hotkey, % this.muteHotkey , % funcObj, On
                     SetTimer, checkIsIdle, Off
-                    tray_toggleMic(0)
                 }else{
                     funcObj:= ObjBindMethod(this,"setMuteState",-1)
                     Hotkey, % this.muteHotkey , % funcObj, On
@@ -69,7 +69,8 @@ Class MicrophoneController {
     }
     
     updateState(){
-        this.state:= VA_GetMasterMute(this.Microphone)
+        rim:= VA_GetMasterMute(this.microphone)
+        this.state:= rim
     }
 
     resetHotkeysSet(){

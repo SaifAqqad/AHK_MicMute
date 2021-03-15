@@ -14,25 +14,27 @@ class ResourcesManager {
 
     __New(){
         if(A_IsCompiled){
+            ;if we're running the compiled version -> icon's 'file' property is the executable
             for obj, ico in this.icoFile {
                 ico.file:= A_ScriptFullPath
             }
             this.defaultIcon.file:= A_ScriptFullPath
         }else{
+            ; if not -> prepend the path to the 'file' property
             for type, file in this.SoundFile {
                 this.soundFile[type]:= this.RES_FOLDER . file
             }
             for obj, ico in this.icoFile {
-                ico.file:= this.RES_FOLDER . file
-                ico.group:= ""
+                ico.file:= this.RES_FOLDER . ico.file
+                ico.group:= "1"
             }
             this.defaultIcon.file:= this.RES_FOLDER . this.defaultIcon.file
-            this.defaultIcon.group:= ""
+            this.defaultIcon.group:= "1"
             this.pngIcon:= this.RES_FOLDER . this.pngIcon
         }
     }
 
-    getSoundFile(state,isPtt:=0){
+    getSoundFile(state, isPtt:=0){
         if(isPtt){
             return state? this.soundFile.ptt_off : this.soundFile.ptt_on
         }else{

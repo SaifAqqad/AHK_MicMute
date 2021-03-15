@@ -18,19 +18,11 @@ class ProfileTemplate{
                 this[prop]:= val
             }
             if(!IsObject(this.Microphone)){
-                this.Microphone:= Array()
-                this.addMicrophone(this.Delete("Microphone")
-                ,this.Delete("MuteHotkey")
-                ,this.Delete("UnmuteHotkey")
-                ,this.Delete("PushToTalk"))
+                this.Microphone:= Array({Name: this.Delete("Microphone")
+                ,MuteHotkey: this.Delete("MuteHotkey")
+                ,UnmuteHotkey: this.Delete("UnmuteHotkey")
+                ,PushToTalk: this.Delete("PushToTalk")})
             }
         }
-    }
-
-    addMicrophone(name, MuteHotkey, Unmutehotkey, PushToTalk){
-        this.Microphone.Push({"Name":name
-        ,"MuteHotkey":MuteHotkey
-        ,"UnmuteHotkey":Unmutehotkey
-        ,"PushToTalk":PushToTalk})
     }
 }

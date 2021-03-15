@@ -1,25 +1,31 @@
 Global startup_shortcut:= A_Programs . "\Startup\MicMute.lnk"
 
 tray_init(){
+    global
     Menu, Tray, DeleteAll
     Menu, Tray, NoStandard
+    Menu, Tray, UseErrorLevel, On
     tray_defaults()
-    tray_add("Exit",Func("tray_exit"))
-    if(A_Args[1] = "/debug"){
-        tray_createDebugMenu()
-        tray_add("Debug", ":Debug")
-    }
-    tray_add("Help",Func("tray_launchHelp"))
-    tray_add("Start on boot",Func("tray_autoStart"))
-    if(FileExist(A_ScriptDir . "\updater.exe"))
-        tray_add("Check for updates",Func("tray_checkUpdate"))
-    Menu, Tray, Insert, 1&
-    tray_add("Edit configuration",Func("editConfig"))
     tray_createProfilesMenu()
+    tray_createDebugMenu()
+
+    tray_add("Toggle microphone", Func("tray_noFunc"))
     tray_add("Profile", ":profiles")
-    tray_add("Toggle microphone", Func("setMuteState").bind("",-1))
+    tray_add("Edit configuration", Func("editConfig"))
+
+    Menu, Tray, Add, ;seperator line
+    
+    if(FileExist(A_ScriptDir . "\updater.exe"))
+        tray_add("Check for updates", Func("tray_checkUpdate"))
+    tray_add("Start on boot",Func("tray_autoStart"))
+    tray_add("Help",Func("tray_launchHelp"))
+    if(A_Args[1] = "/debug" || A_DebuggerName)
+        tray_add("Debug", ":Debug")
+    tray_add("Exit",Func("tray_exit"))        
+
     Menu, Tray, Click, 1
     Menu, Tray, Default, 1&
+    
     if (util_StartupTaskExists())
         Menu, Tray, Check, Start on boot
     else
@@ -28,19 +34,19 @@ tray_init(){
 
 tray_defaults(){
     ico:= resources_obj.defaultIcon
-    Menu, Tray, Icon, % ico.file, % ico.group
     Menu, Tray, Tip, MicMute 
+    Menu, Tray, Icon, % ico.file, % ico.group,0
 }
 
 tray_update(state){
     tooltipText:= state_string[state]
-    ico:= resources_obj.getIcoFile(states)
-    Menu, Tray, Icon, % ico.file, % ico.group
-    Menu, Tray, Tip, % tooltipTxt
+    ico:= resources_obj.getIcoFile(state)
+    Menu, Tray, Tip, % tooltipText
+    Menu, Tray, Icon, % ico.file, % ico.group,0
 }
 
 tray_add(name, funcObj){
-    Menu, Tray, Insert, 1&, %name%, %funcObj%
+    Menu, Tray, Add, %name%, %funcObj%
 }
 
 tray_remove(item){
@@ -62,13 +68,19 @@ tray_autoStart(){
 }
 
 tray_toggleMic(onOff){
-    Menu, Tray, % onOff? "Enable" : "Disable", Toggle microphone
-    Menu, Tray, % onOff? "Default" : "NoDefault", Toggle microphone
+    if(onOff){
+        Menu, Tray, Enable, 1&
+        Menu, Tray, Default, 1&
+    }else{
+        Menu, Tray, Disable, 1&
+        Menu, Tray, NoDefault
+    }
+    
 }
 
 tray_createProfilesMenu(){
     Try Menu, profiles, DeleteAll
-    for i, p_profile in conf.Profiles{
+    for i, p_profile in config_obj.Profiles{
         funcObj:= Func("switchProfile").bind(p_profile.ProfileName)
         Menu, profiles, Add, % p_profile.ProfileName, % funcObj, +Radio
     }
@@ -132,5 +144,9 @@ listKeys(){
             keys[n] := 1
         }
         LV_ModifyCol()
+    return
+}
+
+tray_noFunc(){
     return
 }

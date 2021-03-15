@@ -1,0 +1,44 @@
+{
+    "DefaultProfile": "Default",
+    "MuteOnStartup": 0,
+    "Profiles": [
+        {
+            "afkTimeout": 0,
+            "ExcludeFullscreen": 0,
+            "LinkedApp": "",
+            "Microphone": "Microphone (AmazonBasics Desktop Mini Mic)",
+            "MuteHotkey": "~*RShift",
+            "OnscreenFeedback": 1,
+            "OSDPos": {
+                "x": -1,
+                "y": -1
+            },
+            "ProfileName": "Default",
+            "PTTDelay": 100,
+            "PushToTalk": 0,
+            "SoundFeedback": 1,
+            "UnmuteHotkey": "~*RShift",
+            "UpdateWithSystem": 1
+        },
+        {
+            "afkTimeout": 0,
+            "ExcludeFullscreen": 0,
+            "LinkedApp": "firefox.exe",
+            "Microphone": "Microphone (AmazonBasics Desktop Mini Mic)",
+            "MuteHotkey": "~*RShift",
+            "OnscreenFeedback": 1,
+            "OSDPos": {
+                "x": 145,
+                "y": 1000
+            },
+            "ProfileName": "Firefox",
+            "PTTDelay": 100,
+            "PushToTalk": 1,
+            "SoundFeedback": 1,
+            "UnmuteHotkey": "~*RShift",
+            "UpdateWithSystem": 1
+        }
+    ],
+    "SwitchProfileOSD": 1,
+    "UseCustomSounds": 0
+}
