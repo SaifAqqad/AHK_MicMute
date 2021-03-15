@@ -1,0 +1,36 @@
+{
+    "DefaultProfile": "Default",
+    "MuteOnStartup": 0,
+    "Profiles": [
+        {
+            "afkTimeout": 0,
+            "ExcludeFullscreen": 0,
+            "LinkedApp": "",
+            "Microphone": [
+                {
+                    "Name": "Microphone (AmazonBasics Desktop Mini Mic)",
+                    "MuteHotkey": "~*RShift",
+                    "UnmuteHotkey": "~*RShift",
+                    "PushToTalk": 0
+                },
+                {
+                    "Name": "Headset Microphone (Corsair HS70 Wireless Gaming Headset)",
+                    "MuteHotkey": "*B",
+                    "UnmuteHotkey": "*B",
+                    "PushToTalk": 1
+                }
+            ],
+            "OnscreenFeedback": 1,
+            "OSDPos": {
+                "x": 145,
+                "y": 1000
+            },
+            "ProfileName": "Firefox",
+            "PTTDelay": 100,
+            "SoundFeedback": 1,
+            "UpdateWithSystem": 1
+        }
+    ],
+    "SwitchProfileOSD": 1,
+    "UseCustomSounds": 0
+}

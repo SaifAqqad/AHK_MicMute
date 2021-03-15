@@ -1,14 +1,9 @@
 Global startup_shortcut:= A_Programs . "\Startup\MicMute.lnk"
-, U_defaultBlack:= -3080
-, U_defaultWhite:= -3090
-, U_muteBlack:= -4080
-, U_muteWhite:= -4090
 
 tray_init(){
     Menu, Tray, DeleteAll
     Menu, Tray, NoStandard
-    Menu, Tray, Icon, %A_ScriptFullPath%, 1
-    Menu, Tray, Tip, MicMute 
+    tray_defaults()
     tray_add("Exit",Func("tray_exit"))
     if(A_Args[1] = "/debug"){
         tray_createDebugMenu()
@@ -31,9 +26,17 @@ tray_init(){
         Menu, Tray, Uncheck, Start on boot
 }
 
-tray_update(icon_group, tooltip_txt){
-    Menu, Tray, Icon, %A_ScriptFullPath%, %icon_group%
-    Menu, Tray, Tip, %tooltip_txt%
+tray_defaults(){
+    ico:= resources_obj.defaultIcon
+    Menu, Tray, Icon, % ico.file, % ico.group
+    Menu, Tray, Tip, MicMute 
+}
+
+tray_update(state){
+    tooltipText:= state_string[state]
+    ico:= resources_obj.getIcoFile(states)
+    Menu, Tray, Icon, % ico.file, % ico.group
+    Menu, Tray, Tip, % tooltipTxt
 }
 
 tray_add(name, funcObj){
