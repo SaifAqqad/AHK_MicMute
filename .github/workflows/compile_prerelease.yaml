@@ -1,6 +1,8 @@
 name: compile_prerelease
 on:
   push:
+    branches:
+      - master
   workflow_dispatch:
 jobs:
   compile:
