@@ -14,7 +14,7 @@ class ResourcesManager {
 
     __New(){
         if(A_IsCompiled){
-            ;if we're running the compiled version -> icon's 'file' property is the executable
+            ;if we're running the compiled version -> set icon's 'file' property to executable full path
             for obj, ico in this.icoFile {
                 ico.file:= A_ScriptFullPath
             }

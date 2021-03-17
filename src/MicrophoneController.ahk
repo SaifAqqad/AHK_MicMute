@@ -1,5 +1,5 @@
 Class MicrophoneController {
-    static hotkeys_set
+    static hotkeys_set, generic_state_string:= {0:"Microphone Online",1:"Microphone Muted"}
 
     __New(mic_obj, ptt_delay:=0, feedback_func:=""){
         this.state:=0
@@ -10,6 +10,11 @@ Class MicrophoneController {
         this.isPushToTalk:= mic_obj.PushToTalk
         this.ptt_delay:= ptt_delay
         this.feedback_func:= feedback_func
+        RegExMatch(this.microphone, "(.+) \(.+\)", match)
+        this.name:= match1? match1 : this.microphone
+        if (StrLen(this.name)>14)
+            this.name:= SubStr(this.name, 1, 12) . Chr(0x2026) ; fix overflow with ellipsis
+        this.state_string:= {0:this.name . " Online",1:this.name . " Muted"}
     }
 
     ptt(){
@@ -64,13 +69,15 @@ Class MicrophoneController {
     }
     
     disableHotkeys(){
+        ;@Ahk2Exe-IgnoreBegin
+        OutputDebug, % Format("Disabling Hotkeys: {} | {}`n",this.muteHotkey,this.unmuteHotkey)
+        ;@Ahk2Exe-IgnoreEnd
         Hotkey, % this.muteHotkey, Off, Off
         Hotkey, % this.unmuteHotkey, Off, Off
     }
     
     updateState(){
-        rim:= VA_GetMasterMute(this.microphone)
-        this.state:= rim
+        this.state:= VA_GetMasterMute(this.microphone)
     }
 
     resetHotkeysSet(){

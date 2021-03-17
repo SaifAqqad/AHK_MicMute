@@ -43,14 +43,15 @@
 Global config_obj, resources_obj, osd_obj, mic_controllers
 , mute_sound, unmute_sound, ptt_on_sound, ptt_off_sound
 , sys_theme, current_profile, watched_profiles, watched_profile
-, func_update_state, state_string:={0:"Microphone Online",1:"Microphone Muted"}
+, func_update_state
 
 ; Async run updater
 SetTimer, runUpdater, -1
 ; Async create gui window
 ;SetTimer, GUI_create, -1
-
 initilizeMicMute()
+;export the processed config object
+config_obj.exportConfig()
 if(config_obj.MuteOnStartup){
     for i, mic in mic_controllers 
         mic.setMuteState(1)
@@ -59,6 +60,10 @@ OnExit(Func("exitMicMute"))
 
 
 initilizeMicMute(default_profile:=""){
+    ;make sure hotkeys are disabled before reinitilization
+    if(mic_controllers)
+        for i,mic in mic_controllers
+            mic.disableHotkeys()
     ;initilize globals
     config_obj:= new Config()
     , resources_obj:= new ResourcesManager()
@@ -72,8 +77,6 @@ initilizeMicMute(default_profile:=""){
     , ptt_on_sound:=""
     , ptt_off_sound:=""
     , sys_theme:=""
-    ;export the processed config object
-    config_obj.exportConfig()
     ;add profiles with linked apps to watched_profiles
     for i,profile in config_obj.Profiles {
         if(profile.LinkedApp)
@@ -87,13 +90,14 @@ initilizeMicMute(default_profile:=""){
     initilizeSounds()
     ;update sys_theme variable
     UpdateSysTheme()
-    ;switch to the default profile
-    switchProfile(default_profile)
     ;initilize tray
     tray_init()
+    ;switch to the default profile
+    switchProfile(default_profile)
 }
 
 switchProfile(p_name:=""){
+    Critical, On
     ;turn off profile-specific timers
     Try{
         SetTimer, % func_update_state, Off
@@ -101,20 +105,22 @@ switchProfile(p_name:=""){
     }
     ;unmute and disable hotkeys for all existing microphones
     if(mic_controllers){
-        for i, mic in mic_controllers
+        for i, mic in mic_controllers{
             VA_SetMasterMute(0,mic.microphone)
             mic.disableHotkeys()
+        }
     }
     ;reset tray icon and tooltip
     tray_defaults()
     ;uncheck the profile in the tray menu
-    Try Menu, profiles, Uncheck, % current_profile.ProfileName
+    Menu, profiles, Uncheck, % current_profile.ProfileName
     ;reset the hotkeys set in MicrophoneController class
     MicrophoneController.resetHotkeysSet()
     ;set current_profile to the new profile
     current_profile:= config_obj.getProfile(p_name)
-    ;check the profile in the tray menu
-    Try Menu, profiles, Check, % current_profile.ProfileName
+    ;@Ahk2Exe-IgnoreBegin
+    OutputDebug, % Format("Switching to profile '{}'`n",current_profile.ProfileName)
+    ;@Ahk2Exe-IgnoreEnd
     ;create a new OSD object for the profile
     osd_obj:= new OSD(current_profile.OSDPos, current_profile.ExcludeFullscreen)
     ;initilize mic_controllers
@@ -122,8 +128,12 @@ switchProfile(p_name:=""){
     for i, mic in current_profile.Microphone {
         ;create a new MicrophoneController object for each mic
         mc:= new MicrophoneController(mic, current_profile.PTTDelay, Func("showFeedback"))
-        Try mc.enableHotkeys()
-        Catch, err {
+        Try {
+            device:= VA_GetDevice(mc.microphone)
+            if(!device) ;if the mic does not exist -> throw an error
+                Throw, Format("Invalid microphone name in profile '{}'" ,current_profile.ProfileName)
+            mc.enableHotkeys()
+        }Catch, err {
             MsgBox, 65, MicMute, % err
             IfMsgBox, OK
                 editConfig()
@@ -131,8 +141,13 @@ switchProfile(p_name:=""){
                 ExitApp, -2
             return
         }
+        ;@Ahk2Exe-IgnoreBegin
+        OutputDebug,% Format("Enabled Microphone controller: {} | {} | {}`n", mc.microphone,mc.muteHotkey,mc.unmuteHotkey)
+        ;@Ahk2Exe-IgnoreEnd
         mic_controllers.Push(mc)
     }
+    ;check the profile in the tray menu
+    Menu, profiles, Check, % current_profile.ProfileName
     ;handle tray toggle option
     tray_add("Toggle microphone", ObjBindMethod(mic_controllers[1],"setMuteState",-1))
     tray_toggleMic(1)
@@ -155,14 +170,20 @@ switchProfile(p_name:=""){
     ;show switching-profile OSD
     if(config_obj.SwitchProfileOSD)
         osd_obj.showAndHide(Format("Profile: {}", current_profile.ProfileName))
+    Critical, Off
 }
 
 showFeedback(mic_obj){
     ;update global state to make sure the tray icon is updated
     func_update_state.Call()
-    ; if osd is enabled -> show and hide after 1 sec
+    ;if osd is enabled -> show and hide after 1 sec
     if (current_profile.OnscreenFeedback){
-        osd_obj.showAndHide(state_string[mic_obj.state], !mic_obj.state)
+        if(mic_controllers.Length()>1) ;if there's multiple mic controllers
+            ;use mic name in the state string
+            osd_obj.showAndHide(mic_obj.state_string[mic_obj.state])
+        else
+            ;use generic state string
+            osd_obj.showAndHide(mic_obj.generic_state_string[mic_obj.state], !mic_obj.state)
     }
     ; if sound fb is enabled -> play the relevant sound file
     if (current_profile.SoundFeedback){
@@ -227,6 +248,8 @@ checkConfigDiff(){
     static last_modif_time:= ""
     FileGetTime, modif_time, config.json
     if(last_modif_time && modif_time!=last_modif_time){
+        last_modif_time:= ""
+        setTimer, checkConfigDiff, Off
         initilizeMicMute(current_profile.ProfileName)
         ret:= 1
     }
@@ -235,18 +258,15 @@ checkConfigDiff(){
 }
 
 checkLinkedApps(){
-    static last_profile:=""
     if(watched_profile){
         if(!WinExist("ahk_exe " . watched_profile.LinkedApp)){
-            switchProfile(last_profile.ProfileName)
-            last_profile:=""
+            switchProfile(config_obj.DefaultProfile)
             watched_profile:=""
         }
         return
     }
     for i, prof in watched_profiles {
         if(WinExist("ahk_exe " . prof.LinkedApp)){
-            last_profile:= current_profile
             watched_profile:= prof
             switchProfile(prof.ProfileName)
         }
@@ -265,6 +285,7 @@ updateStateMutliple(){
         mc.updateState()
     }
     UpdateSysTheme()
+    tray_defaults()
 }
 
 UpdateSysTheme(){
@@ -275,7 +296,7 @@ UpdateSysTheme(){
 }
 
 runUpdater(p_silent:=1){
-    if(FileExist(A_ScriptDir . "\updater.exe")){
+    if(A_IsCompiled && FileExist(A_ScriptDir . "\updater.exe")){
         RunWait, %A_ScriptDir%\updater.exe -check-update, %A_ScriptDir%, UseErrorLevel
         if(ErrorLevel=-2 && !p_silent)
             MsgBox, 64, MicMute, You already have the latest verison installed
@@ -283,6 +304,7 @@ runUpdater(p_silent:=1){
 }
 
 exitMicMute(){
+    config_obj.exportConfig()
     for i, mic in mic_controllers 
         VA_SetMasterMute(0,mic.microphone)
 }
