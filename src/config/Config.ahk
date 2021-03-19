@@ -1,4 +1,3 @@
-#Include, <JSON>
 class Config {
     DefaultProfile:=""
     Profiles:=Array()
@@ -7,7 +6,7 @@ class Config {
     SwitchProfileOSD:=1
 
     __New(p_DefaultProfile:=""){
-        this["$schema"]:= "https://raw.githubusercontent.com/SaifAqqad/AHK_MicMute/master/src/config_schema.json"
+;        this["$schema"]:= "https://raw.githubusercontent.com/SaifAqqad/AHK_MicMute/master/src/config_schema.json"
         if(!FileExist("config.json") || util_IsFileEmpty("config.json")){
             if(FileExist("config.ini")){
                 this.importIniConfig()
@@ -37,16 +36,26 @@ class Config {
     }
 
     importIniConfig(){
-        dfProfile:= this.createProfile("Default")
-        this.DefaultProfile:= dfProfile.ProfileName
-        for key, val in dfProfile {
+        iniProfile:= { "afkTimeout":0
+                    , "ExcludeFullscreen":0
+                    , "Microphone":"capture"
+                    , "MuteHotkey":""
+                    , "OnscreenFeedback":0
+                    , "ProfileName":"Default"
+                    , "PushToTalk":0
+                    , "SoundFeedback":0
+                    , "UnmuteHotkey":""
+                    , "UpdateWithSystem":1}
+        for key in iniProfile {
             IniRead, iniVal, config.ini, settings, %key%
             if(iniVal = "ERROR")
                 continue
             if val is number
                 iniVal+=0
-            dfProfile[key]:= iniVal
+            iniProfile[key]:= iniVal
         }
+        dfProfile:= this.createProfile(iniProfile)
+        this.DefaultProfile:= dfProfile.ProfileName
         this.exportConfig()
         FileDelete, config.ini
     }
@@ -85,28 +94,5 @@ class Config {
         this.Profiles.Push(new ProfileTemplate(p_Name))
         this.exportConfig()
         return this.Profiles[this.Profiles.Length()]
-    }
-}
-
-class ProfileTemplate{
-    __New(p_name_Obj){
-        this.ProfileName:= p_name_Obj
-        this.Microphone:="capture"
-        this.MuteHotkey:=""
-        this.UnmuteHotkey:=""
-        this.SoundFeedback:=0
-        this.OnscreenFeedback:=0
-        this.ExcludeFullscreen:=0
-        this.UpdateWithSystem:=1
-        this.afkTimeout:=0
-        this.LinkedApp:=""
-        this.PushToTalk:=0
-        this.PTTDelay:=100
-        this.OSDPos:={x:-1,y:-1}
-        if(IsObject(p_name_Obj)){
-            for prop, val in p_name_Obj{
-                this[prop]:= val
-            }
-        }
     }
 }

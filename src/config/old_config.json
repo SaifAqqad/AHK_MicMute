@@ -1,5 +1,4 @@
 {
-    "$schema": "https://raw.githubusercontent.com/SaifAqqad/AHK_MicMute/master/src/config_schema.json",
     "DefaultProfile": "Default",
     "MuteOnStartup": 0,
     "Profiles": [

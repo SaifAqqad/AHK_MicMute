@@ -1,7 +1,5 @@
-#Include, <Neutron>
-#Include, <UStack>
 ;GUI Globals
-Global neutron :=, GUI_mute_hotkey:=new UStack(), GUI_unmute_hotkey:=new UStack(),GUI_input_hook:= 
+Global neutron :=, GUI_mute_hotkey:=new StackSet(), GUI_unmute_hotkey:=new StackSet(),GUI_input_hook:= 
 ,GUI_modifiers:= {"Alt":"!","RAlt":">!","LAlt":"<!","Shift":"+","RShift":">+","LShift":"<+","Control":"^"
 ,"RControl":">^","LControl":"<^","LWin":"<#","RWin":">#"},GUI_modifier_symbols:={"<^":"LControl",">^":"RControl"
 ,"^":"Control","<+":"LShift",">+":"RShift","+":"Shift","<!":"LAlt",">!":"RAlt","!":"Alt","<#":"LWin",">#":"RWin","#":"LWin"}

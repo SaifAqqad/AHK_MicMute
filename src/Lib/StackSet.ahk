@@ -1,5 +1,5 @@
 ;Ordered collection of unique values
-class UStack{
+class StackSet{
     __New(elements*){
         this.data:= Array()
         this.occurrences:= {}
@@ -19,6 +19,12 @@ class UStack{
     
     pop(){
         val:= this.data.Pop()
+        this.occurrences.Delete(val)
+        return val
+    }
+
+    dequeue(){
+        val:= this.data.RemoveAt(1)
         this.occurrences.Delete(val)
         return val
     }
