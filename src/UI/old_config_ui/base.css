@@ -38,6 +38,7 @@ header {
 .title-bar {
     padding: 0.35em 0.5em;
     flex-grow: 1;
+    margin-left: 4px;
 }
 
 .title-btn {

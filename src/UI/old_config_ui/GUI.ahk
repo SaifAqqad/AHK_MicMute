@@ -1,16 +1,25 @@
-;GUI Globals
-Global neutron :=, GUI_mute_hotkey:=new StackSet(), GUI_unmute_hotkey:=new StackSet(),GUI_input_hook:= 
-,GUI_modifiers:= {"Alt":"!","RAlt":">!","LAlt":"<!","Shift":"+","RShift":">+","LShift":"<+","Control":"^"
-,"RControl":">^","LControl":"<^","LWin":"<#","RWin":">#"},GUI_modifier_symbols:={"<^":"LControl",">^":"RControl"
-,"^":"Control","<+":"LShift",">+":"RShift","+":"Shift","<!":"LAlt",">!":"RAlt","!":"Alt","<#":"LWin",">#":"RWin","#":"LWin"}
-,GUI_nt_modifiers:= {"RAlt":"Alt","LAlt":"Alt","RShift":"Shift","LShift":"Shift","RControl":"Control","LControl":"Control"}
-,GUI_mute_passthrough:=0,GUI_mute_wildcard:=0,GUI_unmute_passthrough:=0,GUI_unmute_wildcard:=0
-,GUI_mute_nt:=1,GUI_unmute_nt:=1,GUI_timer_ref:=,GUI_scale:= A_ScreenDPI/96
-,GUI_tt:= [{selector:".passthrough-label",string:"The hotkey's keystrokes won't be hidden from the OS"}
-,{selector:".wildcard-label",string:"Fire the hotkey even if extra modifiers are held down"}
-,{selector:".nt-label",string:"Use neutral modifiers (i.e. Alt instead of Left Alt / Right Alt)"}
-,{selector:".ptt-delay-label",string:"Delay between releasing the key and the audio cutting off"}
-,{selector:".afk-label",string:"Auto mute the microphone when idling for a length of time"}]
+Global neutron, GUI_scale:= A_ScreenDPI/96
+, GUI_modifier_regex:= "([RL]?)(\w+)"
+, GUI_symbol_regex:= "([<>])?([+^!#])"
+, GUI_input_hook, GUI_input_hook_timer, GUI_hotkeys
+, GUI_hotkey_obj:= { mute:{ nt:""
+                          , wildcard:""
+                          , passthrough:""
+                          , hotkey:""}
+                   , unmute:{ nt:""
+                            , wildcard:""
+                            , passthrough:""
+                            , hotkey:""}}
+, GUI_tooltips:= [ { selector: ".passthrough-label"
+                     , string: "The hotkey's keystrokes won't be hidden from the OS"}
+                  ,{ selector: ".wildcard-label"
+                     , string: "Fire the hotkey even if extra modifiers are held down"}
+                  ,{ selector: ".nt-label"
+                     , string: "Use neutral modifiers (i.e. Alt instead of Left Alt / Right Alt)"}
+                  ,{ selector: ".ptt-delay-label"
+                     , string: "Delay between releasing the key and the audio cutting off"}
+                  ,{ selector: ".afk-label"
+                     , string: "Auto mute the microphone when idling for a length of time"}]
 , GUI_profile_tag_template:= "
 (
     <div class=""tag is-large"" id=""tag_profile_{1:}"" oncontextmenu=""ahk.displayProfileRename('{1:}')"" onClick=""ahk.checkProfileTag('{1:}')"">
@@ -20,6 +29,7 @@ Global neutron :=, GUI_mute_hotkey:=new StackSet(), GUI_unmute_hotkey:=new Stack
         </label>
     </div>
 )"
+
 ;------init-functions------
 GUI_create(){
     RegWrite, REG_DWORD, HKEY_CURRENT_USER, SOFTWARE\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_GPU_RENDERING, %A_ScriptName%, 0x1
@@ -52,7 +62,6 @@ restoreConfig(){
         addProfileTag(prfl.ProfileName)
     }
     checkProfileTag(neutron,current_profile.ProfileName)
-    fetchDeviceList(neutron)
     onRestoreProfile(neutron)
 }
 
@@ -84,98 +93,18 @@ fetchDeviceList(neutron){
 
 ;------hotkey-generation-functions------
 
-addKey(element_id, InputHook, VK, SC){
-    key_name:= GetKeyName(Format("vk{:x}sc{:x}", VK, SC))
-    inputElem:= neutron.doc.getElementByID(element_id)
-    if(element_id = "mute_input"){
-        if(GUI_mute_nt && GUI_nt_modifiers.HasKey(key_name)){
-            key_name:= GUI_nt_modifiers[key_name]
-        }
-        GUI_mute_hotkey.push(key_name) && inputElem.value := inputElem.value . key_name . " + "
-    }else{
-        if(GUI_unmute_nt && GUI_nt_modifiers.HasKey(key_name)){
-            key_name:= GUI_nt_modifiers[key_name]
-        }
-        GUI_unmute_hotkey.push(key_name) && inputElem.value := inputElem.value . key_name . " + "
-    }
-}
-
-onRecord(neutron, elemType){
-    if(GUI_input_hook.InProgress){
-        GUI_input_hook.Stop()
-        sleep 30
-    }
-    if(elemType = "mute")
-        GUI_mute_hotkey:= new UStack()
-    else
-        GUI_unmute_hotkey:= new UStack()
-
-    hideElemID(neutron, elemType . "_record")
-    showElemID(neutron, elemType . "_stop")
-    GUI_timer_ref:= Func("updateTimer").Bind(elemType . "_stop")
-    GUI_timer_ref.Call()
-    SetTimer, % GUI_timer_ref, 1000
-
-    inputElem:= neutron.doc.getElementByID(elemType . "_input")
-    inputElem.value:=""
-    inputElem.placeholder:="Recording"
-
-    GUI_input_hook:= InputHook("L0 T3","{Enter}{Escape}")
-    GUI_input_hook.KeyOpt("{ALL}", "NI")
-    GUI_input_hook.VisibleText:= false
-    GUI_input_hook.VisibleNonText:= false
-    GUI_input_hook.OnKeyDown:= Func("addKey").Bind(elemType . "_input")
-    GUI_input_hook.OnEnd:= Func("onStop").Bind(neutron,elemType)
-    GUI_input_hook.Start()
-
-    funcObj:= Func("addKey").Bind(elemType . "_input","",0x5, 0x0)
-    Hotkey, *XButton1, % funcObj, On
-    funcObj:= Func("addKey").Bind(elemType . "_input","",0x6, 0x0)
-    Hotkey, *XButton2, % funcObj, On 
-}
-
-onStop(neutron, elemType, InputHook:=""){
-    if(GUI_input_hook.InProgress){
-        GUI_input_hook.Stop()
-        return
-    }
-    Hotkey, *XButton1, Off, UseErrorLevel
-    Hotkey, *XButton2, Off, UseErrorLevel
-    str:="", inputElem:= neutron.doc.getElementByID(elemType . "_input")
-    ,stopElem:= neutron.doc.getElementById(elemType . "_stop").firstElementChild
-    inputElem.placeholder:="Click Record"
-    stopElem.value:= 3
-    stopElem.innerText:="Stop"
-    SetTimer, % GUI_timer_ref, Off
-    hideElemID(neutron, elemType . "_stop")
-    showElemID(neutron, elemType . "_record")
-    sanitizeHotkey(elemType = "mute"? GUI_mute_hotkey : GUI_unmute_hotkey,str)
-    inputElem.value:= str
-}
-
-updateTimer(id){
-    buttonElem:= neutron.doc.getElementById(id).firstElementChild
-    buttonElem.innerText:= Format("Stop ({})", buttonElem.value)
-    buttonElem.value := buttonElem.value - 1
-    if(buttonElem.value = 0){
-        Try SetTimer,, Off
-        buttonElem.value := 3
-    }
-}
-
 sanitizeHotkey(ByRef hotkey_str, ByRef keys_str){
-    isModifierHotkey:= 0
     ; check hotkey length
     while(hotkey_str.data.Length()>5)
         hotkey_str.pop()
     ; check modifier count
     modifierCount:= 0
     for i, value in hotkey_str.data 
-        modifierCount += GUI_modifiers.HasKey(value)
+        modifierCount += GUI_isModifier(value)
     keyCount:= hotkey_str.data.Length() - modifierCount
     ; check hotkey validity
     switch modifierCount {
-        case 0,1: ; (2 keys) | (1 modifier 1 key)
+        case 0,1: ; (1/2 keys) | (1 modifier 1 key)
             while(hotkey_str.data.Length()>2)
                 hotkey_str.pop()
         case 2: ; (2 modifiers) | (2 modifiers 1 key)
@@ -188,15 +117,14 @@ sanitizeHotkey(ByRef hotkey_str, ByRef keys_str){
             Goto, clearHotkey
     }
     ; check whether the hotkey is modifier-only
-    if(modifierCount = hotkey_str.data.Length())
-        isModifierHotkey:= 1
+    isModifierHotkey:= modifierCount = hotkey_str.data.Length()
     ; append hotkey parts
     str := "", keys_str := ""
     for i, value in hotkey_str.data {
         ; if the part is a modifier and the hotkey is not a modifier-only hotkey => prepend symbol
         ; else => append the part
-        if (GUI_modifiers.HasKey(value) && !isModifierHotkey){ 
-            str :=  GUI_modifiers[value] . str
+        if (GUI_isModifier(value) && !isModifierHotkey){ 
+            str :=  GUI_modifierToSymbol(value) . str
             keys_str := value . " + " . keys_str
         }else{
             str .= value . " & "
@@ -217,26 +145,23 @@ sanitizeHotkey(ByRef hotkey_str, ByRef keys_str){
     return
     clearHotkey:
     notify(neutron, "Invalid Hotkey")
-    hotkey_str:= new UStack()
+    hotkey_str:= new StackSet()
     keys_str:= ""
 }
 
 parseHotkeyString(str){
     finalStr:="",lastIndex:=0
-    while(pos:=InStr(str, "<")){
-        modifier:= SubStr(str, pos, 2)
-        finalStr.= GUI_modifier_symbols.HasKey(modifier)? GUI_modifier_symbols[modifier] . " + " : ""
-        str:= StrReplace(str, modifier,,, 1)
-    }
-    while(pos:=InStr(str, ">")){
-        modifier:= SubStr(str, pos, 2)
-        finalStr.= GUI_modifier_symbols.HasKey(modifier)? GUI_modifier_symbols[modifier] . " + " : ""
-        str:= StrReplace(str, modifier,,, 1)
+    while(pos:=InStr(str, "<") || pos:=InStr(str, ">")){
+        symbol:= SubStr(str, pos, 2)
+        modifier:= GUI_symbolToModifier(symbol)
+        finalStr.= GUI_isModifier(modifier)? modifier . " + " : ""
+        str:= StrReplace(str, symbol,,, 1)
     }
     Loop, Parse, str 
     {
-        if(GUI_modifier_symbols.HasKey(A_LoopField)){
-            finalStr.= GUI_modifier_symbols[A_LoopField] . " + "
+        modifier:= GUI_symbolToModifier(A_LoopField)
+        if(GUI_isModifier(modifier)){
+            finalStr.= modifier . " + "
             lastIndex:=A_Index
         }
     }
@@ -248,6 +173,157 @@ parseHotkeyString(str){
     return SubStr(finalStr,1,-3) 
 }
 
+onHotkeyType(neutron){
+    u_box:= neutron.doc.getElementById("unmute_box")
+    afk_row:= neutron.doc.getElementById("afk_timeout_row")
+    delay_row:= neutron.doc.getElementById("ptt_delay_row")
+    if(neutron.doc.getElementByID("sep_hotkey").checked){
+        u_box.classList.remove("is-hidden")
+        Sleep, 10
+        u_box.classList.remove("box-hidden")
+        afk_row.classList.remove("is-hidden")
+        delay_row.classList.add("is-hidden")
+        neutron.doc.getElementByID("mute_label").innerText:= "Mute hotkey"
+    }
+    if(neutron.doc.getElementByID("tog_hotkey").checked){
+        u_box.classList.add("box-hidden")
+        afk_row.classList.remove("is-hidden")
+        delay_row.classList.add("is-hidden")
+        neutron.doc.getElementByID("mute_label").innerText:= "Toggle hotkey"
+        funcObj:= Func("hideElemID").Bind(neutron, "unmute_box")
+        SetTimer, % funcObj, -100
+    }
+    if(neutron.doc.getElementByID("ptt_hotkey").checked){
+        u_box.classList.add("box-hidden")
+        afk_row.classList.add("is-hidden")
+        delay_row.classList.remove("is-hidden")
+        neutron.doc.getElementByID("mute_label").innerText:= "Push-to-talk hotkey"
+        funcObj:= Func("hideElemID").Bind(neutron, "unmute_box")
+        SetTimer, % funcObj, -100
+    }
+}
+
+onRecord(neutron, elemType){
+    ;stop any other input hook
+    if(GUI_input_hook.InProgress){
+        GUI_input_hook.Stop()
+        sleep 30
+    }
+    ;reset hotkey stackset
+    GUI_%elemType%_hotkey:= new StackSet()
+    ;hide record button and show stop button
+    hideElemID(neutron, elemType . "_record")
+    showElemID(neutron, elemType . "_stop")
+    ;setup stop button timer
+    GUI_input_hook_timer:= Func("updateTimer").Bind(elemType . "_stop")
+    GUI_input_hook_timer.Call()
+    SetTimer, % GUI_input_hook_timer, 1000
+    ;reset textbox content
+    inputElem:= neutron.doc.getElementByID(elemType . "_input")
+    inputElem.value:=""
+    inputElem.placeholder:="Recording"
+    ;setup a new input hook 
+    GUI_input_hook:= InputHook("L0 T3","{Enter}{Escape}")
+    GUI_input_hook.KeyOpt("{ALL}", "NI")
+    GUI_input_hook.VisibleText:= false
+    GUI_input_hook.VisibleNonText:= false
+    GUI_input_hook.OnKeyDown:= Func("addKey").Bind(elemType . "_input")
+    GUI_input_hook.OnEnd:= Func("onStop").Bind(neutron,elemType)
+    GUI_input_hook.Start()
+    ;setup workaround for mouse back and forward buttons
+    funcObj:= Func("addKey").Bind(elemType . "_input","",0x5, 0x0)
+    Hotkey, *XButton1, % funcObj, On
+    funcObj:= Func("addKey").Bind(elemType . "_input","",0x6, 0x0)
+    Hotkey, *XButton2, % funcObj, On 
+}
+
+addKey(element_id, InputHook, VK, SC){
+    key_name:= GetKeyName(Format("vk{:x}sc{:x}", VK, SC))
+    inputElem:= neutron.doc.getElementByID(element_id)
+    htype:= InStr(element_id, "unmute")? "unmute" : "mute"
+    ;if nt is on and key is a modifier
+    if(GUI_%htype%_nt && GUI_isModifier(key_name)){
+        ;convert it to nt modifier
+        key_name:= GUI_modifierToNeutral(key_name)
+    }
+    ;push it onto hotkey stackset, and add it to text field
+    GUI_%htype%_hotkey.push(key_name) 
+    && inputElem.value := inputElem.value . key_name . " + "
+}
+
+onStop(neutron, elemType, InputHook:=""){
+    ;if the func is not called by the input hook -> stop the input hook
+    if(GUI_input_hook.InProgress){
+        GUI_input_hook.Stop()
+        return
+    }
+    ;turn off the extra hotkeys for mouse buttons workaround
+    Hotkey, *XButton1, Off, UseErrorLevel
+    Hotkey, *XButton2, Off, UseErrorLevel
+
+    str:=""
+    inputElem:= neutron.doc.getElementByID(elemType . "_input")
+    stopElem:= neutron.doc.getElementById(elemType . "_stop").firstElementChild
+    inputElem.placeholder:="Click Record"
+    stopElem.value:= 3
+    stopElem.innerText:="Stop"
+    SetTimer, % GUI_input_hook_timer, Off
+    hideElemID(neutron, elemType . "_stop")
+    showElemID(neutron, elemType . "_record")
+    sanitizeHotkey(GUI_%elemType%_hotkey,str)
+    inputElem.value:= str
+}
+
+updateTimer(id){
+    buttonElem:= neutron.doc.getElementById(id).firstElementChild
+    buttonElem.innerText:= Format("Stop ({})", buttonElem.value)
+    buttonElem.value := buttonElem.value - 1
+    if(buttonElem.value = 0){
+        Try SetTimer,, Off
+        buttonElem.value := 3
+    }
+}
+
+GUI_modifierToSymbol(modifier){
+    out:= str:= ""
+    RegExMatch(modifier, GUI_modifier_regex, out)
+    switch out1 { 
+        case "R": str.=">"
+        case "L": str.="<"
+    }
+    switch out2 {
+        case "Alt": str.= "!"
+        case "Shift": str.= "+"
+        case "Control": str.= "^"
+        case "Win": str.= "#"
+    }
+    return str
+}
+
+GUI_modifierToNeutral(modifier){
+    return RegExReplace(modifier,GUI_modifier_regex,"$2")
+}
+
+GUI_isModifier(key){
+    RegExMatch(key, "Alt|Shift|Control|Win", out)
+    return out? 1 : 0
+}
+
+GUI_symbolToModifier(symbol){
+    out:= str:= ""
+    RegExMatch(symbol, GUI_symbol_regex, out)
+    switch out1 {
+        case "<": str.= "L"
+        case ">": str.= "R"
+    }
+    switch out2 {
+        case "!": str.= "Alt" 
+        case "+": str.= "Shift" 
+        case "^": str.= "Control" 
+        case "#": str.= "Win" 
+    }
+    return str
+}
 ;------profile-handler-functions------
 
 onCreateProfile(neutron){
@@ -373,6 +449,8 @@ onSaveProfile(neutron){
 }
 
 onRestoreProfile(neutron, event:=""){
+    fetchDeviceList(neutron)
+    GUI_hotkeys:= {}
     innerCont:= neutron.doc.getElementById("profile")
     innerCont.classList.add("hidden")
     sleep, 100
