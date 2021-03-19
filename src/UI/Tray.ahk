@@ -38,9 +38,9 @@ tray_defaults(){
     Menu, Tray, Icon, % ico.file, % ico.group,0
 }
 
-tray_update(state){
-    tooltipText:= state_string[state]
-    ico:= resources_obj.getIcoFile(state)
+tray_update(mic_obj){
+    tooltipText:= mic_obj.generic_state_string[mic_obj.state]
+    ico:= resources_obj.getIcoFile(mic_obj.state)
     Menu, Tray, Tip, % tooltipText
     Menu, Tray, Icon, % ico.file, % ico.group,0
 }

@@ -23,6 +23,12 @@ class StackSet{
         return val
     }
 
+    dequeue(){
+        val:= this.data.RemoveAt(1)
+        this.occurrences.Delete(val)
+        return val
+    }
+
     exists(p_value){
         return this.occurrences[p_value]
     }
