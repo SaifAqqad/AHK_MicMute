@@ -18,9 +18,10 @@ tray_init(){
     if(FileExist(A_ScriptDir . "\updater.exe"))
         tray_add("Check for updates", Func("tray_checkUpdate"))
     tray_add("Start on boot",Func("tray_autoStart"))
-    tray_add("Help",Func("tray_launchHelp"))
     if(A_Args[1] = "/debug" || A_DebuggerName)
         tray_add("Debug", ":Debug")
+    tray_add("Help",Func("tray_launchHelp"))
+    tray_add("About",Func("tray_about"))
     tray_add("Exit",Func("tray_exit"))        
 
     Menu, Tray, Click, 1
@@ -93,15 +94,11 @@ tray_checkUpdate(){
 
 tray_createDebugMenu(){
     Menu, Debug, Add, List Hotkeys, lh
-    Menu, Debug, Add, List Lines, ll
     Menu, Debug, Add, List Vars, lv
     Menu, Debug, Add, List Keys, ks
     return
     lh:
         ListHotkeys
-    return
-    ll:
-        ListLines
     return
     lv:
         ListVars
@@ -113,6 +110,10 @@ tray_createDebugMenu(){
 
 tray_launchHelp(){
     Run, https://github.com/SaifAqqad/AHK_MicMute#usage, %A_Desktop%
+}
+
+tray_about(){
+    UI_showAbout()
 }
 
 tray_exit(){

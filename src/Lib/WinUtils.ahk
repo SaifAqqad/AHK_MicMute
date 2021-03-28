@@ -43,12 +43,6 @@ util_ResRead(ByRef var, resName, is_res:=1) {
     return 1
 }
 
-; Returns true if the file is empty (size = 0)
-util_IsFileEmpty(file){
-    FileGetSize, size , %file%
-    return !size
-}
-
 ; Creates a scheduled task to run micmute at user login
 util_CreateStartupTask(){
     scheduler:= ComObjCreate("Schedule.Service")
@@ -56,11 +50,15 @@ util_CreateStartupTask(){
     task:= scheduler.NewTask(0) ;TaskDefinition object
     task.RegistrationInfo.Description:= "Launch MicMute on startup"
     task.Settings.ExecutionTimeLimit:= "PT0S" ;enable the task to run indefinitely
+    task.Settings.DisallowStartIfOnBatteries:= 0  ;why is this enabled by default o_o
+    task.Settings.StopIfGoingOnBatteries:= 0 ;bruh ^^^
     trigger:= task.Triggers.Create(9) ;onLogon trigger = 9
     trigger.UserId:= A_ComputerName . "\" . A_UserName
     trigger.Delay:= "PT10S"
     task.Principal.RunLevel:= A_IsAdmin
-    task.Actions.Create(0).Path:= A_ScriptFullPath ; action run executable = 0
+    action:= task.Actions.Create(0) ;ExecAction = 0
+    action.Path:= A_ScriptFullPath 
+    action.WorkingDirectory:= A_ScriptDir 
     Try scheduler.GetFolder("\").RegisterTaskDefinition("MicMute",task,6,"","",3)
     Catch {
         return 0
@@ -82,4 +80,20 @@ util_StartupTaskExists(){
     scheduler.Connect()
     Try task:= scheduler.GetFolder("\").GetTask("MicMute")
     return task? 1:0
+}
+
+; Returns true if the file is empty
+util_IsFileEmpty(file){
+    FileGetSize, size , %file%
+    return !size
+}
+
+; returns an object with seperate parts of the input path
+util_splitPath(p_input){
+    SplitPath, p_input, _t1, _t2, _t3, _t4, _t5
+    return { "fileName":_t1
+           , "filePath":_t2
+           , "fileExt":_t3
+           , "fileNameNoExt":_t4
+           , "fileDrive":_t5}
 }

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <style>
+        header {
+            height: 30px;
+        }
+
+        body {
+            overflow: hidden;
+            font-family: Segoe UI;
+        }
+
+
+        #icon {
+            height: 44px;
+            width: 44px;
+            border-radius: 10px;
+            transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        img#icon:hover,
+        div:hover>img#icon {
+            box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.055), 0px 0px 20px 0px rgba(255, 87, 45, 0.63), 0px 9px 46px 8px rgba(0, 0, 0, 0.055);
+        }
+
+        #info {
+            position: absolute;
+            top: 40%;
+            left: 80px;
+            transform: translateY(-50%);
+            margin-right: 100px;
+        }
+
+        #label {
+            font-size: 2.5rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        #stats {
+            margin-top: 3px;
+            font-size: 14px;
+        }
+
+        #license {
+            left: 90px;
+            margin-right: 50px;
+            position: fixed;
+            bottom: 20px;
+            font-size: 11px;
+        }
+    </style>
+</head>
+
+<body class="noselect" oncontextmenu="return false">
+    <header>
+        <span class="title-bar" onmousedown="neutron.DragTitleBar()"></span>
+        <span class="title-btn title-btn-close" onclick="ahk.UI_exitAbout()">r</span>
+    </header>
+    <div id='info'>
+        <div id='label' onclick="ahk.launchURL('https://github.com/SaifAqqad/AHK_MicMute')">
+            <img id='icon' src='../../resources/MicMute.png' />
+            MicMute
+        </div>
+        <div id='stats'>
+            <div>Version: <a id="version"
+                    onclick="ahk.launchURL('https://github.com/SaifAqqad/AHK_MicMute/releases/tag/' +  event.target.innerText)">0.9.0</a>
+            </div>
+            <div>Author: <a onclick="ahk.launchURL('https://github.com/SaifAqqad')">Saif Aqqad</a></div>
+        </div>
+    </div>
+    <div id="license">
+        <div>MicMute is licensed under <a
+                onclick="ahk.launchURL('https://github.com/SaifAqqad/AHK_MicMute/blob/master/LICENSE')">The
+                Unlicense</a>.</div>
+        <div>MicMute uses open source libraries and resources (see <a
+                onclick="ahk.launchURL('https://github.com/SaifAqqad/AHK_MicMute#libraries-and-resources-used')">README.md</a>).
+        </div>
+    </div>
+
+</body>
+
+</html>

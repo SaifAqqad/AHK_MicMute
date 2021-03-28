@@ -15,40 +15,44 @@
 ;@Ahk2Exe-AddResource %U_Res%\unmute.wav
 ;@Ahk2Exe-AddResource %U_Res%\ptt_off.wav
 ;@Ahk2Exe-AddResource %U_Res%\ptt_on.wav
-;@Ahk2Exe-AddResource *10 %U_UI%\GUI.html
-;@Ahk2Exe-AddResource %U_UI%\bulma.css
-;@Ahk2Exe-AddResource %U_UI%\base.css
-;@Ahk2Exe-AddResource %U_UI%\dark.css
+;@Ahk2Exe-AddResource *10 %U_UI%\html\UI.html
+;@Ahk2Exe-AddResource *10 %U_UI%\html\about.html
+;@Ahk2Exe-AddResource %U_UI%\css\bulma.css
+;@Ahk2Exe-AddResource %U_UI%\css\base.css
+;@Ahk2Exe-AddResource %U_UI%\css\dark.css
 
 
+#NoEnv
+SetBatchLines -1
 
 #InstallMouseHook
 #InstallKeybdHook
 #SingleInstance force
 
-#Include, <utils>
+#Include, <WinUtils>
 #Include, <VA>
 #Include, <JSON>
 #Include, <Neutron>
 #Include, <StackSet>
 
-#Include, .\ResourcesManager.ahk
-#Include, .\MicrophoneController.ahk
-#Include, .\config\ProfileTemplate.ahk
-#Include, .\config\Config.ahk
-#Include, .\UI\OSD.ahk
-#Include, .\UI\GUI.ahk
-#Include, .\UI\Tray.ahk
+#Include, ResourcesManager.ahk
+#Include, MicrophoneController.ahk
+#Include, %A_ScriptDir%\config
+#Include, ProfileTemplate.ahk
+#Include, Config.ahk
+#Include, %A_ScriptDir%\UI
+#Include, OSD.ahk
+#Include, HotkeyPanel.ahk
+#Include, UI.ahk
+#Include, Tray.ahk
 
 Global config_obj, resources_obj, osd_obj, mic_controllers
 , mute_sound, unmute_sound, ptt_on_sound, ptt_off_sound
-, sys_theme, current_profile, watched_profiles, watched_profile
-, func_update_state
+, sys_theme, ui_theme, current_profile, watched_profiles, watched_profile
+, func_update_state, last_modif_time
 
 ; Async run updater
 SetTimer, runUpdater, -1
-; Async create gui window
-;SetTimer, GUI_create, -1
 initilizeMicMute()
 ;export the processed config object
 config_obj.exportConfig()
@@ -65,8 +69,8 @@ initilizeMicMute(default_profile:=""){
         for i,mic in mic_controllers
             mic.disableHotkeys()
     ;initilize globals
-    config_obj:= new Config()
-    , resources_obj:= new ResourcesManager()
+    resources_obj:= new ResourcesManager()
+    , config_obj:= new Config()
     , osd_obj:=""
     , mic_controllers:=""
     , watched_profiles:= Array()
@@ -77,6 +81,10 @@ initilizeMicMute(default_profile:=""){
     , ptt_on_sound:=""
     , ptt_off_sound:=""
     , sys_theme:=""
+    , last_modif_time:= ""
+    tray_defaults()
+    ; create config gui window
+    UI_create(Func("initilizeMicMute"))
     ;add profiles with linked apps to watched_profiles
     for i,profile in config_obj.Profiles {
         if(profile.LinkedApp)
@@ -97,7 +105,6 @@ initilizeMicMute(default_profile:=""){
 }
 
 switchProfile(p_name:=""){
-    Critical, On
     ;turn off profile-specific timers
     Try{
         SetTimer, % func_update_state, Off
@@ -155,10 +162,10 @@ switchProfile(p_name:=""){
         tray_toggleMic(0)
     ;handle multiple microphones
     if(mic_controllers.Length()>1){
-        func_update_state:= Func("UpdateStateMutliple")
+        func_update_state:= Func("updateStateMutliple")
         tray_toggleMic(0)
     }else{
-        func_update_state:= Func("UpdateState")
+        func_update_state:= Func("updateState")
     }
     ;turn on profile-specific timers
     if (current_profile.UpdateWithSystem)
@@ -170,7 +177,6 @@ switchProfile(p_name:=""){
     ;show switching-profile OSD
     if(config_obj.SwitchProfileOSD)
         osd_obj.showAndHide(Format("Profile: {}", current_profile.ProfileName))
-    Critical, Off
 }
 
 showFeedback(mic_obj){
@@ -205,15 +211,15 @@ editConfig(){
         if(current_profile){
             for i, mic in mic_controllers 
                 mic.disableHotkeys()
-            SetTimer, % func_update_state, Off
+            Try SetTimer, % func_update_state, Off
             SetTimer, checkIsIdle, Off
             SetTimer, checkLinkedApps, Off
         }
         setTimer, checkConfigDiff, Off
+        last_modif_time:= ""
+        tray_toggleMic(0)
         tray_defaults()
-        GUI_show()
-        if(!checkConfigDiff())
-            initilizeMicMute(current_profile.ProfileName)
+        UI_show(current_profile.ProfileName)
     }
 }
 
@@ -245,16 +251,13 @@ checkIsIdle(){
 
 ;checks for changes to the config file
 checkConfigDiff(){
-    static last_modif_time:= ""
     FileGetTime, modif_time, config.json
     if(last_modif_time && modif_time!=last_modif_time){
         last_modif_time:= ""
         setTimer, checkConfigDiff, Off
         initilizeMicMute(current_profile.ProfileName)
-        ret:= 1
     }
     last_modif_time:= modif_time
-    return ret
 }
 
 checkLinkedApps(){
@@ -276,7 +279,7 @@ checkLinkedApps(){
 updateState(){
     mic_controllers[1].updateState()
     UpdateSysTheme()
-    tray_update(mic_controllers[1].state)
+    tray_update(mic_controllers[1])
 }
 
 updateStateMutliple(){
@@ -292,7 +295,8 @@ UpdateSysTheme(){
     RegRead, reg
     , HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize, SystemUsesLightTheme
     sys_theme:= !reg
-    osd_obj.setTheme(sys_theme)
+    ui_theme:= config_obj.PreferTheme = -1? sys_theme : config_obj.PreferTheme
+    osd_obj.setTheme(ui_theme)
 }
 
 runUpdater(p_silent:=1){

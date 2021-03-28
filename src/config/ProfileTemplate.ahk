@@ -25,4 +25,10 @@ class ProfileTemplate{
             }
         }
     }
+    getMicObj(p_mic){
+        for i,mic in this.Microphone {
+            if(mic.Name == p_mic)
+                return mic
+        }
+    }
 }

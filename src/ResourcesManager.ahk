@@ -11,6 +11,11 @@ class ResourcesManager {
               , white_unmute: {file:"white_unmute.ico",group:"-3090"}}
     defaultIcon:= {file:"MicMute.ico",group:"-2000"}
     pngIcon:= "MicMute.png"
+    htmlFile:= { UI: "UI.html"
+               , about: "about.html"}
+    cssFile:= [{ name:"bulma",file: "bulma.css"}
+              ,{ name:"base",file:"base.css"}
+              ,{ name:"dark",file:"dark.css"}]
 
     __New(){
         if(A_IsCompiled){
@@ -20,13 +25,20 @@ class ResourcesManager {
             }
             this.defaultIcon.file:= A_ScriptFullPath
         }else{
-            ; if not -> prepend the path to the 'file' property
+            ; if not -> prepend the path to all resources
             for type, file in this.SoundFile {
                 this.soundFile[type]:= this.RES_FOLDER . file
             }
+
             for obj, ico in this.icoFile {
                 ico.file:= this.RES_FOLDER . ico.file
                 ico.group:= "1"
+            }
+            for name,file in this.htmlFile {
+                this.htmlFile[name]:= "UI/html/" file
+            }
+            for i,css in this.cssFile {
+                css.file:= this.UI_FOLDER . "css\" . css.file
             }
             this.defaultIcon.file:= this.RES_FOLDER . this.defaultIcon.file
             this.defaultIcon.group:= "1"

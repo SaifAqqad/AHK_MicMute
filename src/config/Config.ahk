@@ -4,6 +4,7 @@ class Config {
     MuteOnStartup:=0
     UseCustomSounds:=0
     SwitchProfileOSD:=1
+    PreferTheme:=-1
 
     __New(p_DefaultProfile:=""){
 ;        this["$schema"]:= "https://raw.githubusercontent.com/SaifAqqad/AHK_MicMute/master/src/config_schema.json"
