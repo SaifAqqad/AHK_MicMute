@@ -94,24 +94,23 @@ header {
     opacity: 1 !important;
     padding-top: 5px !important;
     border-radius: 0.8rem;
-    box-shadow: rgba(0, 0, 0, 0.18) 0px 2px 4px, rgba(0, 0, 0, 0.15) 0px 0.5px 1px !important;
-    transition: box-shadow 0.23s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.1s linear, transform 230ms cubic-bezier(0.19, 1, 0.22, 1);
+    box-shadow: rgba(0, 0, 0, 0.18) 0 2px 4px, rgba(0, 0, 0, 0.15) 0 0.5px 1px !important;
+    transition: box-shadow 0.23s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.1s linear, transform 230ms cubic-bezier(0.19, 1, 0.22, 1),visibility 0.1s , height 0.2s linear;
     margin-bottom: 20px !important;
     width: 80%;
 }
 
 .box-visible:hover {
-    box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.055), 0px 0px 20px 1px rgba(255, 87, 45, 0.63), 0px 9px 46px 8px rgba(0, 0, 0, 0.055) !important;
+    box-shadow: 0 11px 15px -7px rgba(0, 0, 0, 0.055), 0 0 20px 1px rgba(255, 87, 45, 0.63), 0 9px 46px 8px rgba(0, 0, 0, 0.055) !important;
     transform: translateY(-3px);
 }
 
 .box-hidden {
-    visibility: hidden !important;
-    height: 0 !important;
+    height: 1px !important;
     opacity: 0 !important;
     margin: 0 !important;
     padding: 0 !important;
-    transition: visibility 0s 0.1s, opacity 0.1s linear, height 0.1s 0.1s !important;
+    visibility: hidden !important;
 }
 
 .noselect {
@@ -170,24 +169,24 @@ input[type="number"]:disabled {
     margin: 5px;
     border-radius: 5px;
     transition: box-shadow 0.23s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.1s linear, transform 230ms cubic-bezier(0.19, 1, 0.22, 1);
-    box-shadow: rgba(0, 0, 0, 0.18) 0px 2px 4px, rgba(0, 0, 0, 0.15) 0px 0.5px 1px ;
+    box-shadow: rgba(0, 0, 0, 0.18) 0 2px 4px, rgba(0, 0, 0, 0.15) 0 0.5px 1px ;
 }
 
 .tag:hover {
-    box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.055), 0px 0px 20px 0px rgba(255, 87, 45, 0.63), 0px 9px 46px 8px rgba(0, 0, 0, 0.055);
+    box-shadow: 0 11px 15px -7px rgba(0, 0, 0, 0.055), 0 0 20px 0 rgba(255, 87, 45, 0.63), 0 9px 46px 8px rgba(0, 0, 0, 0.055);
     transform: translateY(-4px);
 }
 
 img#MicMute_icon {
     width: 44px;
     border-radius: 10px;
-    box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1), 0 0px 0 1px rgba(10, 10, 10, 0.02);
+    box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.02);
     transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 img#MicMute_icon:hover,
 label:hover>img#MicMute_icon {
-    box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.055), 0px 0px 20px 0px rgba(255, 87, 45, 0.63), 0px 9px 46px 8px rgba(0, 0, 0, 0.055);
+    box-shadow: 0 11px 15px -7px rgba(0, 0, 0, 0.055), 0 0 20px 0 rgba(255, 87, 45, 0.63), 0 9px 46px 8px rgba(0, 0, 0, 0.055);
 }
 
 .tag.option {
@@ -209,11 +208,11 @@ label:hover>img#MicMute_icon {
 
 .row-hidden {
     visibility: hidden !important;
-    height: 0 !important;
+    height: 1px !important;
     opacity: 0 !important;
     margin: 0 !important;
     padding: 0 !important;
-    transition: visibility 0s 0.1s, opacity 0.1s linear, height 0.1s 0.1s !important;
+    transition: visibility 0s 0.1s, opacity 0.1s linear, height 0.2s !important;
 }
 
 :-ms-input-placeholder {
@@ -232,7 +231,7 @@ footer {
 #footer-tag {
     height: 2.5em !important;
     width: fit-content !important;
-    margin: 0px auto !important;
+    margin: 0 auto !important;
 }
 
 p.content {
@@ -259,13 +258,13 @@ a {
     font-weight: 400 !important;
     text-align: center;
     position: absolute;
-    padding: 3px 5px 5px 5px !important;
+    padding: 3px 5px 5px !important;
     bottom: 150%;
     left: -20px;
     width: 210px;
     height: max-content;
     white-space: pre-wrap;
-    box-shadow: rgba(0, 0, 0, 0.11) 0px 3px 4px, rgba(0, 0, 0, 0.096) 0px 0.5px 1px;
+    box-shadow: rgba(0, 0, 0, 0.11) 0 3px 4px, rgba(0, 0, 0, 0.096) 0 0.5px 1px;
     opacity: 0;
     border-radius: 5px;
     z-index: 99999;
@@ -342,7 +341,7 @@ input[type=range].slider::-ms-thumb {
     border: 0.1px solid rgba(0, 0, 0, 0.5);
     border-radius: 8px;
     cursor: pointer;
-    margin-top: 0px;
+    margin-top: 0;
 }
 input[type=range].slider::-ms-tooltip{
     display: none;

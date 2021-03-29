@@ -138,7 +138,7 @@ switchProfile(p_name:=""){
         Try {
             device:= VA_GetDevice(mc.microphone)
             if(!device) ;if the mic does not exist -> throw an error
-                Throw, Format("Invalid microphone name in profile '{}'" ,current_profile.ProfileName)
+                Throw, Format("Invalid microphone name in profile '{}'`nClick OK to edit configuration" ,current_profile.ProfileName)
             mc.enableHotkeys()
         }Catch, err {
             MsgBox, 65, MicMute, % err
@@ -244,8 +244,9 @@ initilizeSounds(){
 
 checkIsIdle(){
     if (A_TimeIdlePhysical > current_profile.afkTimeout * 60000){
-       for i, mic in mic_controllers
-           mic.setMuteState(1)
+        for i, mic in mic_controllers
+            if(!mic.isPushToTalk)
+                mic.setMuteState(1)
     }
 }
 

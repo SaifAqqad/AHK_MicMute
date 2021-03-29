@@ -1,13 +1,20 @@
 {
     "DefaultProfile": "Default",
     "MuteOnStartup": 0,
+    "PreferTheme": -1,
     "Profiles": [
         {
             "afkTimeout": 0,
             "ExcludeFullscreen": 0,
             "LinkedApp": "",
-            "Microphone": "AmazonBasics (AmazonBasics Desktop Mini Mic)",
-            "MuteHotkey": "~*RShift",
+            "Microphone": [
+                {
+                    "MuteHotkey": "~*RShift",
+                    "Name": "AmazonBasics (AmazonBasics Desktop Mini Mic)",
+                    "PushToTalk": 0,
+                    "UnmuteHotkey": "~*RShift"
+                }
+            ],
             "OnscreenFeedback": 1,
             "OSDPos": {
                 "x": -1,
@@ -15,27 +22,29 @@
             },
             "ProfileName": "Default",
             "PTTDelay": 100,
-            "PushToTalk": 0,
             "SoundFeedback": 1,
-            "UnmuteHotkey": "~*RShift",
             "UpdateWithSystem": 1
         },
         {
             "afkTimeout": 0,
             "ExcludeFullscreen": 0,
             "LinkedApp": "firefox.exe",
-            "Microphone": "AmazonBasics (AmazonBasics Desktop Mini Mic)",
-            "MuteHotkey": "~*RShift",
-            "OnscreenFeedback": 1,
+            "Microphone": [
+                {
+                    "MuteHotkey": "~T",
+                    "Name": "AmazonBasics (AmazonBasics Desktop Mini Mic)",
+                    "PushToTalk": 1,
+                    "UnmuteHotkey": "~T"
+                }
+            ],
+            "OnscreenFeedback": 0,
             "OSDPos": {
                 "x": 145,
                 "y": 1000
             },
             "ProfileName": "Firefox",
             "PTTDelay": 100,
-            "PushToTalk": 1,
-            "SoundFeedback": 1,
-            "UnmuteHotkey": "~*RShift",
+            "SoundFeedback": 0,
             "UpdateWithSystem": 1
         }
     ],

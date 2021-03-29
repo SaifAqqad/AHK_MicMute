@@ -39,10 +39,10 @@ class HotkeyPanel{
     }
 
     setMuteFromKeySet(keys_ss, wildcard, passthrough, nt){
-        this.mute.passthrough:= passthrough
+        this.mute.hotkey:= this.keySetToHotkey(keys_ss)
+        this.mute.passthrough:= passthrough || InStr(this.mute.hotkey, "~")
         this.mute.wildcard:= wildcard
         this.mute.nt:= nt
-        this.mute.hotkey:= this.keySetToHotkey(keys_ss)
         ;apply options to hotkey
         if(this.mute.wildcard && !InStr(this.mute.hotkey, "*"))
             this.mute.hotkey:= "*" . this.mute.hotkey
@@ -52,10 +52,10 @@ class HotkeyPanel{
     }
 
     setUnmuteFromKeySet(keys_ss, wildcard, passthrough, nt){
-        this.unmute.wildcard:= wildcard
-        this.unmute.passthrough:= passthrough
-        this.unmute.nt:= nt
         this.unmute.hotkey:= this.keySetToHotkey(keys_ss)
+        this.unmute.wildcard:= wildcard
+        this.unmute.passthrough:= passthrough || InStr(this.unmute.hotkey, "~")
+        this.unmute.nt:= nt
         ;apply options to hotkey
         if(this.unmute.wildcard && !InStr(this.unmute.hotkey, "*"))
             this.unmute.hotkey:= "*" . this.unmute.hotkey
@@ -104,7 +104,6 @@ class HotkeyPanel{
         switch str {
             case "Shift","Alt","Control":
                 str:= "~" . str
-                this.passthrough:= 1
         }
         return str
 
@@ -179,5 +178,11 @@ class HotkeyPanel{
         return str
     }
 
+    isTypeValid(){
+        switch this.hotkeyType {
+            case 0: return 1
+            case 1,2: return this.mute.hotkey == this.unmute.hotkey
+        }
+    }
 
 }
