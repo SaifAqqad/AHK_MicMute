@@ -16,52 +16,43 @@ class HotkeyPanel{
 
     __New(muteStr:="", unmuteStr:="", type:=""){
         if(muteStr)
-            this.setMuteHotkey(muteStr)
+            this.setFromHotkey("mute",muteStr)
         if(unmuteStr)
-            this.setUnmuteHotkey(unmuteStr)
+            this.setFromHotkey("unmute",unmuteStr)
         this.hotkeyType:= type
     }
 
-    setMuteHotkey(str){
-        this.mute.hotkey:= str
-        this.mute.wildcard:= InStr(str, "*")? 1 : 0
-        this.mute.passthrough:= InStr(str, "~")? 1 : 0
-        this.mute.nt:= RegExMatch(str, this.nt_regex)? 0 : 1
-        this.mute.hotkey_h:= this.hotkeyToKeys(str)
+    setFromHotkey(type, str){
+        this[type].hotkey:= str
+        this[type].wildcard:= InStr(str, "*")? 1 : 0
+        this[type].passthrough:= InStr(str, "~")? 1 : 0
+        this[type].nt:= RegExMatch(str, this.nt_regex)? 0 : 1
+        this[type].hotkey_h:= this.hotkeyToKeys(str)
     }
 
-    setUnmuteHotkey(str){
-        this.unmute.hotkey:= str
-        this.unmute.wildcard:= InStr(str, "*")? 1 : 0
-        this.unmute.passthrough:= InStr(str, "~")? 1 : 0
-        this.unmute.nt:= RegExMatch(str, this.nt_regex)? 0 : 1
-        this.unmute.hotkey_h:= this.hotkeyToKeys(str)
-    }
-
-    setMuteFromKeySet(keys_ss, wildcard, passthrough, nt){
-        this.mute.hotkey:= this.keySetToHotkey(keys_ss)
-        this.mute.passthrough:= passthrough || InStr(this.mute.hotkey, "~")
-        this.mute.wildcard:= wildcard
-        this.mute.nt:= nt
+    setFromKeySet(type, keys_set, wildcard, passthrough, nt){
+        this[type].hotkey:= this.keySetToHotkey(keys_set)
+        this[type].wildcard:= wildcard
+        this[type].passthrough:= passthrough || InStr(this.unmute.hotkey, "~")
+        this[type].nt:= nt
         ;apply options to hotkey
-        if(this.mute.wildcard && !InStr(this.mute.hotkey, "*"))
-            this.mute.hotkey:= "*" . this.mute.hotkey
-        if(this.mute.passthrough && !InStr(this.mute.hotkey, "~"))
-            this.mute.hotkey:= "~" . this.mute.hotkey
-        this.mute.hotkey_h:= this.hotkeyToKeys(this.mute.hotkey)
+        updateOption(type, "wildcard", this[type].wildcard)
+        updateOption(type, "passthrough", this[type].passthrough)
+        this[type].hotkey_h:= this.hotkeyToKeys(this[type].hotkey)
     }
 
-    setUnmuteFromKeySet(keys_ss, wildcard, passthrough, nt){
-        this.unmute.hotkey:= this.keySetToHotkey(keys_ss)
-        this.unmute.wildcard:= wildcard
-        this.unmute.passthrough:= passthrough || InStr(this.unmute.hotkey, "~")
-        this.unmute.nt:= nt
-        ;apply options to hotkey
-        if(this.unmute.wildcard && !InStr(this.unmute.hotkey, "*"))
-            this.unmute.hotkey:= "*" . this.unmute.hotkey
-        if(this.unmute.passthrough && !InStr(this.unmute.hotkey, "~"))
-            this.unmute.hotkey:= "~" . this.unmute.hotkey
-        this.unmute.hotkey_h:= this.hotkeyToKeys(this.unmute.hotkey)
+    updateOption(type, option, enable){
+        this[type][option]:= enable
+        symb:=""
+        switch option {
+            case "wildcard": symb:="*"
+            case "passthrough": symb:="~"
+        }
+        if(enable)
+            if(!InStr(this[type].hotkey, symb))
+                this[type].hotkey:= symb . this[type].hotkey
+        else
+            this[type].hotkey:= StrReplace(this[type].hotkey, symb)
     }
 
     keySetToHotkey(keySet){
