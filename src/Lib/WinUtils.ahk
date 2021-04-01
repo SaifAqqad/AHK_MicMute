@@ -97,3 +97,9 @@ util_splitPath(p_input){
            , "fileNameNoExt":_t4
            , "fileDrive":_t5}
 }
+
+util_getFileSemVer(file){
+    FileGetVersion, _t1, %file%
+    RegExMatch(_t1, "^([0-9]+)\.([0-9]+)\.([0-9]+)((\.([0-9]+))+)?$", _match)
+    return Format("{}.{}.{}", _match1,_match2,_match3)
+}

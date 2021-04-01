@@ -1,7 +1,7 @@
 class ProfileTemplate{
     __New(p_name_Obj){
         this.ProfileName:= p_name_Obj
-        this.Microphone:= [{Name:"capture"
+        this.Microphone:= [{Name:"Default"
         ,MuteHotkey:""
         ,UnmuteHotkey:""
         ,PushToTalk:0}]

@@ -3,14 +3,14 @@ class HotkeyPanel{
     , symbol_regex:= "([<>])?([+^!#])"
     , nt_regex:= "i)[RL][SAWC]|[<>][+^!#]"
     mute:= { hotkey: ""
-           , wildcard: ""
-           , passthrough: ""
-           , nt: ""
+           , wildcard: 0
+           , passthrough: 0
+           , nt: 1
            , hotkey_h: ""}
     unmute:= { hotkey: ""
-             , wildcard: ""
-             , passthrough: ""
-             , nt: ""
+             , wildcard: 0
+             , passthrough: 0
+             , nt: 1
              , hotkey_h: ""}
     hotkeyType:=""
 
@@ -36,8 +36,8 @@ class HotkeyPanel{
         this[type].passthrough:= passthrough || InStr(this.unmute.hotkey, "~")
         this[type].nt:= nt
         ;apply options to hotkey
-        updateOption(type, "wildcard", this[type].wildcard)
-        updateOption(type, "passthrough", this[type].passthrough)
+        this.updateOption(type, "wildcard", this[type].wildcard)
+        this.updateOption(type, "passthrough", this[type].passthrough)
         this[type].hotkey_h:= this.hotkeyToKeys(this[type].hotkey)
     }
 
@@ -47,12 +47,14 @@ class HotkeyPanel{
         switch option {
             case "wildcard": symb:="*"
             case "passthrough": symb:="~"
+            case "nt": return
         }
-        if(enable)
+        if(enable){
             if(!InStr(this[type].hotkey, symb))
                 this[type].hotkey:= symb . this[type].hotkey
-        else
+        }else{
             this[type].hotkey:= StrReplace(this[type].hotkey, symb)
+        }
     }
 
     keySetToHotkey(keySet){
@@ -82,9 +84,9 @@ class HotkeyPanel{
         ; append hotkey parts
         str := ""
         for i, value in keySet.data {
-            ; if the part is a modifier and the hotkey is not a modifier-only hotkey => prepend symbol
+            ; if the part is a modifier and the hotkey is not a modifier-only hotkey => append symbol
             if (this.isModifier(value) && !isModifierHotkey)
-                str :=  this.modifierToSymbol(value) . str
+                str .=  this.modifierToSymbol(value)
             else ; else => append the part
                 str .= value . " & "
         }
@@ -171,7 +173,7 @@ class HotkeyPanel{
 
     isTypeValid(){
         switch this.hotkeyType {
-            case 0: return 1
+            case 0: return this.mute.hotkey && this.unmute.hotkey
             case 1,2: return this.mute.hotkey == this.unmute.hotkey
         }
     }

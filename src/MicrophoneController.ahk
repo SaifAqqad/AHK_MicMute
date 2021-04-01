@@ -5,13 +5,16 @@ Class MicrophoneController {
         this.state:=0
         this.ptt_key:=""
         this.microphone:= mic_obj.Name
+        if(mic_obj.Name = "default")
+            this.microphone:= "capture"
         this.muteHotkey:= mic_obj.MuteHotkey
         this.unmuteHotkey:= mic_obj.UnmuteHotkey
         this.isPushToTalk:= mic_obj.PushToTalk
         this.ptt_delay:= ptt_delay
         this.feedback_func:= feedback_func
-        RegExMatch(this.microphone, "(.+) \(.+\)", match)
-        this.name:= match1? match1 : this.microphone
+        _n:= this.microphone == "capture"? VA_GetDeviceName(VA_GetDevice("capture")) : this.microphone
+        RegExMatch(_n, "(.+) \(.+\)", match)
+        this.name:= match1? match1 : _n
         if (StrLen(this.name)>14)
             this.name:= SubStr(this.name, 1, 12) . Chr(0x2026) ; fix overflow with ellipsis
         this.state_string:= {0:this.name . " Online",1:this.name . " Muted"}

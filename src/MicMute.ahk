@@ -1,29 +1,18 @@
 ;compiler directives
 ;@Ahk2Exe-Let Res = %A_ScriptDir%\resources
-;@Ahk2Exe-Let UI = %A_ScriptDir%\UI
+;@Ahk2Exe-Let UI = %A_ScriptDir%\UI\config
+;@Ahk2Exe-Let Version = 0.9.0
+;@Ahk2Exe-IgnoreBegin
+    U_Version:= "0.9.0"
+;@Ahk2Exe-IgnoreEnd
 ;@Ahk2Exe-SetMainIcon %U_Res%\MicMute.ico
-;@Ahk2Exe-SetVersion 0.8.3
+;@Ahk2Exe-SetVersion %U_Version%
 ;@Ahk2Exe-SetName MicMute
 ;@Ahk2Exe-SetDescription MicMute
-;@Ahk2Exe-AddResource %U_Res%\MicMute.png
-;@Ahk2Exe-AddResource %U_Res%\MicMute.ico, 2000
-;@Ahk2Exe-AddResource %U_Res%\black_unmute.ico, 3080
-;@Ahk2Exe-AddResource %U_Res%\black_mute.ico, 4080
-;@Ahk2Exe-AddResource %U_Res%\white_unmute.ico, 3090
-;@Ahk2Exe-AddResource %U_Res%\white_mute.ico, 4090
-;@Ahk2Exe-AddResource %U_Res%\mute.wav
-;@Ahk2Exe-AddResource %U_Res%\unmute.wav
-;@Ahk2Exe-AddResource %U_Res%\ptt_off.wav
-;@Ahk2Exe-AddResource %U_Res%\ptt_on.wav
-;@Ahk2Exe-AddResource *10 %U_UI%\html\UI.html
-;@Ahk2Exe-AddResource *10 %U_UI%\html\about.html
-;@Ahk2Exe-AddResource %U_UI%\css\bulma.css
-;@Ahk2Exe-AddResource %U_UI%\css\base.css
-;@Ahk2Exe-AddResource %U_UI%\css\dark.css
-
 
 #NoEnv
 SetBatchLines -1
+SetWorkingDir %A_ScriptDir%
 
 #InstallMouseHook
 #InstallKeybdHook
@@ -42,15 +31,16 @@ SetBatchLines -1
 #Include, Config.ahk
 #Include, %A_ScriptDir%\UI
 #Include, OSD.ahk
+#Include, Tray.ahk
+#Include, %A_ScriptDir%\UI\config
 #Include, HotkeyPanel.ahk
 #Include, UI.ahk
-#Include, Tray.ahk
 
 Global config_obj, resources_obj, osd_obj, mic_controllers
 , mute_sound, unmute_sound, ptt_on_sound, ptt_off_sound
 , sys_theme, ui_theme, current_profile, watched_profiles, watched_profile
 , func_update_state, last_modif_time
-
+, A_Version:= A_IsCompiled? util_getFileSemVer(A_ScriptFullPath) : U_Version 
 ; Async run updater
 SetTimer, runUpdater, -1
 initilizeMicMute()
@@ -105,6 +95,7 @@ initilizeMicMute(default_profile:=""){
 }
 
 switchProfile(p_name:=""){
+    Critical, On
     ;turn off profile-specific timers
     Try{
         SetTimer, % func_update_state, Off
@@ -138,7 +129,7 @@ switchProfile(p_name:=""){
         Try {
             device:= VA_GetDevice(mc.microphone)
             if(!device) ;if the mic does not exist -> throw an error
-                Throw, Format("Invalid microphone name in profile '{}'`nClick OK to edit configuration" ,current_profile.ProfileName)
+                Throw, Format("Invalid microphone name '{}'`nin profile '{}'`nClick OK to edit configuration",mc.microphone ,current_profile.ProfileName)
             mc.enableHotkeys()
         }Catch, err {
             MsgBox, 65, MicMute, % err
@@ -177,19 +168,16 @@ switchProfile(p_name:=""){
     ;show switching-profile OSD
     if(config_obj.SwitchProfileOSD)
         osd_obj.showAndHide(Format("Profile: {}", current_profile.ProfileName))
+    Critical, Off
 }
 
 showFeedback(mic_obj){
     ;update global state to make sure the tray icon is updated
     func_update_state.Call()
     ;if osd is enabled -> show and hide after 1 sec
-    if (current_profile.OnscreenFeedback){
-        if(mic_controllers.Length()>1) ;if there's multiple mic controllers
-            ;use mic name in the state string
-            osd_obj.showAndHide(mic_obj.state_string[mic_obj.state])
-        else
-            ;use generic state string
-            osd_obj.showAndHide(mic_obj.generic_state_string[mic_obj.state], !mic_obj.state)
+    if (current_profile.OnscreenFeedback){ ;use generic/mic.name state string
+        str:= (mic_obj[(mic_controllers.Length()>1? "": "generic_") "state_string"][mic_obj.state])
+        osd_obj.showAndHide(str, !mic_obj.state)
     }
     ; if sound fb is enabled -> play the relevant sound file
     if (current_profile.SoundFeedback){

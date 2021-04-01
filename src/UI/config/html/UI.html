@@ -3,12 +3,14 @@
 
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel='stylesheet' href='D:\OneDrive - asu.edu.jo\Documents\AHK\AHK_MicMute\src\UI\config\css\bulma.css'>
+    <link rel='stylesheet' href='D:\OneDrive - asu.edu.jo\Documents\AHK\AHK_MicMute\src\UI\config\css\base.css'>
 </head>
 
 <body class="noselect" oncontextmenu="return false">
     <header>
         <span class="title-bar" onmousedown="neutron.DragTitleBar()"></span>
-        <span class="title-btn title-btn-minimize" onclick="neutron.Minimize()">0</span>
+        <span class="title-btn title-btn-minimize" onclick="neutron.Minimize()" aria>0</span>
         <span class="title-btn title-btn-maximize" onclick="neutron.Maximize()">1</span>
         <span class="title-btn title-btn-close" onclick="ahk.UI_exit()">r</span>
     </header>
@@ -16,19 +18,18 @@
         <div id="top" style="height: 0;"></div>
         <div class="settings container">
             <!-- title -->
-            <div class="_title spaced-label" onclick="ahk.UI_showAbout()">
+            <div class="_title spaced-label">
                 <p class="title is-2 is-spaced noselect">
-                    <label>
-                        <img src="D:\OneDrive - asu.edu.jo\Documents\AHK\AHK_MicMute\src\resources\MicMute.png"
-                            id="MicMute_icon">
+                    <label onclick="ahk.UI_showAbout()">
+                        <img src="" id="MicMute_icon">
                         MicMute</label>
                 </p>
             </div>
             <br>
             <!-- profile tags -->
             <label class="label title is-4 noselect" for="profiles">Profiles
-                <button type="button" style="margin-left: 5px;" class="button is-primary is-small is-outlined"
-                    onclick="ahk.onCreateProfile()">
+                <button type="button" aria-label="Create profile" style="margin-left: 5px;"
+                    class="button is-primary is-small is-outlined" onclick="ahk.UI_onCreateProfile()">
                     <span class="icon" style="font-size: x-large;padding-bottom: 50%;">
                         + </span>
                 </button>
@@ -45,39 +46,45 @@
                         <div class="control is-expanded ">
                             <div class="select is-fullwidth is-primary">
                                 <select class="input-elem" name="microphone" id="microphone"
-                                    onchange="ahk.updateCurrentMic(event.target.value)">
+                                    onchange="ahk.UI_onSetMicrophone(event.target.value)">
                                     <option value="0" id="mic_Name" selected>Select Microphone</option>
                                 </select>
                             </div>
                         </div>
                         <div class="control">
-                            <button type="button" class="button is-primary" onclick="ahk.fetchDeviceList()">Refresh
+                            <button type="button" class="button is-primary"
+                                onclick="ahk.UI_onRefreshDeviceList()">Refresh
                                 Devices</button>
                         </div>
                     </div>
                     <!-- hotkeys panel -->
                     <div class="visible" id="hotkeys_panel">
                         <!-- hotkey type -->
-                        <label class="label title is-4 noselect spaced-label">Hotkeys</label>
+                        <label class="label title is-4 noselect spaced-label" for="hotkeys_panel">Hotkeys
+                            <button id="clear_hotkeys_button" type="button" aria-label="Clear hotkey"
+                                style="margin-left: 5px;" class="button is-primary is-small is-outlined"
+                                onclick="ahk.UI_onClearHotkey()"> Clear
+                            </button>
+                        </label>
                         <div class="control type-radio" style="margin-bottom: 10px ;">
                             <div class="tag is-large"
-                                onclick="document.getElementById('hktype_0').checked=1;ahk.UI_onHotkeyType(0)">
+                                onclick="document.getElementById('hktype_0').checked=1;ahk.UI_onHotkeyType(0,120)">
                                 <label class="radio">
-                                    <input type="radio" name="hotkeyType" id="hktype_0" checked>
+                                    <input type="radio" name="hotkeyType" id="hktype_0" checked disabled>
                                     <span>Separate hotkeys</span>
                                 </label>
                             </div>
                             <div class="tag is-large"
-                                onclick="document.getElementById('hktype_1').checked=1;ahk.UI_onHotkeyType(1)">
+                                onclick="document.getElementById('hktype_1').checked=1;ahk.UI_onHotkeyType(1,120)">
                                 <label class="radio">
-                                    <input type="radio" name="hotkeyType" id="hktype_1">
+                                    <input type="radio" name="hotkeyType" id="hktype_1" disabled>
                                     <span>Toggle</span>
                                 </label>
                             </div>
                             <div class="tag is-large"
-                                onclick="document.getElementById('hktype_2').checked=1;ahk.UI_onHotkeyType(2)">
+                                onclick="document.getElementById('hktype_2').checked=1;ahk.UI_onHotkeyType(2,120)">
                                 <label class="radio">
-                                    <input type="radio" name="hotkeyType" id="hktype_2">
+                                    <input type="radio" name="hotkeyType" id="hktype_2" disabled>
                                     <span>Push-to-talk</span>
                                 </label>
                             </div>
@@ -94,35 +101,33 @@
                                     </div>
                                     <div class="control" id="mute_record">
                                         <button type="button" class="button is-primary is-outlined"
-                                            onclick="ahk.onRecord('mute')">Record</button>
+                                            onclick="ahk.UI_onRecord('mute')">Record</button>
                                     </div>
                                     <div class="control is-hidden" id="mute_stop">
                                         <button type="button" class="button is-primary" value="3"
-                                            onclick="ahk.onStop('mute')">Stop</button>
+                                            onclick="ahk.UI_onStop('mute')">Stop</button>
                                     </div>
                                 </div>
                                 <div class="row is-one-third">
                                     <label class="noselect label">Options</label>
                                     <div class="tag is-medium option"
-                                        onclick="ahk.updateHotkeyOption('mute_passthrough',1)">
+                                        onclick="document.getElementById('mute_passthrough').checked ^= 1;ahk.UI_updateHotkeyOption('mute_passthrough')">
                                         <label class="checkbox">
-                                            <input type="checkbox" id="mute_passthrough"
-                                                onchange="ahk.updateHotkeyOption('mute_passthrough',0)">
+                                            <input type="checkbox" id="mute_passthrough" disabled>
                                             <span class="passthrough-label">Passthrough</span>
                                         </label>
                                     </div>
                                     <div class="tag is-medium option"
-                                        onclick="ahk.updateHotkeyOption('mute_wildcard',1)">
+                                        onclick="document.getElementById('mute_wildcard').checked ^= 1;ahk.UI_updateHotkeyOption('mute_wildcard')">
                                         <label class="checkbox">
-                                            <input type="checkbox" id="mute_wildcard"
-                                                onchange="ahk.updateHotkeyOption('mute_wildcard',0)">
+                                            <input type="checkbox" id="mute_wildcard" disabled>
                                             <span class="wildcard-label">Wildcard</span>
                                         </label>
                                     </div>
-                                    <div class="tag is-medium option" onclick="ahk.updateHotkeyOption('mute_nt',1)">
+                                    <div class="tag is-medium option"
+                                        onclick="document.getElementById('mute_nt').checked ^= 1;ahk.UI_updateHotkeyOption('mute_nt')">
                                         <label class="checkbox">
-                                            <input type="checkbox" id="mute_nt"
-                                                onchange="ahk.updateHotkeyOption('mute_nt',1)">
+                                            <input type="checkbox" id="mute_nt" disabled>
                                             <span class="nt-label">Neutral modifiers</span>
                                         </label>
                                     </div>
@@ -139,35 +144,33 @@
                                     </div>
                                     <div class="control" id="unmute_record">
                                         <button type="button" class="button is-primary is-outlined"
-                                            onclick="ahk.onRecord('unmute')">Record</button>
+                                            onclick="ahk.UI_onRecord('unmute')">Record</button>
                                     </div>
                                     <div class="control is-hidden" id="unmute_stop">
                                         <button type="button" class="button is-primary" value="3"
-                                            onclick="ahk.onStop('unmute')">Stop</button>
+                                            onclick="ahk.UI_onStop('unmute')">Stop</button>
                                     </div>
                                 </div>
                                 <div class="row is-one-third">
                                     <label class="noselect label">Options</label>
                                     <div class="tag is-medium option"
-                                        onclick="ahk.updateHotkeyOption('unmute_passthrough',1)">
+                                        onclick="document.getElementById('unmute_passthrough').checked ^= 1;ahk.UI_updateHotkeyOption('unmute_passthrough')">
                                         <label class="checkbox">
-                                            <input type="checkbox" id="unmute_passthrough"
-                                                onchange="ahk.updateHotkeyOption('unmute_passthrough',0)">
+                                            <input type="checkbox" id="unmute_passthrough" disabled>
                                             <span class="passthrough-label">Passthrough</span>
                                         </label>
                                     </div>
                                     <div class="tag is-medium option"
-                                        onclick="ahk.updateHotkeyOption('unmute_wildcard',1)">
+                                        onclick="document.getElementById('unmute_wildcard').checked ^= 1;ahk.UI_updateHotkeyOption('unmute_wildcard')">
                                         <label class="checkbox">
-                                            <input type="checkbox" name="unmute_wildcard" id="unmute_wildcard"
-                                                onchange="ahk.updateHotkeyOption('unmute_wildcard',0)">
+                                            <input type="checkbox" name="unmute_wildcard" id="unmute_wildcard" disabled>
                                             <span class="wildcard-label">Wildcard</span>
                                         </label>
                                     </div>
-                                    <div class="tag is-medium option" onclick="ahk.updateHotkeyOption('unmute_nt',1)">
+                                    <div class="tag is-medium option"
+                                        onclick="document.getElementById('unmute_nt').checked ^= 1;ahk.UI_updateHotkeyOption('unmute_nt')">
                                         <label class="checkbox">
-                                            <input type="checkbox" name="unmute_nt" id="unmute_nt"
-                                                onchange="ahk.updateHotkeyOption('unmute_nt',0)">
+                                            <input type="checkbox" name="unmute_nt" id="unmute_nt" disabled>
                                             <span class="nt-label">Neutral modifiers</span>
                                         </label>
                                     </div>
@@ -181,21 +184,21 @@
                         <div class="tag is-medium option"
                             onclick="document.getElementById('SoundFeedback').checked ^= 1">
                             <label class="checkbox">
-                                <input type="checkbox" id="SoundFeedback">
+                                <input type="checkbox" id="SoundFeedback" disabled>
                                 <span>Sound feedback</span>
                             </label>
                         </div>
                         <div class="tag is-medium option"
                             onclick="document.getElementById('OnscreenFeedback').checked ^= 1;ahk.UI_onOSDToggle()">
                             <label class="checkbox">
-                                <input type="checkbox" id="OnscreenFeedback" onchange="ahk.UI_onOSDToggle()">
+                                <input type="checkbox" id="OnscreenFeedback" disabled>
                                 <span>On-screen feedback</span>
                             </label>
                         </div>
                         <div class="tag hidden is-medium option" id="ExcludeFullscreen_tag"
                             onclick="document.getElementById('ExcludeFullscreen').checked ^= 1">
                             <label class="checkbox">
-                                <input type="checkbox" id="ExcludeFullscreen">
+                                <input type="checkbox" id="ExcludeFullscreen" disabled>
                                 <span class="ExcludeFullscreen-label">Exclude fullscreen apps</span>
                             </label>
                         </div>
@@ -206,7 +209,7 @@
                         <div class="columns is-mobile">
                             <div class="column is-3">
                                 <button type="button" class="button is-primary is-fullwidth"
-                                    onclick="ahk.onOSDset()">Set Position</button>
+                                    onclick="ahk.UI_onOSDset()">Set Position</button>
                             </div>
                             <div class="column is-2">
                                 <input class="input is-primary input-elem" id="OSDPos_x" disabled placeholder="X"
@@ -218,7 +221,7 @@
                             </div>
                             <div class="column is-3">
                                 <button type="button" class="button is-primary is-fullwidth"
-                                    onclick="ahk.onOSDset(1)">Reset Position</button>
+                                    onclick="ahk.UI_onOSDset(1)">Reset Position</button>
                             </div>
                         </div>
                     </div>
@@ -232,10 +235,12 @@
                             <div class="field has-addons">
                                 <div class="control is-expanded">
                                     <input class="input is-primary input-elem" type="text" readonly
-                                        placeholder="example.exe" onkeydown="ahk.clearLinkedApp(event)" id="LinkedApp">
+                                        placeholder="example.exe" onkeydown="ahk.UI_clearLinkedApp(event)"
+                                        id="LinkedApp">
                                 </div>
                                 <div class="control">
-                                    <button class="button is-primary" type="button" onclick="ahk.onSelectApp()">Select
+                                    <button class="button is-primary" type="button"
+                                        onclick="ahk.UI_onSelectApp()">Select
                                         app</button>
                                 </div>
                             </div>
@@ -257,7 +262,7 @@
                                         id="PTTDelay_text" value="100 ms">
                                 </div>
                                 <div class="column">
-                                    <input class="slider" min="0" max="500" step="100" value="100" type="range"
+                                    <input class="slider" min="0" max="500" step="50" value="100" type="range"
                                         id="PTTDelay" onchange="ahk.UI_onUpdateDelay(event.target.value)">
                                 </div>
                             </div>
@@ -265,12 +270,12 @@
                     </div>
                     <!-- save/delete buttons -->
                     <div class="row is-one-quarter">
-                        <button type="button" class="button is-primary is-fullwidth" onclick="ahk.saveProfile()">Save
+                        <button type="button" class="button is-primary is-fullwidth" onclick="ahk.UI_onSaveProfile()">Save
                             profile</button>
                     </div>
                     <div class="row is-one-quarter">
                         <button type="button" class="button is-danger is-outlined is-fullwidth"
-                            onclick="ahk.deleteProfile()">Delete profile</button>
+                            onclick="ahk.UI_onDeleteProfile()">Delete profile</button>
                     </div>
                 </form>
             </div>
@@ -281,24 +286,21 @@
                     <!-- Mute on startup -->
                     <div class="tag is-medium option" onclick="ahk.UI_onGlobalOption('MuteOnStartup',1)">
                         <label class="checkbox">
-                            <input type="checkbox" name="MuteOnStartup" id="MuteOnStartup"
-                                onclick="ahk.UI_onGlobalOption('MuteOnStartup',0)">
+                            <input type="checkbox" name="MuteOnStartup" id="MuteOnStartup" disabled>
                             <span>Mute on startup</span>
                         </label>
                     </div>
                     <!-- Use custom sounds -->
                     <div class="tag is-medium option" onclick="ahk.UI_onGlobalOption('UseCustomSounds',1)">
                         <label class="checkbox">
-                            <input type="checkbox" name="UseCustomSounds" id="UseCustomSounds"
-                                onclick="ahk.UI_onGlobalOption('UseCustomSounds',0)">
+                            <input type="checkbox" name="UseCustomSounds" id="UseCustomSounds" disabled>
                             <span>Use custom sounds</span>
                         </label>
                     </div>
                     <!-- Switching-profile OSD -->
                     <div class="tag is-medium option" onclick="ahk.UI_onGlobalOption('SwitchProfileOSD',1)">
                         <label class="checkbox">
-                            <input tabindex="0" type="checkbox" name="SwitchProfileOSD" id="SwitchProfileOSD"
-                                onclick="ahk.UI_onGlobalOption('SwitchProfileOSD',0)">
+                            <input tabindex="0" type="checkbox" name="SwitchProfileOSD" id="SwitchProfileOSD" disabled>
                             <span class="SwitchProfileOSD-label">Switching-profile OSD</span>
                         </label>
                     </div>
@@ -332,11 +334,11 @@
 
         </div>
         <!-- profile rename -->
-        <div class="hidden" id="page_mask" onclick="ahk.hideProfileRename()"></div>
-        <div class="field hidden" id="profile_name">
+        <div class="visible hidden" id="page_mask" onclick="ahk.UI_hideProfileRename()"></div>
+        <div class="field visible hidden" id="profile_name">
             <input class="input is-primary input-elem" placeholder="Profile name" name="profile_name_field"
-                id="profile_name_field" onkeydown="ahk.hideProfileRename(event)"
-                onblur="ahk.onChangeProfileName(event)">
+                id="profile_name_field" onkeydown="ahk.UI_hideProfileRename(event)"
+                onblur="ahk.UI_onChangeProfileName(event)">
         </div>
     </div>
     <!-- notification -->

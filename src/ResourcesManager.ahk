@@ -1,6 +1,22 @@
+;@Ahk2Exe-AddResource %U_Res%\MicMute.png
+;@Ahk2Exe-AddResource %U_Res%\MicMute.ico, 2000
+;@Ahk2Exe-AddResource %U_Res%\black_unmute.ico, 3080
+;@Ahk2Exe-AddResource %U_Res%\black_mute.ico, 4080
+;@Ahk2Exe-AddResource %U_Res%\white_unmute.ico, 3090
+;@Ahk2Exe-AddResource %U_Res%\white_mute.ico, 4090
+;@Ahk2Exe-AddResource %U_Res%\mute.wav
+;@Ahk2Exe-AddResource %U_Res%\unmute.wav
+;@Ahk2Exe-AddResource %U_Res%\ptt_off.wav
+;@Ahk2Exe-AddResource %U_Res%\ptt_on.wav
+;@Ahk2Exe-AddResource *10 %U_UI%\html\UI.html
+;@Ahk2Exe-AddResource *10 %U_UI%\html\about.html
+;@Ahk2Exe-AddResource %U_UI%\css\bulma.css
+;@Ahk2Exe-AddResource %U_UI%\css\base.css
+;@Ahk2Exe-AddResource %U_UI%\css\dark.css
+
 class ResourcesManager {
     static RES_FOLDER:= A_ScriptDir . "\resources\"
-    , UI_FOLDER:= A_ScriptDir . "\UI\"
+    , UI_FOLDER:= A_ScriptDir . "\UI\config\"
     soundFile:= { mute: "mute.wav"
                 , unmute: "unmute.wav"
                 , ptt_off: "ptt_off.wav"
@@ -34,8 +50,8 @@ class ResourcesManager {
                 ico.file:= this.RES_FOLDER . ico.file
                 ico.group:= "1"
             }
-            for name,file in this.htmlFile {
-                this.htmlFile[name]:= "UI/html/" file
+            for name,file in this.htmlFile { ;neutron prepends "A_WorkingDir/" to the file
+                this.htmlFile[name]:= "UI/config/html/" . file
             }
             for i,css in this.cssFile {
                 css.file:= this.UI_FOLDER . "css\" . css.file
