@@ -32,7 +32,6 @@ class ResourcesManager {
     cssFile:= [{ name:"bulma",file: "bulma.css"}
               ,{ name:"base",file:"base.css"}
               ,{ name:"dark",file:"dark.css"}]
-
     __New(){
         if(A_IsCompiled){
             ;if we're running the compiled version -> set icon's 'file' property to executable full path

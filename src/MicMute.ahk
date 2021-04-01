@@ -9,7 +9,6 @@
 ;@Ahk2Exe-SetVersion %U_Version%
 ;@Ahk2Exe-SetName MicMute
 ;@Ahk2Exe-SetDescription MicMute
-
 #NoEnv
 SetBatchLines -1
 SetWorkingDir %A_ScriptDir%

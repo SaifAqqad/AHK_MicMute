@@ -1,0 +1,67 @@
+body {
+    background-color: #232323 !important;
+    scrollbar-base-color: #232323;
+    scrollbar-face-color: #4d4d4d;
+    scrollbar-3dlight-color: #4d4d4d;
+    scrollbar-highlight-color: #4d4d4d;
+    scrollbar-track-color: #232323;
+    scrollbar-arrow-color: #232323;
+    scrollbar-shadow-color: #4d4d4d;
+}
+
+header {
+    color: #d9d9d9 !important;
+    background: #232323 !important;
+}
+
+.title-btn-minimize:hover,
+.title-btn-maximize:hover {
+  background: #414141 !important;
+}
+
+.title-btn-close:hover {
+  background: #e81123 !important;
+}
+
+.box{
+    background-color: #2e2e2e !important;
+    box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
+}
+
+.input-elem {
+    background-color: #363636 !important;
+}
+
+.tag{
+    background-color: #2e2e2e !important;
+    margin: 5px;
+}
+
+.tag.option {
+    border: #ff572d solid 1px;
+}
+
+a:hover,
+p,
+body,
+label,
+.input-elem {
+    color: #d9d9d9 !important;
+}
+
+input[type="text"]:disabled {
+    color: #d6d6d6;
+}
+
+[data-title]:after {
+    background-color: #191919 !important;
+    color: #c9c9c9;
+}
+
+input[type=range].slider::-ms-fill-upper {
+    background: #383838;
+}
+
+input[type=range].slider:focus::-ms-fill-upper {
+    background: #383838;
+}
