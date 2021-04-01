@@ -104,6 +104,8 @@ Class OSD {
 
     ; hides the OSD window
     hide(){
+        if(!this.hwnd)
+            return
         Gui, % this.hwnd ":Default"
         OnMessage(0x201, this.onDragFunc, 0)
         OnMessage(0x205, this.onRClickFunc, 0)

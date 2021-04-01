@@ -1,0 +1,59 @@
+{
+    "DefaultProfile": "Default",
+    "MuteOnStartup": 0,
+    "PreferTheme": -1,
+    "Profiles": [
+        {
+            "afkTimeout": 0,
+            "ExcludeFullscreen": 0,
+            "LinkedApp": "",
+            "Microphone": [
+                {
+                    "MuteHotkey": "~*<^R",
+                    "Name": "AmazonBasics (AmazonBasics Desktop Mini Mic)",
+                    "PushToTalk": 0,
+                    "UnmuteHotkey": "~*<^R"
+                }
+            ],
+            "OnscreenFeedback": 1,
+            "OSDPos": {
+                "x": -1,
+                "y": -1
+            },
+            "ProfileName": "Default",
+            "PTTDelay": 100,
+            "SoundFeedback": 1,
+            "UpdateWithSystem": 1
+        },
+        {
+            "afkTimeout": 0,
+            "ExcludeFullscreen": 1,
+            "LinkedApp": "firefox.exe",
+            "Microphone": [
+                {
+                    "MuteHotkey": "*^F",
+                    "Name": "Default",
+                    "PushToTalk": 0,
+                    "UnmuteHotkey": "*^F"
+                },
+                {
+                    "MuteHotkey": "^D",
+                    "Name": "VoiceMeeter Output (VB-Audio VoiceMeeter VAIO)",
+                    "PushToTalk": 0,
+                    "UnmuteHotkey": "^D"
+                }
+            ],
+            "OnscreenFeedback": 1,
+            "OSDPos": {
+                "x": 145,
+                "y": 1000
+            },
+            "ProfileName": "Firefox",
+            "PTTDelay": 50,
+            "SoundFeedback": 1,
+            "UpdateWithSystem": 1
+        }
+    ],
+    "SwitchProfileOSD": 1,
+    "UseCustomSounds": 0
+}

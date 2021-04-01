@@ -1,0 +1,9 @@
+@charset "utf-8";
+$orange: #ff572d;
+$red: #E61123;
+$family-sans-serif: Segoe UI;
+$primary: $orange;
+$danger: $red;
+$link: $orange;
+
+@import "../bulma/bulma.sass";

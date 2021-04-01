@@ -4,19 +4,14 @@
 ; MASTER CONTROLS
 ;
 VA_GetCaptureDeviceList(){
-    dev:= {Name:"",isDefault:0}
-    devList:= Array()
-    defCapture:= VA_GetDeviceName(VA_GetDevice("capture"))
+    devicesList:= Array()
     Loop {
-        cDev:=VA_GetDevice("capture:" . A_Index)
-        if(!cDev)
+        device:= VA_GetDevice("capture:" . A_Index)
+        if(!device)
             break
-        dObj:= new dev
-        dObj.Name:=VA_GetDeviceName(cDev)
-        dObj.isDefault:= (defCapture==dObj.Name)
-        devList.push(dObj)
+        devicesList.push(VA_GetDeviceName(device))
     }
-    return devList
+    return devicesList
 }
 
 VA_GetMasterVolume(channel="", device_desc="playback")
