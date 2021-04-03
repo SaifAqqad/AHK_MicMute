@@ -18,10 +18,11 @@ tray_init(){
     if(FileExist(A_ScriptDir . "\updater.exe"))
         tray_add("Check for updates", Func("tray_checkUpdate"))
     tray_add("Start on boot",Func("tray_autoStart"))
-    if(A_Args[1] = "/debug" || A_DebuggerName)
+    if(Arg_isDebug || A_DebuggerName)
         tray_add("Debug", ":Debug")
     tray_add("Help",Func("tray_launchHelp"))
-    tray_add("About",Func("tray_about"))
+    if(!arg_noUI)
+        tray_add("About",Func("tray_about"))
     tray_add("Exit",Func("tray_exit"))        
 
     Menu, Tray, Click, 1

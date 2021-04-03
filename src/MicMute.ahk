@@ -35,20 +35,25 @@ SetWorkingDir %A_ScriptDir%
 #Include, HotkeyPanel.ahk
 #Include, UI.ahk
 
-Global config_obj, resources_obj, osd_obj, mic_controllers
+Global config_obj, osd_obj, mic_controllers, current_profile
 , mute_sound, unmute_sound, ptt_on_sound, ptt_off_sound
-, sys_theme, ui_theme, current_profile, watched_profiles, watched_profile
+, sys_theme, ui_theme
+, watched_profiles, watched_profile
 , func_update_state, last_modif_time
+, arg_isDebug, arg_profile, arg_noUI
+, resources_obj:= new ResourcesManager()
 , A_Version:= A_IsCompiled? util_getFileSemVer(A_ScriptFullPath) : U_Version 
 ; Async run updater
 SetTimer, runUpdater, -1
-initilizeMicMute()
-;export the processed config object
+; parse cli args
+parseArgs()
+; create config gui window
+if(!arg_noUI)
+    UI_create(Func("reloadMicMute"))
+; initilize micmute
+initilizeMicMute(arg_profile)
+; export the processed config object
 config_obj.exportConfig()
-if(config_obj.MuteOnStartup){
-    for i, mic in mic_controllers 
-        mic.setMuteState(1)
-}
 OnExit(Func("exitMicMute"))
 
 
@@ -58,8 +63,7 @@ initilizeMicMute(default_profile:=""){
         for i,mic in mic_controllers
             mic.disableHotkeys()
     ;initilize globals
-    resources_obj:= new ResourcesManager()
-    , config_obj:= new Config()
+    config_obj:= new Config()
     , osd_obj:=""
     , mic_controllers:=""
     , watched_profiles:= Array()
@@ -72,8 +76,6 @@ initilizeMicMute(default_profile:=""){
     , sys_theme:=""
     , last_modif_time:= ""
     tray_defaults()
-    ; create config gui window
-    UI_create(Func("initilizeMicMute"))
     ;add profiles with linked apps to watched_profiles
     for i,profile in config_obj.Profiles {
         if(profile.LinkedApp)
@@ -162,6 +164,11 @@ switchProfile(p_name:=""){
         SetTimer, % func_update_state, 1500
     if (current_profile.afkTimeout)
         SetTimer, checkIsIdle, 1000  
+    ; mute mics on startup
+    if(config_obj.MuteOnStartup){
+        for i, mic in mic_controllers 
+            VA_SetMasterMute(1,mic.microphone)
+    }
     ;get initial state  
     func_update_state.Call()
     ;show switching-profile OSD
@@ -188,8 +195,9 @@ showFeedback(mic_obj){
 }
 
 editConfig(){
+    Thread, NoTimers
     Try osd_obj.destroy()
-    if(GetKeyState("Shift", "P")){
+    if(GetKeyState("Shift", "P") || arg_noUI){
         if(progPath:=util_GetFileAssoc("json"))
             Run, %ProgPath% "%A_ScriptDir%\config.json",
         else
@@ -299,4 +307,26 @@ exitMicMute(){
     config_obj.exportConfig()
     for i, mic in mic_controllers 
         VA_SetMasterMute(0,mic.microphone)
+}
+
+reloadMicMute(p_profile:=""){
+    if(A_IsCompiled)
+        Run "%A_ScriptFullPath%" /restart "/profile=%p_profile%"
+    else
+        Run "%A_AhkPath%" /restart "%A_ScriptFullPath%" "/profile=%p_profile%"
+}
+
+parseArgs(){
+    arg_regex:= "i)\/([\w]+)(=([\w\s]+))?"
+    for i,arg in A_Args {
+        match:= RegExMatch(arg, arg_regex, val)
+        if(!match)
+            continue
+        switch val1 {
+            case "debug": arg_isDebug:= 1
+            case "noui": arg_noUI:= 1
+            case "profile": arg_profile:= val3
+        }
+    }
+
 }
