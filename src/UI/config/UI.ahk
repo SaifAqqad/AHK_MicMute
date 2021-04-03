@@ -3,7 +3,7 @@ global ui_obj, about_obj, current_profile, hotkey_panels, current_hp
 , input_hook, input_hook_timer, key_set, modifier_set
 , template_link:= "<link rel='stylesheet' id='css_{1:}' href='{2:}'>"
 , template_default_profile:= "<option value='{1:}' {2:} >{1:}</option>"
-, template_mic:= "<option value='{1:}' {2:} >{1:}</option>"
+, template_mic:= "<option value='{1:}' id='mic_{1:}' {2:} >{1:}</option>"
 , template_profile_tag:= "
 (
     <div class=""tag is-large"" id=""tag_profile_{1:}"" oncontextmenu=""ahk.UI_displayProfileRename('{1:}')"" onClick=""ahk.UI_setProfile('{1:}')"">
@@ -70,7 +70,7 @@ UI_setProfile(neutron, p_profile){
     sleep, 200
     hotkey_panels:= {}
     for i, mic in current_profile.Microphone {
-        if(mic.Name = "capture")
+        if(mic.Name = "capture" || !ui_obj.doc.getElementById("mic_" mic.Name))
             mic.Name:= "Default"
         hType:= mic.MuteHotkey == mic.UnmuteHotkey? (mic.PushToTalk? 2 : 1) : 0
         hotkey_panels[mic.Name]:= new HotkeyPanel(mic.MuteHotkey,mic.UnmuteHotkey,htype)
@@ -147,6 +147,7 @@ UI_setHotkeyPanel(hotkey_panel, delay:=0){
     ui_obj.doc.getElementById("unmute_passthrough").checked:= current_hp.unmute.passthrough
     ui_obj.doc.getElementById("unmute_nt").checked:= current_hp.unmute.nt
     innerCont.classList.remove("hidden")
+    UI_checkMicOptions()
 }
 
 UI_updateHotkeyOption(neutron, option){
@@ -179,6 +180,12 @@ UI_onSaveProfile(neutron){
                                         , MuteHotkey: hp.mute.hotkey
                                         , UnmuteHotkey: hp.unmute.hotkey
                                         , PushToTalk: (hp.hotkeyType = 2? 1 : 0) })
+    }
+    if(!current_profile.Microphone.Length()){
+        current_profile.Microphone.Push({ Name: "Default"
+                                        , MuteHotkey: ""
+                                        , UnmuteHotkey: ""
+                                        , PushToTalk: 0 })    
     }
     config_obj.exportConfig()
     UI_reset()
@@ -294,7 +301,7 @@ UI_onStop(neutron, type, InputHook:=""){
     loop % key_set.data.Length()
         tempSet.push(key_set.dequeue())
     current_hp.setFromKeySet(type, tempSet, hp.wildcard, hp.passthrough, hp.nt)
-    inputElem.value:= current_hp[type].hotkey_h
+    UI_setHotkeyPanel(current_hp)
 
     ;@Ahk2Exe-IgnoreBegin
     OutputDebug, % Format("{} hotkey set to: {}`n", type, current_hp[type].hotkey)
@@ -304,14 +311,27 @@ UI_onStop(neutron, type, InputHook:=""){
 UI_onClearHotkey(neutron){
     mic:= ui_obj.doc.getElementById("microphone").value
     hotkey_panels[mic]:= new HotkeyPanel("","",1)
-    UI_setHotkeyPanel(hotkey_panels[mic],200)
+    UI_setHotkeyPanel(hotkey_panels[mic], 200)
 }
 
 UI_onRefreshDeviceList(neutron){
     UI_resetMicSelect()
+    UI_checkMicOptions()
     if(current_profile.Microphone[1].Name)
         ui_obj.doc.getElementById("microphone").value:= current_profile.Microphone[1].Name
     UI_onSetMicrophone("",ui_obj.doc.getElementById("microphone").value)
+}
+
+UI_checkMicOptions(){
+    devices:= VA_GetCaptureDeviceList()
+    devices.Push("Default")
+    for i, device in devices {
+        micOption:= ui_obj.doc.getElementById("mic_" device)
+        if(hotkey_panels[device].mute.hotkey_h)
+            micOption.innerText:= (InStr(micOption.innerText, "*")? "" : "* ") . micOption.innerText
+        else
+            micOption.innerText:= StrReplace(micOption.innerText, "* ")
+    }
 }
 
 UI_onUpdateDelay(neutron,delay){
