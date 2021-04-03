@@ -29,27 +29,27 @@ global ui_obj, about_obj, current_profile, hotkey_panels, current_hp
                      , string: "Show an OSD when switching between profiles"}]
 
 UI_create(p_onExitCallback){
-    if(ui_obj)
-        ui_obj.Destroy()
     UI_enableIeFeatures({"FEATURE_GPU_RENDERING": 0x1
                         ,"FEATURE_BROWSER_EMULATION": 0x2AF8
                         ,"FEATURE_96DPI_PIXEL": 0x1})
     ui_obj:= new NeutronWindow()
     ui_obj.load(resources_obj.htmlFile.UI)
     onExitCallback:= p_onExitCallback
-    UI_loadCss(ui_obj)
     UI_createAbout()
 }
 
 UI_Show(p_profile){
+    Thread, NoTimers
     ;@Ahk2Exe-IgnoreBegin
     OutputDebug, % "Showing config UI`n"
     ;@Ahk2Exe-IgnoreEnd
+    UI_loadCss(ui_obj)
     UI_reset()
     UI_setProfile("", p_profile)
     UI_addTooltips()
     SetTimer, UI_checkTheme, 1500
     UI_checkTheme()
+    tray_defaults()
     ui_obj.Gui(Format("+MinSize{:i}x{:i}",700*UI_scale,440*UI_scale))
     ui_obj.Show(Format("Center w{:i} h{:i}",830*UI_scale,650*UI_scale),"MicMute")
     WinSet, Transparent, 252, % "ahk_id " . ui_obj.hWnd
@@ -367,20 +367,17 @@ UI_onHotkeyType(neutron, type, delay:=0){
 }
 
 UI_onSetMicrophone(neutron, mic_name){
+    ui_obj.doc.getElementById("hotkeys_panel").classList.add("hidden")
     func:= Func("UI_asyncOnSetMicrophone").Bind(mic_name)
-    SetTimer, % func, -1
+    SetTimer, % func, -200
 }
 
 UI_asyncOnSetMicrophone(mic_name){
-    innerCont:= ui_obj.doc.getElementById("hotkeys_panel")
-    innerCont.classList.add("hidden")
-    sleep, 200
     if(!hotkey_panels[mic_name]){
         hotkey_panels[mic_name]:= new HotkeyPanel("","",1)
     }
     UI_setHotkeyPanel(hotkey_panels[mic_name])
-    innerCont.classList.remove("hidden")
-
+    ui_obj.doc.getElementById("hotkeys_panel").classList.remove("hidden")
 }
 
 UI_onGlobalOption(neutron, option, setState){
@@ -507,8 +504,10 @@ UI_updateDefaultProfile(neutron){
 
 UI_loadCss(neutron){
     neutron.doc.getElementById("MicMute_icon").setAttribute("src", resources_obj.pngIcon)
-    for i, css in resources_obj.cssFile 
-        neutron.doc.head.insertAdjacentHTML("beforeend",Format(template_link, css.name, css.file))
+    for i, css in resources_obj.cssFile {
+        if(!neutron.doc.getElementById("css_" css.name))
+            neutron.doc.head.insertAdjacentHTML("beforeend",Format(template_link, css.name, css.file))
+    }
 }
 
 UI_addTooltips(){
@@ -563,13 +562,13 @@ UI_createAbout(){
     about_obj:= new NeutronWindow()
     about_obj.load(resources_obj.htmlFile.about)
     about_obj.doc.getElementById("version").innerText:= A_Version
-    UI_loadCss(about_obj)
     UI_checkTheme()
     about_obj.Gui("-Resize")
 }
 
 UI_showAbout(neutron:=""){
     tray_defaults()
+    UI_loadCss(about_obj)
     about_obj.show(Format("Center w{:i} h{:i}",500*UI_scale,300*UI_scale),"About MicMute")
     WinSet, Transparent, 252, % "ahk_id " . about_obj.hWnd
 }
