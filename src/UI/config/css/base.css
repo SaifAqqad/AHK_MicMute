@@ -51,7 +51,7 @@ header {
 
 .title-btn {
     padding: 0.35em 1.0em;
-    cursor: pointer;
+    cursor: default;
     vertical-align: bottom;
     font-family: Webdings;
     font-size: 11pt;
@@ -162,7 +162,7 @@ input[type="number"]:disabled {
 }
 
 .tag {
-    cursor: pointer;
+    cursor: default;
     visibility: visible !important;
     opacity: 1 !important;
     background-color: white !important;
@@ -343,7 +343,7 @@ input[type=range].slider::-ms-thumb {
     background: #ffffff;
     border: 0.1px solid rgba(0, 0, 0, 0.5);
     border-radius: 8px;
-    cursor: pointer;
+    cursor: default;
     margin-top: 0;
 }
 input[type=range].slider::-ms-tooltip{
@@ -358,14 +358,12 @@ div.tabs{
     margin-bottom: 10px;
 }
 
-div._title label{
-    cursor: pointer;
-}
-
-input[type="text"]{
-    cursor: text;
-}
-
-input[disabled]{
+input[disabled],
+select,
+button,
+input[type="radio"],
+input[type="checkbox"],
+label,
+.tag{
     cursor: default !important;
 }
