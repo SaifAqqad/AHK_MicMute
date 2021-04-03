@@ -10,12 +10,15 @@ class Config {
         this["$schema"]:= "https://raw.githubusercontent.com/SaifAqqad/AHK_MicMute/master/src/config_schema.json"
         if(!FileExist("config.json") || util_IsFileEmpty("config.json")){
             if(FileExist("config.ini")){
+                isFirstLaunch:=0
                 this.importIniConfig()
             }else{
+                isFirstLaunch:=1
                 this.DefaultProfile:= this.createProfile("Default").ProfileName
                 this.exportConfig()
             }
         }else{
+            isFirstLaunch:=0
             this.importConfig()
         }
         if(p_DefaultProfile)

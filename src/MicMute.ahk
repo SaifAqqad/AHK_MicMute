@@ -37,7 +37,7 @@ SetWorkingDir %A_ScriptDir%
 
 Global config_obj, osd_obj, mic_controllers, current_profile
 , mute_sound, unmute_sound, ptt_on_sound, ptt_off_sound
-, sys_theme, ui_theme
+, sys_theme, ui_theme, isFirstLaunch:=0
 , watched_profiles, watched_profile
 , func_update_state, last_modif_time
 , arg_isDebug, arg_profile, arg_noUI
@@ -91,6 +91,12 @@ initilizeMicMute(default_profile:=""){
     UpdateSysTheme()
     ;initilize tray
     tray_init()
+    ;on first launch -> immediately call editConfig()
+    if(isFirstLaunch){
+        current_profile:= config_obj.Profiles[1]
+        editConfig()
+        return
+    }
     ;switch to the default profile
     switchProfile(default_profile)
 }
@@ -130,10 +136,11 @@ switchProfile(p_name:=""){
         Try {
             device:= VA_GetDevice(mc.microphone)
             if(!device) ;if the mic does not exist -> throw an error
-                Throw, Format("Invalid microphone name '{}'`nin profile '{}'`nClick OK to edit configuration",mc.microphone ,current_profile.ProfileName)
+                Throw, Format("Invalid microphone name '{}' in profile '{}'",mc.microphone ,current_profile.ProfileName)
             mc.enableHotkeys()
         }Catch, err {
-            MsgBox, 65, MicMute, % err
+            Thread, NoTimers, 1
+            MsgBox, 65, MicMute, % err . "`nClick OK to edit configuration"
             IfMsgBox, OK
                 editConfig()
             IfMsgBox, Cancel
@@ -195,7 +202,6 @@ showFeedback(mic_obj){
 }
 
 editConfig(){
-    Thread, NoTimers
     Try osd_obj.destroy()
     if(GetKeyState("Shift", "P") || arg_noUI){
         if(progPath:=util_GetFileAssoc("json"))
@@ -203,6 +209,7 @@ editConfig(){
         else
             Run, notepad.exe "%A_ScriptDir%\config.json",
     }else{
+        Thread, NoTimers, 1
         if(current_profile){
             for i, mic in mic_controllers 
                 mic.disableHotkeys()

@@ -65,7 +65,7 @@ Class MicrophoneController {
                 Hotkey, % this.unmuteHotkey, % funcObj, On
             } 
         }catch{
-            Throw, Format("'{}' profile needs to be set up",current_profile.ProfileName)
+            Throw, Format("Invalid hotkeys in profile '{}'",current_profile.ProfileName)
         }
         hotkeys_set.push(mic.MuteHotkey)
         hotkeys_set.push(mic.UnmuteHotkey)
