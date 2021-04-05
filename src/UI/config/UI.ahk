@@ -300,7 +300,11 @@ UI_onStop(neutron, type, InputHook:=""){
         tempSet.push(modifier_set.dequeue())
     loop % key_set.data.Length()
         tempSet.push(key_set.dequeue())
-    current_hp.setFromKeySet(type, tempSet, hp.wildcard, hp.passthrough, hp.nt)
+    try current_hp.setFromKeySet(type, tempSet, hp.wildcard, hp.passthrough, hp.nt)
+    catch err{
+        UI_notify(err)
+        hp.hotkey:= hp.hotkey_h:= ""
+    }
     UI_setHotkeyPanel(current_hp)
 
     ;@Ahk2Exe-IgnoreBegin
