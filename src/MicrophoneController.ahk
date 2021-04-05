@@ -43,9 +43,9 @@ Class MicrophoneController {
     
 
     enableHotkeys(){
-        if(MicrophoneController.hotkeys_set.exists(this.muteHotkey)
-        || MicrophoneController.hotkeys_set.exists(this.unmuteHotkey))
-            Throw, Format("Found conflicting hotkeys in profile '{}'`nMicrophone `{}`",current_profile.ProfileName,mic.Name)
+        if(this.hotkeys_set.exists(HotkeyPanel.hotkeyToKeys(this.muteHotkey,1))
+           || this.hotkeys_set.exists(HotkeyPanel.hotkeyToKeys(this.unmuteHotkey,1)))
+            Throw, Format("Found conflicting hotkeys in profile '{}'", current_profile.ProfileName)
         Try{
             if (this.muteHotkey=this.unmuteHotkey){
                 if(this.isPushToTalk){
@@ -67,8 +67,8 @@ Class MicrophoneController {
         }catch{
             Throw, Format("Invalid hotkeys in profile '{}'",current_profile.ProfileName)
         }
-        hotkeys_set.push(mic.MuteHotkey)
-        hotkeys_set.push(mic.UnmuteHotkey)
+        this.hotkeys_set.push(HotkeyPanel.hotkeyToKeys(this.MuteHotkey,1))
+        this.hotkeys_set.push(HotkeyPanel.hotkeyToKeys(this.unmuteHotkey,1))
     }
     
     disableHotkeys(){

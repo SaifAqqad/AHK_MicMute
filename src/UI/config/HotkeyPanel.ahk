@@ -104,28 +104,33 @@ class HotkeyPanel{
             Throw, "Invalid Hotkey"
     }
 
-    hotkeyToKeys(str){
+    hotkeyToKeys(str, useNeutralModifers:=0){
+        finalStr:=""
+        ;remove wildcard and passthrough symbols
         str:= StrReplace(str, "*")
         str:= StrReplace(str, "~")
-        finalStr:="",lastIndex:=0
-        while(pos:=InStr(str, "<") || pos:=InStr(str, ">")){
-            symbol:= SubStr(str, pos, 2)
-            modifier:= this.symbolToModifier(symbol)
-            finalStr.= this.isModifier(modifier)? modifier . " + " : ""
-            str:= StrReplace(str, symbol,,, 1)
-        }
-        Loop, Parse, str 
-        {
-            modifier:= this.symbolToModifier(A_LoopField)
-            if(this.isModifier(modifier)){
-                finalStr.= modifier . " + "
-                lastIndex:= A_Index
+        while(str){
+            modifier:=""
+            if(RegExMatch(str, this.symbol_regex, symbol)){
+                ;match modifier symbols
+                str:= StrReplace(str, symbol, "",, 1)
+                modifier:= this.symbolToModifier(symbol)
+                finalStr.= (useNeutralModifers? this.modifierToNeutral(modifier) : modifier) . " + "
+            }else if(ptr:= RegExMatch(str, this.modifier_regex, modifier)){ ; no more symbols
+                ;match modifiers
+                str:= StrReplace(str, modifier, "",, 1)
+                finalStr.= (useNeutralModifers? this.modifierToNeutral(modifier) : modifier) . " + "
+            }else{ ;no more modifiers
+                ;match keys
+                Loop, Parse, str, % "&", %A_Space%%A_Tab%
+                {
+                    str:= StrReplace(str, A_LoopField, "",, 1)
+                    finalStr.= A_LoopField . " + "
+                }
+                ;remove spaces and '&' from str
+                str:= StrReplace(str, " ", "")
+                str:= StrReplace(str, "&", "")
             }
-        }
-        str := SubStr(str, lastIndex+1)
-        str:= StrSplit(str, "&"," `t")
-        for i,val in str {
-            finalStr.= val . " + "
         }
         return SubStr(finalStr,1,-3) 
     }
