@@ -1,20 +1,21 @@
-;@Ahk2Exe-AddResource %U_Res%\MicMute.png
-;@Ahk2Exe-AddResource %U_Res%\MicMute.ico, 2000
-;@Ahk2Exe-AddResource %U_Res%\black_unmute.ico, 3080
-;@Ahk2Exe-AddResource %U_Res%\black_mute.ico, 4080
-;@Ahk2Exe-AddResource %U_Res%\white_unmute.ico, 3090
-;@Ahk2Exe-AddResource %U_Res%\white_mute.ico, 4090
-;@Ahk2Exe-AddResource %U_Res%\mute.wav
-;@Ahk2Exe-AddResource %U_Res%\unmute.wav
-;@Ahk2Exe-AddResource %U_Res%\ptt_off.wav
-;@Ahk2Exe-AddResource %U_Res%\ptt_on.wav
-;@Ahk2Exe-AddResource *10 %U_UI%\html\UI.html
-;@Ahk2Exe-AddResource *10 %U_UI%\html\about.html
-;@Ahk2Exe-AddResource %U_UI%\css\bulma.css
-;@Ahk2Exe-AddResource %U_UI%\css\base.css
-;@Ahk2Exe-AddResource %U_UI%\css\dark.css
-
 class ResourcesManager {
+    
+    ;@Ahk2Exe-AddResource %U_Res%\MicMute.png
+    ;@Ahk2Exe-AddResource %U_Res%\MicMute.ico, 2000
+    ;@Ahk2Exe-AddResource %U_Res%\black_unmute.ico, 3080
+    ;@Ahk2Exe-AddResource %U_Res%\black_mute.ico, 4080
+    ;@Ahk2Exe-AddResource %U_Res%\white_unmute.ico, 3090
+    ;@Ahk2Exe-AddResource %U_Res%\white_mute.ico, 4090
+    ;@Ahk2Exe-AddResource %U_Res%\mute.wav
+    ;@Ahk2Exe-AddResource %U_Res%\unmute.wav
+    ;@Ahk2Exe-AddResource %U_Res%\ptt_off.wav
+    ;@Ahk2Exe-AddResource %U_Res%\ptt_on.wav
+    ;@Ahk2Exe-AddResource *10 %U_UI%\html\UI.html
+    ;@Ahk2Exe-AddResource *10 %U_UI%\html\about.html
+    ;@Ahk2Exe-AddResource %U_UI%\css\bulma.css
+    ;@Ahk2Exe-AddResource %U_UI%\css\base.css
+    ;@Ahk2Exe-AddResource %U_UI%\css\dark.css
+
     static RES_FOLDER:= A_ScriptDir . "\resources\"
     , UI_FOLDER:= A_ScriptDir . "\UI\config\"
     soundFile:= { mute: "mute.wav"
