@@ -23,6 +23,7 @@ SetWorkingDir %A_ScriptDir%
 #Include, <Neutron>
 #Include, <StackSet>
 
+#Include, %A_ScriptDir%
 #Include, ResourcesManager.ahk
 #Include, MicrophoneController.ahk
 #Include, %A_ScriptDir%\config
@@ -43,18 +44,21 @@ Global config_obj, osd_obj, mic_controllers, current_profile
 , arg_isDebug, arg_profile, arg_noUI
 , resources_obj:= new ResourcesManager()
 , A_Version:= A_IsCompiled? util_getFileSemVer(A_ScriptFullPath) : U_Version 
+, WM_SETTINGCHANGE:= 0x001A
 ; Async run updater
 SetTimer, runUpdater, -1
 ; parse cli args
 parseArgs()
+; initilize micmute
+initilizeMicMute(arg_profile)
 ; create config gui window
 if(!arg_noUI)
     UI_create(Func("reloadMicMute"))
-; initilize micmute
-initilizeMicMute(arg_profile)
 ; export the processed config object
 config_obj.exportConfig()
 OnExit(Func("exitMicMute"))
+; listen for sys theme changes
+OnMessage(WM_SETTINGCHANGE, "updateSysTheme")
 
 
 initilizeMicMute(default_profile:=""){
@@ -87,8 +91,8 @@ initilizeMicMute(default_profile:=""){
     setTimer, checkConfigDiff, 3000
     ;initilize sound variables
     initilizeSounds()
-    ;update sys_theme variable
-    UpdateSysTheme()
+    ;update theme variables
+    updateSysTheme()
     ;initilize tray
     tray_init()
     ;on first launch -> immediately call editConfig()
@@ -128,6 +132,7 @@ switchProfile(p_name:=""){
     ;@Ahk2Exe-IgnoreEnd
     ;create a new OSD object for the profile
     osd_obj:= new OSD(current_profile.OSDPos, current_profile.ExcludeFullscreen)
+    osd_obj.setTheme(ui_theme)
     ;initilize mic_controllers
     mic_controllers:= Array()
     for i, mic in current_profile.Microphone {
@@ -136,7 +141,7 @@ switchProfile(p_name:=""){
         Try {
             device:= VA_GetDevice(mc.microphone)
             if(!device) ;if the mic does not exist -> throw an error
-                Throw, Format("Invalid microphone name '{}' in profile '{}'",mc.microphone ,current_profile.ProfileName)
+                Throw, Format("Invalid microphone name '{}' in profile '{}'", mic.Name,current_profile.ProfileName)
             mc.enableHotkeys()
         }Catch, err {
             Thread, NoTimers, 1
@@ -281,7 +286,6 @@ checkLinkedApps(){
 
 updateState(){
     mic_controllers[1].updateState()
-    UpdateSysTheme()
     tray_update(mic_controllers[1])
 }
 
@@ -290,16 +294,22 @@ updateStateMutliple(){
     for i, mc in mic_controllers {
         mc.updateState()
     }
-    UpdateSysTheme()
     tray_defaults()
 }
 
-UpdateSysTheme(){
-    RegRead, reg
-    , HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize, SystemUsesLightTheme
-    sys_theme:= !reg
-    ui_theme:= config_obj.PreferTheme = -1? sys_theme : config_obj.PreferTheme
-    osd_obj.setTheme(ui_theme)
+updateSysTheme(wParam:="", lParam:=""){
+    if(!lParam || StrGet(lParam) == "ImmersiveColorSet"){
+        ;read system theme
+        RegRead, reg
+        , HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize, SystemUsesLightTheme
+        sys_theme:= !reg
+        ;read apps theme
+        RegRead, reg
+        , HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize, AppsUseLightTheme
+        ui_theme:= config_obj.PreferTheme = -1? !reg : config_obj.PreferTheme
+        osd_obj.setTheme(ui_theme)
+        UI_updateTheme()
+    }
 }
 
 runUpdater(p_silent:=1){

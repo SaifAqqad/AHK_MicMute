@@ -47,8 +47,7 @@ UI_Show(p_profile){
     UI_reset()
     UI_setProfile("", p_profile)
     UI_addTooltips()
-    SetTimer, UI_checkTheme, 1500
-    UI_checkTheme()
+    updateSysTheme()
     tray_defaults()
     ui_obj.Gui(Format("+MinSize{:i}x{:i}",700*UI_scale,440*UI_scale))
     ui_obj.Show(Format("Center w{:i} h{:i}",830*UI_scale,650*UI_scale),"MicMute")
@@ -515,7 +514,7 @@ UI_hideProfileRename(neutron, event:=""){
 
 UI_updateThemeOption(neutron:=""){
     config_obj.PreferTheme:= ui_obj.doc.getElementById("PreferTheme").value+0
-    UI_checkTheme()
+    updateSysTheme()
     config_obj.exportConfig()
     UI_notify("Configuration saved")
 }
@@ -565,13 +564,11 @@ UI_dismissNotif(){
 }
 
 UI_exit(neutron){
-    SetTimer, UI_checkTheme, Off
     onExitCallback.Call(current_profile.ProfileName)
     ui_obj.Close()
 }
 
-UI_checkTheme(){
-    UpdateSysTheme()
+UI_updateTheme(){
     if(ui_theme){
         ui_obj.doc.getElementById("css_dark").removeAttribute("disabled")
         about_obj.doc.getElementById("css_dark").removeAttribute("disabled")
@@ -586,7 +583,7 @@ UI_createAbout(){
     about_obj:= new NeutronWindow()
     about_obj.load(resources_obj.htmlFile.about)
     about_obj.doc.getElementById("version").innerText:= A_Version
-    UI_checkTheme()
+    updateSysTheme()
     about_obj.Gui("-Resize")
 }
 
