@@ -116,7 +116,7 @@ class HotkeyPanel{
                 str:= StrReplace(str, symbol, "",, 1)
                 modifier:= this.symbolToModifier(symbol)
                 finalStr.= (useNeutralModifers? this.modifierToNeutral(modifier) : modifier) . " + "
-            }else if(ptr:= RegExMatch(str, this.modifier_regex, modifier)){ ; no more symbols
+            }else if(RegExMatch(str, this.modifier_regex, modifier)){ ; no more symbols
                 ;match modifiers
                 str:= StrReplace(str, modifier, "",, 1)
                 finalStr.= (useNeutralModifers? this.modifierToNeutral(modifier) : modifier) . " + "
@@ -124,8 +124,10 @@ class HotkeyPanel{
                 ;match keys
                 Loop, Parse, str, % "&", %A_Space%%A_Tab%
                 {
-                    str:= StrReplace(str, A_LoopField, "",, 1)
-                    finalStr.= A_LoopField . " + "
+                    if(A_LoopField){
+                        str:= StrReplace(str, A_LoopField, "",, 1)
+                        finalStr.= A_LoopField . " + "
+                    }
                 }
                 ;remove spaces and '&' from str
                 str:= StrReplace(str, " ", "")
