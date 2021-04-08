@@ -45,8 +45,6 @@ Global config_obj, osd_obj, mic_controllers, current_profile
 , resources_obj:= new ResourcesManager()
 , A_Version:= A_IsCompiled? util_getFileSemVer(A_ScriptFullPath) : U_Version 
 , WM_SETTINGCHANGE:= 0x001A
-; Async run updater
-SetTimer, runUpdater, -1
 ; parse cli args
 parseArgs()
 ; initilize micmute
@@ -309,14 +307,6 @@ updateSysTheme(wParam:="", lParam:=""){
         ui_theme:= config_obj.PreferTheme = -1? !reg : config_obj.PreferTheme
         osd_obj.setTheme(ui_theme)
         UI_updateTheme()
-    }
-}
-
-runUpdater(p_silent:=1){
-    if(A_IsCompiled && FileExist(A_ScriptDir . "\updater.exe")){
-        RunWait, %A_ScriptDir%\updater.exe -check-update, %A_ScriptDir%, UseErrorLevel
-        if(ErrorLevel=-2 && !p_silent)
-            MsgBox, 64, MicMute, You already have the latest verison installed
     }
 }
 

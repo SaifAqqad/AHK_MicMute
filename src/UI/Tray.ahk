@@ -15,8 +15,6 @@ tray_init(){
 
     Menu, Tray, Add, ;seperator line
     
-    if(FileExist(A_ScriptDir . "\updater.exe"))
-        tray_add("Check for updates", Func("tray_checkUpdate"))
     tray_add("Start on boot",Func("tray_autoStart"))
     if(Arg_isDebug || A_DebuggerName)
         tray_add("Debug", ":Debug")
@@ -86,11 +84,6 @@ tray_createProfilesMenu(){
         funcObj:= Func("switchProfile").bind(p_profile.ProfileName)
         Menu, profiles, Add, % p_profile.ProfileName, % funcObj, +Radio
     }
-}
-
-tray_checkUpdate(){
-    funcObj:= Func("runUpdater").bind(0)
-    SetTimer, % funcObj, -1
 }
 
 tray_createDebugMenu(){
