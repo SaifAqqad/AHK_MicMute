@@ -15,151 +15,203 @@
 ## Features
 
    * Set up multiple profiles and link them to apps/games
+   * Control multiple microphones simultaneously 
    * Use separate hotkeys for Mute/Unmute or a single toggle/push-to-talk hotkey
-   * Optional sound and on-screen feedback
-   * AFK timeout (auto mute when the user is AFK for longer than a specified time interval)
-   * Auto-start on boot
-   * Very lightweight ( File size ≈ 1MB, CPU usage ≤ 1%, Memory usage ≤ 20MB )
-## Install using [Scoop](https://scoop.sh)
+   * Optional sound and on-screen feedback with ability to use custom sounds
+   * AFK timeout (auto mute when idling for longer than a specific time interval)
 
-   ```powershell
-      # Add the extras bucket
-      scoop bucket add extras
-      # Install MicMute
-      scoop install micmute
-   ```
-   ###### You can update MicMute using `scoop update micmute`, your config file will be saved between updates.
+## Installation
+### A. Install using [Scoop](https://scoop.sh)
 
-## Use standalone executable
-   You can [download MicMute](https://github.com/SaifAqqad/AHK_MicMute/releases/latest/download/MicMute.exe) and use it standalone.
+```powershell
+# Add the extras bucket
+scoop bucket add extras
+
+# Install MicMute
+scoop install micmute
+```
+
+   <small> You can update MicMute using `scoop update micmute`, your config file will be saved between updates.</small>
+
+### B. Use standalone executable
+   You can download [MicMute](https://github.com/SaifAqqad/AHK_MicMute/releases/latest/download/MicMute.exe) and use it standalone.
 
 ## Usage
+![The first time you launch MicMute, a configuration window will open](.\src\resources\configwindow_1.png)      
+<small>The first time you launch MicMute, a configuration window will open</small>
 
-On the first run, you'll be asked to set up a profile:
+1. Select your microphone from the list.
+2. Choose the hotkey type (Toggle, Push-to-talk or seperate hotkeys).
+3. Select the hotkey options you want. see [hotkey options](#Hotkey%20options).
+4. Click Record and press the key(s) combination for the hotkey, then click on Stop to save it.
+5. Select the feedback options you want. see [feedback options](#Feedback%20options).
+6. If you're setting up multiple profiles, you can link a profile to an app/game. see [linked applications](#Linked%20applications).
+7. If you want the microphone to be auto muted when you idle, type the amount of minutes to wait under AFK timeout.
+8. If you're setting up a PTT hotkey, you can change the delay between releasing the key and the audio cutting off by changing the PTT delay option.
+9. Click on Save profile.
 
-![](./src/resources/firstsetupdialog.png)
+### Notes
+* You can change a profile's name by right clicking it.
+* When Changing the microphone, make sure to clear the hotkey for the previous one before setting up the new one.
+* When you set up a hotkey for a microphone, a `*` will appear before the microphone's name
+<hr>
 
-Click OK and a new configuration window will open:
+### Hotkey options
+| Option            | Description                                                                                                                                                                                                                                                  |
+|-------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Passthrough       | If this is turned off, the hotkey will only work for MicMute and will be hidden from the rest of the system. So turn this on if you want the hotkey to work for other apps.                                                                                  |
+| Wildcard          | If this is turned on, the hotkey will work even if you press extra modifiers, so for example if the hotkey is `Ctrl + M` and you press `Ctrl + Shift + M` , the hotkey will still be triggered.                                                              |
+| Neutral modifiers | If this is turned off, the hotkey can have a specific modifier (Right or Left) instead of a neutral one (example: `RCtrl` instead of `Ctrl`, this will only be triggered by the right control key). This option should be set *before* recording the hotkey. |
+<hr>
 
-![](./src/resources/configwindow_1.png)
+### Feedback options
+#### 1. Sound feedback
+Play a sound when muting/unmuting the microphones. You can also use [custom sounds](#1.%20Custom%20sounds).
+#### 2. On-screen feedback
+Show an OSD when muting/unmuting the microphones. 
 
+* You can change the OSD position (default position is the bottom center of the screen, above the taskbar).
+* You can exclude fullscreen apps/games from the OSD, this is needed for some games that lose focus when the OSD is shown.
 
-1. Choose your microphone from the drop down list.
+<details>
+<summary>OSD.gif</summary>
 
-2. Choose whether you want separate hotkeys for Mute and Unmute or a single Toggle/Push-to-talk hotkey.
-
-      ![](./src/resources/configwindow_2.png)
-
-
-3. Based on your choice, you will either need to setup both hotkeys or just one of them.
-        
-   - Click on 'Record' then press the key(s) you want.
-   - Turn on 'Wildcard' if you want the hotkey to be fired even if extra modifiers/keys are held down.
-   - Turn on 'Passthrough' if you don't want the key's native function to be blocked/hidden from the system.
-   - Turn off "Neutral modifiers" if you want to specify which key of the modifier pair to use (i.e. `Left Alt` or `Right Alt` instead of `Alt`) .
-      
-      ##### Using a neutral modifier (i.e. Alt) alone as a hotkey will turn on passthrough
-   
-4. Choose whether you want sound feedback when muting/unmuting the microphone or on-screen feedback or both.
-
-
-
-   <details><summary>On screen feedback</summary>
-   
-   ![](./src/resources/OSD.gif)
-   
-   </details>
-
-5. Choose whether you want the OSD to exclude fullscreen apps/games (this is needed for games that lose focus when the OSD is shown).
-
-7. Set up "AFK Timeout" if you want the microphone to be muted when you idle for longer than a set interval (in minutes).
-
-8. Click on "Select app" and choose an app's executable if you want to link the profile to that app (switch to the profile when the app is launched and switch back to default when it is closed)
-
-9. Click "Save profile"
-
-<details><summary><b>You can change the profile's name by right clicking the profile tag</b></summary> 
-
-![](./src/resources/edit_name.gif)
+![OSD](.\src\resources\OSD.gif)
 </details>
+<hr>
 
-#### Some options are not available in the GUI but can be changed in the [config file](#editing-the-config-file):
-* Mute on startup [#13](https://github.com/SaifAqqad/AHK_MicMute/issues/13)
-* Use custom sounds [#14](https://github.com/SaifAqqad/AHK_MicMute/issues/14)
-* Turn off switching-profile-osd [#15](https://github.com/SaifAqqad/AHK_MicMute/discussions/15)
+### Linked applications
+Link a profile to an app/game, when the app is launched, MicMute automatically switches to that profile, when the app closes, MicMute switches back to the default profile.
+<hr>
+
+### Global options
+These options are shared between all profiles.
+#### 1. Custom sounds
+ To use custom feedback sounds, turn on the option in the config UI, then make sure the sound files (`mp3`,`wav`) are in the same directory as `MicMute.exe` and rename them as:
+
+* **Mute sound**: `mute` 
+
+* **Unmute sound**: `unmute` 
+
+* **PTT on**: `ptt_on` 
+
+* **PTT off**: `ptt_off`
+
+#### 2. Mute on startup
+Mute the profile's microphones when switching to it.
+#### 3. Switching-profile OSD
+Show an OSD with the profile's name when switching to it.
+#### 4. UI Theme
+UI Theme can be set to `System Theme`, `Dark` or `Light`
+
+<small>This does *not* affect the tray icon color, which is always based on the system theme</small>
+<hr>
+
+### Controlling multiple microphones
+Starting with version [0.9.0](https://github.com/SaifAqqad/AHK_MicMute/releases/tag/0.9.0), You can have active hotkeys for multiple microphones simultaneously.
+To do this, just select another microphone from the list and setup hotkeys for it.
+
+When using this feature, the following applies:
+
+* The tray icon will be the static MicMute icon
+* The tray icon no longer acts as a toggle button, and the tray menu option to toggle the microphone is disabled.
+* The [On-screen feedback](#2.%20On-screen%20feedback) OSD will show the microphone name when muting/unmuting
+<hr>
+  
 ## Editing the config file
- Hold shift when asked to setup a profile or when clicking "Edit configuration" from the tray menu, and the config file will open in a text editor
+ Hold shift when asked to setup a profile or when clicking "Edit configuration" from the tray menu, and the config file will open in the default JSON editor
 
 ```json
 //config.json example 
 {
     "DefaultProfile": "Default",
     "MuteOnStartup": 0,
+    "PreferTheme": -1,
+    "SwitchProfileOSD": 1,
+    "UseCustomSounds": 0,
     "Profiles": [
         {
-            "afkTimeout": 2,
-            "ExcludeFullscreen": 1,
+            "afkTimeout": 0,
+            "ExcludeFullscreen": 0,
             "LinkedApp": "",
-            "Microphone": "Microphone (AmazonBasics Desktop Mini Mic)",
-            "MuteHotkey": "*RShift",
+            "Microphone": [
+                {
+                    "MuteHotkey": "~*RShift",
+                    "Name": "Default",
+                    "PushToTalk": 0,
+                    "UnmuteHotkey": "~*RShift"
+                }
+            ],
             "OnscreenFeedback": 1,
             "OSDPos": {
-                "x": "96",
-                "y": "998"
+                "x": -1,
+                "y": -1
             },
             "ProfileName": "Default",
-            "PushToTalk": 0,
+            "PTTDelay": 100,
             "SoundFeedback": 1,
-            "UnmuteHotkey": "*RShift",
             "UpdateWithSystem": 1
         }
-    ],
-    "SwitchProfileOSD": 1,
-    "UseCustomSounds": 0
+    ]
 }
 ```
-### Custom sounds
-To use custom feedback sounds, set `UseCustomSounds` to `1` then put the sound files (`mp3`,`wav`...) in the same directory as `MicMute.exe` and rename them as:
 
-**Mute sound**: `mute` 
+## CLI arguments
+| Argument                  | Description                                                                       |
+|---------------------------|-----------------------------------------------------------------------------------|
+| `/profile=<profile name>` | Startup with a specific profile.                                                  |
+| `/noUI`                   | Disable the configuration UI completely. This makes MicMute use alot less memory. |
+| `/debug`                  | Add shortcuts to `ListVars`, `ListHotkeys` and `listKeys`  in the tray menu.      |
 
-**Unmute sound**: `unmute` 
-
-**PTT on**: `ptt_on` 
-
-**PTT off**: `ptt_off`
-
+Example: `MicMute.exe "/profile=profile 1" /noUI /debug`
 ## Compile instructions
-##### Install [Scoop](https://scoop.sh) then run these commands in powershell
-1. Clone the repository
+<small>Note: Starting with version [0.9.0](https://github.com/SaifAqqad/AHK_MicMute/releases/tag/0.9.0), You can run `MicMute.ahk` directly without compiling it.</small>
+
+### 1. Install prerequisites
+You will need [AutoHotkey](https://www.autohotkey.com/), [upx](https://upx.github.io/) and [git](https://git-scm.com/download/win).
+
+You can install them using [scoop](https://scoop.sh):
+
+1. Install scoop 
     ```powershell
-    git clone https://github.com/SaifAqqad/AHK_MicMute.git;
-    cd .\AHK_MicMute\;
+    # This allows running powershell scripts 
+    # that are signed by a trusted publisher.
+    # You should type 'yes' when prompted.
+    Set-ExecutionPolicy RemoteSigned -scope CurrentUser;
+
+    # This runs the scoop installer script.
+    iwr -useb get.scoop.sh | iex;
     ```
-2. Install autohotkey
+2. Install prerequisites
     ```powershell
+    scoop install git upx;
     scoop bucket add extras;
     scoop install autohotkey;
     ```
-3. Install upx (optional)
+3. Copy upx to the compiler directory
     ```powershell
-    scoop install upx;
     cp "$(scoop prefix upx)\upx.exe" -Destination "$(scoop prefix autohotkey)\Compiler\";
     ```
-4. Run ahk2exe
-    ```powershell
-    ahk2exe /in ".\src\MicMute.ahk" /out ".\src\MicMute.exe";    # add `/compress 2` if upx was installed
-    ```
+### 2. Clone the repository
+    
+```powershell
+git clone https://github.com/SaifAqqad/AHK_MicMute.git;
+cd .\AHK_MicMute\;
+```
+### 3. Run the compiler
 
+```powershell
+ahk2exe /in ".\src\MicMute.ahk" /out ".\src\MicMute.exe" /compress 2;
+```
 ## Known issues
-* When running MicMute alongside [Microsoft Powertoys](https://github.com/microsoft/PowerToys), they might conflict with each other, which may result in the hotkeys not working at all. see [microsoft/PowerToys#2132](https://github.com/microsoft/PowerToys/issues/2132)
+* When running AutoHotkey alongside [Microsoft Powertoys](https://github.com/microsoft/PowerToys), they might conflict with each other, which may result in the hotkeys not working at all. see [microsoft/PowerToys#2132](https://github.com/microsoft/PowerToys/issues/2132).
 
 ## Libraries and resources used
 
 | Library                                                                | License                                                                        |
 |------------------------------------------------------------------------|--------------------------------------------------------------------------------|
-| [G33kDude/Neutron.ahk](https://github.com/G33kDude/Neutron.ahk)        | [MIT](https://github.com/G33kDude/Neutron.ahk/blob/master/LICENSE)     |
+| [G33kDude/Neutron.ahk](https://github.com/G33kDude/Neutron.ahk)        | [MIT](https://github.com/G33kDude/Neutron.ahk/blob/master/LICENSE)             |
 | [cocobelgica/JSON.ahk](https://github.com/cocobelgica/AutoHotkey-JSON) | [WTFPL](https://github.com/cocobelgica/AutoHotkey-JSON#json-and-jxon)          |
 | [Lexikos/VA.ahk](https://github.com/ahkscript/VistaAudio)              | [License](https://github.com/ahkscript/VistaAudio/blob/master/LICENSE)         |
-| [Bulma CSS framework](https://bulma.io/)                               | [MIT](https://github.com/jgthms/bulma/blob/master/LICENSE)             |
+| [Bulma CSS framework](https://bulma.io/)                               | [MIT](https://github.com/jgthms/bulma/blob/master/LICENSE)                     |
 | [Material Design icons](https://github.com/Templarian/MaterialDesign)  | [Apache 2.0](https://github.com/Templarian/MaterialDesign/blob/master/LICENSE) |
