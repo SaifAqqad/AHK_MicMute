@@ -42,10 +42,10 @@ scoop install micmute
 
 1. Select your microphone from the list.
 2. Choose the hotkey type (Toggle, Push-to-talk or seperate hotkeys).
-3. Select the hotkey options you want. see [hotkey options](#Hotkey%20options).
+3. Select the hotkey options you want. see [hotkey options](#hotkey-options).
 4. Click Record and press the key(s) combination for the hotkey, then click on Stop to save it.
-5. Select the feedback options you want. see [feedback options](#Feedback%20options).
-6. If you're setting up multiple profiles, you can link a profile to an app/game. see [linked applications](#Linked%20applications).
+5. Select the feedback options you want. see [feedback options](#feedback-options).
+6. If you're setting up multiple profiles, you can link a profile to an app/game. see [linked applications](#linked-applications).
 7. If you want the microphone to be auto muted when you idle, type the amount of minutes to wait under AFK timeout.
 8. If you're setting up a PTT hotkey, you can change the delay between releasing the key and the audio cutting off by changing the PTT delay option.
 9. Click on Save profile.
@@ -66,7 +66,7 @@ scoop install micmute
 
 ### Feedback options
 #### 1. Sound feedback
-Play a sound when muting/unmuting the microphones. You can also use [custom sounds](#1.%20Custom%20sounds).
+Play a sound when muting/unmuting the microphones. You can also use [custom sounds](#1-custom-sounds).
 #### 2. On-screen feedback
 Show an OSD when muting/unmuting the microphones. 
 
@@ -115,7 +115,7 @@ When using this feature, the following applies:
 
 * The tray icon will be the static MicMute icon
 * The tray icon no longer acts as a toggle button, and the tray menu option to toggle the microphone is disabled.
-* The [On-screen feedback](#2.%20On-screen%20feedback) OSD will show the microphone name when muting/unmuting
+* The [On-screen feedback](#2-on-screen-feedback) OSD will show the microphone name when muting/unmuting
 <hr>
   
 ## Editing the config file
