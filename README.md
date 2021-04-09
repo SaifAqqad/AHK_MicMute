@@ -37,7 +37,7 @@ scoop install micmute
    You can download [MicMute](https://github.com/SaifAqqad/AHK_MicMute/releases/latest/download/MicMute.exe) and use it standalone.
 
 ## Usage
-![The first time you launch MicMute, a configuration window will open](.\src\resources\configwindow_1.png)      
+![The first time you launch MicMute, a configuration window will open](./src/resources/configwindow_1.png)      
 <small>The first time you launch MicMute, a configuration window will open</small>
 
 1. Select your microphone from the list.
@@ -76,7 +76,7 @@ Show an OSD when muting/unmuting the microphones.
 <details>
 <summary>OSD.gif</summary>
 
-![OSD](.\src\resources\OSD.gif)
+![OSD](./src/resources/OSD.gif)
 </details>
 <hr>
 
