@@ -47,11 +47,11 @@ Global config_obj, osd_obj, mic_controllers, current_profile
 , WM_SETTINGCHANGE:= 0x001A
 ; parse cli args
 parseArgs()
-; initilize micmute
-initilizeMicMute(arg_profile)
 ; create config gui window
 if(!arg_noUI)
     UI_create(Func("reloadMicMute"))
+; initilize micmute
+initilizeMicMute(arg_profile)
 ; export the processed config object
 config_obj.exportConfig()
 OnExit(Func("exitMicMute"))
