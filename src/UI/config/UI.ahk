@@ -49,7 +49,7 @@ UI_Show(p_profile){
     UI_addTooltips()
     updateSysTheme()
     tray_defaults()
-    ui_obj.Gui(Format("+MinSize{:i}x{:i}",700*UI_scale,440*UI_scale))
+    ui_obj.Gui(Format("+LabelUI_ +MinSize{:i}x{:i}",700*UI_scale,440*UI_scale))
     ui_obj.Show(Format("Center w{:i} h{:i}",830*UI_scale,650*UI_scale),"MicMute")
     WinSet, Transparent, 252, % "ahk_id " . ui_obj.hWnd
 }
@@ -563,7 +563,8 @@ UI_dismissNotif(){
     notif.classList.add("hidden")
 }
 
-UI_exit(neutron){
+UI_close(neutron:=""){
+    ui_obj.Hide()
     onExitCallback.Call(current_profile.ProfileName)
     ui_obj.Close()
 }
