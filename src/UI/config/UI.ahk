@@ -251,9 +251,9 @@ UI_onRecord(neutron, type){
     input_hook.OnEnd:= Func("UI_onStop").Bind(neutron,type)
     input_hook.Start()
     ;setup workaround for mouse back and forward buttons
-    funcObj:= Func("addKey").Bind(type,"",0x5, 0x0)
+    funcObj:= Func("UI_addKey").Bind(type,"",0x5, 0x0)
     Hotkey, *XButton1, % funcObj, On UseErrorLevel
-    funcObj:= Func("addKey").Bind(type,"",0x6, 0x0)
+    funcObj:= Func("UI_addKey").Bind(type,"",0x6, 0x0)
     Hotkey, *XButton2, % funcObj, On UseErrorLevel
 }
 
