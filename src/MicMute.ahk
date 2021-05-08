@@ -41,7 +41,7 @@ Global config_obj, osd_obj, mic_controllers, current_profile
 , sys_theme, ui_theme, isFirstLaunch:=0
 , watched_profiles, watched_profile
 , func_update_state, last_modif_time
-, arg_isDebug, arg_profile, arg_noUI
+, arg_isDebug:=0, arg_profile:="", arg_noUI:=0
 , resources_obj:= new ResourcesManager()
 , A_Version:= A_IsCompiled? util_getFileSemVer(A_ScriptFullPath) : U_Version 
 , WM_SETTINGCHANGE:= 0x001A
@@ -330,10 +330,9 @@ parseArgs(){
         if(!match)
             continue
         switch val1 {
-            case "debug": arg_isDebug:= 1
-            case "noui": arg_noUI:= 1
+            case "debug": arg_isDebug:= (val3=""? 1 : val3)
+            case "noui": arg_noUI:= (val3=""? 1 : val3)
             case "profile": arg_profile:= val3
         }
     }
-
 }
