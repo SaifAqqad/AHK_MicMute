@@ -1,9 +1,9 @@
 ;compiler directives
 ;@Ahk2Exe-Let Res = %A_ScriptDir%\resources
 ;@Ahk2Exe-Let UI = %A_ScriptDir%\UI\config
-;@Ahk2Exe-Let Version = 0.9.0
+;@Ahk2Exe-Let Version = 0.9.2
 ;@Ahk2Exe-IgnoreBegin
-    U_Version:= "0.9.0"
+    U_Version:= "0.9.2"
 ;@Ahk2Exe-IgnoreEnd
 ;@Ahk2Exe-SetMainIcon %U_Res%\MicMute.ico
 ;@Ahk2Exe-SetVersion %U_Version%
