@@ -12,11 +12,10 @@
             "$id": "#root/DefaultProfile",
             "title": "Defaultprofile",
             "type": "string",
-            "default": "",
+            "default": "Default",
             "examples": [
-                "Default"
-            ],
-            "pattern": "^.*$"
+                "Profile 1"
+            ]
         },
         "MuteOnStartup": {
             "$id": "#root/MuteOnStartup",
@@ -25,9 +24,6 @@
                 "integer",
                 "boolean"
             ],
-            "examples": [
-                0
-            ],
             "default": 0
         },
         "PreferTheme": {
@@ -35,7 +31,9 @@
             "title": "Prefertheme",
             "type": "integer",
             "examples": [
-                0
+                0,
+                1,
+                -1
             ],
             "default": -1
         },
@@ -58,7 +56,8 @@
                         "title": "Afktimeout",
                         "type": "integer",
                         "examples": [
-                            0
+                            2,
+                            5
                         ],
                         "default": 0
                     },
@@ -68,9 +67,6 @@
                         "type": [
                             "integer",
                             "boolean"
-                        ],
-                        "examples": [
-                            1
                         ],
                         "default": 0
                     },
@@ -82,7 +78,7 @@
                         "examples": [
                             "example.exe"
                         ],
-                        "pattern": "^.*\\.exe$"
+                        "pattern": "^|(.*\\.exe)$"
                     },
                     "Microphone": {
                         "$id": "#root/Profiles/items/Microphone",
@@ -106,12 +102,13 @@
                                     "type": "string",
                                     "default": "",
                                     "examples": [
-                                        "~*<^R"
+                                        "~*<^R",
+                                        "*RShift"
                                     ]
                                 },
                                 "Name": {
                                     "$id": "#root/Profiles/items/Microphone/items/Name",
-                                    "title": "Name",
+                                    "title": "Microphone name",
                                     "type": "string",
                                     "default": "",
                                     "examples": [
@@ -125,9 +122,6 @@
                                         "integer",
                                         "boolean"
                                     ],
-                                    "examples": [
-                                        1
-                                    ],
                                     "default": 0
                                 },
                                 "UnmuteHotkey": {
@@ -136,7 +130,8 @@
                                     "type": "string",
                                     "default": "",
                                     "examples": [
-                                        "~*<^R"
+                                        "~*<^R",
+                                        "~RCtrl"
                                     ]
                                 }
                             }
@@ -144,13 +139,10 @@
                     },
                     "OnscreenFeedback": {
                         "$id": "#root/Profiles/items/OnscreenFeedback",
-                        "title": "Onscreenfeedback",
+                        "title": "Onscreen feedback",
                         "type": [
                             "integer",
                             "boolean"
-                        ],
-                        "examples": [
-                            1
                         ],
                         "default": 0
                     },
@@ -194,34 +186,29 @@
                     },
                     "PTTDelay": {
                         "$id": "#root/Profiles/items/PTTDelay",
-                        "title": "Pttdelay",
+                        "title": "Ptt delay",
                         "type": "integer",
                         "examples": [
-                            100
+                            250,
+                            50
                         ],
                         "default": 100
                     },
                     "SoundFeedback": {
                         "$id": "#root/Profiles/items/SoundFeedback",
-                        "title": "Soundfeedback",
+                        "title": "Sound feedback",
                         "type": [
                             "integer",
                             "boolean"
-                        ],
-                        "examples": [
-                            1
                         ],
                         "default": 0
                     },
                     "UpdateWithSystem": {
                         "$id": "#root/Profiles/items/UpdateWithSystem",
-                        "title": "Updatewithsystem",
+                        "title": "Update with system",
                         "type": [
                             "integer",
                             "boolean"
-                        ],
-                        "examples": [
-                            1
                         ],
                         "default": 1
                     }
@@ -232,18 +219,12 @@
             "$id": "#root/SwitchProfileOSD",
             "title": "Switching-profile OSD",
             "type": ["integer","boolean"],
-            "examples": [
-                1
-            ],
             "default": 1
         },
         "UseCustomSounds": {
             "$id": "#root/UseCustomSounds",
-            "title": "Usecustomsounds",
+            "title": "Use custom sounds",
             "type": ["integer","boolean"],
-            "examples": [
-                0
-            ],
             "default": 0
         }
     }
