@@ -26,7 +26,8 @@ global ui_obj, about_obj, current_profile, hotkey_panels, current_hp
                   ,{ selector: ".ExcludeFullscreen-label"
                      , string: "Turn off the OSD if the active app/game is fullscreen"}
                   ,{ selector: ".SwitchProfileOSD-label"
-                     , string: "Show an OSD when switching between profiles"}]
+                  ,{ selector: ".OnscreenOverlay-label"
+                     , string: "Show the microphone's state in an always-on-top overlay"}]
 
 UI_create(p_onExitCallback){
     UI_enableIeFeatures({"FEATURE_GPU_RENDERING": 0x1
@@ -79,6 +80,7 @@ UI_setProfile(neutron, p_profile){
     UI_setHotkeyPanel(hotkey_panels[current_profile.Microphone[1].Name])
     ui_obj.doc.getElementById("SoundFeedback").checked:= current_profile.SoundFeedback
     ui_obj.doc.getElementById("OnscreenFeedback").checked:= current_profile.OnscreenFeedback
+    ui_obj.doc.getElementById("OnscreenOverlay").checked:= current_profile.OnscreenOverlay
     ui_obj.doc.getElementById("ExcludeFullscreen").checked:= current_profile.ExcludeFullscreen
     UI_onOSDToggle("")
     ui_obj.doc.getElementById("OSDPos_x").value:= current_profile.OSDPos.x==-1? "" : current_profile.OSDPos.x
@@ -161,6 +163,7 @@ UI_updateHotkeyOption(neutron, option){
 UI_onSaveProfile(neutron){
     current_profile.SoundFeedback:= ui_obj.doc.getElementById("SoundFeedback").checked? 1 : 0
     current_profile.OnscreenFeedback:= ui_obj.doc.getElementById("OnscreenFeedback").checked? 1 : 0
+    current_profile.OnscreenOverlay:= ui_obj.doc.getElementById("OnscreenOverlay").checked? 1 : 0
     current_profile.ExcludeFullscreen:= ui_obj.doc.getElementById("ExcludeFullscreen").checked? 1 : 0
     current_profile.afkTimeout:= (val:= ui_obj.doc.getElementById("afkTimeout").value)? val+0 : 0
     current_profile.LinkedApp:= ui_obj.doc.getElementById("LinkedApp").value
@@ -326,15 +329,22 @@ UI_onRefreshDeviceList(neutron){
 }
 
 UI_checkMicOptions(){
-    devices:= VA_GetCaptureDeviceList()
+    devices:= VA_GetCaptureDeviceList(), numPanels:=0
     devices.Push("Default")
     for i, device in devices {
         micOption:= ui_obj.doc.getElementById("mic_" device)
-        if(hotkey_panels[device].mute.hotkey_h)
+        if(hotkey_panels[device].mute.hotkey_h){
             micOption.innerText:= (InStr(micOption.innerText, "*")? "" : "* ") . micOption.innerText
-        else
+            numPanels++
+        }else{
             micOption.innerText:= StrReplace(micOption.innerText, "* ")
     }
+}
+    overlay_tag:= ui_obj.doc.getElementById("OnscreenOverlay_tag")
+    if(numPanels>1)
+        overlay_tag.classList.add("hidden")
+    else
+        overlay_tag.classList.remove("hidden")
 }
 
 UI_onUpdateDelay(neutron,delay){

@@ -31,12 +31,13 @@ SetWorkingDir %A_ScriptDir%
 #Include, Config.ahk
 #Include, %A_ScriptDir%\UI
 #Include, OSD.ahk
+#Include, Overlay.ahk
 #Include, Tray.ahk
 #Include, %A_ScriptDir%\UI\config
 #Include, HotkeyPanel.ahk
 #Include, UI.ahk
 
-Global config_obj, osd_obj, mic_controllers, current_profile
+Global config_obj, osd_obj, overlay_obj, mic_controllers, current_profile
 , mute_sound, unmute_sound, ptt_on_sound, ptt_off_sound
 , sys_theme, ui_theme, isFirstLaunch:=0
 , watched_profiles, watched_profile
@@ -64,9 +65,13 @@ initilizeMicMute(default_profile:=""){
     if(mic_controllers)
         for i,mic in mic_controllers
             mic.disableHotkeys()
+    ;destroy existing guis 
+    overlay_obj.destroy()
+    osd_obj.destroy()
     ;initilize globals
     config_obj:= new Config()
     , osd_obj:=""
+    , overlay_obj:=""
     , mic_controllers:=""
     , watched_profiles:= Array()
     , current_profile:=""
@@ -117,6 +122,9 @@ switchProfile(p_name:=""){
             mic.disableHotkeys()
         }
     }
+    ;destroy existing guis 
+    overlay_obj.destroy()
+    osd_obj.destroy()
     ;reset tray icon and tooltip
     tray_defaults()
     ;uncheck the profile in the tray menu
@@ -168,6 +176,8 @@ switchProfile(p_name:=""){
         tray_toggleMic(0)
     }else{
         func_update_state:= Func("updateState")
+        if(current_profile.OnscreenOverlay)
+            overlay_obj:= new Overlay(current_profile.OverlayPos)
     }
     ;turn on profile-specific timers
     if (current_profile.UpdateWithSystem)
@@ -216,6 +226,7 @@ editConfig(){
         if(current_profile){
             for i, mic in mic_controllers 
                 mic.disableHotkeys()
+            overlay_obj.destroy()
             Try SetTimer, % func_update_state, Off
             SetTimer, checkIsIdle, Off
             SetTimer, checkLinkedApps, Off
@@ -285,6 +296,8 @@ checkLinkedApps(){
 updateState(){
     mic_controllers[1].updateState()
     tray_update(mic_controllers[1])
+    if(overlay_obj)
+        overlay_obj.setState(mic_controllers[1].state)
 }
 
 updateStateMutliple(){

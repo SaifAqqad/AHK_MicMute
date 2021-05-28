@@ -179,21 +179,36 @@
                     <!-- feedback -->
                     <div class="row is-half">
                         <label class="label title is-4 noselect" style="padding-top: 0 !important;">Feedback</label>
+                    <div class="columns is-mobile" style="margin-bottom: 0 !important;">
+                        <div class="column">
                         <div class="tag is-medium option"
                             onclick="document.getElementById('SoundFeedback').checked ^= 1">
                             <label class="checkbox">
                                 <input type="checkbox" id="SoundFeedback" disabled>
-                                <span>Sound feedback</span>
+                                    <span class="SoundFeedback-label">Sound feedback</span>
                             </label>
                         </div>
                         <div class="tag is-medium option"
                             onclick="document.getElementById('OnscreenFeedback').checked ^= 1;ahk.UI_onOSDToggle()">
                             <label class="checkbox">
                                 <input type="checkbox" id="OnscreenFeedback" disabled>
-                                <span>On-screen feedback</span>
+                                    <span class="OnscreenFeedback-label">On-screen feedback</span>
                             </label>
                         </div>
-                        <div class="tag hidden is-medium option" id="ExcludeFullscreen_tag"
+                            <div class="tag is-medium option hidden" id="OnscreenOverlay_tag"
+                                onclick="document.getElementById('OnscreenOverlay').checked ^= 1">
+                                <label class="checkbox">
+                                    <input type="checkbox" id="OnscreenOverlay" disabled>
+                                    <span class="OnscreenOverlay-label">On-screen overlay</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="columns is-mobile" id="OSDPos_group" style="margin-bottom: 0 !important;">
+                        <!-- osd options -->
+                        <div class="column is-7">
+                            <label class="label title is-4 noselect spaced-label">OSD options</label>
+                            <div class="tag is-medium option" id="ExcludeFullscreen_tag"
                             onclick="document.getElementById('ExcludeFullscreen').checked ^= 1">
                             <label class="checkbox">
                                 <input type="checkbox" id="ExcludeFullscreen" disabled>
