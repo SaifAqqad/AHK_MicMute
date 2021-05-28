@@ -22,10 +22,15 @@ global ui_obj, about_obj, current_profile, hotkey_panels, current_hp
                   ,{ selector: ".ptt-delay-label"
                      , string: "Delay between releasing the key and the audio cutting off"}
                   ,{ selector: ".afk-label"
-                     , string: "Auto mute the microphone when idling for a length of time"}
+                     , string: "Mute the microphone when idling for a length of time"}
                   ,{ selector: ".ExcludeFullscreen-label"
-                     , string: "Turn off the OSD if the active app/game is fullscreen"}
+                     , string: "Don't show the OSD if the active app/game is fullscreen"}
                   ,{ selector: ".SwitchProfileOSD-label"
+                     , string: "Show an OSD when switching between profiles"}
+                  ,{ selector: ".SoundFeedback-label"
+                     , string: "Play a sound when muting or unmuting the microphone"}
+                  ,{ selector: ".OnscreenFeedback-label"
+                     , string: "Show an OSD when muting or unmuting the microphone"}
                   ,{ selector: ".OnscreenOverlay-label"
                      , string: "Show the microphone's state in an always-on-top overlay"}]
 
@@ -338,8 +343,8 @@ UI_checkMicOptions(){
             numPanels++
         }else{
             micOption.innerText:= StrReplace(micOption.innerText, "* ")
+        }
     }
-}
     overlay_tag:= ui_obj.doc.getElementById("OnscreenOverlay_tag")
     if(numPanels>1)
         overlay_tag.classList.add("hidden")
@@ -432,19 +437,21 @@ UI_onSelectApp(neutron){
         linkedAppField.value:=""
 }
 
-UI_onOSDset(neutron,isReset:=0){
+UI_onOSDset(neutron){
     pox_x:= ui_obj.doc.getElementByID("OSDPos_x")
     pox_y:= ui_obj.doc.getElementByID("OSDPos_y")
-    if(isReset){
-        pox_x.value:=""
-        pox_y.value:=""
-        return
-    }
-    MsgBox, 64, MicMute, Drag the OSD to the wanted `nposition then right click it
+    MsgBox, 65, MicMute, Click OK then drag the OSD to the `nwanted position and right click it`nor click Cancel to reset.
+    IfMsgBox, Cancel
+        Goto, _reset
     ui_obj.Minimize()
     editor_osd:= new OSD(current_profile.OSDPos,,Func("UI_onConfirmOSDPos"))
     editor_osd.setTheme(ui_theme)
     editor_osd.showPosEditor()
+    return
+    _reset:
+        pox_x.value:=""
+        pox_y.value:=""
+    return
 }
 
 UI_onConfirmOSDPos(x,y){

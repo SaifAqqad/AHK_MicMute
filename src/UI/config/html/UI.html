@@ -177,24 +177,23 @@
                         </div>
                     </div>
                     <!-- feedback -->
-                    <div class="row is-half">
-                        <label class="label title is-4 noselect" style="padding-top: 0 !important;">Feedback</label>
+                    <label class="label title is-4 noselect" style="padding-top: 0 !important;">Feedback</label>
                     <div class="columns is-mobile" style="margin-bottom: 0 !important;">
                         <div class="column">
-                        <div class="tag is-medium option"
-                            onclick="document.getElementById('SoundFeedback').checked ^= 1">
-                            <label class="checkbox">
-                                <input type="checkbox" id="SoundFeedback" disabled>
+                            <div class="tag is-medium option"
+                                onclick="document.getElementById('SoundFeedback').checked ^= 1">
+                                <label class="checkbox">
+                                    <input type="checkbox" id="SoundFeedback" disabled>
                                     <span class="SoundFeedback-label">Sound feedback</span>
-                            </label>
-                        </div>
-                        <div class="tag is-medium option"
-                            onclick="document.getElementById('OnscreenFeedback').checked ^= 1;ahk.UI_onOSDToggle()">
-                            <label class="checkbox">
-                                <input type="checkbox" id="OnscreenFeedback" disabled>
+                                </label>
+                            </div>
+                            <div class="tag is-medium option"
+                                onclick="document.getElementById('OnscreenFeedback').checked ^= 1;ahk.UI_onOSDToggle()">
+                                <label class="checkbox">
+                                    <input type="checkbox" id="OnscreenFeedback" disabled>
                                     <span class="OnscreenFeedback-label">On-screen feedback</span>
-                            </label>
-                        </div>
+                                </label>
+                            </div>
                             <div class="tag is-medium option hidden" id="OnscreenOverlay_tag"
                                 onclick="document.getElementById('OnscreenOverlay').checked ^= 1">
                                 <label class="checkbox">
@@ -209,32 +208,29 @@
                         <div class="column is-7">
                             <label class="label title is-4 noselect spaced-label">OSD options</label>
                             <div class="tag is-medium option" id="ExcludeFullscreen_tag"
-                            onclick="document.getElementById('ExcludeFullscreen').checked ^= 1">
-                            <label class="checkbox">
-                                <input type="checkbox" id="ExcludeFullscreen" disabled>
-                                <span class="ExcludeFullscreen-label">Exclude fullscreen apps</span>
-                            </label>
+                                onclick="document.getElementById('ExcludeFullscreen').checked ^= 1">
+                                <label class="checkbox">
+                                    <input type="checkbox" id="ExcludeFullscreen" disabled>
+                                    <span class="ExcludeFullscreen-label">Exclude fullscreen apps</span>
+                                </label>
+                            </div>
                         </div>
-                    </div>
-                    <!-- osd position -->
-                    <div class="row is-half row-hidden" id="OSDPos_group">
-                        <label class="label title is-4 noselect">OSD position</label>
-                        <div class="columns is-mobile">
-                            <div class="column is-3">
-                                <button type="button" class="button is-primary is-fullwidth"
-                                    onclick="ahk.UI_onOSDset()">Set Position</button>
-                            </div>
-                            <div class="column is-2">
-                                <input class="input is-primary input-elem" id="OSDPos_x" disabled placeholder="X"
-                                    style="text-align: center;" type="number">
-                            </div>
-                            <div class="column is-2">
-                                <input class="input is-primary input-elem" id="OSDPos_y" disabled placeholder="Y"
-                                    style="text-align: center;" type="number">
-                            </div>
-                            <div class="column is-3">
-                                <button type="button" class="button is-primary is-fullwidth"
-                                    onclick="ahk.UI_onOSDset(1)">Reset Position</button>
+                        <!-- osd position -->
+                        <div class="column is-5">
+                            <label class="label title is-4 noselect spaced-label">OSD position</label>
+                            <div class="field has-addons">
+                                <div class="control">
+                                    <input class="input is-primary input-elem" type="number" disabled placeholder="X" style="text-align: center;"
+                                        id="OSDPos_x">
+                                </div>
+                                <div class="control">
+                                    <input class="input is-primary input-elem" type="text" disabled placeholder="Y" style="text-align: center;"
+                                        id="OSDPos_y">
+                                </div>
+                                <div class="control">
+                                    <button type="button" class="button is-primary"
+                                        onclick="ahk.UI_onOSDset()">Set</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -283,7 +279,8 @@
                     </div>
                     <!-- save/delete buttons -->
                     <div class="row is-one-quarter">
-                        <button type="button" class="button is-primary is-fullwidth" onclick="ahk.UI_onSaveProfile()">Save
+                        <button type="button" class="button is-primary is-fullwidth"
+                            onclick="ahk.UI_onSaveProfile()">Save
                             profile</button>
                     </div>
                     <div class="row is-one-quarter">
