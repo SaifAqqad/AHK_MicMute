@@ -41,7 +41,7 @@ jobs:
           echo "Copying upx"
           Copy-Item -Path "$(scoop prefix upx)\upx.exe" -Destination "$(scoop prefix autohotkey)\Compiler\"
           echo "Running Ahk2Exe";
-          $err = Invoke-Expression "$(scoop prefix autohotkey)\Compiler\Ahk2Exe.exe /in '.\src\MicMute.ahk' /out '.\MicMute.exe' /icon '.\src\MicMute.ico' /compress '2' | more";
+          $err = Invoke-Expression "$(scoop prefix autohotkey)\Compiler\Ahk2Exe.exe /in '.\src\MicMute.ahk' /out '.\MicMute.exe' /icon '.\src\MicMute.ico' /compress '2'";
           If ($err -Match "Successfully"){
             echo "MicMute compiled: `n$err"
           }else{
