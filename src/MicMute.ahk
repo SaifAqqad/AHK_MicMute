@@ -22,6 +22,7 @@ SetWorkingDir %A_ScriptDir%
 #Include, <JSON>
 #Include, <Neutron>
 #Include, <StackSet>
+#Include, <ScriptGuard1>
 
 #Include, %A_ScriptDir%
 #Include, ResourcesManager.ahk
