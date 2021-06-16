@@ -35,11 +35,14 @@ global ui_obj, about_obj, current_profile, hotkey_panels, current_hp
                      , string: "Show the microphone's state in an always-on-top overlay"}]
 
 UI_create(p_onExitCallback){
-    UI_enableIeFeatures({"FEATURE_GPU_RENDERING": 0x1
-                        ,"FEATURE_BROWSER_EMULATION": 0x2AF8
-                        ,"FEATURE_96DPI_PIXEL": 0x1})
+    features:= {"FEATURE_GPU_RENDERING": 0x1
+            ,"FEATURE_BROWSER_EMULATION": 0x2AF8
+            ,"FEATURE_96DPI_PIXEL": 0x1}
+    UI_enableIeFeatures(features)
     ui_obj:= new NeutronWindow()
     ui_obj.load(resources_obj.htmlFile.UI)
+    UI_enableIeFeatures(features,1)
+    UI_loadCss(ui_obj)
     onExitCallback:= p_onExitCallback
     UI_createAbout()
 }
@@ -49,7 +52,7 @@ UI_Show(p_profile){
     ;@Ahk2Exe-IgnoreBegin
     OutputDebug, % "Showing config UI`n"
     ;@Ahk2Exe-IgnoreEnd
-    UI_loadCss(ui_obj)
+    updateSysTheme()
     UI_reset()
     UI_setProfile("", p_profile)
     UI_addTooltips()
@@ -57,14 +60,17 @@ UI_Show(p_profile){
     tray_defaults()
     ui_obj.Gui(Format("+LabelUI_ +MinSize{:i}x{:i}",700*UI_scale,440*UI_scale))
     ui_obj.Show(Format("Center w{:i} h{:i}",830*UI_scale,650*UI_scale),"MicMute")
-    WinSet, Transparent, 252, % "ahk_id " . ui_obj.hWnd
 }
 
-UI_enableIeFeatures(f_obj){
+UI_enableIeFeatures(f_obj, delete:=0){
     static reg_dir:= "SOFTWARE\Microsoft\Internet Explorer\Main\FeatureControl\"
          , executable:= A_IsCompiled? A_ScriptName : util_splitPath(A_AhkPath).fileName
     for feature, value in f_obj
-        RegWrite, REG_DWORD, HKCU, % reg_dir feature, % executable, % value
+        if(!delete)
+            RegWrite, REG_DWORD, % "HKCU\" reg_dir feature, % executable, % value
+        else
+            RegDelete, % "HKCU\" reg_dir feature, % executable
+
 }
 
 UI_setProfile(neutron, p_profile){
@@ -601,19 +607,20 @@ UI_createAbout(){
     about_obj:= new NeutronWindow()
     about_obj.load(resources_obj.htmlFile.about)
     about_obj.doc.getElementById("version").innerText:= A_Version
-    updateSysTheme()
+    UI_loadCss(about_obj)
     about_obj.Gui("-Resize")
 }
 
 UI_showAbout(neutron:=""){
     tray_defaults()
-    UI_loadCss(about_obj)
+    updateSysTheme()
     about_obj.show(Format("Center w{:i} h{:i}",500*UI_scale,300*UI_scale),"About MicMute")
-    WinSet, Transparent, 252, % "ahk_id " . about_obj.hWnd
 }
 
 UI_exitAbout(neutron){
-    neutron.Close()
+    about_obj.Close()
+    about_obj.Destroy()
+    UI_createAbout()
 }
 
 UI_launchURL(neutron:="", url:=""){
