@@ -18,7 +18,16 @@ class Config {
             }
         }else{
             isFirstLaunch:=0
-            this.importConfig()
+            Try this.importConfig()
+            catch err{
+                MsgBox, 65, MicMute, % "Importing the config file failed`nError: " 
+                 . (IsObject(err)? err.Message : err) . "`nClick OK to reset configuration"
+                IfMsgBox, Cancel
+                    return
+                isFirstLaunch:=1
+                this.DefaultProfile:= this.createProfile("Default").ProfileName
+                this.exportConfig()
+            }
         }
         if(p_DefaultProfile)
             this.DefaultProfile := p_DefaultProfile
@@ -77,12 +86,12 @@ class Config {
             if(profile.ProfileName == p_name)
                 return profile
         }
-        Throw, Exception(Format("Profile '{}' not found", p_name))
+        Throw, Format("Profile '{}' not found", p_name)
     }
 
     deleteProfile(p_name){
         if(p_name = this.DefaultProfile){
-            Throw, Exception("Default profile can't be deleted")
+            Throw, "Default profile can't be deleted"
             return
         }
         profArr:= Array()

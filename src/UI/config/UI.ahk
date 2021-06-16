@@ -114,6 +114,7 @@ UI_reset(){
         selected:= profile.ProfileName == config_obj.DefaultProfile? "selected" : ""
         defaultProfile.insertAdjacentHTML("beforeend",Format(template_default_profile, profile.ProfileName, selected))
     }
+    config_obj.DefaultProfile:= ui_obj.doc.getElementById("default_profile").value
     if(config_obj.MuteOnStartup)
         ui_obj.doc.getElementById("MuteOnStartup").setAttribute("checked", 1)
     else

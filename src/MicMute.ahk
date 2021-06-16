@@ -132,7 +132,12 @@ switchProfile(p_name:=""){
     ;reset the hotkeys set in MicrophoneController class
     MicrophoneController.resetHotkeysSet()
     ;set current_profile to the new profile
-    current_profile:= config_obj.getProfile(p_name)
+    Try current_profile:= config_obj.getProfile(p_name)
+    catch err{
+        current_profile:= config_obj.Profiles[1]
+        configMsg(err)
+        return
+    }
     ;@Ahk2Exe-IgnoreBegin
     OutputDebug, % Format("Switching to profile '{}'`n",current_profile.ProfileName)
     ;@Ahk2Exe-IgnoreEnd
@@ -150,12 +155,7 @@ switchProfile(p_name:=""){
                 Throw, Format("Invalid microphone name '{}' in profile '{}'", mic.Name,current_profile.ProfileName)
             mc.enableHotkeys()
         }Catch, err {
-            Thread, NoTimers, 1
-            MsgBox, 65, MicMute, % err . "`nClick OK to edit configuration"
-            IfMsgBox, OK
-                editConfig()
-            IfMsgBox, Cancel
-                ExitApp, -2
+            configMsg(err)
             return
         }
         ;@Ahk2Exe-IgnoreBegin
@@ -348,4 +348,13 @@ parseArgs(){
             case "profile": arg_profile:= val3
         }
     }
+}
+
+configMsg(err){
+    Thread, NoTimers, 1
+    MsgBox, 65, MicMute, % err . "`nClick OK to edit configuration"
+    IfMsgBox, OK
+        editConfig()
+    IfMsgBox, Cancel
+        ExitApp, -2
 }
