@@ -87,10 +87,12 @@ class Overlay {
     }
 
     destroy(){
-        Gui,% this.Hwnd ":Default"
-        Gui, Destroy
-        Try Hotkey, ^!F9, Off, Off
-        Try Hotkey, ^!F10, Off, Off
+        Try {
+            Gui,% this.Hwnd ":Default"
+            Gui, Destroy
+        }
+        Hotkey, ^!F9, Off, Off UseErrorLevel
+        Hotkey, ^!F10, Off, Off UseErrorLevel
     }
 
     __onDrag(wParam, lParam, msg, hwnd){
