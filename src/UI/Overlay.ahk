@@ -4,6 +4,7 @@ class Overlay {
         Gui, New, +Hwndui_hwnd +AlwaysOnTop -SysMenu +E0x20 ToolWindow, MicMute overlay
         this.hwnd:= ui_hwnd
         this.locked:=1
+        this.state:= -1
 
         ;add the icon to the overlay
         this.iconObj:= {0: resources_obj.icoFile["white_unmute"]
@@ -48,9 +49,12 @@ class Overlay {
     }
 
     setState(state){
+        if(state==this.state)
+            return
         try{
             Gui,% this.Hwnd ":Default"
             GuiControl,, % this.iconHwnd, % Format("*w40 *h-1 *icon{} {}", this.iconObj[state].group, this.iconObj[state].file)
+            this.state:= state
         }
     }
 
