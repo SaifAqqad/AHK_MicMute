@@ -45,9 +45,10 @@ Class OSD {
 
     ; hides and destroys the OSD window
     destroy(){
-        Gui,% this.hwnd ":Default"
-        this.hide()
-        Gui, Destroy
+        Try{
+            this.hide()
+            Gui, Destroy
+        }
         this.hwnd:= ""
         this.hwndTxt:=""
     }
