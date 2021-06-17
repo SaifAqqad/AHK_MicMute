@@ -51,7 +51,7 @@ scoop install micmute
 
 ### Notes
 * You can change a profile's name by right clicking it.
-* When Changing the microphone, make sure to clear the hotkey for the previous one before setting up the new one, unless you want to control multiple microphones simultaneously.
+* When Changing the microphone, make sure to clear the hotkey for the previous one before setting up the new one, unless you want to control multiple microphones simultaneously. <b><- THIS IS IMPORTANT!!</b>
 * When you set up a hotkey for a microphone, a `*` will appear before the microphone's name
 <hr>
 
@@ -59,8 +59,8 @@ scoop install micmute
 | Option            | Description                                                                                                                                                                                                                                                  |
 |-------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Passthrough       | If this is turned off, the hotkey will only work for MicMute and will be hidden from the rest of the system. So turn this on if you want the hotkey to work for other apps.                                                                                  |
-| Wildcard          | If this is turned on, the hotkey will work even if you press extra modifiers, so for example if the hotkey is `Ctrl + M` and you press `Ctrl + Shift + M` , the hotkey will still be triggered.                                                              |
-| Neutral modifiers | If this is turned off, the hotkey can have a specific modifier (Right or Left) instead of a neutral one (example: `RCtrl` instead of `Ctrl`, this will only be triggered by the right control key). This option should be set *before* recording the hotkey. |
+| Wildcard          | If this is turned on, the hotkey will work even if you press extra modifiers, so for example if the hotkey is <kbd>Ctrl</kbd> <kbd>M</kbd> and you press <kbd>Ctrl</kbd> <kbd>Shift</kbd> <kbd>M</kbd> , the hotkey will still be triggered.                                                              |
+| Neutral modifiers | If this is turned off, the hotkey can have a specific modifier (Right or Left) instead of a neutral one (example: <kbd>RCtrl</kbd> instead of <kbd>Ctrl</kbd>, this will only be triggered by the right control key). This option should be set *before* recording the hotkey. |
 <hr>
 
 ### Feedback options
@@ -71,12 +71,25 @@ Show an OSD when muting/unmuting the microphones.
 
 * You can change the OSD position (default position is the bottom center of the screen, above the taskbar).
 * You can exclude fullscreen apps/games from the OSD, this is needed for some games that lose focus when the OSD is shown.
+* <details>
+  <summary>GIF</summary>
 
-<details>
-<summary>OSD.gif</summary>
+  ![OSD](./src/resources/OSD.gif)
+  </details>
 
-![OSD](./src/resources/OSD.gif)
-</details>
+#### 3. On-screen overlay
+Show the microphone's state in an always-on-top overlay.
+
+* <kbd>CTRL</kbd> <kbd>ALT</kbd> <kbd>F9</kbd> toggles show/hide
+* <kbd>CTRL</kbd> <kbd>ALT</kbd> <kbd>F10</kbd> toggles locked/unlocked 
+* You can drag the overlay to change its position when it's unlocked
+* Games need to be set to `Windowed fullscreen` or `Borderless` for the overlay to show up on top
+*  <details>
+    <summary>GIF</summary>
+
+    ![overlay](https://user-images.githubusercontent.com/47293197/122362722-0c4bbe80-cf61-11eb-881f-e11b0b06f025.gif)
+   </details>
+
 <hr>
 
 ### Linked applications
@@ -116,7 +129,15 @@ When using this feature, the following applies:
 * The tray icon no longer acts as a toggle button, and the tray menu option to toggle the microphone is disabled.
 * The [On-screen feedback](#2-on-screen-feedback) OSD will show the microphone name when muting/unmuting
 <hr>
-  
+
+## Known issues
+* When running AutoHotkey alongside [Microsoft Powertoys](https://github.com/microsoft/PowerToys), they might conflict with each other, which may result in the hotkeys not working at all. [microsoft/PowerToys#2132](https://github.com/microsoft/PowerToys/issues/2132)
+
+* [Albion Online](https://albiononline.com/en/home) detects MicMute as a botting tool, the games blacklists anything written in autohotkey and marks it as a botting tool. [#23](https://github.com/SaifAqqad/AHK_MicMute/issues/23)
+
+* Windows defender might falsely detect MicMute as a trojen/malware (`Zpevdo.B` or ML detections). I always submit new releases to microsoft to remove the false detections and they usually do in a couple of days, but sometimes when they release a new definition update the detection occurs again. [#25](https://github.com/SaifAqqad/AHK_MicMute/issues/25)
+ 
+
 ## Editing the config file
  Hold shift when asked to setup a profile or when clicking "Edit configuration" from the tray menu, and the config file will open in the default JSON editor
 
@@ -202,8 +223,6 @@ cd .\AHK_MicMute\;
 ```powershell
 ahk2exe /in ".\src\MicMute.ahk" /out ".\src\MicMute.exe" /compress 2;
 ```
-## Known issues
-* When running AutoHotkey alongside [Microsoft Powertoys](https://github.com/microsoft/PowerToys), they might conflict with each other, which may result in the hotkeys not working at all. see [microsoft/PowerToys#2132](https://github.com/microsoft/PowerToys/issues/2132).
 
 ## Libraries and resources used
 
