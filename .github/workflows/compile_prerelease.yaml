@@ -42,12 +42,7 @@ jobs:
           echo "Copying upx"
           Copy-Item -Path "$(scoop prefix upx)\upx.exe" -Destination "$(scoop prefix autohotkey)\Compiler\"
           echo "Running Ahk2Exe";
-          $err = Invoke-Expression "$(scoop prefix autohotkey)\Compiler\Ahk2Exe.exe /in '.\src\MicMute.ahk' /out '.\MicMute.exe' /icon '.\src\MicMute.ico' /compress '2'";
-          If ($err -Match "Successfully"){
-            echo "MicMute compiled: `n$err"
-          }else{
-            throw "MicMute failed to compile: $err"
-          }
+          Invoke-Expression "$(scoop prefix autohotkey)\Compiler\Ahk2Exe.exe /Silent /in '.\src\MicMute.ahk' /out '.\MicMute.exe' /compress '2' /Verbose 2>&1 | echo";
       - name: Upload files to a GitHub release
         uses: svenstaro/upload-release-action@2.2.0
         with:
