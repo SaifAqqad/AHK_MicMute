@@ -37,6 +37,7 @@ jobs:
           Set-ExecutionPolicy RemoteSigned -scope CurrentUser -Force;
           Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')
           scoop bucket add utils https://github.com/SaifAqqad/utils.git;
+          scoop bucket add extras;
           scoop install extras/autohotkey utils/ahk2exe_beta main/upx;
           echo "Copying upx"
           Copy-Item -Path "$(scoop prefix upx)\upx.exe" -Destination "$(scoop prefix autohotkey)\Compiler\"
