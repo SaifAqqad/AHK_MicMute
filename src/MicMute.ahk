@@ -177,7 +177,7 @@ switchProfile(p_name:=""){
     }else{
         func_update_state:= Func("updateState")
         if(current_profile.OnscreenOverlay)
-            overlay_obj:= new Overlay(current_profile.OverlayPos)
+            overlay_obj:= new Overlay(current_profile.OverlayPos,current_profile.OverlayOnMuteOnly)
     }
     ;turn on profile-specific timers
     if (current_profile.UpdateWithSystem)

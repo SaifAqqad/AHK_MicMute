@@ -1,10 +1,11 @@
 class Overlay {
-    __New(pos_obj){
+    __New(pos_obj, onMuteOnly:=0){
         ;create the overlay
         Gui, New, +Hwndui_hwnd +AlwaysOnTop -SysMenu +E0x20 ToolWindow, MicMute overlay
         this.hwnd:= ui_hwnd
         this.locked:=1
         this.state:= -1
+        this.onMuteOnly:= onMuteOnly
 
         ;add the icon to the overlay
         this.iconObj:= {0: resources_obj.icoFile["white_unmute"]
@@ -42,9 +43,11 @@ class Overlay {
         OnMessage(0x46, this.onPosChangeFunc)
 
         ;register toggle hotkeys
-        this.toggleFunc:= toggleFunc:= objBindMethod(this, "toggleShow")
-        Try Hotkey, ^!F9, % toggleFunc, On
-        this.lockFunc:= lockFunc:= objBindMethod(this, "toggleLock")
+        if(!onMuteOnly){
+            toggleFunc:= objBindMethod(this, "setShow")
+            Try Hotkey, ^!F9, % toggleFunc, On
+        }
+        lockFunc:= objBindMethod(this, "toggleLock")
         Try Hotkey, ^!F10, % lockFunc, On
     }
 
@@ -53,37 +56,56 @@ class Overlay {
             return
         try{
             Gui,% this.Hwnd ":Default"
+            if(this.onMuteOnly)
+                this.setShow(state)
             GuiControl,, % this.iconHwnd, % Format("*w40 *h-1 *icon{} {}", this.iconObj[state].group, this.iconObj[state].file)
             this.state:= state
         }
+        return this
     }
 
     toggleLock(){
-        Gui,% this.Hwnd ":Default"
-        if(this.locked){
-            Gui, -E0x20
-            DetectHiddenWindows, 1
-            WinSet, TransColor, Off, % "ahk_id " this.hwnd
-            DetectHiddenWindows, 0
-            this.locked:= 0
-        }else{
-            Gui, +E0x20
-            DetectHiddenWindows, 1
-            WinSet, TransColor, 232323 190, % "ahk_id " this.hwnd
-            DetectHiddenWindows, 0
-            this.locked:= 1
+        Try {
+            Gui,% this.Hwnd ":Default"
+            if(!this.shown)
+                this.setShow(1)
+            if(this.locked){
+                Gui, -E0x20
+                DetectHiddenWindows, 1
+                WinSet, TransColor, Off, % "ahk_id " this.hwnd
+                DetectHiddenWindows, 0
+                this.locked:= 0
+            }else{
+                Gui, +E0x20
+                DetectHiddenWindows, 1
+                WinSet, TransColor, 232323 190, % "ahk_id " this.hwnd
+                DetectHiddenWindows, 0
+                this.locked:= 1
+            }
         }
+        return this
     }
 
-    toggleShow(){
-        Gui,% this.Hwnd ":Default"
-        if(this.shown){
-            Gui, Hide
-            this.shown:= 0
-        }else{
-            Gui, Show, % Format("NA x{} y{}",this.pos.x,this.pos.y), MicMute overlay
-            this.shown:= 1
+    setShow(showHide:=-1){
+        Try {
+            Gui,% this.Hwnd ":Default"
+            if(showHide == this.shown)
+                return
+            _setShowHide:
+            switch showHide {
+                case -1: 
+                    showHide:= !this.shown
+                    Goto, _setShowHide
+                    return
+                case 0:
+                    Gui, Hide
+                    this.shown:= 0
+                case 1:
+                    Gui, Show, % Format("NA x{} y{}",this.pos.x,this.pos.y), MicMute overlay
+                    this.shown:= 1
+            }
         }
+        return this
     }
 
     destroy(){
@@ -93,6 +115,7 @@ class Overlay {
         }
         Hotkey, ^!F9, Off, Off UseErrorLevel
         Hotkey, ^!F10, Off, Off UseErrorLevel
+        return this
     }
 
     __onDrag(wParam, lParam, msg, hwnd){
