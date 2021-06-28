@@ -1,0 +1,20 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Compile MicMute",
+            "type": "shell",
+            "command": "ahk2exe.exe /Silent /Verbose /in \".\\src\\MicMute.ahk\" /out \".\\src\\MicMute.exe\" /compress 2 | echo",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}
