@@ -39,7 +39,15 @@
             <div class="inner-container visible" id="profile">
                 <form id="form">
                     <!-- microphone select -->
-                    <label class="label title is-4 noselect mic-label" for="microphone">Microphone</label>
+                    <span class="label title is-4 noselect mic-label">Microphone
+                        <span class="tag is-small option"
+                            onclick="document.getElementById('multiple_mics').checked ^= 1;ahk.UI_onToggleMultiple()">
+                            <label class="checkbox">
+                                <input type="checkbox" name="multiple_mics" id="multiple_mics" disabled>
+                                <span class="multiple-mics-label">Multiple</span>
+                            </label>
+                        </span>
+                    </span>
                     <div class="field has-addons">
                         <div class="control is-expanded ">
                             <div class="select is-fullwidth is-primary">

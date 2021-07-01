@@ -45,6 +45,7 @@ a:hover,
 p,
 body,
 label,
+span.label,
 .input-elem {
     color: #d9d9d9 !important;
 }
@@ -66,6 +67,7 @@ input[type=range].slider:focus::-ms-fill-upper {
     background: #383838;
 }
 
-#label{
-    color: #d9d9d9;
+input[type="radio"]:checked+span,
+input[type="checkbox"]:checked+span {
+    color: #FF6038 !important;
 }

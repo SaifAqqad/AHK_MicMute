@@ -1,6 +1,6 @@
 global ui_obj, about_obj, current_profile, hotkey_panels, current_hp
 , onExitCallback, UI_scale:= A_ScreenDPI/96
-, input_hook, input_hook_timer, key_set, modifier_set
+, input_hook, input_hook_timer, key_set, modifier_set, is_multiple_mics:=0
 , template_link:= "<link rel='stylesheet' id='css_{1:}' href='{2:}'>"
 , template_default_profile:= "<option value='{1:}' {2:} >{1:}</option>"
 , template_mic:= "<option value='{1:}' id='mic_{1:}' {2:} >{1:}</option>"
@@ -32,7 +32,9 @@ global ui_obj, about_obj, current_profile, hotkey_panels, current_hp
                   ,{ selector: ".OnscreenFeedback-label"
                      , string: "Show an OSD when muting or unmuting the microphone"}
                   ,{ selector: ".OnscreenOverlay-label"
-                     , string: "Show the microphone's state in an always-on-top overlay"}]
+                     , string: "Show the microphone's state in an always-on-top overlay"}
+                  ,{ selector: ".multiple-mics-label"
+                     , string: "Setup hotkeys for multiple microphones simultaneously"}]
 
 UI_create(p_onExitCallback){
     features:= {"FEATURE_GPU_RENDERING": 0x1
@@ -86,6 +88,8 @@ UI_setProfile(neutron, p_profile){
         hType:= mic.MuteHotkey == mic.UnmuteHotkey? (mic.PushToTalk? 2 : 1) : 0
         hotkey_panels[mic.Name]:= new HotkeyPanel(mic.MuteHotkey,mic.UnmuteHotkey,htype)
     }
+    ui_obj.doc.getElementById("multiple_mics").checked:= is_multiple_mics:= current_profile.Microphone.Length()>1
+    UI_onToggleMultiple("")
     ui_obj.doc.getElementById("profile_name_field").value:= current_profile.ProfileName
     ui_obj.doc.getElementById("microphone").value:= current_profile.Microphone[1].Name
     UI_setHotkeyPanel(hotkey_panels[current_profile.Microphone[1].Name])
@@ -352,11 +356,6 @@ UI_checkMicOptions(){
             micOption.innerText:= StrReplace(micOption.innerText, "* ")
         }
     }
-    overlay_tag:= ui_obj.doc.getElementById("OnscreenOverlay_tag")
-    if(numPanels>1)
-        overlay_tag.classList.add("hidden")
-    else
-        overlay_tag.classList.remove("hidden")
 }
 
 UI_onUpdateDelay(neutron,delay){
@@ -421,7 +420,13 @@ UI_asyncOnSetMicrophone(mic_name){
     if(!hotkey_panels[mic_name]){
         hotkey_panels[mic_name]:= new HotkeyPanel("","",1)
     }
-    UI_setHotkeyPanel(hotkey_panels[mic_name])
+    if(is_multiple_mics){
+        UI_setHotkeyPanel(hotkey_panels[mic_name])        
+    }else{
+        hotkey_panels:= {}
+        hotkey_panels[mic_name]:= current_hp
+        UI_setHotkeyPanel(hotkey_panels[mic_name]) 
+    }
     ui_obj.doc.getElementById("hotkeys_panel").classList.remove("hidden")
 }
 
@@ -490,6 +495,20 @@ UI_onChangeProfileName(neutron, event){
     UI_reset()
     UI_setProfile(neutron,str)
     UI_notify("Profile name saved")
+}
+
+UI_onToggleMultiple(neutron){
+    is_multiple_mics:= ui_obj.doc.getElementById("multiple_mics").checked
+    if(is_multiple_mics){
+        ui_obj.doc.getElementById("OnscreenOverlay_tag").classList.add("hidden")
+    }else{
+        ui_obj.doc.getElementById("OnscreenOverlay_tag").classList.remove("hidden")
+        if(hotkey_panels.Count()>1)
+            for mic, panel in hotkey_panels
+                if(panel!= current_hp)
+                    hotkey_panels.Delete(mic)
+    }
+    UI_checkMicOptions()
 }
 
 UI_updateStopTimer(id){
