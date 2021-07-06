@@ -33,6 +33,8 @@ global ui_obj, about_obj, current_profile, hotkey_panels, current_hp
                      , string: "Show an OSD when muting or unmuting the microphone"}
                   ,{ selector: ".OnscreenOverlay-label"
                      , string: "Show the microphone's state in an always-on-top overlay"}
+                  ,{ selector: ".OverlayOnMuteOnly-label"
+                     , string: "Only show the overlay when the microphone is muted"}
                   ,{ selector: ".multiple-mics-label"
                      , string: "Setup hotkeys for multiple microphones simultaneously"}]
 
@@ -96,8 +98,10 @@ UI_setProfile(neutron, p_profile){
     ui_obj.doc.getElementById("SoundFeedback").checked:= current_profile.SoundFeedback
     ui_obj.doc.getElementById("OnscreenFeedback").checked:= current_profile.OnscreenFeedback
     ui_obj.doc.getElementById("OnscreenOverlay").checked:= current_profile.OnscreenOverlay
+    ui_obj.doc.getElementById("OverlayOnMuteOnly").checked:= current_profile.OverlayOnMuteOnly
     ui_obj.doc.getElementById("ExcludeFullscreen").checked:= current_profile.ExcludeFullscreen
     UI_onOSDToggle("")
+    UI_onOverlayToggle("")
     ui_obj.doc.getElementById("OSDPos_x").value:= current_profile.OSDPos.x==-1? "" : current_profile.OSDPos.x
     ui_obj.doc.getElementById("OSDPos_y").value:= current_profile.OSDPos.y==-1? "" : current_profile.OSDPos.y
     ui_obj.doc.getElementById("LinkedApp").value:= current_profile.LinkedApp
@@ -181,6 +185,7 @@ UI_onSaveProfile(neutron){
     current_profile.OnscreenFeedback:= ui_obj.doc.getElementById("OnscreenFeedback").checked? 1 : 0
     current_profile.OnscreenOverlay:= ui_obj.doc.getElementById("OnscreenOverlay").checked? 1 : 0
     current_profile.ExcludeFullscreen:= ui_obj.doc.getElementById("ExcludeFullscreen").checked? 1 : 0
+    current_profile.OverlayOnMuteOnly:= ui_obj.doc.getElementById("OverlayOnMuteOnly").checked? 1 : 0
     current_profile.afkTimeout:= (val:= ui_obj.doc.getElementById("afkTimeout").value)? val+0 : 0
     current_profile.LinkedApp:= ui_obj.doc.getElementById("LinkedApp").value
     current_profile.PTTDelay:= ui_obj.doc.getElementById("PTTDelay").value+0
@@ -374,6 +379,18 @@ UI_onOSDToggle(neutron){
     }
 }
 
+UI_onOverlayToggle(neutron){
+    excl_tag:= ui_obj.doc.getElementByID("OverlayOnMuteOnly_tag")
+    pos_row:= ui_obj.doc.getElementByID("overlay_group")
+    if(ui_obj.doc.getElementByID("OnscreenOverlay").checked){
+        excl_tag.classList.remove("hidden")
+        pos_row.classList.remove("row-hidden")
+    }else{
+        excl_tag.classList.add("hidden")
+        pos_row.classList.add("row-hidden")
+    }
+}
+
 UI_onHotkeyType(neutron, type, delay:=0){
     static hideElemFunc:= Func("UI_hideElemID").Bind("", "unmute_box")
     innerCont:= neutron.doc.getElementById("hotkey_panels_group")
@@ -501,8 +518,13 @@ UI_onToggleMultiple(neutron){
     is_multiple_mics:= ui_obj.doc.getElementById("multiple_mics").checked
     if(is_multiple_mics){
         ui_obj.doc.getElementById("OnscreenOverlay_tag").classList.add("hidden")
+        ui_obj.doc.getElementById("OverlayOnMuteOnly_tag").classList.add("hidden")
+        ui_obj.doc.getElementById("overlay_group").classList.add("row-hidden")
     }else{
         ui_obj.doc.getElementById("OnscreenOverlay_tag").classList.remove("hidden")
+        ui_obj.doc.getElementById("OverlayOnMuteOnly_tag").classList.remove("hidden")
+        ui_obj.doc.getElementById("overlay_group").classList.remove("row-hidden")
+        UI_onOverlayToggle(neutron)
         if(hotkey_panels.Count()>1)
             for mic, panel in hotkey_panels
                 if(panel!= current_hp)

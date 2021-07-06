@@ -40,7 +40,7 @@
                 <form id="form">
                     <!-- microphone select -->
                     <span class="label title is-4 noselect mic-label">Microphone
-                        <span class="tag is-small option"
+                        <span class="tag is-small"
                             onclick="document.getElementById('multiple_mics').checked ^= 1;ahk.UI_onToggleMultiple()">
                             <label class="checkbox">
                                 <input type="checkbox" name="multiple_mics" id="multiple_mics" disabled>
@@ -202,8 +202,8 @@
                                     <span class="OnscreenFeedback-label">On-screen feedback</span>
                                 </label>
                             </div>
-                            <div class="tag is-medium option hidden" id="OnscreenOverlay_tag"
-                                onclick="document.getElementById('OnscreenOverlay').checked ^= 1">
+                            <div class="tag is-medium option" id="OnscreenOverlay_tag"
+                                onclick="document.getElementById('OnscreenOverlay').checked ^= 1;ahk.UI_onOverlayToggle()">
                                 <label class="checkbox">
                                     <input type="checkbox" id="OnscreenOverlay" disabled>
                                     <span class="OnscreenOverlay-label">On-screen overlay</span>
@@ -239,6 +239,19 @@
                                     <button type="button" class="button is-primary"
                                         onclick="ahk.UI_onOSDset()">Set</button>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- overlay options  -->
+                    <div class="columns is-mobile" id="overlay_group" style="margin-bottom: 0 !important;">
+                        <div class="column is-7">
+                            <label class="label title is-4 noselect spaced-label">Overlay options</label>
+                            <div class="tag is-medium option" id="OverlayOnMuteOnly_tag"
+                                onclick="document.getElementById('OverlayOnMuteOnly').checked ^= 1">
+                                <label class="checkbox">
+                                    <input type="checkbox" id="OverlayOnMuteOnly" disabled>
+                                    <span class="OverlayOnMuteOnly-label">On-mute only</span>
+                                </label>
                             </div>
                         </div>
                     </div>
