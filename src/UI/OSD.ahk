@@ -120,7 +120,7 @@ Class OSD {
 
     setTheme(theme:=""){
         if(theme != this.theme)
-            this.theme:= theme? (theme=1? "232323" : theme) : "f2f2f2"
+            this.theme:= theme? (theme=1? "272727" : theme) : "F3F3F3"
     }
 
     processText(text){
