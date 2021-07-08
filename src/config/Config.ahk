@@ -5,6 +5,7 @@ class Config {
     UseCustomSounds:=0
     SwitchProfileOSD:=1
     PreferTheme:=-1
+    AllowUpdateChecker:=-1
 
     __New(p_DefaultProfile:=""){
         if(!FileExist("config.json") || util_IsFileEmpty("config.json")){

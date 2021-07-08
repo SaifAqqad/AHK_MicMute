@@ -26,6 +26,7 @@ SetWorkingDir %A_ScriptDir%
 #Include, %A_ScriptDir%
 #Include, ResourcesManager.ahk
 #Include, MicrophoneController.ahk
+#Include, VersionChecker.ahk
 #Include, %A_ScriptDir%\config
 #Include, ProfileTemplate.ahk
 #Include, Config.ahk
@@ -58,6 +59,11 @@ config_obj.exportConfig()
 OnExit(Func("exitMicMute"))
 ; listen for sys theme changes
 OnMessage(WM_SETTINGCHANGE, "updateSysTheme")
+; run the update checker once, 5 seconds after launching
+if(A_IsCompiled && !arg_reload && config_obj.AllowUpdateChecker=1){
+    cfunc:= ObjBindMethod(VersionChecker, "CheckForUpdates")
+    SetTimer, % cfunc, -5000
+}
 
 
 initilizeMicMute(default_profile:=""){
@@ -98,6 +104,15 @@ initilizeMicMute(default_profile:=""){
     updateSysTheme()
     ;initilize tray
     tray_init()
+    if(config_obj.AllowUpdateChecker==-1){
+        MsgBox, 35, MicMute, Allow MicMute to connect to the internet and check for updates on startup?
+        IfMsgBox, Yes
+            config_obj.AllowUpdateChecker:= 1
+        IfMsgBox, No
+            config_obj.AllowUpdateChecker:= 0
+        IfMsgBox, Cancel
+            config_obj.AllowUpdateChecker:= -1
+    }
     ;on first launch -> immediately call editConfig()
     if(isFirstLaunch){
         current_profile:= config_obj.Profiles[1]
