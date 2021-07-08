@@ -592,6 +592,7 @@ UI_updateDefaultProfile(neutron){
 
 UI_loadCss(neutron){
     neutron.doc.getElementById("MicMute_icon").setAttribute("src", resources_obj.pngIcon)
+    neutron.doc.getElementById("version").innerText:= "v" A_Version
     for i, css in resources_obj.cssFile {
         if(!neutron.doc.getElementById("css_" css.name))
             neutron.doc.head.insertAdjacentHTML("beforeend",Format(template_link, css.name, css.file))
@@ -648,7 +649,6 @@ UI_updateTheme(){
 UI_createAbout(){
     about_obj:= new NeutronWindow()
     about_obj.load(resources_obj.htmlFile.about)
-    about_obj.doc.getElementById("version").innerText:= A_Version
     UI_loadCss(about_obj)
     about_obj.Gui("-Resize")
 }
@@ -666,5 +666,10 @@ UI_exitAbout(neutron){
 }
 
 UI_launchURL(neutron:="", url:=""){
+    Run, %url%, %A_Desktop%
+}
+
+UI_launchReleasePage(neutron:=""){
+    url:= "https://github.com/SaifAqqad/AHK_MicMute/releases/tag/" . A_Version
     Run, %url%, %A_Desktop%
 }
