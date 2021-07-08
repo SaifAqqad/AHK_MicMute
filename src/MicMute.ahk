@@ -43,7 +43,7 @@ Global config_obj, osd_obj, overlay_obj, mic_controllers, current_profile
 , sys_theme, ui_theme, isFirstLaunch:=0
 , watched_profiles, watched_profile
 , func_update_state, last_modif_time
-, arg_isDebug:=0, arg_profile:="", arg_noUI:=0
+, arg_isDebug:=0, arg_profile:="", arg_noUI:=0, arg_reload:= 0
 , resources_obj:= new ResourcesManager()
 , A_Version:= A_IsCompiled? util_getFileSemVer(A_ScriptFullPath) : U_Version 
 , WM_SETTINGCHANGE:= 0x001A
@@ -346,9 +346,9 @@ exitMicMute(){
 
 reloadMicMute(p_profile:=""){
     if(A_IsCompiled)
-        Run "%A_ScriptFullPath%" /restart "/profile=%p_profile%"
+        Run "%A_ScriptFullPath%" /r "/reload" "/profile=%p_profile%"
     else
-        Run "%A_AhkPath%" /restart "%A_ScriptFullPath%" "/profile=%p_profile%"
+        Run "%A_AhkPath%" /r "%A_ScriptFullPath%" "/reload" "/profile=%p_profile%"
 }
 
 parseArgs(){
@@ -361,6 +361,7 @@ parseArgs(){
             case "debug": arg_isDebug:= (val3=""? 1 : val3)
             case "noui": arg_noUI:= (val3=""? 1 : val3)
             case "profile": arg_profile:= val3
+            case "reload": arg_reload:= (val3=""? 1 : val3)
         }
     }
 }
