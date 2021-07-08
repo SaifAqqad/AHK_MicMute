@@ -51,7 +51,7 @@ scoop install micmute
 
 ### Notes
 * You can change a profile's name by right clicking it.
-* When Changing the microphone, make sure to clear the hotkey for the previous one before setting up the new one, unless you want to control multiple microphones simultaneously. <b><- THIS IS IMPORTANT!!</b>
+* ~~When Changing the microphone, make sure to clear the hotkey for the previous one before setting up the new one, unless you want to control multiple microphones simultaneously.~~ This no longer applies for version [1.1.0](https://github.com/SaifAqqad/AHK_MicMute/releases/tag/1.1.0) and later.
 * When you set up a hotkey for a microphone, a `*` will appear before the microphone's name
 <hr>
 
@@ -84,6 +84,7 @@ Show the microphone's state in an always-on-top overlay.
 * <kbd>CTRL</kbd> <kbd>ALT</kbd> <kbd>F10</kbd> toggles locked/unlocked 
 * You can drag the overlay to change its position when it's unlocked
 * Games need to be set to `Windowed fullscreen` or `Borderless` for the overlay to show up on top
+* You have the option to only show the overlay when the microphone is muted
 *  <details>
     <summary>GIF</summary>
 
@@ -121,13 +122,14 @@ UI Theme can be set to `System Theme`, `Dark` or `Light`
 
 ### Controlling multiple microphones
 Starting with version [0.9.0](https://github.com/SaifAqqad/AHK_MicMute/releases/tag/0.9.0), You can have active hotkeys for multiple microphones simultaneously.
-To do this, just select another microphone from the list and setup hotkeys for it.
+To do this, toggle the `Multiple` option then select another microphone from the list and setup hotkeys for it.
 
 When using this feature, the following applies:
 
 * The tray icon will be the static MicMute icon
 * The tray icon no longer acts as a toggle button, and the tray menu option to toggle the microphone is disabled.
 * The [On-screen feedback](#2-on-screen-feedback) OSD will show the microphone name when muting/unmuting
+* The [On-screen overlay]() is disabled
 <hr>
 
 ## Known issues
@@ -144,11 +146,10 @@ When using this feature, the following applies:
 ```json
 //config.json example 
 {
+    "AllowUpdateChecker": 1,
     "DefaultProfile": "Default",
     "MuteOnStartup": 0,
     "PreferTheme": -1,
-    "SwitchProfileOSD": 1,
-    "UseCustomSounds": 0,
     "Profiles": [
         {
             "afkTimeout": 0,
@@ -156,23 +157,31 @@ When using this feature, the following applies:
             "LinkedApp": "",
             "Microphone": [
                 {
-                    "MuteHotkey": "~*RShift",
-                    "Name": "Default",
+                    "MuteHotkey": "*RShift",
+                    "Name": "Microphone (AmazonBasics Desktop Mini Mic)",
                     "PushToTalk": 0,
-                    "UnmuteHotkey": "~*RShift"
+                    "UnmuteHotkey": "*RShift"
                 }
             ],
-            "OnscreenFeedback": 1,
+            "OnscreenFeedback": 0,
+            "OnscreenOverlay": 1,
             "OSDPos": {
                 "x": -1,
                 "y": -1
             },
+            "OverlayOnMuteOnly": 1,
+            "OverlayPos": {
+                "x": 2481,
+                "y": 413
+            },
             "ProfileName": "Default",
-            "PTTDelay": 100,
+            "PTTDelay": 50,
             "SoundFeedback": 1,
             "UpdateWithSystem": 1
         }
-    ]
+    ],
+    "SwitchProfileOSD": 1,
+    "UseCustomSounds": 0
 }
 ```
 
@@ -180,7 +189,7 @@ When using this feature, the following applies:
 | Argument                  | Description                                                                       |
 |---------------------------|-----------------------------------------------------------------------------------|
 | `/profile=<profile name>` | Startup with a specific profile.                                                  |
-| `/noUI`                   | Disable the configuration UI completely. This makes MicMute use alot less memory. |
+| `/noUI`                   | Disable the configuration UI completely. This decreases memory usage by almost 60%. |
 | `/debug`                  | Add shortcuts to `ListVars`, `ListHotkeys` and `listKeys`  in the tray menu.      |
 
 Example: `MicMute.exe "/profile=profile 1" /noUI /debug`
