@@ -22,7 +22,7 @@ class VersionChecker{
         return obj[prop]
     }
     
-    CheckForUpdates(){
+    CheckForUpdates(isTray:=0){
         latestVer:= VersionChecker.getLatestVersion()
         if(!latestVer)
             return
@@ -38,6 +38,8 @@ class VersionChecker{
             IfMsgBox, No
                 return
             Run, https://github.com/SaifAqqad/AHK_MicMute/releases/latest
+        }else if(isTray){
+            MsgBox, 64, MicMute, You have the latest version installed
         }
     }
 }

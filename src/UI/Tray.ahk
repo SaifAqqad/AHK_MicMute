@@ -18,6 +18,7 @@ tray_init(){
     tray_add("Start on boot",Func("tray_autoStart"))
     if(Arg_isDebug || A_DebuggerName)
         tray_add("Debug", ":Debug")
+    tray_add("Check for updates", Func("tray_checkForUpdates"))
     tray_add("Help",Func("tray_launchHelp"))
     if(!arg_noUI)
         tray_add("About",Func("tray_about"))
@@ -140,6 +141,10 @@ listKeys(){
         }
         LV_ModifyCol()
     return
+}
+
+tray_checkForUpdates(){
+    VersionChecker.CheckForUpdates(1)
 }
 
 tray_noFunc(){
