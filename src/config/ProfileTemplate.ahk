@@ -16,6 +16,7 @@ class ProfileTemplate{
         this.OSDPos:={x:-1,y:-1}
         this.OverlayPos:={x:-1,y:-1}
         this.OverlayOnMuteOnly:=0
+        this.OverlayUseCustomIcons:=0
         if(IsObject(p_name_Obj)){
             for prop, val in p_name_Obj{
                 this[prop]:= val

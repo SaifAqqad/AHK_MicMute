@@ -1,9 +1,9 @@
 ;compiler directives
 ;@Ahk2Exe-Let Res = %A_ScriptDir%\resources
 ;@Ahk2Exe-Let UI = %A_ScriptDir%\UI\config
-;@Ahk2Exe-Let Version = 1.1.0
+;@Ahk2Exe-Let Version = 1.1.1
 ;@Ahk2Exe-IgnoreBegin
-    U_Version:= "1.1.0"
+    U_Version:= "1.1.1"
 ;@Ahk2Exe-IgnoreEnd
 ;@Ahk2Exe-SetMainIcon %U_Res%\MicMute.ico
 ;@Ahk2Exe-SetVersion %U_Version%
@@ -192,7 +192,7 @@ switchProfile(p_name:=""){
     }else{
         func_update_state:= Func("updateState")
         if(current_profile.OnscreenOverlay)
-            overlay_obj:= new Overlay(current_profile.OverlayPos,current_profile.OverlayOnMuteOnly)
+            overlay_obj:= new Overlay(current_profile)
     }
     ;turn on profile-specific timers
     if (current_profile.UpdateWithSystem)

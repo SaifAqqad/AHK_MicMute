@@ -99,6 +99,7 @@ UI_setProfile(neutron, p_profile){
     ui_obj.doc.getElementById("OnscreenFeedback").checked:= current_profile.OnscreenFeedback
     ui_obj.doc.getElementById("OnscreenOverlay").checked:= current_profile.OnscreenOverlay
     ui_obj.doc.getElementById("OverlayOnMuteOnly").checked:= current_profile.OverlayOnMuteOnly
+    ui_obj.doc.getElementById("OverlayUseCustomIcons").checked:= current_profile.OverlayUseCustomIcons
     ui_obj.doc.getElementById("ExcludeFullscreen").checked:= current_profile.ExcludeFullscreen
     UI_onOSDToggle("")
     UI_onOverlayToggle("")
@@ -186,6 +187,7 @@ UI_onSaveProfile(neutron){
     current_profile.OnscreenOverlay:= ui_obj.doc.getElementById("OnscreenOverlay").checked? 1 : 0
     current_profile.ExcludeFullscreen:= ui_obj.doc.getElementById("ExcludeFullscreen").checked? 1 : 0
     current_profile.OverlayOnMuteOnly:= ui_obj.doc.getElementById("OverlayOnMuteOnly").checked? 1 : 0
+    current_profile.OverlayUseCustomIcons:= ui_obj.doc.getElementById("OverlayUseCustomIcons").checked? 1 : 0
     current_profile.afkTimeout:= (val:= ui_obj.doc.getElementById("afkTimeout").value)? val+0 : 0
     current_profile.LinkedApp:= ui_obj.doc.getElementById("LinkedApp").value
     current_profile.PTTDelay:= ui_obj.doc.getElementById("PTTDelay").value+0

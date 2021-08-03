@@ -1,29 +1,44 @@
 class Overlay {
-    __New(pos_obj, onMuteOnly:=0){
+    __New(config){
         ;create the overlay
         Gui, New, +Hwndui_hwnd +AlwaysOnTop -SysMenu +E0x20 ToolWindow, MicMute overlay
         this.hwnd:= ui_hwnd
         this.locked:=1
         this.state:= -1
-        this.onMuteOnly:= onMuteOnly
-
-        ;add the icon to the overlay
-        this.iconObj:= {0: resources_obj.icoFile["white_unmute"]
-                       ,1: resources_obj.icoFile["white_mute"]}
+        this.onMuteOnly:= config.OverlayOnMuteOnly
+        ; setup default icons
+        this.iconObj:= {0: resources_obj.icoFile["white_unmute"].clone()
+                       ,1: resources_obj.icoFile["white_mute"].clone()}
+        ; check if we're using custom icons
+        if(config.OverlayUseCustomIcons){
+            Loop, Files, overlay_unmute.* 
+            {
+                this.iconObj[0].group:= 1
+                this.iconObj[0].file:= A_LoopFileLongPath
+                break
+            }
+            Loop, Files, overlay_mute.* 
+            {
+                this.iconObj[1].group:= 1
+                this.iconObj[1].file:= A_LoopFileLongPath
+                break
+            }
+        }
+        ;add the icon to the overlay        
         Gui, Add, Picture, % "w40 h-1 Hwndico_hwnd Icon" this.iconObj[0].group, % this.iconObj[1].file
         this.iconHwnd:= ico_hwnd
 
         ;set the overlay color/transparency
         Gui, Color, 232323
         DetectHiddenWindows, 1
-        WinSet, TransColor, 232323 190, % "ahk_id " this.hwnd
+        WinSet, TransColor, 232323 210, % "ahk_id " this.hwnd
         DetectHiddenWindows, 0
         
         ;remove the title bar
         Gui -Caption 
         
         ;set overlay position
-        this.pos:= pos_obj
+        this.pos:= config.OverlayPos
         if !(this.pos.x > -1 && this.pos.y > -1){
             SysGet, res, Monitor
             this.pos.x:= resRight - 100
