@@ -21,7 +21,7 @@ body {
     padding: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #F3F3F3;
-    color: #1B1B1B;
+    color: #3C3C3C;
 }
 
 a:hover,
@@ -30,7 +30,7 @@ body,
 label,
 .label,
 .input-elem {
-    color: #1B1B1B;
+    color: #3C3C3C;
 }
 
 body,
