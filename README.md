@@ -8,6 +8,7 @@
 <p align="center">
     <a href="https://wakatime.com/badge/github/SaifAqqad/AHK_MicMute"><img alt="WakaTime"src="https://wakatime.com/badge/github/SaifAqqad/AHK_MicMute.svg"></a>
     <a href="https://github.com/SaifAqqad/AHK_MicMute/releases/latest"><img src="https://img.shields.io/github/downloads/SaifAqqad/AHK_MicMute/total"></img></a>
+    <a href="https://github.com/SaifAqqad/AHK_MicMute/releases/latest"><img alt="GitHub release(latest SemVer)"src="https://img.shields.io/github/v/release/SaifAqqad/AHK_MicMute?label=Latest"></a>
     <a href="https://github.com/SaifAqqad/AHK_MicMute/actions?query=workflow%3Acompile_prerelease"><img src="https://img.shields.io/github/workflow/status/SaifAqqad/AHK_MicMute/compile_prerelease/master"></img></a>
 </p>
 
@@ -56,10 +57,10 @@ scoop install micmute
 <hr>
 
 ### Hotkey options
-| Option            | Description                                                                                                                                                                                                                                                  |
-|-------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Passthrough       | If this is turned off, the hotkey will only work for MicMute and will be hidden from the rest of the system. So turn this on if you want the hotkey to work for other apps.                                                                                  |
-| Wildcard          | If this is turned on, the hotkey will work even if you press extra modifiers, so for example if the hotkey is <kbd>Ctrl</kbd> <kbd>M</kbd> and you press <kbd>Ctrl</kbd> <kbd>Shift</kbd> <kbd>M</kbd> , the hotkey will still be triggered.                                                              |
+| Option            | Description                                                                                                                                                                                                                                                                    |
+|-------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Passthrough       | If this is turned off, the hotkey will only work for MicMute and will be hidden from the rest of the system. So turn this on if you want the hotkey to work for other apps.                                                                                                    |
+| Wildcard          | If this is turned on, the hotkey will work even if you press extra modifiers, so for example if the hotkey is <kbd>Ctrl</kbd> <kbd>M</kbd> and you press <kbd>Ctrl</kbd> <kbd>Shift</kbd> <kbd>M</kbd> , the hotkey will still be triggered.                                   |
 | Neutral modifiers | If this is turned off, the hotkey can have a specific modifier (Right or Left) instead of a neutral one (example: <kbd>RCtrl</kbd> instead of <kbd>Ctrl</kbd>, this will only be triggered by the right control key). This option should be set *before* recording the hotkey. |
 <hr>
 
@@ -80,17 +81,22 @@ Show an OSD when muting/unmuting the microphones.
 #### 3. On-screen overlay
 Show the microphone's state in an always-on-top overlay.
 
-* <kbd>CTRL</kbd> <kbd>ALT</kbd> <kbd>F9</kbd> toggles show/hide
-* <kbd>CTRL</kbd> <kbd>ALT</kbd> <kbd>F10</kbd> toggles locked/unlocked 
-* You can drag the overlay to change its position when it's unlocked
-* Games need to be set to `Windowed fullscreen` or `Borderless` for the overlay to show up on top
-* You have the option to only show the overlay when the microphone is muted
 *  <details>
     <summary>GIF</summary>
 
     ![overlay](https://user-images.githubusercontent.com/47293197/122362722-0c4bbe80-cf61-11eb-881f-e11b0b06f025.gif)
    </details>
-
+* <kbd>CTRL</kbd> <kbd>ALT</kbd> <kbd>F9</kbd> toggles show/hide
+* <kbd>CTRL</kbd> <kbd>ALT</kbd> <kbd>F10</kbd> toggles locked/unlocked 
+* You can drag the overlay to change its position when it's unlocked
+* Games need to be set to `Windowed fullscreen` or `Borderless` for the overlay to show up on top
+* You have the option to only show the overlay when the microphone is muted
+* You can use custom icons for the overlay. 
+    To do this, turn on the option in the config UI, then place the icons (`ico`/`png`/`jpeg`) in the same folder as `MicMute.exe` and rename them as:  
+    -  Mute icon: `overlay_mute`
+    -  Unmute icon: `overlay_unmute`
+   
+    <sub>**Avoid using icons that have a gray `#232323` color**</sub>
 <hr>
 
 ### Linked applications
@@ -100,7 +106,7 @@ Link a profile to an app/game, when the app is launched, MicMute automatically s
 ### Global options
 These options are shared between all profiles.
 #### 1. Custom sounds
- To use custom feedback sounds, turn on the option in the config UI, then make sure the sound files (`mp3`,`wav`) are in the same directory as `MicMute.exe` and rename them as:
+ To use custom feedback sounds, turn on the option in the config UI, then make sure the sound files (`mp3`,`wav`) are in the same folder as `MicMute.exe` and rename them as:
 
 * **Mute sound**: `mute` 
 
@@ -186,11 +192,11 @@ When using this feature, the following applies:
 ```
 
 ## CLI arguments
-| Argument                  | Description                                                                       |
-|---------------------------|-----------------------------------------------------------------------------------|
-| `/profile=<profile name>` | Startup with a specific profile.                                                  |
+| Argument                  | Description                                                                         |
+|---------------------------|-------------------------------------------------------------------------------------|
+| `/profile=<profile name>` | Startup with a specific profile.                                                    |
 | `/noUI`                   | Disable the configuration UI completely. This decreases memory usage by almost 60%. |
-| `/debug`                  | Add shortcuts to `ListVars`, `ListHotkeys` and `listKeys`  in the tray menu.      |
+| `/debug`                  | Add shortcuts to `ListVars`, `ListHotkeys` and `listKeys`  in the tray menu.        |
 
 Example: `MicMute.exe "/profile=profile 1" /noUI /debug`
 ## Compile instructions
@@ -235,10 +241,10 @@ ahk2exe /in ".\src\MicMute.ahk" /out ".\src\MicMute.exe" /compress 2;
 
 ## Libraries and resources used
 
-| Library                                                                | License                                                                        |
-|------------------------------------------------------------------------|--------------------------------------------------------------------------------|
-| [G33kDude/Neutron.ahk](https://github.com/G33kDude/Neutron.ahk)        | [MIT](https://github.com/G33kDude/Neutron.ahk/blob/master/LICENSE)             |
-| [cocobelgica/JSON.ahk](https://github.com/cocobelgica/AutoHotkey-JSON) | [WTFPL](https://github.com/cocobelgica/AutoHotkey-JSON#json-and-jxon)          |
-| [Lexikos/VA.ahk](https://github.com/ahkscript/VistaAudio)              | [License](https://github.com/ahkscript/VistaAudio/blob/master/LICENSE)         |
-| [Bulma CSS framework](https://bulma.io/)                               | [MIT](https://github.com/jgthms/bulma/blob/master/LICENSE)                     |
-| [Material Design icons](https://github.com/Templarian/MaterialDesign)  | [Apache 2.0](https://github.com/Templarian/MaterialDesign/blob/master/LICENSE) |
+| Library                                                               | License                                                                        |
+|-----------------------------------------------------------------------|--------------------------------------------------------------------------------|
+| [G33kDude/Neutron.ahk](https://github.com/G33kDude/Neutron.ahk)       | [MIT](https://github.com/G33kDude/Neutron.ahk/blob/master/LICENSE)             |
+| [G33kDude/cJson.ahk](https://github.com/G33kDude/cJson.ahk)           | [MIT](https://github.com/G33kDude/cJson.ahk/blob/main/LICENSE)                 |
+| [Bulma CSS framework](https://bulma.io/)                              | [MIT](https://github.com/jgthms/bulma/blob/master/LICENSE)                     |
+| [Lexikos/VA.ahk](https://github.com/ahkscript/VistaAudio)             | [License](https://github.com/ahkscript/VistaAudio/blob/master/LICENSE)         |
+| [Material Design icons](https://github.com/Templarian/MaterialDesign) | [Apache 2.0](https://github.com/Templarian/MaterialDesign/blob/master/LICENSE) |
