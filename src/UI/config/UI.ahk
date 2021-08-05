@@ -6,7 +6,8 @@ global ui_obj, about_obj, current_profile, hotkey_panels, current_hp
 , template_mic:= "<option value='{1:}' id='mic_{1:}' {2:} >{1:}</option>"
 , template_profile_tag:= "
 (
-    <div class=""tag is-large"" id=""tag_profile_{1:}"" oncontextmenu=""ahk.UI_displayProfileRename('{1:}')"" onClick=""ahk.UI_setProfile('{1:}')"">
+    <div class=""tag is-large"" tabindex=0 onkeydown=""switch(event.keyCode){case 32:case 69: event.preventDefault(); this.oncontextmenu.call() ;break; case 13:this.click()}""
+        id=""tag_profile_{1:}"" oncontextmenu=""ahk.UI_displayProfileRename('{1:}')"" onClick=""ahk.UI_setProfile('{1:}');this.blur()"">
         <label class=""radio"">
             <input type=""radio"" name=""profiles_radio"" value=""{1:}"" id=""profile_{1:}"" disabled>
             <span data-title=""Right click to edit profile name"" >{1:}</span>
@@ -64,6 +65,7 @@ UI_Show(p_profile){
     tray_defaults()
     ui_obj.Gui(Format("+LabelUI_ +MinSize{:i}x{:i}",700*UI_scale,440*UI_scale))
     ui_obj.Show(Format("Center w{:i} h{:i}",830*UI_scale,650*UI_scale),"MicMute")
+    ui_obj.doc.focus()
 }
 
 UI_enableIeFeatures(f_obj, delete:=0){
@@ -659,6 +661,7 @@ UI_showAbout(neutron:=""){
     tray_defaults()
     updateSysTheme()
     about_obj.show(Format("Center w{:i} h{:i}",500*UI_scale,300*UI_scale),"About MicMute")
+    about_obj.doc.focus()
 }
 
 UI_exitAbout(neutron){

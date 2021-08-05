@@ -42,12 +42,15 @@ header {
 }
 
 .box:hover,
-.tag:hover{
+.tag:hover,
+.box:focus,
+.tag:focus{
     background-color: #303030 !important;
 }
 
 
 a:hover,
+a:focus,
 p,
 body,
 label,

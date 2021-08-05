@@ -25,6 +25,7 @@ body {
 }
 
 a:hover,
+a:focus,
 p,
 body,
 label,
@@ -108,7 +109,8 @@ header {
     width: 80%;
 }
 
-.box-visible:hover {
+.box-visible:hover,
+.box-visible:focus {
     background-color: #F8F8F8 !important;
     transform: translateY(-2px);
 }
@@ -180,7 +182,9 @@ input[type="number"]:disabled {
     box-shadow: rgba(0, 0, 0, 0.18) 0 2px 4px, rgba(0, 0, 0, 0.15) 0 0.5px 1px ;
 }
 
-.tag:hover {
+.tag:hover,
+.tag:focus {
+    outline: none;
     background-color: #F8F8F8 !important;
     transform: translateY(-4px);
 }
@@ -193,6 +197,7 @@ img#MicMute_icon {
 }
 
 img#MicMute_icon:hover,
+img#MicMute_icon:focus,
 label:hover>img#MicMute_icon {
     box-shadow: 0 11px 15px -7px rgba(0, 0, 0, 0.055), 0 0 20px 0 rgba(255, 87, 45, 0.63), 0 9px 46px 8px rgba(0, 0, 0, 0.055);
 }
@@ -255,7 +260,8 @@ a {
     text-decoration: none;
 }
 
-[data-title]:hover:after {
+[data-title]:hover:after,
+.tag:focus  [data-title]:after{
     opacity: 1;
     transition: all 0.2s ease-in-out 0.2s;
     visibility: visible;
@@ -324,10 +330,6 @@ input[type=range].slider {
     background-color: transparent;
 }
 
-input[type=range].slider:focus {
-    outline: none;
-}
-
 input[type=range].slider::-ms-track {
     background: transparent;
     border-color: transparent;
@@ -358,10 +360,6 @@ input[type=range].slider::-ms-tooltip{
     display: none;
 }
 
-div.tabs{
-    margin-bottom: 0 !important;
-}
-
 ._title{
     margin-bottom: 10px;
 }
@@ -374,4 +372,8 @@ input[type="checkbox"],
 label,
 .tag{
     cursor: default !important;
+}
+
+button:focus{
+    outline: 1px dotted white !important;
 }

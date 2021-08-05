@@ -62,23 +62,27 @@
     </header>
     <div id='info'>
         <div>
-            <label id='label' onclick="ahk.UI_launchURL('https://github.com/SaifAqqad/AHK_MicMute')"><img
-                    id='MicMute_icon' src='' />
+            <label id='label' tabindex=0 onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
+                onclick="ahk.UI_launchURL('https://github.com/SaifAqqad/AHK_MicMute')"><img id='MicMute_icon' src='' />
                 MicMute</label>
         </div>
         <div id='stats'>
-            <div>Version: <a id="version" onclick="ahk.UI_launchReleasePage()"></a>
+            <div>Version: <a id="version" tabindex=0 onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
+                    onclick="ahk.UI_launchReleasePage()"></a>
             </div>
-            <div>Author: <a onclick="ahk.UI_launchURL('https://github.com/SaifAqqad')">Saif Aqqad</a></div>
+            <div>Author: <a tabindex=0 onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
+                    onclick="ahk.UI_launchURL('https://github.com/SaifAqqad')">Saif Aqqad</a></div>
         </div>
     </div>
     <div id="license">
-        <div> MicMute's code is public domain and is licensed under <a
+        <div> MicMute's code is public domain and is licensed under <a tabindex=0
+                onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
                 onclick="ahk.UI_launchURL('https://github.com/SaifAqqad/AHK_MicMute/blob/master/LICENSE')">The
                 Unlicense</a>.
         </div>
         <div>
-            MicMute uses several open source libraries with their own <a
+            MicMute uses several open source libraries with their own <a tabindex=0
+                onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
                 onclick="ahk.UI_launchURL('https://github.com/SaifAqqad/AHK_MicMute#libraries-and-resources-used')">license</a>.
         </div>
     </div>
