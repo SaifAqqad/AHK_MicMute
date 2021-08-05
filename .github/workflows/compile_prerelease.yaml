@@ -8,30 +8,10 @@ jobs:
   compile:
     runs-on: windows-latest
     steps:
-
       - uses: actions/checkout@v2
 
-      - uses: dev-drprasad/delete-tag-and-release@v0.1.2
-        name: Delete tag and release
-        with:
-          delete_release: true
-          tag_name: latest_commit
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Recreate tag and release
-        id: recreate_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: latest_commit
-          release_name: Build at latest commit
-          draft: false
-          prerelease: true
-      
-      - name: Build artifacts
-        id: build_artifacts
+      - name: Compile MicMute
+        id: compile_micmute
         shell: pwsh
         run: |
           Set-ExecutionPolicy RemoteSigned -scope CurrentUser -Force;
@@ -42,12 +22,14 @@ jobs:
           echo "Copying upx"
           Copy-Item -Path "$(scoop prefix upx)\upx.exe" -Destination "$(scoop prefix autohotkey)\Compiler\"
           echo "Running Ahk2Exe";
-          Invoke-Expression "$(scoop prefix autohotkey)\Compiler\Ahk2Exe.exe /Silent /in '.\src\MicMute.ahk' /out '.\MicMute.exe' /compress '2' /Verbose 2>&1 | echo";
-      - name: Upload files to a GitHub release
-        uses: svenstaro/upload-release-action@2.2.0
+          Invoke-Expression "$(scoop prefix autohotkey)\Compiler\Ahk2Exe.exe /Silent /in '.\src\MicMute.ahk' /out '.\src\MicMute.exe' /bin `"$(scoop prefix autohotkey)\Compiler\Unicode 64-bit.bin`"  /compress '2' /Verbose 2>&1 | echo";
+      
+      - name: Create release
+        uses: "marvinpinto/action-automatic-releases@latest"
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: "*.exe"
-          tag: latest_commit
-          overwrite: true
-          file_glob: true
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "latest_commit"
+          prerelease: true
+          title: "Development Build"
+          files: |
+            *.exe
