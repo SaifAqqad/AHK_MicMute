@@ -3,7 +3,7 @@ Class OSD {
     ,"0":"DC3545" ; OFF ACCENT
     ,"1":"007BFF"} ; ON ACCENT
 
-    __New(pos:="", excludeFullscreen:=0, posEditorCallback:=""){      
+    __New(pos:="", excludeFullscreen:=0, posEditorCallback:=""){
         this.excludeFullscreen:= excludeFullscreen
         this.state:= 0
         ;get the primary monitor resolution
@@ -33,6 +33,7 @@ Class OSD {
 
     ; creates the OSD window
     create(){
+        util_log("[OSD] Creating OSD window")
         Gui, New, +Hwndhwnd, OSD 
         this.hwnd:= hwnd
         Gui, +AlwaysOnTop -SysMenu +ToolWindow -caption -Border 

@@ -35,6 +35,7 @@ class Config {
     }
 
     importConfig(){
+        util_log("[Config] Importing config.json")
         jsonFile:=FileOpen("config.json", "R")
         jsonStr:=jsonFile.Read()
         jsonFile.Close()
@@ -49,6 +50,7 @@ class Config {
     }
 
     importIniConfig(){
+        util_log("[Config] Importing config.ini")
         iniProfile:= { "afkTimeout":0
                     , "ExcludeFullscreen":0
                     , "Microphone":"capture"
@@ -74,6 +76,7 @@ class Config {
     }
 
     exportConfig(){
+        util_log("[Config] exporting the config object")
         jsonStr:= cJson.Dumps(this)
         jsonFile:=FileOpen("config.json", "w")
         jsonFile.Write(jsonStr)

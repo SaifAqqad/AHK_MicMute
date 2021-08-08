@@ -13,6 +13,7 @@ class VersionChecker{
     }
 
     getPropFromURL(url, prop){
+        util_log("[VersionChecker] Fetching " prop " from " url)
         http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
         http.Open("GET", url, true)
         http.Send()
@@ -23,7 +24,9 @@ class VersionChecker{
     }
     
     CheckForUpdates(isTray:=0){
+        util_log("[VersionChecker] Checking for updates...")
         latestVer:= VersionChecker.getLatestVersion()
+        util_log("[VersionChecker] latest version: " latestVer)
         if(!latestVer)
             return
         if(latestVer != A_Version){

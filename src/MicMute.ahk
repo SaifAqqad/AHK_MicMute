@@ -43,12 +43,14 @@ Global config_obj, osd_obj, overlay_obj, mic_controllers, current_profile
 , sys_theme, ui_theme, isFirstLaunch:=0
 , watched_profiles, watched_profile
 , func_update_state, last_modif_time
-, arg_isDebug:=0, arg_profile:="", arg_noUI:=0, arg_reload:= 0
+, arg_isDebug:=0, arg_profile:="", arg_noUI:=0, arg_reload:= 0, arg_logFile:="*"
 , resources_obj:= new ResourcesManager()
 , A_Version:= A_IsCompiled? util_getFileSemVer(A_ScriptFullPath) : U_Version 
 , WM_SETTINGCHANGE:= 0x001A
 ; parse cli args
 parseArgs()
+util_log("MicMute v" . A_Version)
+OnError(Func("util_log"))
 ; create config gui window
 if(!arg_noUI)
     UI_create(Func("reloadMicMute"))
@@ -67,6 +69,7 @@ if(A_IsCompiled && !arg_reload && config_obj.AllowUpdateChecker=1){
 
 
 initilizeMicMute(default_profile:=""){
+    util_log("[Main] Initilizing MicMute")
     ;make sure hotkeys are disabled before reinitilization
     if(mic_controllers)
         for i,mic in mic_controllers
@@ -153,30 +156,23 @@ switchProfile(p_name:=""){
         configMsg(err)
         return
     }
-    ;@Ahk2Exe-IgnoreBegin
-    OutputDebug, % Format("Switching to profile '{}'`n",current_profile.ProfileName)
-    ;@Ahk2Exe-IgnoreEnd
+    util_log("[Main] Switching to profile '" current_profile.ProfileName "'")
     ;create a new OSD object for the profile
     osd_obj:= new OSD(current_profile.OSDPos, current_profile.ExcludeFullscreen)
     osd_obj.setTheme(ui_theme)
     ;initilize mic_controllers
     mic_controllers:= Array()
     for i, mic in current_profile.Microphone {
-        ;create a new MicrophoneController object for each mic
-        mc:= new MicrophoneController(mic, current_profile.PTTDelay, Func("showFeedback"))
         Try {
-            device:= VA_GetDevice(mc.microphone)
-            if(!device) ;if the mic does not exist -> throw an error
-                Throw, Format("Invalid microphone name '{}' in profile '{}'", mic.Name,current_profile.ProfileName)
+            ;create a new MicrophoneController object for each mic
+            mc:= new MicrophoneController(mic, current_profile.PTTDelay, Func("showFeedback"))
             mc.enableHotkeys()
+            mic_controllers.Push(mc)
         }Catch, err {
+            util_log(err)
             configMsg(err)
             return
         }
-        ;@Ahk2Exe-IgnoreBegin
-        OutputDebug,% Format("Enabled Microphone controller: {} | {} | {}`n", mc.microphone,mc.muteHotkey,mc.unmuteHotkey)
-        ;@Ahk2Exe-IgnoreEnd
-        mic_controllers.Push(mc)
     }
     ;check the profile in the tray menu
     Menu, profiles, Check, % current_profile.ProfileName
@@ -275,6 +271,7 @@ initilizeSounds(){
 
 checkIsIdle(){
     if (A_TimeIdlePhysical > current_profile.afkTimeout * 60000){
+        util_log("[Main] User is idle")
         for i, mic in mic_controllers
             if(!mic.isPushToTalk)
                 mic.setMuteState(1)
@@ -285,6 +282,7 @@ checkIsIdle(){
 checkConfigDiff(){
     FileGetTime, modif_time, config.json
     if(last_modif_time && modif_time!=last_modif_time){
+        util_log("[Main] Detected changes to config file")
         last_modif_time:= ""
         setTimer, checkConfigDiff, Off
         initilizeMicMute(current_profile.ProfileName)
@@ -295,6 +293,7 @@ checkConfigDiff(){
 checkLinkedApps(){
     if(watched_profile){
         if(!WinExist("ahk_exe " . watched_profile.LinkedApp)){
+            util_log("[Main] Linked app closed: " . watched_profile.LinkedApp)
             switchProfile(config_obj.DefaultProfile)
             watched_profile:=""
         }
@@ -302,6 +301,7 @@ checkLinkedApps(){
     }
     for i, prof in watched_profiles {
         if(WinExist("ahk_exe " . prof.LinkedApp)){
+            util_log("[Main] Detected linked app: " . prof.LinkedApp)
             watched_profile:= prof
             switchProfile(prof.ProfileName)
         }
@@ -339,20 +339,24 @@ updateSysTheme(wParam:="", lParam:=""){
 }
 
 exitMicMute(){
+    util_log("[Main] Exiting MicMute")
     config_obj.exportConfig()
     for i, mic in mic_controllers 
         VA_SetMasterMute(0,mic.microphone)
 }
 
 reloadMicMute(p_profile:=""){
+    args:= Format("/reload=1 ""/profile={1:}"" /debug={2:} /noui={3:} ""/logFile={4:}""" 
+        , p_profile, arg_isDebug, arg_noUI, arg_logFile)
+    util_log("[Main] Reloading MicMute with args (" args ")")
     if(A_IsCompiled)
-        Run "%A_ScriptFullPath%" /r "/reload" "/profile=%p_profile%"
+        Run "%A_ScriptFullPath%" /r %args%
     else
-        Run "%A_AhkPath%" /r "%A_ScriptFullPath%" "/reload" "/profile=%p_profile%"
+        Run "%A_AhkPath%" /r "%A_ScriptFullPath%" %args%
 }
 
 parseArgs(){
-    arg_regex:= "i)\/([\w]+)(=([\w\s]+))?"
+    arg_regex:= "i)\/([\w]+)(=(.+))?"
     for i,arg in A_Args {
         match:= RegExMatch(arg, arg_regex, val)
         if(!match)
@@ -362,13 +366,14 @@ parseArgs(){
             case "noui": arg_noUI:= (val3=""? 1 : val3)
             case "profile": arg_profile:= val3
             case "reload": arg_reload:= (val3=""? 1 : val3)
+            case "logFile": arg_logFile:= val3
         }
     }
 }
 
 configMsg(err){
     Thread, NoTimers, 1
-    MsgBox, 65, MicMute, % err . "`nClick OK to edit configuration"
+    MsgBox, 65, MicMute, % (IsObject(err)? err.Message : err) . "`nClick OK to edit configuration"
     IfMsgBox, OK
         editConfig()
     IfMsgBox, Cancel

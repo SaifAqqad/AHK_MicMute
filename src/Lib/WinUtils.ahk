@@ -103,3 +103,10 @@ util_getFileSemVer(file){
     RegExMatch(_t1, "^([0-9]+)\.([0-9]+)\.([0-9]+)((\.([0-9]+))+)?$", _match)
     return Format("{}.{}.{}", _match1,_match2,_match3)
 }
+
+util_log(msg){
+    static logNum:=0
+    msg:= Format("#{:i} {}: {}`n", ++logNum, A_Now, IsObject(msg)? "Error: " . msg.Message : msg)
+    Try OutputDebug, % msg
+    Try FileOpen(arg_logFile, "a").Write(msg)
+}

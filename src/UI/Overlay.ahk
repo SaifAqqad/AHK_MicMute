@@ -1,5 +1,6 @@
 class Overlay {
     __New(config){
+        util_log("[Overlay] Creating overlay window")
         ;create the overlay
         Gui, New, +Hwndui_hwnd +AlwaysOnTop -SysMenu +E0x20 ToolWindow, MicMute overlay
         this.hwnd:= ui_hwnd

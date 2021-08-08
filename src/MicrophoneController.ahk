@@ -7,6 +7,8 @@ Class MicrophoneController {
         this.microphone:= mic_obj.Name
         if(mic_obj.Name = "default")
             this.microphone:= "capture"
+        if(!VA_GetDevice(this.microphone))
+            Throw, Format("[MicrophoneController] Invalid microphone name '{}' in profile '{}'", mic_obj.Name, current_profile.ProfileName)
         this.muteHotkey:= mic_obj.MuteHotkey
         this.unmuteHotkey:= mic_obj.UnmuteHotkey
         this.isPushToTalk:= mic_obj.PushToTalk
@@ -45,7 +47,7 @@ Class MicrophoneController {
     enableHotkeys(){
         if(this.hotkeys_set.exists(HotkeyPanel.hotkeyToKeys(this.muteHotkey,1))
            || this.hotkeys_set.exists(HotkeyPanel.hotkeyToKeys(this.unmuteHotkey,1)))
-            Throw, Format("Found conflicting hotkeys in profile '{}'", current_profile.ProfileName)
+            Throw, Format("[MicrophoneController] Found conflicting hotkeys in profile '{}'", current_profile.ProfileName)
         Try{
             if (this.muteHotkey=this.unmuteHotkey){
                 if(this.isPushToTalk){
@@ -65,18 +67,17 @@ Class MicrophoneController {
                 Hotkey, % this.unmuteHotkey, % funcObj, On
             } 
         }catch{
-            Throw, Format("Invalid hotkeys in profile '{}'",current_profile.ProfileName)
+            Throw, Format("[MicrophoneController] Invalid hotkeys in profile '{}'",current_profile.ProfileName)
         }
         this.hotkeys_set.push(HotkeyPanel.hotkeyToKeys(this.MuteHotkey,1))
         this.hotkeys_set.push(HotkeyPanel.hotkeyToKeys(this.unmuteHotkey,1))
+        util_log(Format("[MicrophoneController] Enabled: {} | {} | {}", this.microphone,this.muteHotkey,this.unmuteHotkey))
     }
     
     disableHotkeys(){
-        ;@Ahk2Exe-IgnoreBegin
-        OutputDebug, % Format("Disabling Hotkeys: {} | {}`n",this.muteHotkey,this.unmuteHotkey)
-        ;@Ahk2Exe-IgnoreEnd
         Hotkey, % this.muteHotkey, Off, Off
         Hotkey, % this.unmuteHotkey, Off, Off
+        util_log(Format("[MicrophoneController] Disabled: {} | {} | {}", this.microphone,this.muteHotkey,this.unmuteHotkey))
     }
     
     updateState(){

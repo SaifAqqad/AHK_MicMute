@@ -40,6 +40,7 @@ global ui_obj, about_obj, current_profile, hotkey_panels, current_hp
                      , string: "Setup hotkeys for multiple microphones simultaneously"}]
 
 UI_create(p_onExitCallback){
+    util_log("[UI] Creating 'config' window")
     features:= {"FEATURE_GPU_RENDERING": 0x1
             ,"FEATURE_BROWSER_EMULATION": 0x2AF8
             ,"FEATURE_96DPI_PIXEL": 0x1}
@@ -54,14 +55,11 @@ UI_create(p_onExitCallback){
 
 UI_Show(p_profile){
     Thread, NoTimers
-    ;@Ahk2Exe-IgnoreBegin
-    OutputDebug, % "Showing config UI`n"
-    ;@Ahk2Exe-IgnoreEnd
+    util_log("[UI] Showing 'config' window")
     updateSysTheme()
     UI_reset()
     UI_setProfile("", p_profile)
     UI_addTooltips()
-    updateSysTheme()
     tray_defaults()
     ui_obj.Gui(Format("+LabelUI_ +MinSize{:i}x{:i}",700*UI_scale,440*UI_scale))
     ui_obj.Show(Format("Center w{:i} h{:i}",830*UI_scale,650*UI_scale),"MicMute")
@@ -178,9 +176,7 @@ UI_updateHotkeyOption(neutron, option){
     elem:= ui_obj.doc.getElementById(option)
     option:= StrSplit(option, "_")
     current_hp.updateOption(option[1], option[2], elem.checked? 1 : 0)
-    ;@Ahk2Exe-IgnoreBegin
-    OutputDebug, % Format("{} hotkey set to: {}`n", option[1], current_hp[option[1]].hotkey)
-    ;@Ahk2Exe-IgnoreEnd
+    util_log(Format("[UI] {} hotkey set to: {}", option[1], current_hp[option[1]].hotkey))
 }
 
 UI_onSaveProfile(neutron){
@@ -333,10 +329,7 @@ UI_onStop(neutron, type, InputHook:=""){
         hp.hotkey:= hp.hotkey_h:= ""
     }
     UI_setHotkeyPanel(current_hp)
-
-    ;@Ahk2Exe-IgnoreBegin
-    OutputDebug, % Format("{} hotkey set to: {}`n", type, current_hp[type].hotkey)
-    ;@Ahk2Exe-IgnoreEnd
+    util_log(Format("[UI] {} hotkey set to: {}", type, current_hp[type].hotkey))
 }
 
 UI_onClearHotkey(neutron){
@@ -651,15 +644,17 @@ UI_updateTheme(){
 }
 
 UI_createAbout(){
+    util_log("[UI] Creating 'about' window")
     about_obj:= new NeutronWindow()
     about_obj.load(resources_obj.htmlFile.about)
     UI_loadCss(about_obj)
+    updateSysTheme()
     about_obj.Gui("-Resize")
 }
 
 UI_showAbout(neutron:=""){
+    util_log("[UI] Showing 'about' window")
     tray_defaults()
-    updateSysTheme()
     about_obj.show(Format("Center w{:i} h{:i}",500*UI_scale,300*UI_scale),"About MicMute")
     about_obj.doc.focus()
 }
