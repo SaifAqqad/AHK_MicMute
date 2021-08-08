@@ -4,6 +4,7 @@ global ui_obj, about_obj, current_profile, hotkey_panels, current_hp
 , template_link:= "<link rel='stylesheet' id='css_{1:}' href='{2:}'>"
 , template_default_profile:= "<option value='{1:}' {2:} >{1:}</option>"
 , template_mic:= "<option value='{1:}' id='mic_{1:}' {2:} >{1:}</option>"
+, template_app:= "<option value='{1:}' {3:} >{2:}</option>"
 , template_profile_tag:= "
 (
     <div class=""tag is-large"" tabindex=0 onkeydown=""switch(event.keyCode){case 32:case 69: event.preventDefault(); this.oncontextmenu.call() ;break; case 13:this.click()}""
@@ -105,7 +106,7 @@ UI_setProfile(neutron, p_profile){
     UI_onOverlayToggle("")
     ui_obj.doc.getElementById("OSDPos_x").value:= current_profile.OSDPos.x==-1? "" : current_profile.OSDPos.x
     ui_obj.doc.getElementById("OSDPos_y").value:= current_profile.OSDPos.y==-1? "" : current_profile.OSDPos.y
-    ui_obj.doc.getElementById("LinkedApp").value:= current_profile.LinkedApp
+    UI_onRefreshAppsList("")
     ui_obj.doc.getElementById("afkTimeout").value:= !current_profile.afkTimeout? "" : current_profile.afkTimeout
     ui_obj.doc.getElementById("PTTDelay").value:= current_profile.PTTDelay
     UI_onUpdateDelay("",current_profile.PTTDelay)
@@ -344,6 +345,8 @@ UI_onRefreshDeviceList(neutron){
     if(current_profile.Microphone[1].Name)
         ui_obj.doc.getElementById("microphone").value:= current_profile.Microphone[1].Name
     UI_onSetMicrophone("",ui_obj.doc.getElementById("microphone").value)
+    if(neutron)
+        UI_notify("Refreshed devices")
 }
 
 UI_checkMicOptions(){
@@ -453,16 +456,6 @@ UI_onGlobalOption(neutron, option, setState){
     UI_notify("Configuration saved")
 }
 
-UI_onSelectApp(neutron){
-    FileSelectFile, _f, 3,, Select an application - MicMute, Application (*.exe)
-    _f:= util_splitPath(_f)
-    linkedAppField:= ui_obj.doc.getElementById("LinkedApp")
-    if(_f.fileName && _f.fileExt == "exe")
-        linkedAppField.value:= _f.fileName
-    else
-        linkedAppField.value:=""
-}
-
 UI_onOSDset(neutron){
     pox_x:= ui_obj.doc.getElementByID("OSDPos_x")
     pox_y:= ui_obj.doc.getElementByID("OSDPos_y")
@@ -541,11 +534,19 @@ UI_updateStopTimer(id){
 
 }
 
-UI_clearLinkedApp(neutron,event){
-    switch event.keyCode {
-        case 0x2E,0x08 :
-            ui_obj.doc.getElementById("LinkedApp").value:=""
+UI_onRefreshAppsList(neutron){
+    list:= UI_getProcessList()
+    select:= ui_obj.doc.getElementById("LinkedApp")
+    if(current_profile.LinkedApp)
+        list.push(current_profile.LinkedApp)
+    select.innerHTML:=""
+    select.insertAdjacentHTML("beforeend", Format(template_app, "", "Select an app", "selected"))
+    for i, process in list.data {
+        select.insertAdjacentHTML("beforeend"
+        , Format(template_app, process, process, process = current_profile.LinkedApp? "selected" : ""))    
     }
+    if(neutron)
+        UI_notify("Refreshed running apps")
 }
 
 UI_displayProfileRename(neutron, p_profile){
@@ -672,4 +673,16 @@ UI_launchURL(neutron:="", url:=""){
 UI_launchReleasePage(neutron:=""){
     url:= "https://github.com/SaifAqqad/AHK_MicMute/releases/tag/" . A_Version
     Run, %url%, %A_Desktop%
+}
+
+UI_getProcessList(){
+    pSet:= new StackSet()
+    WinGet, pList, List
+    loop %pList% 
+    {
+        pHwnd:= pList%A_Index%
+        WinGet, pName, ProcessName, ahk_id %pHwnd%
+        pSet.push(pName)
+    }
+    return pSet
 }
