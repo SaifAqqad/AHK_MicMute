@@ -230,7 +230,7 @@ You can install them using [scoop](https://scoop.sh):
 ### 2. Clone the repository
     
 ```powershell
-git clone https://github.com/SaifAqqad/AHK_MicMute.git;
+git clone --recurse-submodules https://github.com/SaifAqqad/AHK_MicMute.git;
 cd .\AHK_MicMute\;
 ```
 ### 3. Run the compiler

@@ -10,6 +10,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: submodules-init
+        uses: snickerbockers/submodules-init@v4
+
       - name: Compile MicMute
         id: compile_micmute
         shell: pwsh
@@ -22,7 +25,7 @@ jobs:
           echo "Running Ahk2Exe";
           Invoke-Expression "$(scoop prefix autohotkey)\Compiler\Ahk2Exe.exe /Silent /in '.\src\MicMute.ahk' /out '.\MicMute.exe' /bin `"$(scoop prefix autohotkey)\Compiler\Unicode 64-bit.bin`"  /compress '0' /Verbose 2>&1 | echo";
           echo "Calculating SHA256 hash";
-          (Get-FileHash '.\MicMute.exe').Hash | Out-File -FilePath .\MicMute.sha256
+          (Get-FileHash '.\MicMute.exe').Hash  | Tee-Object -FilePath  .\MicMute.sha256
       
       - name: Create release
         uses: "marvinpinto/action-automatic-releases@latest"
