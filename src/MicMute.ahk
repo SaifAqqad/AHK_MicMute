@@ -19,8 +19,8 @@ SetWorkingDir %A_ScriptDir%
 
 #Include, <WinUtils>
 #Include, <VA>
-#Include, <cJson>
-#Include, <Neutron>
+#Include, <cJson\Dist\cJson>
+#Include, <Neutron\Neutron>
 #Include, <StackSet>
 
 #Include, %A_ScriptDir%
