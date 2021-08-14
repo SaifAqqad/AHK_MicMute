@@ -1,6 +1,6 @@
-[submodule "./src/Lib/cJson"]
-	path = ./src/Lib/cJson
-	url = git://github.com/G33kDude/cJson.ahk.git
-[submodule "./src/Lib/Neutron"]
-	path = ./src/Lib/Neutron
-	url = git://github.com/G33kDude/Neutron.ahk.git
+[submodule "src/Lib/cJson"]
+	path = src/Lib/cJson
+	url = https://github.com/G33kDude/cJson.ahk
+[submodule "src/Lib/Neutron"]
+	path = src/Lib/Neutron
+	url = https://github.com/G33kDude/Neutron.ahk
