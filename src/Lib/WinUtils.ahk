@@ -107,6 +107,6 @@ util_getFileSemVer(file){
 util_log(msg){
     static logNum:=0
     msg:= Format("#{:i} {}: {}`n", ++logNum, A_Now, IsObject(msg)? "Error: " . msg.Message : msg)
-    Try OutputDebug, % msg
+    A_log.= msg
     Try FileOpen(arg_logFile, "a").Write(msg)
 }

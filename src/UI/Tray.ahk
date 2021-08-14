@@ -91,6 +91,7 @@ tray_createProfilesMenu(){
 tray_createDebugMenu(){
     Menu, Debug, Add, List Hotkeys, lh
     Menu, Debug, Add, List Vars, lv
+    Menu, Debug, Add, View Log, tray_showLog
     return
     lh:
         ListHotkeys
@@ -118,4 +119,26 @@ tray_checkForUpdates(){
 
 tray_noFunc(){
     return
+}
+
+tray_showLog(){
+    Gui, llv:New, +Labeltray_llv
+    Gui, Add, ListView, NoSortHdr r20 w700, Line
+    Gui, Add, Button, w80 gtray_llvRefresh, Refresh Log
+    tray_llvRefresh()
+    Gui, show, , MicMute Logs
+}
+
+tray_llvRefresh(){
+    Gui, llv:Default
+    LV_Delete()
+    for i, line in StrSplit(A_log, "`n") {
+        LV_Add("",line)
+    }
+    LV_Modify(LV_GetCount(), "Vis")
+}
+
+tray_llvClose(){
+    Gui, llv:Default
+    Gui, Destroy
 }

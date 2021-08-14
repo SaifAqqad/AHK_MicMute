@@ -47,6 +47,7 @@ Global config_obj, osd_obj, overlay_obj, mic_controllers, current_profile
 , resources_obj:= new ResourcesManager()
 , A_Version:= A_IsCompiled? util_getFileSemVer(A_ScriptFullPath) : U_Version 
 , WM_SETTINGCHANGE:= 0x001A
+, A_log:=""
 ; parse cli args
 parseArgs()
 util_log("MicMute v" . A_Version)
