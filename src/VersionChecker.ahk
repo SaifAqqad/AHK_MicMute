@@ -4,12 +4,8 @@ class VersionChecker{
     , isScoopInstall:= InStr(A_ScriptFullPath, A_UserName "\scoop")
 
     getLatestVersion(){
-        try{
-            return VersionChecker.isScoopInstall? VersionChecker.getPropFromURL(VersionChecker.scoop_manifest_url, "version") 
-                : VersionChecker.getPropFromURL(VersionChecker.github_latest_url, "tag_name")
-        }catch{
-            MsgBox, 16, MicMute, An error occured while fetching the latest version
-        }
+        return VersionChecker.isScoopInstall? VersionChecker.getPropFromURL(VersionChecker.scoop_manifest_url, "version") 
+            : VersionChecker.getPropFromURL(VersionChecker.github_latest_url, "tag_name")
     }
 
     getPropFromURL(url, prop){
@@ -24,12 +20,30 @@ class VersionChecker{
     }
     
     CheckForUpdates(isTray:=0){
+        static isRetry:= 0
         util_log("[VersionChecker] Checking for updates...")
-        latestVer:= VersionChecker.getLatestVersion()
-        util_log("[VersionChecker] latest version: " latestVer)
-        if(!latestVer)
+        Try {
+            if(!DllCall("Wininet.dll\InternetGetConnectedState", "Str", 0x43, "Int", 0)){ ; no internet
+                util_log("[VersionChecker] No internet connection")
+                if(!isTray && !isRetry){ ; retry after 30s if auto checking for updates
+                    util_log("[VersionChecker] Retrying in 30 seconds...")
+                    cfunc:= ObjBindMethod(VersionChecker, "CheckForUpdates")
+                    SetTimer, % cfunc, -30000
+                    isRetry:= 1
+                    return
+                }
+                Throw, Exception("No internet connection") 
+            }
+            latestVer := VersionChecker.getLatestVersion()
+        }catch err{
+            util_log("[VersionChecker] An error occured: " err.Message)
+            if(isTray){
+                MsgBox, 16, MicMute, An error occured while fetching the latest version
+            }
             return
-        if(latestVer != A_Version){
+        }        
+        util_log("[VersionChecker] latest version: " latestVer)
+        if(latestVer && latestVer != A_Version){
             txt:= "A new version of MicMute is available`n"
             if(VersionChecker.isScoopInstall)
                 MsgBox, 64, MicMute, % txt 
