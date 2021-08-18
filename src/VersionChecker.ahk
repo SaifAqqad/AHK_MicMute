@@ -25,10 +25,10 @@ class VersionChecker{
         Try {
             if(!DllCall("Wininet.dll\InternetGetConnectedState", "Str", 0x43, "Int", 0)){ ; no internet
                 util_log("[VersionChecker] No internet connection")
-                if(!isTray && !isRetry){ ; retry after 30s if auto checking for updates
-                    util_log("[VersionChecker] Retrying in 30 seconds...")
+                if(!isTray && !isRetry){ ; retry after 1min if auto checking for updates
+                    util_log("[VersionChecker] Retrying in 1 minute...")
                     cfunc:= ObjBindMethod(VersionChecker, "CheckForUpdates")
-                    SetTimer, % cfunc, -30000
+                    SetTimer, % cfunc, -60000
                     isRetry:= 1
                     return
                 }
