@@ -1,5 +1,5 @@
 global ui_obj, about_obj, current_profile, hotkey_panels, current_hp
-, onExitCallback, UI_scale:= A_ScreenDPI/96
+, onExitCallback, UI_scale:= A_ScreenDPI/96, UI_profileIsDirty:= 0
 , input_hook, input_hook_timer, key_set, modifier_set, is_multiple_mics:=0
 , template_link:= "<link rel='stylesheet' id='css_{1:}' href='{2:}'>"
 , template_default_profile:= "<option value='{1:}' {2:} >{1:}</option>"
@@ -79,6 +79,8 @@ UI_enableIeFeatures(f_obj, delete:=0){
 }
 
 UI_setProfile(neutron, p_profile){
+    if(UI_profileIsDirty)
+        UI_warnProfileIsDirty()
     current_profile:= config_obj.getProfile(p_profile)
     ui_obj.doc.getElementById("profile_" p_profile).checked:= 1
     innerCont:= ui_obj.doc.getElementById("profile")
@@ -92,7 +94,7 @@ UI_setProfile(neutron, p_profile){
         hotkey_panels[mic.Name]:= new HotkeyPanel(mic.MuteHotkey,mic.UnmuteHotkey,htype)
     }
     ui_obj.doc.getElementById("multiple_mics").checked:= is_multiple_mics:= current_profile.Microphone.Length()>1
-    UI_onToggleMultiple("")
+    UI_onToggleMultiple()
     ui_obj.doc.getElementById("profile_name_field").value:= current_profile.ProfileName
     ui_obj.doc.getElementById("microphone").value:= current_profile.Microphone[1].Name
     UI_setHotkeyPanel(hotkey_panels[current_profile.Microphone[1].Name])
@@ -102,15 +104,16 @@ UI_setProfile(neutron, p_profile){
     ui_obj.doc.getElementById("OverlayOnMuteOnly").checked:= current_profile.OverlayOnMuteOnly
     ui_obj.doc.getElementById("OverlayUseCustomIcons").checked:= current_profile.OverlayUseCustomIcons
     ui_obj.doc.getElementById("ExcludeFullscreen").checked:= current_profile.ExcludeFullscreen
-    UI_onOSDToggle("")
-    UI_onOverlayToggle("")
+    UI_onOSDToggle()
+    UI_onOverlayToggle()
     ui_obj.doc.getElementById("OSDPos_x").value:= current_profile.OSDPos.x==-1? "" : current_profile.OSDPos.x
     ui_obj.doc.getElementById("OSDPos_y").value:= current_profile.OSDPos.y==-1? "" : current_profile.OSDPos.y
     UI_onRefreshAppsList("")
     ui_obj.doc.getElementById("afkTimeout").value:= !current_profile.afkTimeout? "" : current_profile.afkTimeout
     ui_obj.doc.getElementById("PTTDelay").value:= current_profile.PTTDelay
-    UI_onUpdateDelay("",current_profile.PTTDelay)
+    UI_onUpdateDelay(current_profile.PTTDelay)
     innerCont.classList.remove("hidden")
+    UI_profileIsDirty:= 0
 }
 
 UI_reset(){
@@ -140,6 +143,12 @@ UI_reset(){
     ui_obj.doc.getElementById("PreferTheme").value:= config_obj.PreferTheme
 }
 
+UI_onChange(neutron, funcName, params*){
+    if(fn:=Func(funcName))
+        fn.call(params*)
+    UI_profileIsDirty:= 1
+}
+
 UI_resetMicSelect(){
     select:= ui_obj.doc.getElementById("microphone")
     select.innerHTML:=""
@@ -158,7 +167,7 @@ UI_setHotkeyPanel(hotkey_panel, delay:=0){
     current_hp:= hotkey_panel
     ; hotkey type
     ui_obj.doc.getElementById("hktype_" . current_hp.hotkeyType).checked:=1
-    UI_onHotkeyType("",current_hp.hotkeyType)
+    UI_onHotkeyType(current_hp.hotkeyType)
     ; mute panel
     ui_obj.doc.getElementById("mute_input").value:= current_hp.mute.hotkey_h
     ui_obj.doc.getElementById("mute_wildcard").checked:= current_hp.mute.wildcard
@@ -173,14 +182,15 @@ UI_setHotkeyPanel(hotkey_panel, delay:=0){
     UI_checkMicOptions()
 }
 
-UI_updateHotkeyOption(neutron, option){
+UI_updateHotkeyOption(option){
     elem:= ui_obj.doc.getElementById(option)
     option:= StrSplit(option, "_")
     current_hp.updateOption(option[1], option[2], elem.checked? 1 : 0)
     util_log(Format("[UI] {} hotkey set to: {}", option[1], current_hp[option[1]].hotkey))
 }
 
-UI_onSaveProfile(neutron){
+UI_onSaveProfile(neutron, noReset:=0){
+    UI_profileIsDirty:= 0
     current_profile.SoundFeedback:= ui_obj.doc.getElementById("SoundFeedback").checked? 1 : 0
     current_profile.OnscreenFeedback:= ui_obj.doc.getElementById("OnscreenFeedback").checked? 1 : 0
     current_profile.OnscreenOverlay:= ui_obj.doc.getElementById("OnscreenOverlay").checked? 1 : 0
@@ -212,9 +222,11 @@ UI_onSaveProfile(neutron){
                                         , PushToTalk: 0 })    
     }
     config_obj.exportConfig()
-    UI_reset()
-    UI_setProfile(neutron, current_profile.ProfileName)
-    neutron.doc.getElementById("top").scrollIntoView()
+    if(!noReset){
+        UI_reset()
+        UI_setProfile(neutron, current_profile.ProfileName)
+    }
+    ui_obj.doc.getElementById("top").scrollIntoView()
     UI_notify("Profile saved")   
 }
 
@@ -226,7 +238,7 @@ UI_onDeleteProfile(neutron){
     config_obj.deleteProfile(current_profile.ProfileName)
     UI_reset()
     UI_setProfile(neutron, config_obj.DefaultProfile)
-    neutron.doc.getElementById("top").scrollIntoView()
+    ui_obj.doc.getElementById("top").scrollIntoView()
     UI_notify("Profile deleted")
 }
 
@@ -247,7 +259,7 @@ UI_onCreateProfile(neutron){
     UI_onCreateProfile(neutron)
 }
 
-UI_onRecord(neutron, type){
+UI_onRecord(type){
     ;stop any other input hook
     if(input_hook.InProgress){
         input_hook.Stop()
@@ -257,8 +269,8 @@ UI_onRecord(neutron, type){
     key_set:= new StackSet()
     modifier_set:= new StackSet()
     ;hide record button and show stop button
-    UI_hideElemID(neutron, type . "_record")
-    UI_showElemID(neutron, type . "_stop")
+    UI_hideElemID(type . "_record")
+    UI_showElemID(type . "_stop")
     ;setup stop button timer
     input_hook_timer:= Func("UI_updateStopTimer").Bind(type . "_stop")
     input_hook_timer.Call()
@@ -273,7 +285,7 @@ UI_onRecord(neutron, type){
     input_hook.VisibleText:= false
     input_hook.VisibleNonText:= false
     input_hook.OnKeyDown:= Func("UI_addKey").Bind(type)
-    input_hook.OnEnd:= Func("UI_onStop").Bind(neutron,type)
+    input_hook.OnEnd:= Func("UI_onStop").Bind(type)
     input_hook.Start()
     ;setup workaround for mouse back and forward buttons
     funcObj:= Func("UI_addKey").Bind(type,"",0x5, 0x0)
@@ -298,7 +310,7 @@ UI_addKey(type, InputHook, VK, SC){
         inputElem.value := inputElem.value . key_name . " + "
 }
 
-UI_onStop(neutron, type, InputHook:=""){
+UI_onStop(type, InputHook:=""){
     ;if the func is not called by the input hook -> stop the input hook
     if(input_hook.InProgress){
         input_hook.Stop()
@@ -314,8 +326,8 @@ UI_onStop(neutron, type, InputHook:=""){
     stopElem.innerText:="Stop"
 
     SetTimer, % input_hook_timer, Off
-    UI_hideElemID(neutron,type "_stop")
-    UI_showElemID(neutron,type "_record")
+    UI_hideElemID(type "_stop")
+    UI_showElemID(type "_record")
     ;turn off the extra hotkeys for mouse buttons workaround
     Hotkey, *XButton1, Off, UseErrorLevel
     Hotkey, *XButton2, Off, UseErrorLevel
@@ -333,7 +345,7 @@ UI_onStop(neutron, type, InputHook:=""){
     util_log(Format("[UI] {} hotkey set to: {}", type, current_hp[type].hotkey))
 }
 
-UI_onClearHotkey(neutron){
+UI_onClearHotkey(){
     mic:= ui_obj.doc.getElementById("microphone").value
     hotkey_panels[mic]:= new HotkeyPanel("","",1)
     UI_setHotkeyPanel(hotkey_panels[mic], 200)
@@ -344,7 +356,7 @@ UI_onRefreshDeviceList(neutron){
     UI_checkMicOptions()
     if(current_profile.Microphone[1].Name)
         ui_obj.doc.getElementById("microphone").value:= current_profile.Microphone[1].Name
-    UI_onSetMicrophone("",ui_obj.doc.getElementById("microphone").value)
+    UI_onSetMicrophone(ui_obj.doc.getElementById("microphone").value)
     if(neutron)
         UI_notify("Refreshed devices")
 }
@@ -363,11 +375,11 @@ UI_checkMicOptions(){
     }
 }
 
-UI_onUpdateDelay(neutron,delay){
+UI_onUpdateDelay(delay){
     ui_obj.doc.getElementByID("PTTDelay_text").value:= delay . " ms"
 }
 
-UI_onOSDToggle(neutron){
+UI_onOSDToggle(){
     excl_tag:= ui_obj.doc.getElementByID("ExcludeFullscreen_tag")
     pos_row:= ui_obj.doc.getElementByID("OSDPos_group")
     if(ui_obj.doc.getElementByID("OnscreenFeedback").checked){
@@ -379,7 +391,7 @@ UI_onOSDToggle(neutron){
     }
 }
 
-UI_onOverlayToggle(neutron){
+UI_onOverlayToggle(){
     excl_tag:= ui_obj.doc.getElementByID("OverlayOnMuteOnly_tag")
     pos_row:= ui_obj.doc.getElementByID("overlay_group")
     if(ui_obj.doc.getElementByID("OnscreenOverlay").checked){
@@ -391,9 +403,9 @@ UI_onOverlayToggle(neutron){
     }
 }
 
-UI_onHotkeyType(neutron, type, delay:=0){
-    static hideElemFunc:= Func("UI_hideElemID").Bind("", "unmute_box")
-    innerCont:= neutron.doc.getElementById("hotkey_panels_group")
+UI_onHotkeyType(type, delay:=0){
+    static hideElemFunc:= Func("UI_hideElemID").Bind("unmute_box")
+    innerCont:= ui_obj.doc.getElementById("hotkey_panels_group")
     innerCont.classList.add("hidden")
     if(delay)
         sleep, %delay%
@@ -427,7 +439,7 @@ UI_onHotkeyType(neutron, type, delay:=0){
     innerCont.classList.remove("hidden")
 }
 
-UI_onSetMicrophone(neutron, mic_name){
+UI_onSetMicrophone(mic_name){
     ui_obj.doc.getElementById("hotkeys_panel").classList.add("hidden")
     func:= Func("UI_asyncOnSetMicrophone").Bind(mic_name)
     SetTimer, % func, -200
@@ -456,7 +468,7 @@ UI_onGlobalOption(neutron, option, setState){
     UI_notify("Configuration saved")
 }
 
-UI_onOSDset(neutron){
+UI_onOSDset(){
     pox_x:= ui_obj.doc.getElementByID("OSDPos_x")
     pox_y:= ui_obj.doc.getElementByID("OSDPos_y")
     MsgBox, 65, MicMute, Click OK then drag the OSD to the `nwanted position and right click it`nor click Cancel to reset.
@@ -504,7 +516,7 @@ UI_onChangeProfileName(neutron, event){
     UI_notify("Profile name saved")
 }
 
-UI_onToggleMultiple(neutron){
+UI_onToggleMultiple(){
     is_multiple_mics:= ui_obj.doc.getElementById("multiple_mics").checked
     if(is_multiple_mics){
         ui_obj.doc.getElementById("OnscreenOverlay_tag").classList.add("hidden")
@@ -514,7 +526,7 @@ UI_onToggleMultiple(neutron){
         ui_obj.doc.getElementById("OnscreenOverlay_tag").classList.remove("hidden")
         ui_obj.doc.getElementById("OverlayOnMuteOnly_tag").classList.remove("hidden")
         ui_obj.doc.getElementById("overlay_group").classList.remove("row-hidden")
-        UI_onOverlayToggle(neutron)
+        UI_onOverlayToggle()
         if(hotkey_panels.Count()>1)
             for mic, panel in hotkey_panels
                 if(panel!= current_hp)
@@ -605,14 +617,25 @@ UI_addTooltips(){
     }
 }
 
-UI_hideElemID(neutron, elemId){
+UI_flipVal(neutron,elemId){
+    elem:= ui_obj.doc.getElementById(elemId)
+    elem.checked := !elem.checked
+}
+
+UI_hideElemID(elemId){
     elem:= ui_obj.doc.getElementByID(elemId)
     elem.classList.add("is-hidden")
 }
 
-UI_showElemID(neutron, elemId){
+UI_showElemID(elemId){
     elem:= ui_obj.doc.getElementByID(elemId)
     elem.classList.remove("is-hidden")
+}
+
+UI_warnProfileIsDirty(){
+    MsgBox, 52, MicMute, % Format("You have unsaved changes in profile '{}'`nDo you want to save them before continuing?",current_profile.ProfileName)
+    IfMsgBox, Yes
+        UI_onSaveProfile("", 1)
 }
 
 UI_notify(txt){
@@ -628,6 +651,8 @@ UI_dismissNotif(){
 }
 
 UI_close(neutron:=""){
+    if(UI_profileIsDirty)
+        UI_warnProfileIsDirty()
     ui_obj.Hide()
     onExitCallback.Call(current_profile.ProfileName)
     ui_obj.Close()
