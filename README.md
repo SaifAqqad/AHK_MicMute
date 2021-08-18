@@ -6,10 +6,9 @@
     Control your microphone using keyboard shortcuts.
 </p>
 <p align="center">
-    <a href="https://wakatime.com/badge/github/SaifAqqad/AHK_MicMute"><img alt="WakaTime"src="https://wakatime.com/badge/github/SaifAqqad/AHK_MicMute.svg"></a>
-    <a href="https://github.com/SaifAqqad/AHK_MicMute/releases/latest"><img src="https://img.shields.io/github/downloads/SaifAqqad/AHK_MicMute/total"></img></a>
-    <a href="https://github.com/SaifAqqad/AHK_MicMute/releases/latest"><img alt="GitHub release(latest SemVer)"src="https://img.shields.io/github/v/release/SaifAqqad/AHK_MicMute?label=Latest"></a>
-    <a href="https://github.com/SaifAqqad/AHK_MicMute/actions?query=workflow%3Acompile_prerelease"><img src="https://img.shields.io/github/workflow/status/SaifAqqad/AHK_MicMute/compile_prerelease/master"></img></a>
+    <a href="https://github.com/SaifAqqad/AHK_MicMute/releases/latest"><img src="https://img.shields.io/github/v/release/SaifAqqad/AHK_MicMute?color=FF5B20&label=latest&logo=github&style=for-the-badge"></a>
+    <a href="https://github.com/SaifAqqad/AHK_MicMute/releases/latest"><img src="https://img.shields.io/github/downloads/SaifAqqad/AHK_MicMute/total?color=FF6920&logo=data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAclBMVEUAAAD%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F9eWEHEAAAAJXRSTlMAAQIGHCQlJicyMzc5Pj9SVYGChIaJi42QlJWWl5vi7vDx8vT%2BbH3BRAAAAJBJREFUeNrdzwOSBEEUhOFs2zbz%2FkfcHdszof7D9b4Sfp3s%2B%2FJD4JP%2BwoF0BNKtudE6e2C27vVc6TnYW2D1HPUrIBTk5KyB2ZGNiGtRkUNGZgNZCriRkHNXLdz5WrydZ8f1C4CIJFPcBwjIBI8AwgCPAfAB8MjMv1FGehugzbzTrO4edkfMhwdrnn8jT8Vi%2Bgc1TxxjuzGKYQAAAABJRU5ErkJggg%3D%3D&style=for-the-badge"></img></a>
+    <a href="https://github.com/SaifAqqad/AHK_MicMute/actions?query=workflow%3Acompile_prerelease"><img src="https://img.shields.io/github/workflow/status/SaifAqqad/AHK_MicMute/compile_prerelease/master?color=FF7720&logo=githubactions&logoColor=FFFFFF&style=for-the-badge"></img></a>
 </p>
 
 ## Features
@@ -175,13 +174,14 @@ When using this feature, the following applies:
                 "x": -1,
                 "y": -1
             },
-            "OverlayOnMuteOnly": 1,
+            "OverlayOnMuteOnly": 0,
             "OverlayPos": {
-                "x": 2481,
-                "y": 413
+                "x": 300,
+                "y": 450
             },
+            "OverlayUseCustomIcons": 0,
             "ProfileName": "Default",
-            "PTTDelay": 50,
+            "PTTDelay": 100,
             "SoundFeedback": 1,
             "UpdateWithSystem": 1
         }
@@ -192,26 +192,25 @@ When using this feature, the following applies:
 ```
 
 ## CLI arguments
-| Argument                  | Description                                                                         |
-|---------------------------|-------------------------------------------------------------------------------------|
-| `/profile=<profile name>` | Startup with a specific profile.                                                    |
-| `/noUI`                   | Disable the configuration UI completely. This decreases memory usage by almost 60%. |
-| `/debug`                  | Add shortcuts to `ListVars`, `ListHotkeys` and `listKeys`  in the tray menu.        |
+| Argument                    | Description                                                                         |
+|-----------------------------|-------------------------------------------------------------------------------------|
+| `/profile=<profile name>`   | Startup with a specific profile.                                                    |
+| `/noUI`                     | Disable the configuration UI completely. This decreases memory usage by almost 60%. |
+| `/debug`                    | Add shortcuts to `ListVars`, `ListHotkeys` and `View Log`  in the tray menu.        |
+| `/logFile=<file_to_log_to>` | Outputs the log to a file (it's written to stdout by default )                      |
 
-Example: `MicMute.exe "/profile=profile 1" /noUI /debug`
+Example: `MicMute.exe "/profile=profile 1" /noUI /debug /logFile=MicMute.log`
 ## Compile instructions
 <small>Note: Starting with version [0.9.0](https://github.com/SaifAqqad/AHK_MicMute/releases/tag/0.9.0), You can run `MicMute.ahk` directly without compiling it.</small>
 
 ### 1. Install prerequisites
-You will need [AutoHotkey](https://www.autohotkey.com/), [upx](https://upx.github.io/) and [git](https://git-scm.com/download/win).
+You'll need [AutoHotkey](https://www.autohotkey.com/) and [git](https://git-scm.com/download/win).
 
 You can install them using [scoop](https://scoop.sh):
 
 1. Install scoop 
     ```powershell
-    # This allows running powershell scripts 
-    # that are signed by a trusted publisher.
-    # You should type 'yes' when prompted.
+    # This allows running powershell scripts that are signed by a trusted publisher.
     Set-ExecutionPolicy RemoteSigned -scope CurrentUser;
 
     # This runs the scoop installer script.
@@ -219,24 +218,19 @@ You can install them using [scoop](https://scoop.sh):
     ```
 2. Install prerequisites
     ```powershell
-    scoop install git upx;
     scoop bucket add extras;
-    scoop install autohotkey;
+    scoop install git autohotkey;
     ```
-3. Copy upx to the compiler directory
-    ```powershell
-    cp "$(scoop prefix upx)\upx.exe" -Destination "$(scoop prefix autohotkey)\Compiler\";
-    ```
-### 2. Clone the repository
+### 2. Clone the repository (and submodules)
     
 ```powershell
 git clone --recurse-submodules https://github.com/SaifAqqad/AHK_MicMute.git;
-cd .\AHK_MicMute\;
 ```
 ### 3. Run the compiler
 
 ```powershell
-ahk2exe /in ".\src\MicMute.ahk" /out ".\src\MicMute.exe" /compress 2;
+cd .\AHK_MicMute\;
+ahk2exe /in ".\src\MicMute.ahk" /out ".\src\MicMute.exe";
 ```
 
 ## Libraries and resources used
