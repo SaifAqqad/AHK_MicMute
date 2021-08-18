@@ -51,6 +51,7 @@ Global config_obj, osd_obj, overlay_obj, mic_controllers, current_profile
 ; parse cli args
 parseArgs()
 util_log("MicMute v" . A_Version)
+util_log(Format("[Main] Running as user {}, A_IsAdmin = {}", A_UserName, A_IsAdmin))
 OnError(Func("util_log"))
 ; create config gui window
 if(!arg_noUI)
@@ -314,6 +315,7 @@ updateState(){
     tray_update(mic_controllers[1])
     if(overlay_obj)
         overlay_obj.setState(mic_controllers[1].state)
+    showElevatedWarning()
 }
 
 updateStateMutliple(){
@@ -322,6 +324,7 @@ updateStateMutliple(){
         mc.updateState()
     }
     tray_defaults()
+    showElevatedWarning()
 }
 
 updateSysTheme(wParam:="", lParam:=""){
@@ -369,6 +372,18 @@ parseArgs(){
             case "reload": arg_reload:= (val3=""? 1 : val3)
             case "logFile": arg_logFile:= val3
         }
+    }
+}
+
+showElevatedWarning(){
+    static shown:=0
+    if(shown)
+        return
+    WinGet, pid, PID, A
+    if(util_isProcessElevated(pid)){
+        tray_defaults()
+        TrayTip, MicMute, Detected an application running with administrator privileges. You need to run MicMute as administrator for the hotkeys to work with it.
+        shown:=1
     }
 }
 
