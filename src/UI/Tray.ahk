@@ -102,7 +102,10 @@ tray_createDebugMenu(){
 }
 
 tray_launchHelp(){
-    Run, https://github.com/SaifAqqad/AHK_MicMute#usage, %A_Desktop%
+    if(GetKeyState("Shift", "P"))
+        tray_showLog()
+    else
+        Run, https://github.com/SaifAqqad/AHK_MicMute#usage, %A_Desktop%
 }
 
 tray_about(){
@@ -122,8 +125,9 @@ tray_noFunc(){
 }
 
 tray_showLog(){
+    tray_defaults()
     Gui, llv:New, +Labeltray_llv
-    Gui, Add, ListView, NoSortHdr r20 w700, Line
+    Gui, Add, ListView, NoSortHdr r20 w700, Log
     Gui, Add, Button, w80 gtray_llvRefresh, Refresh Log
     tray_llvRefresh()
     Gui, show, , MicMute Logs
