@@ -47,7 +47,7 @@ Global config_obj, osd_obj, overlay_obj, mic_controllers, current_profile
 , resources_obj:= new ResourcesManager()
 , A_Version:= A_IsCompiled? util_getFileSemVer(A_ScriptFullPath) : U_Version 
 , WM_SETTINGCHANGE:= 0x001A
-, A_log:=""
+, A_log:="", A_startupTime:= A_TickCount
 ; parse cli args
 parseArgs()
 util_log("MicMute v" . A_Version)
@@ -68,6 +68,8 @@ if(A_IsCompiled && !arg_reload && config_obj.AllowUpdateChecker=1){
     cfunc:= ObjBindMethod(VersionChecker, "CheckForUpdates")
     SetTimer, % cfunc, -5000
 }
+A_startupTime:= A_TickCount - A_startupTime
+util_log("[Main] MicMute startup took " A_startupTime "ms")
 
 
 initilizeMicMute(default_profile:=""){
