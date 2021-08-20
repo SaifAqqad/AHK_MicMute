@@ -36,14 +36,17 @@ class ResourcesManager {
     __New(){
         if(A_IsCompiled){
             ;if we're running the compiled version -> set icon's 'file' property to executable full path
+            this.defaultIcon.file:= A_ScriptFullPath
             for obj, ico in this.icoFile {
                 ico.file:= A_ScriptFullPath
             }
-            this.defaultIcon.file:= A_ScriptFullPath
+            for type, file in this.SoundFile {
+                this.soundFile[type]:= this.getResourcePtr(file)
+            }
         }else{
             ; if not -> prepend the path to all resources
-            for type, file in this.SoundFile {
-                this.soundFile[type]:= this.RES_FOLDER . file
+            for type, filePath in this.SoundFile {
+                this.soundFile[type]:= {file: this.RES_FOLDER . filePath}
             }
 
             for obj, ico in this.icoFile {
@@ -68,6 +71,15 @@ class ResourcesManager {
         }else{
             return state? this.soundFile.mute : this.soundFile.unmute
         }
+    }
+
+    getResourcePtr(resource){
+        if hMod := DllCall("GetModuleHandle", "UInt", 0, "PTR")
+            if hRes := DllCall("FindResource", "UInt", hMod, "Str", resource, "UInt", 10, "PTR")
+                if hData := DllCall("LoadResource", "UInt", hMod, "UInt", hRes, "PTR")
+                    if pData := DllCall("LockResource", "UInt", hData, "PTR")
+                        return { ptr: pData
+                              , size: DllCall( "SizeofResource", "UInt", hMod, "UInt", hRes, "PTR")}
     }
 
     getIcoFile(state){

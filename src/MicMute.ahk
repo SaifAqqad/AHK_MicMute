@@ -9,6 +9,11 @@
 ;@Ahk2Exe-SetVersion %U_Version%
 ;@Ahk2Exe-SetName MicMute
 ;@Ahk2Exe-SetDescription MicMute
+;@Ahk2Exe-Bin Unicode 64*
+/*@Ahk2Exe-Keep
+FileInstall, Lib\bass.dll, %A_ScriptDir%\bass.dll
+*/
+
 #NoEnv
 SetBatchLines -1
 SetWorkingDir %A_ScriptDir%
@@ -22,6 +27,7 @@ SetWorkingDir %A_ScriptDir%
 #Include, <cJson\Dist\cJson>
 #Include, <Neutron\Neutron>
 #Include, <StackSet>
+#Include, <SoundPlayer>
 
 #Include, %A_ScriptDir%
 #Include, ResourcesManager.ahk
@@ -46,7 +52,7 @@ Global config_obj, osd_obj, overlay_obj, mic_controllers, current_profile
 , arg_isDebug:=0, arg_profile:="", arg_noUI:=0, arg_reload:= 0, arg_logFile:="*"
 , resources_obj:= new ResourcesManager()
 , A_Version:= A_IsCompiled? util_getFileSemVer(A_ScriptFullPath) : U_Version 
-, WM_SETTINGCHANGE:= 0x001A
+, WM_SETTINGCHANGE:= 0x001A, sp_obj
 , A_log:="", A_startupTime:= A_TickCount
 ; parse cli args
 parseArgs()
@@ -95,6 +101,7 @@ initilizeMicMute(default_profile:=""){
     , ptt_off_sound:=""
     , sys_theme:=""
     , last_modif_time:= ""
+    , sp_obj:=""
     tray_defaults()
     ;add profiles with linked apps to watched_profiles
     for i,profile in config_obj.Profiles {
@@ -105,8 +112,6 @@ initilizeMicMute(default_profile:=""){
     SetTimer, checkLinkedApps, % watched_profiles.Length()? 3000 : "Off"
     ;enable checkConfigDiff timer 
     setTimer, checkConfigDiff, 3000
-    ;initilize sound variables
-    initilizeSounds()
     ;update theme variables
     updateSysTheme()
     ;initilize tray
@@ -185,6 +190,10 @@ switchProfile(p_name:=""){
     tray_toggleMic(1)
     if(mic_controllers[1].isPushToTalk)
         tray_toggleMic(0)
+    if(current_profile.SoundFeedback){
+        sp_obj:= new SoundPlayer()
+        sp_obj.setDevice(current_profile.SoundFeedbackDevice)
+    }
     ;handle multiple microphones
     if(mic_controllers.Length()>1){
         func_update_state:= Func("updateStateMutliple")
@@ -215,17 +224,15 @@ switchProfile(p_name:=""){
 showFeedback(mic_obj){
     ;update global state to make sure the tray icon is updated
     func_update_state.Call()
-    ;if osd is enabled -> show and hide after 1 sec
+    ; if sound fb is enabled -> play the sound file
+    if (current_profile.SoundFeedback){
+        file:= resources_obj.getSoundFile(mic_obj.state,mic_obj.isPushToTalk)
+        sp_obj.play(file)
+    }    
+    ; if osd is enabled -> show and hide after 1 sec
     if (current_profile.OnscreenFeedback){ ;use generic/mic.name state string
         str:= (mic_obj[(mic_controllers.Length()>1? "": "generic_") "state_string"][mic_obj.state])
         osd_obj.showAndHide(str, !mic_obj.state)
-    }
-    ; if sound fb is enabled -> play the relevant sound file
-    if (current_profile.SoundFeedback){
-        if(mic_obj.isPushToTalk)
-            util_PlaySound(mic_obj.state? ptt_off_sound : ptt_on_sound)
-        else
-            util_PlaySound(mic_obj.state? mute_sound : unmute_sound)
     }
 }
 
@@ -251,25 +258,6 @@ editConfig(){
         tray_toggleMic(0)
         tray_defaults()
         UI_show(current_profile.ProfileName)
-    }
-}
-
-initilizeSounds(){
-    ;load default sounds
-    util_ResRead(mute_sound, resources_obj.getSoundFile(1), A_IsCompiled)
-    util_ResRead(unmute_sound, resources_obj.getSoundFile(0), A_IsCompiled)
-    util_ResRead(ptt_on_sound, resources_obj.getSoundFile(0,1), A_IsCompiled)
-    util_ResRead(ptt_off_sound, resources_obj.getSoundFile(1,1), A_IsCompiled)
-    if(config_obj.UseCustomSounds){
-        ;try loading custom sound files
-        util_ResRead(mute_sound,"mute.mp3" ,0)
-        || util_ResRead(mute_sound, "mute.wav",0)
-        util_ResRead(unmute_sound,"unmute.mp3" ,0)
-        || util_ResRead(unmute_sound, "unmute.wav",0)
-        util_ResRead(ptt_on_sound,"ptt_on.mp3" ,0)
-        || util_ResRead(ptt_on_sound, "ptt_on.wav",0)
-        util_ResRead(ptt_off_sound,"ptt_off.mp3" ,0)
-        || util_ResRead(ptt_off_sound, "ptt_off.wav",0)
     }
 }
 

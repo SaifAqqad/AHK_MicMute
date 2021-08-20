@@ -4,3 +4,4 @@ VA-2.3
 config.ini
 bulma
 .sass-cache
+*.dll
