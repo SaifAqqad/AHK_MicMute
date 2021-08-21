@@ -60,10 +60,11 @@ UI_Show(p_profile){
     updateSysTheme()
     UI_reset()
     UI_setProfile("", p_profile)
+    UI_switchToTab("", "profiles_tab")
     UI_addTooltips()
     tray_defaults()
-    ui_obj.Gui(Format("+LabelUI_ +MinSize{:i}x{:i}",700*UI_scale,440*UI_scale))
-    ui_obj.Show(Format("Center w{:i} h{:i}",830*UI_scale,650*UI_scale),"MicMute")
+    ui_obj.Gui(Format("+LabelUI_ +MinSize{:i}x{:i}",840*UI_scale,650*UI_scale))
+    ui_obj.Show(Format("Center w{:i} h{:i}",840*UI_scale,650*UI_scale),"MicMute")
     ui_obj.doc.focus()
 }
 
@@ -566,6 +567,7 @@ UI_displayProfileRename(neutron, p_profile){
         UI_setProfile(neutron,p_profile)
     ui_obj.doc.getElementById("page_mask").classList.remove("hidden")
     ui_obj.doc.getElementById("profile_name").classList.remove("hidden")
+    ui_obj.qs(".main").classList.add("is-clipped")
     field:= ui_obj.doc.getElementById("profile_name_field")
     field.focus()
     field.setSelectionRange(ln:=StrLen(field.value),ln)
@@ -577,6 +579,7 @@ UI_hideProfileRename(neutron, event:=""){
     if(!event){
         maskElem.classList.add("hidden")
         pElem.classList.add("hidden")
+        ui_obj.qs(".main").classList.remove("is-clipped")
         return
     }
     switch event.keyCode {
@@ -584,6 +587,33 @@ UI_hideProfileRename(neutron, event:=""){
             pElem.firstElementChild.blur()
             maskElem.classList.add("hidden")
             pElem.classList.add("hidden")
+            ui_obj.qs(".main").classList.remove("is-clipped")
+    }
+}
+
+UI_switchToTab(neutron, tabID){
+    if(tabID == "profiles_tab"){
+        ui_obj.doc.getElementById("global_options_tab").classList.remove("is-active")
+        div:= ui_obj.doc.getElementById("global_options_tab_content")
+        div.classList.add("hidden")
+        if(neutron)
+            Sleep, 200
+        div.classList.add("tab-hidden")
+        ui_obj.doc.getElementById("profiles_tab").classList.add("is-active")
+        div:= ui_obj.doc.getElementById("profiles_tab_content")
+        div.classList.remove("tab-hidden")
+        div.classList.remove("hidden")
+    }else{
+        ui_obj.doc.getElementById("profiles_tab").classList.remove("is-active")
+        div:= ui_obj.doc.getElementById("profiles_tab_content")
+        div.classList.add("hidden")
+        if(neutron)
+            Sleep, 200
+        div.classList.add("tab-hidden")
+        ui_obj.doc.getElementById("global_options_tab").classList.add("is-active")
+        div:= ui_obj.doc.getElementById("global_options_tab_content")
+        div.classList.remove("hidden")
+        div.classList.remove("tab-hidden")
     }
 }
 

@@ -79,11 +79,19 @@ header {
     /* Some settings for everything in the client area */
     font-size: 12pt;
     overflow: auto;
+    padding: 50px 110px;
+    overflow-y: scroll !important;
+
+}
+
+.main-header{
+    max-width: 660px !important;
+    margin: 0 auto !important;
 }
 
 .container {
     /* Only render items in the center 600px of the client area */
-    max-width: 650px !important;
+    max-width: 660px !important;
     transform: scale(0.9, 0.9);
     -ms-transform: scale(0.9, 0.9);
 }
@@ -91,6 +99,10 @@ header {
 .inner-container {
     transform: scale(0.93, 0.93);
     -ms-transform: scale(0.93, 0.93);
+}
+
+#profiles_tab_content{
+    margin-top: -25px;
 }
 
 .spaced-label{
@@ -239,25 +251,30 @@ input[type="text"].input-elem {
     margin-bottom: 10px !important;
 }
 
-footer {
-    display: flex !important;
-    margin-bottom: 10px;
-}
-
-#footer-tag {
-    height: 2.5em !important;
-    width: fit-content !important;
-    margin: 0 auto !important;
-}
-
-p.content {
-    font-size: 13px !important;
-}
-
 a {
     transition: color .2s ease-in-out;
     color: #ff572d;
     text-decoration: none;
+}
+
+.tabs{
+    max-width: 650px !important;
+}
+
+.tabs a ,
+.tabs a:hover{
+    transition: border-bottom-color .2s ease-in-out;
+    color: #3C3C3C !important;
+    font-weight: 600;
+}
+
+.tabs a{
+    cursor: default !important;
+    border-bottom-color: #CFCFCF;
+}
+
+.tab-hidden{
+    display: none !important;
 }
 
 [data-title]:hover:after,
@@ -321,9 +338,11 @@ a {
     bottom: 0;
     left: 0;
 }
+
 .select:not(.is-multiple):not(.is-loading):hover::after {
     border-color: #FF4D20;
 }
+
 input[type=range].slider {
     width: 90%;
     margin: 2px 0.5px;
@@ -376,4 +395,8 @@ label,
 
 button:focus{
     outline: 1px dotted white !important;
+}
+
+.is-clipped{
+    overflow-y: hidden !important;
 }

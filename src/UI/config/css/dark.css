@@ -80,3 +80,13 @@ input[type="radio"]:checked+span,
 input[type="checkbox"]:checked+span {
     color: #FF6038 !important;
 }
+
+.tabs a ,
+.tabs a:hover{
+    color: #d9d9d9 !important;
+    border-bottom-color: #d9d9d9;
+
+}
+.tabs a{
+    border-bottom-color: #3B3B3B;
+}
