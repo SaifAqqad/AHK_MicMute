@@ -14,15 +14,12 @@ class SoundPlayer {
         this.getDevices()
     }
 
-    play(p_sound){
+    play(p_sound, volume:=1){
         static previousStream:=0
         if(!IsObject(p_sound)){
             Throw, Exception("[SoundPlayer] play: p_sound is not an object")
             return
         }
-        ; end the previous stream
-        if(previousStream)
-            DllCall(this.BASS_DLLPATH . this.BASS_DLL . "\BASS_StreamFree", UInt, PrevStream)
         ; create a new stream
         flags:= this.BASS_STREAM_AUTOFREE | this.BASS_UNICODE
         if(p_sound.ptr){
@@ -39,6 +36,8 @@ class SoundPlayer {
             Throw, Exception("[SoundPlayer] play: BASS_StreamCreateFile failed with error code (" err ")")
         }else{
             previousStream:= stream
+            ; set the volume
+            DllCall(this.BASS_DLLPATH . this.BASS_DLL . "\BASS_ChannelSetAttribute", UInt, stream, UInt, 2, Float, volume)
             return DllCall(this.BASS_DLLPATH . this.BASS_DLL . "\BASS_ChannelPlay", UInt, stream, Int, 1)
         }
     }

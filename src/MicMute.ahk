@@ -1,9 +1,9 @@
 ;compiler directives
 ;@Ahk2Exe-Let Res = %A_ScriptDir%\resources
 ;@Ahk2Exe-Let UI = %A_ScriptDir%\UI\config
-;@Ahk2Exe-Let Version = 1.1.2
+;@Ahk2Exe-Let Version = 1.2.0
 ;@Ahk2Exe-IgnoreBegin
-    U_Version:= "1.1.2"
+    U_Version:= "1.2.0"
 ;@Ahk2Exe-IgnoreEnd
 ;@Ahk2Exe-SetMainIcon %U_Res%\MicMute.ico
 ;@Ahk2Exe-SetVersion %U_Version%
@@ -193,6 +193,7 @@ switchProfile(p_name:=""){
     if(current_profile.SoundFeedback){
         sp_obj:= new SoundPlayer()
         sp_obj.setDevice(current_profile.SoundFeedbackDevice)
+        sp_obj.play(resources_obj.getSoundFile(0),0) ;test playback to remove initial pop
     }
     ;handle multiple microphones
     if(mic_controllers.Length()>1){
