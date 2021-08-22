@@ -82,6 +82,19 @@ class ResourcesManager {
                               , size: DllCall( "SizeofResource", "UInt", hMod, "UInt", hRes, "PTR")}
     }
 
+    loadCustomSounds(){
+        for s_type in this.soundFile {
+            Loop, Files, %s_type%.*
+            {
+                if A_LoopFileExt in wav,mp3,ogg 
+                {
+                    this.soundFile[s_type]:= {file: A_LoopFileLongPath}
+                    break
+                }
+            }
+        }
+    }
+
     getIcoFile(state){
         color:= sys_theme? "white" : "black"
         state:= state? "mute" : "unmute"

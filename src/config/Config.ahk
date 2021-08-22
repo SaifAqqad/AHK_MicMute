@@ -2,7 +2,6 @@ class Config {
     DefaultProfile:=""
     Profiles:=Array()
     MuteOnStartup:=0
-    UseCustomSounds:=0
     SwitchProfileOSD:=1
     PreferTheme:=-1
     AllowUpdateChecker:=-1
@@ -44,9 +43,15 @@ class Config {
             if(prop = "profiles")
                 for i, profile in val ; to ensure new props are added to existing profiles
                     this.Profiles.Push(new ProfileTemplate(profile))
-            else 
+            else
                 this[prop] := jsonObj[prop] 
         }
+        if(this.UseCustomSounds){
+            for i, profile in this.profiles {
+                profile.SoundFeedbackUseCustomSounds:= this.UseCustomSounds
+            }
+        }
+        this.Delete("UseCustomSounds")
     }
 
     importIniConfig(){

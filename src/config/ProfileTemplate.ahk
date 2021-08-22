@@ -6,6 +6,8 @@ class ProfileTemplate{
         ,UnmuteHotkey:""
         ,PushToTalk:0}]
         this.SoundFeedback:=0
+        this.SoundFeedbackDevice:="Default"
+        this.SoundFeedbackUseCustomSounds:=0
         this.OnscreenFeedback:=0
         this.OnscreenOverlay:=0
         this.ExcludeFullscreen:=0

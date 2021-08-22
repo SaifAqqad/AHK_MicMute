@@ -166,6 +166,10 @@ switchProfile(p_name:=""){
         return
     }
     util_log("[Main] Switching to profile '" current_profile.ProfileName "'")
+    ; create a new resource object
+    resources_obj:= new ResourcesManager()
+    if(current_profile.SoundFeedbackUseCustomSounds)
+        resources_obj.loadCustomSounds()
     ;create a new OSD object for the profile
     osd_obj:= new OSD(current_profile.OSDPos, current_profile.ExcludeFullscreen)
     osd_obj.setTheme(ui_theme)
@@ -190,6 +194,7 @@ switchProfile(p_name:=""){
     tray_toggleMic(1)
     if(mic_controllers[1].isPushToTalk)
         tray_toggleMic(0)
+    ; setup sound player
     if(current_profile.SoundFeedback){
         sp_obj:= new SoundPlayer()
         sp_obj.setDevice(current_profile.SoundFeedbackDevice)
