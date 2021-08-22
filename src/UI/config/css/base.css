@@ -90,19 +90,31 @@ header {
 }
 
 .container {
-    /* Only render items in the center 600px of the client area */
     max-width: 660px !important;
-    transform: scale(0.9, 0.9);
-    -ms-transform: scale(0.9, 0.9);
 }
 
-.inner-container {
-    transform: scale(0.93, 0.93);
-    -ms-transform: scale(0.93, 0.93);
+.inner-container{
+    max-width: 85% !important;
+    margin: 0 auto !important;
 }
 
-#profiles_tab_content{
-    margin-top: -25px;
+.inner-container-95{
+    max-width: 95% !important;
+    margin: -10px auto 10px auto !important;
+}
+
+#profiles_container,
+#global_options_container{
+    max-width: 95% !important;
+    margin: 15px auto 0 auto;
+}
+
+.inner-tabs{
+    max-width: 90% !important;
+    margin: 0 auto 20px auto;
+}
+.inner-tabs li{
+    font-size: small !important;
 }
 
 .spaced-label{
@@ -180,7 +192,7 @@ input[type="number"]:disabled {
 }
 
 .type-radio {
-    width: 75%;
+    width: 100%;
 }
 
 .tag {
@@ -198,12 +210,25 @@ input[type="number"]:disabled {
 .tag:focus {
     outline: none;
     background-color: #F8F8F8 !important;
-    transform: translateY(-4px);
+    transform: translateY(-2px);
+}
+
+.tag-is-small{
+    transform: scale(0.85);
+}
+
+.tag-is-small:hover,
+.tag-is-small:focus{
+    transform: scale(0.85) translateY(-3px);
+}
+
+.button-is-small{
+    transform: scale(0.80) !important;
 }
 
 img#MicMute_icon {
-    width: 44px;
-    border-radius: 10px;
+    width: 38px;
+    border-radius: 23%;
     box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.02);
     transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -219,12 +244,20 @@ label:hover>img#MicMute_icon {
 }
 
 #notification {
+    transform: scale(0.75);
     min-width: 200px;
-    max-width: 240px;
     text-align: center;
     position: absolute;
     top: 38px;
-    right: 25px;
+    right: 10px;
+    background-color: #F3F3F3 !important;
+    border: 0.5px solid #ff572d;
+    border-radius: 10px;
+    box-shadow: 0 11px 15px -7px rgba(0, 0, 0, 0.055), 0 9px 26px 8px rgba(0, 0, 0, 0.055);
+}
+
+#notification label{
+    color: #3C3C3C !important;
 }
 
 .row {
@@ -261,6 +294,28 @@ a {
     max-width: 650px !important;
 }
 
+.main-tabs li{
+    width: 50% !important;
+}
+
+.profile-tabs li{
+    width: 33.33% !important;
+}
+
+.profile-create{
+    font-size: large;
+    margin-top: 5px;
+}
+
+.profile-action{
+    margin-top: 5px;
+}
+
+#profiles{
+    width: auto;
+    margin-right: 5px;
+}
+
 .tabs a ,
 .tabs a:hover{
     transition: border-bottom-color .2s ease-in-out;
@@ -288,7 +343,7 @@ a {
     content: attr(data-title);
     background-color: #ffffff;
     color: #111;
-    font-size: 14px ;
+    font-size: 12px ;
     font-weight: 400 !important;
     text-align: center;
     position: absolute;
@@ -344,8 +399,8 @@ a {
 }
 
 input[type=range].slider {
-    width: 90%;
-    margin: 2px 0.5px;
+    width: 100%;
+    margin: -10px 0.5px 2px -2px !important;
     background-color: transparent;
 }
 
@@ -393,7 +448,7 @@ label,
     cursor: default !important;
 }
 
-button:focus{
+button:not(.is-outlined):focus{
     outline: 1px dotted white !important;
 }
 

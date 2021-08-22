@@ -90,3 +90,11 @@ input[type="checkbox"]:checked+span {
 .tabs a{
     border-bottom-color: #3B3B3B;
 }
+
+#notification{
+    background-color: #272727 !important;
+}
+
+#notification label{
+    color: #d9d9d9 !important;
+}

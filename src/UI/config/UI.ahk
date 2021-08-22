@@ -4,16 +4,17 @@ global ui_obj, about_obj, current_profile, hotkey_panels, current_hp
 , template_link:= "<link rel='stylesheet' id='css_{1:}' href='{2:}'>"
 , template_default_profile:= "<option value='{1:}' {2:} >{1:}</option>"
 , template_mic:= "<option value='{1:}' id='mic_{1:}' {2:} >{1:}</option>"
+, template_output:= "<option value='{1:}' id='output_{1:}'>{1:}</option>"
 , template_app:= "<option value='{1:}' {3:} >{2:}</option>"
 , template_profile_tag:= "
 (
-    <div class=""tag is-large"" tabindex=0 onkeydown=""switch(event.keyCode){case 32:case 69: event.preventDefault(); this.oncontextmenu.call() ;break; case 13:this.click()}""
+    <span class=""tag is-medium"" tabindex=0 onkeydown=""switch(event.keyCode){case 32:case 69: event.preventDefault(); this.oncontextmenu.call() ;break; case 13:this.click()}""
         id=""tag_profile_{1:}"" oncontextmenu=""ahk.UI_displayProfileRename('{1:}')"" onClick=""ahk.UI_setProfile('{1:}');this.blur()"">
         <label class=""radio"">
             <input type=""radio"" name=""profiles_radio"" value=""{1:}"" id=""profile_{1:}"" disabled>
             <span data-title=""Right click to edit profile name"" >{1:}</span>
         </label>
-    </div>
+    </span>
 )"
 , UI_tooltips:= [ { selector: ".passthrough-label"
                      , string: "The hotkey's keystrokes won't be hidden from the OS"}
@@ -60,11 +61,11 @@ UI_Show(p_profile){
     updateSysTheme()
     UI_reset()
     UI_setProfile("", p_profile)
-    UI_switchToTab("", "profiles_tab")
+    UI_switchToTab("", ".main-tabs", "profiles_tab")
     UI_addTooltips()
     tray_defaults()
-    ui_obj.Gui(Format("+LabelUI_ +MinSize{:i}x{:i}",840*UI_scale,650*UI_scale))
-    ui_obj.Show(Format("Center w{:i} h{:i}",840*UI_scale,650*UI_scale),"MicMute")
+    ui_obj.Gui(Format("+LabelUI_ +MinSize{:i}x{:i}",520*UI_scale,500*UI_scale))
+    ui_obj.Show(Format("Center w{:i} h{:i}",800*UI_scale,650*UI_scale),"MicMute")
     ui_obj.doc.focus()
 }
 
@@ -100,13 +101,14 @@ UI_setProfile(neutron, p_profile){
     ui_obj.doc.getElementById("microphone").value:= current_profile.Microphone[1].Name
     UI_setHotkeyPanel(hotkey_panels[current_profile.Microphone[1].Name])
     ui_obj.doc.getElementById("SoundFeedback").checked:= current_profile.SoundFeedback
+    ui_obj.doc.getElementById("UseCustomSounds").checked:= current_profile.SoundFeedbackUseCustomSounds
+    UI_onRefreshOutputDeviceList("")
+    ui_obj.doc.getElementById("output_device").value:= current_profile.SoundFeedbackDevice
     ui_obj.doc.getElementById("OnscreenFeedback").checked:= current_profile.OnscreenFeedback
     ui_obj.doc.getElementById("OnscreenOverlay").checked:= current_profile.OnscreenOverlay
     ui_obj.doc.getElementById("OverlayOnMuteOnly").checked:= current_profile.OverlayOnMuteOnly
     ui_obj.doc.getElementById("OverlayUseCustomIcons").checked:= current_profile.OverlayUseCustomIcons
     ui_obj.doc.getElementById("ExcludeFullscreen").checked:= current_profile.ExcludeFullscreen
-    UI_onOSDToggle()
-    UI_onOverlayToggle()
     ui_obj.doc.getElementById("OSDPos_x").value:= current_profile.OSDPos.x==-1? "" : current_profile.OSDPos.x
     ui_obj.doc.getElementById("OSDPos_y").value:= current_profile.OSDPos.y==-1? "" : current_profile.OSDPos.y
     UI_onRefreshAppsList("")
@@ -193,6 +195,8 @@ UI_updateHotkeyOption(option){
 UI_onSaveProfile(neutron, noReset:=0){
     UI_profileIsDirty:= 0
     current_profile.SoundFeedback:= ui_obj.doc.getElementById("SoundFeedback").checked? 1 : 0
+    current_profile.SoundFeedbackUseCustomSounds:= ui_obj.doc.getElementById("UseCustomSounds").checked? 1 : 0
+    current_profile.SoundFeedbackDevice:= ui_obj.doc.getElementById("output_device").value
     current_profile.OnscreenFeedback:= ui_obj.doc.getElementById("OnscreenFeedback").checked? 1 : 0
     current_profile.OnscreenOverlay:= ui_obj.doc.getElementById("OnscreenOverlay").checked? 1 : 0
     current_profile.ExcludeFullscreen:= ui_obj.doc.getElementById("ExcludeFullscreen").checked? 1 : 0
@@ -227,19 +231,18 @@ UI_onSaveProfile(neutron, noReset:=0){
         UI_reset()
         UI_setProfile(neutron, current_profile.ProfileName)
     }
-    ui_obj.doc.getElementById("top").scrollIntoView()
     UI_notify("Profile saved")   
 }
 
 UI_onDeleteProfile(neutron){
     if(current_profile.ProfileName == config_obj.DefaultProfile){
-        UI_notify("Default profile cannot be deleted")
+        UI_notify("Cannot delete default profile")
         return
     }
     config_obj.deleteProfile(current_profile.ProfileName)
+    UI_profileIsDirty:= 0
     UI_reset()
     UI_setProfile(neutron, config_obj.DefaultProfile)
-    ui_obj.doc.getElementById("top").scrollIntoView()
     UI_notify("Profile deleted")
 }
 
@@ -362,6 +365,18 @@ UI_onRefreshDeviceList(neutron){
         UI_notify("Refreshed devices")
 }
 
+UI_onRefreshOutputDeviceList(neutron){
+    select:= ui_obj.doc.getElementById("output_device")
+    select.innerHTML:= ""
+    devices:= new SoundPlayer().devices
+    for i, device in devices {
+        select.insertAdjacentHTML("beforeend", Format(template_output, device))
+    }
+    select.value:= current_profile.SoundFeedbackDevice
+    if(neutron)
+        UI_notify("Refreshed devices")
+}
+
 UI_checkMicOptions(){
     devices:= VA_GetCaptureDeviceList(), numPanels:=0
     devices.Push("Default")
@@ -378,30 +393,6 @@ UI_checkMicOptions(){
 
 UI_onUpdateDelay(delay){
     ui_obj.doc.getElementByID("PTTDelay_text").value:= delay . " ms"
-}
-
-UI_onOSDToggle(){
-    excl_tag:= ui_obj.doc.getElementByID("ExcludeFullscreen_tag")
-    pos_row:= ui_obj.doc.getElementByID("OSDPos_group")
-    if(ui_obj.doc.getElementByID("OnscreenFeedback").checked){
-        excl_tag.classList.remove("hidden")
-        pos_row.classList.remove("row-hidden")
-    }else{
-        excl_tag.classList.add("hidden")
-        pos_row.classList.add("row-hidden")
-    }
-}
-
-UI_onOverlayToggle(){
-    excl_tag:= ui_obj.doc.getElementByID("OverlayOnMuteOnly_tag")
-    pos_row:= ui_obj.doc.getElementByID("overlay_group")
-    if(ui_obj.doc.getElementByID("OnscreenOverlay").checked){
-        excl_tag.classList.remove("hidden")
-        pos_row.classList.remove("row-hidden")
-    }else{
-        excl_tag.classList.add("hidden")
-        pos_row.classList.add("row-hidden")
-    }
 }
 
 UI_onHotkeyType(type, delay:=0){
@@ -522,12 +513,11 @@ UI_onToggleMultiple(){
     if(is_multiple_mics){
         ui_obj.doc.getElementById("OnscreenOverlay_tag").classList.add("hidden")
         ui_obj.doc.getElementById("OverlayOnMuteOnly_tag").classList.add("hidden")
-        ui_obj.doc.getElementById("overlay_group").classList.add("row-hidden")
+        ui_obj.doc.getElementById("onscreen_overlay_group").classList.add("row-hidden")
     }else{
         ui_obj.doc.getElementById("OnscreenOverlay_tag").classList.remove("hidden")
         ui_obj.doc.getElementById("OverlayOnMuteOnly_tag").classList.remove("hidden")
-        ui_obj.doc.getElementById("overlay_group").classList.remove("row-hidden")
-        UI_onOverlayToggle()
+        ui_obj.doc.getElementById("onscreen_overlay_group").classList.remove("row-hidden")
         if(hotkey_panels.Count()>1)
             for mic, panel in hotkey_panels
                 if(panel!= current_hp)
@@ -591,30 +581,26 @@ UI_hideProfileRename(neutron, event:=""){
     }
 }
 
-UI_switchToTab(neutron, tabID){
-    if(tabID == "profiles_tab"){
-        ui_obj.doc.getElementById("global_options_tab").classList.remove("is-active")
-        div:= ui_obj.doc.getElementById("global_options_tab_content")
-        div.classList.add("hidden")
-        if(neutron)
-            Sleep, 200
-        div.classList.add("tab-hidden")
-        ui_obj.doc.getElementById("profiles_tab").classList.add("is-active")
-        div:= ui_obj.doc.getElementById("profiles_tab_content")
-        div.classList.remove("tab-hidden")
-        div.classList.remove("hidden")
-    }else{
-        ui_obj.doc.getElementById("profiles_tab").classList.remove("is-active")
-        div:= ui_obj.doc.getElementById("profiles_tab_content")
-        div.classList.add("hidden")
-        if(neutron)
-            Sleep, 200
-        div.classList.add("tab-hidden")
-        ui_obj.doc.getElementById("global_options_tab").classList.add("is-active")
-        div:= ui_obj.doc.getElementById("global_options_tab_content")
-        div.classList.remove("hidden")
-        div.classList.remove("tab-hidden")
-    }
+UI_switchToTab(neutron, rootSelector, tabID){
+    activeTab:= ui_obj.qs(rootSelector " li.is-active")
+    activeTabContent:= ui_obj.doc.getElementById(activeTab.id "_content")
+
+    wantedTab:= ui_obj.doc.getElementById(tabID)
+    wantedTabContent:= ui_obj.doc.getElementById(tabID "_content")
+
+    if(neutron && activeTab.id == wantedTab.id)
+        return 
+        
+    activeTab.classList.remove("is-active")
+    wantedTab.classList.add("is-active")
+    activeTabContent.classList.add("hidden")
+    if(neutron)
+        sleep, 200
+    activeTabContent.classList.add("tab-hidden")
+    wantedTabContent.classList.remove("tab-hidden")
+    wantedTabContent.classList.remove("hidden")
+    if(tabID == "profiles_tab")
+        UI_switchToTab(neutron, ".profile-tabs", "hotkeys_tab")
 }
 
 UI_updateThemeOption(neutron:=""){
@@ -669,15 +655,13 @@ UI_warnProfileIsDirty(){
 }
 
 UI_notify(txt){
-    notif:= ui_obj.doc.getElementById("notification")
-    notif.firstElementChild.innerText:= txt
-    notif.classList.remove("hidden")
-    SetTimer, UI_dismissNotif, -1200
+    ui_obj.doc.getElementById("notification_content").innerText:= txt
+    ui_obj.doc.getElementById("notification").classList.remove("hidden")
+    SetTimer, UI_dismissNotif, -2000
 }
 
-UI_dismissNotif(){
-    notif:= ui_obj.doc.getElementById("notification")
-    notif.classList.add("hidden")
+UI_dismissNotif(neutron:=""){
+    ui_obj.doc.getElementById("notification").classList.add("hidden")
 }
 
 UI_close(neutron:=""){
