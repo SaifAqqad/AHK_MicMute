@@ -64,7 +64,7 @@ input[type="text"]:disabled {
 }
 
 [data-title]:after {
-    background-color: #191919 !important;
+    background-color: #1A1A1A !important;
     color: #c9c9c9;
 }
 

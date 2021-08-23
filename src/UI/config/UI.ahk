@@ -8,7 +8,7 @@ global ui_obj, about_obj, current_profile, hotkey_panels, current_hp
 , template_app:= "<option value='{1:}' {3:} >{2:}</option>"
 , template_profile_tag:= "
 (
-    <span class=""tag is-medium"" tabindex=0 onkeydown=""switch(event.keyCode){case 32:case 69: event.preventDefault(); this.oncontextmenu.call() ;break; case 13:this.click()}""
+    <span class=""tag is-medium has-tooltip"" tabindex=0 onkeydown=""switch(event.keyCode){case 32:case 69: event.preventDefault(); this.oncontextmenu.call() ;break; case 13:this.click()}""
         id=""tag_profile_{1:}"" oncontextmenu=""ahk.UI_displayProfileRename('{1:}')"" onClick=""ahk.UI_setProfile('{1:}');this.blur()"">
         <label class=""radio"">
             <input type=""radio"" name=""profiles_radio"" value=""{1:}"" id=""profile_{1:}"" disabled>
@@ -64,7 +64,7 @@ UI_Show(p_profile){
     UI_switchToTab("", ".main-tabs", "profiles_tab")
     UI_addTooltips()
     tray_defaults()
-    ui_obj.Gui(Format("+LabelUI_ +MinSize{:i}x{:i}",520*UI_scale,500*UI_scale))
+    ui_obj.Gui(Format("+LabelUI_ +MinSize{:i}x{:i}",745*UI_scale,500*UI_scale))
     ui_obj.Show(Format("Center w{:i} h{:i}",800*UI_scale,650*UI_scale),"MicMute")
     ui_obj.doc.focus()
 }
