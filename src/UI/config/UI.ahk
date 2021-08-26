@@ -65,7 +65,7 @@ UI_Show(p_profile){
     UI_addTooltips()
     tray_defaults()
     ui_obj.Gui(Format("+LabelUI_ +MinSize{:i}x{:i}",745*UI_scale,500*UI_scale))
-    ui_obj.Show(Format("Center w{:i} h{:i}",800*UI_scale,650*UI_scale),"MicMute")
+    ui_obj.Show(Format("Center w{:i} h{:i}",820*UI_scale,650*UI_scale),"MicMute")
     ui_obj.doc.focus()
 }
 
@@ -618,7 +618,7 @@ UI_updateDefaultProfile(neutron){
 
 UI_loadCss(neutron){
     neutron.doc.getElementById("MicMute_icon").setAttribute("src", resources_obj.pngIcon)
-    neutron.doc.getElementById("version").innerText:= "v" A_Version
+    neutron.doc.getElementById("version").innerText:= A_Version
     for i, css in resources_obj.cssFile {
         if(!neutron.doc.getElementById("css_" css.name))
             neutron.doc.head.insertAdjacentHTML("beforeend",Format(template_link, css.name, css.file))
