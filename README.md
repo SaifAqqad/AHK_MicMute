@@ -3,7 +3,7 @@
     MicMute
 </h1>
 <p align="center">
-    Control your microphone using keyboard shortcuts.
+    Control your microphone using keyboard and mouse hotkeys.
 </p>
 <p align="center">
     <a href="https://github.com/SaifAqqad/AHK_MicMute/releases/latest"><img src="https://img.shields.io/github/v/release/SaifAqqad/AHK_MicMute?color=FF5B20&label=latest&logo=github&style=for-the-badge"></a>
@@ -16,10 +16,13 @@
    * Set up multiple profiles and link them to apps/games
    * Control multiple microphones simultaneously 
    * Use separate hotkeys for Mute/Unmute or a single toggle/push-to-talk hotkey
-   * Optional sound and on-screen feedback with ability to use custom sounds
    * AFK timeout (auto mute when idling for longer than a specific time interval)
+   * Optional sound and on-screen feedback with ability to use custom sounds
+   * Always-on-top overlay to show the microphone's state
 
 ## Installation
+<sub>Note: Starting with [version 1.1.1](https://github.com/SaifAqqad/AHK_MicMute/releases/tag/1.1.1), `MicMute.exe` is 64-bit only.</sub>
+
 ### A. Install using [Scoop](https://scoop.sh)
 
 ```powershell
@@ -43,11 +46,11 @@ scoop install micmute
 2. Choose the hotkey type (Toggle, Push-to-talk or seperate hotkeys).
 3. Select the hotkey options you want. see [hotkey options](#hotkey-options).
 4. Click Record and press the key(s) combination for the hotkey, then click on Stop to save it.
-5. Select the feedback options you want. see [feedback options](#feedback-options).
+5. Go to the `Feedback` tab and select the feedback options you want. see [feedback options](#feedback-options).
 6. If you're setting up multiple profiles, you can link a profile to an app/game. see [linked applications](#linked-applications).
-7. If you want the microphone to be auto muted when you idle, type the amount of minutes to wait under AFK timeout.
-8. If you're setting up a PTT hotkey, you can change the delay between releasing the key and the audio cutting off by changing the PTT delay option.
-9. Click on Save profile.
+7. If you want the microphone to be auto muted when you idle, setup `AFK timeout`.
+8. If you're setting up a PTT hotkey, you can change the delay between releasing the key and the audio cutting off by changing the `PTT delay` option.
+9. Click on the save button.
 
 ### Notes
 * You can change a profile's name by right clicking it.
@@ -65,17 +68,32 @@ scoop install micmute
 
 ### Feedback options
 #### 1. Sound feedback
-Play a sound when muting/unmuting the microphones. You can also use [custom sounds](#1-custom-sounds).
+Play a sound when muting/unmuting the microphones.
+* You can select which output device to play the sound on.
+
+* You can use custom sounds:
+   1. Turn on the option in the config UI
+   2. Make sure the sound files (`mp3`,`wav`) are in the same folder as `MicMute.exe`
+   3. Rename them as:
+        * **Mute sound**: `mute` 
+
+        * **Unmute sound**: `unmute` 
+
+        * **PTT on**: `ptt_on` 
+
+        * **PTT off**: `ptt_off`
+
+
 #### 2. On-screen feedback
 Show an OSD when muting/unmuting the microphones. 
 
-* You can change the OSD position (default position is the bottom center of the screen, above the taskbar).
-* You can exclude fullscreen apps/games from the OSD, this is needed for some games that lose focus when the OSD is shown.
 * <details>
   <summary>GIF</summary>
 
   ![OSD](./src/resources/OSD.gif)
   </details>
+* You can change the OSD position (default position is the bottom center of the screen, above the taskbar).
+* You can exclude fullscreen apps/games from the OSD, this is needed for some games that lose focus when the OSD is shown.
 
 #### 3. On-screen overlay
 Show the microphone's state in an always-on-top overlay.
@@ -104,22 +122,11 @@ Link a profile to an app/game, when the app is launched, MicMute automatically s
 
 ### Global options
 These options are shared between all profiles.
-#### 1. Custom sounds
- To use custom feedback sounds, turn on the option in the config UI, then make sure the sound files (`mp3`,`wav`) are in the same folder as `MicMute.exe` and rename them as:
-
-* **Mute sound**: `mute` 
-
-* **Unmute sound**: `unmute` 
-
-* **PTT on**: `ptt_on` 
-
-* **PTT off**: `ptt_off`
-
-#### 2. Mute on startup
-Mute the profile's microphones when switching to it.
-#### 3. Switching-profile OSD
+#### 1. Mute on startup
+Mute the microphone(s) when starting up or switching profiles.
+#### 2. Switching-profile OSD
 Show an OSD with the profile's name when switching to it.
-#### 4. UI Theme
+#### 3. UI Theme
 UI Theme can be set to `System Theme`, `Dark` or `Light`
 
 <small>This does *not* affect the tray icon color, which is always based on the system theme</small>
@@ -132,9 +139,9 @@ To do this, toggle the `Multiple` option then select another microphone from the
 When using this feature, the following applies:
 
 * The tray icon will be the static MicMute icon
-* The tray icon no longer acts as a toggle button, and the tray menu option to toggle the microphone is disabled.
+* The tray icon will no longer act as a toggle button, and the tray menu option to toggle the microphone will be disabled.
 * The [On-screen feedback](#2-on-screen-feedback) OSD will show the microphone name when muting/unmuting
-* The [On-screen overlay]() is disabled
+* The [On-screen overlay](#3-on-screen-overlay) is disabled
 <hr>
 
 ## Known issues
@@ -142,7 +149,7 @@ When using this feature, the following applies:
 
 * [Albion Online](https://albiononline.com/en/home) detects MicMute as a botting tool, the games blacklists anything written in autohotkey and marks it as a botting tool. [#23](https://github.com/SaifAqqad/AHK_MicMute/issues/23)
 
-* Windows defender might falsely detect MicMute as a trojen/malware (`Zpevdo.B` or ML detections). I always submit new releases to microsoft to remove the false detections and they usually do in a couple of days, but sometimes when they release a new definition update the detection occurs again. [#25](https://github.com/SaifAqqad/AHK_MicMute/issues/25)
+* Windows defender might falsely detect MicMute as a trojen/malware (`Zpevdo.B` or `Wacatac.B!ml`). I always submit new releases to microsoft to remove the false detections and they usually do in a couple of days, but sometimes when they release a new definition update the detection occurs again. [#25](https://github.com/SaifAqqad/AHK_MicMute/issues/25)
  
 
 ## Editing the config file
@@ -151,21 +158,21 @@ When using this feature, the following applies:
 ```json
 //config.json example 
 {
-    "AllowUpdateChecker": 1,
+    "AllowUpdateChecker": 0,
     "DefaultProfile": "Default",
-    "MuteOnStartup": 0,
+    "MuteOnStartup": 1,
     "PreferTheme": -1,
     "Profiles": [
         {
-            "afkTimeout": 0,
+            "afkTimeout": 2,
             "ExcludeFullscreen": 0,
             "LinkedApp": "",
             "Microphone": [
                 {
-                    "MuteHotkey": "*RShift",
+                    "MuteHotkey": "~*RShift",
                     "Name": "Microphone (AmazonBasics Desktop Mini Mic)",
                     "PushToTalk": 0,
-                    "UnmuteHotkey": "*RShift"
+                    "UnmuteHotkey": "~*RShift"
                 }
             ],
             "OnscreenFeedback": 0,
@@ -176,18 +183,19 @@ When using this feature, the following applies:
             },
             "OverlayOnMuteOnly": 0,
             "OverlayPos": {
-                "x": 300,
-                "y": 450
+                "x": 2486,
+                "y": 387
             },
             "OverlayUseCustomIcons": 0,
             "ProfileName": "Default",
-            "PTTDelay": 100,
+            "PTTDelay": 50,
             "SoundFeedback": 1,
+            "SoundFeedbackDevice": "Default",
+            "SoundFeedbackUseCustomSounds": 0,
             "UpdateWithSystem": 1
         }
     ],
-    "SwitchProfileOSD": 1,
-    "UseCustomSounds": 0
+    "SwitchProfileOSD": 1
 }
 ```
 
@@ -201,16 +209,16 @@ When using this feature, the following applies:
 
 Example: `MicMute.exe "/profile=profile 1" /noUI /debug /logFile=MicMute.log`
 ## Compile instructions
-<small>Note: Starting with version [0.9.0](https://github.com/SaifAqqad/AHK_MicMute/releases/tag/0.9.0), You can run `MicMute.ahk` directly without compiling it.</small>
+<small>Note: Run the following commands in powershell, not command prompt.</small>
 
 ### 1. Install prerequisites
-You'll need [AutoHotkey](https://www.autohotkey.com/) and [git](https://git-scm.com/download/win).
+You'll need [AutoHotkey (Ahk2Exe)](https://www.autohotkey.com/) and [git](https://git-scm.com/download/win) in your path.
 
 You can install them using [scoop](https://scoop.sh):
 
 1. Install scoop 
     ```powershell
-    # This allows running powershell scripts that are signed by a trusted publisher.
+    # This allows running powershell scripts.
     Set-ExecutionPolicy RemoteSigned -scope CurrentUser;
 
     # This runs the scoop installer script.
@@ -218,27 +226,43 @@ You can install them using [scoop](https://scoop.sh):
     ```
 2. Install prerequisites
     ```powershell
+    scoop install git;
     scoop bucket add extras;
-    scoop install git autohotkey;
+    scoop install autohotkey;
     ```
 ### 2. Clone the repository (and submodules)
     
 ```powershell
 git clone --recurse-submodules https://github.com/SaifAqqad/AHK_MicMute.git;
+cd .\AHK_MicMute\;
 ```
-### 3. Run the compiler
+
+If you had already cloned the repository without submodules, Run the following command:
 
 ```powershell
-cd .\AHK_MicMute\;
-ahk2exe /in ".\src\MicMute.ahk" /out ".\src\MicMute.exe";
+git submodule update --init --recursive;
+```
+
+### 3. Download and extract BASS library
+```powershell
+Invoke-WebRequest "www.un4seen.com/files/bass24.zip" -OutFile ".\bass24.zip";
+Expand-Archive ".\bass24.zip" -DestinationPath ".\base24\";
+Copy-Item ".\base24\x64\bass.dll" -Destination ".\src\Lib\bass.dll";
+```
+
+### 4. Run the compiler
+
+```powershell
+ahk2exe.exe /in ".\src\MicMute.ahk" /out ".\src\MicMute.exe";
 ```
 
 ## Libraries and resources used
 
 | Library                                                               | License                                                                        |
 |-----------------------------------------------------------------------|--------------------------------------------------------------------------------|
-| [G33kDude/Neutron.ahk](https://github.com/G33kDude/Neutron.ahk)       | [MIT](https://github.com/G33kDude/Neutron.ahk/blob/master/LICENSE)             |
-| [G33kDude/cJson.ahk](https://github.com/G33kDude/cJson.ahk)           | [MIT](https://github.com/G33kDude/cJson.ahk/blob/main/LICENSE)                 |
-| [Bulma CSS framework](https://bulma.io/)                              | [MIT](https://github.com/jgthms/bulma/blob/master/LICENSE)                     |
-| [Lexikos/VA.ahk](https://github.com/ahkscript/VistaAudio)             | [License](https://github.com/ahkscript/VistaAudio/blob/master/LICENSE)         |
 | [Material Design icons](https://github.com/Templarian/MaterialDesign) | [Apache 2.0](https://github.com/Templarian/MaterialDesign/blob/master/LICENSE) |
+| [BASS audio library](https://www.un4seen.com)                         | [License](https://www.un4seen.com/#license)                                    |
+| [Lexikos/VA.ahk](https://github.com/ahkscript/VistaAudio)             | [License](https://github.com/ahkscript/VistaAudio/blob/master/LICENSE)         |
+| [Bulma CSS framework](https://bulma.io/)                              | [MIT](https://github.com/jgthms/bulma/blob/master/LICENSE)                     |
+| [G33kDude/cJson.ahk](https://github.com/G33kDude/cJson.ahk)           | [MIT](https://github.com/G33kDude/cJson.ahk/blob/main/LICENSE)                 |
+| [G33kDude/Neutron.ahk](https://github.com/G33kDude/Neutron.ahk)       | [MIT](https://github.com/G33kDude/Neutron.ahk/blob/master/LICENSE)             |
