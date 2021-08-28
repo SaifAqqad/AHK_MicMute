@@ -21,7 +21,7 @@
    * Always-on-top overlay to show the microphone's state
 
 ## Installation
-<sub>Note: Starting with [version 1.1.1](https://github.com/SaifAqqad/AHK_MicMute/releases/tag/1.1.1), `MicMute.exe` is 64-bit only.</sub>
+<sub>Note: Starting with [v1.1.1](https://github.com/SaifAqqad/AHK_MicMute/releases/tag/1.1.1), MicMute.exe is 64-bit only.</sub>
 
 ### A. Install using [Scoop](https://scoop.sh)
 
