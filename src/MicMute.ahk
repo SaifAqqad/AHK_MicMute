@@ -197,7 +197,8 @@ switchProfile(p_name:=""){
     ; setup sound player
     if(current_profile.SoundFeedback){
         sp_obj:= new SoundPlayer()
-        sp_obj.setDevice(current_profile.SoundFeedbackDevice)
+        if(!sp_obj.setDevice(current_profile.SoundFeedbackDevice))
+            sp_obj.setDevice("Default")
         sp_obj.play(resources_obj.getSoundFile(0),0) ;test playback to remove initial pop
     }
     ;handle multiple microphones

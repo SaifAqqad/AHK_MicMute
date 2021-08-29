@@ -4,7 +4,7 @@ global ui_obj, about_obj, current_profile, hotkey_panels, current_hp
 , template_link:= "<link rel='stylesheet' id='css_{1:}' href='{2:}'>"
 , template_default_profile:= "<option value='{1:}' {2:} >{1:}</option>"
 , template_mic:= "<option value='{1:}' id='mic_{1:}' {2:} >{1:}</option>"
-, template_output:= "<option value='{1:}' id='output_{1:}'>{1:}</option>"
+, template_output:= "<option value='{1:}' id='output_{1:}' {2:}>{1:}</option>"
 , template_app:= "<option value='{1:}' {3:} >{2:}</option>"
 , template_profile_tag:= "
 (
@@ -370,9 +370,10 @@ UI_onRefreshOutputDeviceList(neutron){
     select.innerHTML:= ""
     devices:= new SoundPlayer().devices
     for i, device in devices {
-        select.insertAdjacentHTML("beforeend", Format(template_output, device))
+        select.insertAdjacentHTML("beforeend", Format(template_output, device, device = current_profile.SoundFeedbackDevice? "selected":""))
     }
-    select.value:= current_profile.SoundFeedbackDevice
+    if(current_profile.SoundFeedbackDevice != select.value)
+        select.insertAdjacentHTML("beforeend", Format(template_output, current_profile.SoundFeedbackDevice, "selected"))
     if(neutron)
         UI_notify("Refreshed devices")
 }
