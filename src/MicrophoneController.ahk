@@ -1,14 +1,12 @@
 Class MicrophoneController {
-    static hotkeys_set, generic_state_string:= {0:"Microphone Online",1:"Microphone Muted"}
+    static hotkeys_set, generic_state_string:= {0:"Microphone Online",1:"Microphone Muted",-1:"Microphone Unavailable"}
 
     __New(mic_obj, ptt_delay:=0, feedback_func:=""){
         this.state:=0
         this.ptt_key:=""
         this.microphone:= mic_obj.Name
         if(mic_obj.Name = "default")
-            this.microphone:= "capture"
-        if(!VA_GetDevice(this.microphone))
-            Throw, Format("[MicrophoneController] Invalid microphone name '{}' in profile '{}'", mic_obj.Name, current_profile.ProfileName)
+            this.microphone:= "capture"            
         this.muteHotkey:= mic_obj.MuteHotkey
         this.unmuteHotkey:= mic_obj.UnmuteHotkey
         this.isPushToTalk:= mic_obj.PushToTalk
@@ -34,9 +32,10 @@ Class MicrophoneController {
         Critical, On
         switch state {
             case this.state: return
-            case -1: state:= !this.state
+            case -2: state:= !this.state
         }
-        VA_SetMasterMute(state, this.microphone)
+        if(VA_SetMasterMute(state, this.microphone) = -1) ;failing
+            return util_log("[MicrophoneController] " this.microphone " is unavailable")
         this.updateState()
         Critical, Off
         if(IsFunc(this.feedback_func))
@@ -57,7 +56,7 @@ Class MicrophoneController {
                     Hotkey, % this.muteHotkey , % funcObj, On
                     SetTimer, checkIsIdle, Off
                 }else{
-                    funcObj:= ObjBindMethod(this,"setMuteState",-1)
+                    funcObj:= ObjBindMethod(this,"setMuteState",-2)
                     Hotkey, % this.muteHotkey , % funcObj, On
                 }
             }else{

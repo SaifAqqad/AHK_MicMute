@@ -155,11 +155,11 @@ UI_onChange(neutron, funcName, params*){
 UI_resetMicSelect(){
     select:= ui_obj.doc.getElementById("microphone")
     select.innerHTML:=""
-    select.insertAdjacentHTML("beforeend", Format(template_mic, "Default", "selected"))
-    devices:= VA_GetCaptureDeviceList()
+    devices:= UI_getMicrophonesList()
     for i, device in devices {
         select.insertAdjacentHTML("beforeend", Format(template_mic, device,""))
     }
+    select.value:= "Default"
 }
 
 UI_setHotkeyPanel(hotkey_panel, delay:=0){
@@ -379,8 +379,7 @@ UI_onRefreshOutputDeviceList(neutron){
 }
 
 UI_checkMicOptions(){
-    devices:= VA_GetCaptureDeviceList(), numPanels:=0
-    devices.Push("Default")
+    devices:= UI_getMicrophonesList(), numPanels:=0
     for i, device in devices {
         micOption:= ui_obj.doc.getElementById("mic_" device)
         if(hotkey_panels[device].mute.hotkey_h){
@@ -390,6 +389,15 @@ UI_checkMicOptions(){
             micOption.innerText:= StrReplace(micOption.innerText, "* ")
         }
     }
+}
+
+; returns a list of all microphones, even if they are not currently available
+UI_getMicrophonesList(){
+    inputDevices:= new StackSet("Default", VA_GetCaptureDeviceList()*)
+    for i, mic in current_profile.Microphone {
+        inputDevices.push(mic.Name)
+    }
+    return inputDevices.data
 }
 
 UI_onUpdateDelay(delay){

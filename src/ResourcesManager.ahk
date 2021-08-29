@@ -96,6 +96,8 @@ class ResourcesManager {
     }
 
     getIcoFile(state){
+        if(state = -1)
+            return this.defaultIcon
         color:= sys_theme? "white" : "black"
         state:= state? "mute" : "unmute"
         return this.icoFile[color "_" state]
