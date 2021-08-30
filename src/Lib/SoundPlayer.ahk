@@ -22,6 +22,8 @@ class SoundPlayer {
             Throw, Exception("[SoundPlayer] play: p_sound is not an object")
             return
         }
+        if(previousStream) ;mute previous stream
+            DllCall(this.BASS_DLLPATH . this.BASS_DLL . "\BASS_ChannelSetAttribute", UInt, previousStream, UInt, 2, Float, 0.0)
         ; create a new stream
         flags:= this.BASS_STREAM_AUTOFREE | this.BASS_UNICODE
         if(p_sound.ptr){
