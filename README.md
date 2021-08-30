@@ -59,8 +59,8 @@ scoop install micmute
 <hr>
 
 ### Hotkey options
-| Option            | Description                                                                                                                                                                                                                                                                    |
-|-------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Option | Description |
+|--------|-------------|
 | Passthrough       | If this is turned off, the hotkey will only work for MicMute and will be hidden from the rest of the system. So turn this on if you want the hotkey to work for other apps.                                                                                                    |
 | Wildcard          | If this is turned on, the hotkey will work even if you press extra modifiers, so for example if the hotkey is <kbd>Ctrl</kbd> <kbd>M</kbd> and you press <kbd>Ctrl</kbd> <kbd>Shift</kbd> <kbd>M</kbd> , the hotkey will still be triggered.                                   |
 | Neutral modifiers | If this is turned off, the hotkey can have a specific modifier (Right or Left) instead of a neutral one (example: <kbd>RCtrl</kbd> instead of <kbd>Ctrl</kbd>, this will only be triggered by the right control key). This option should be set *before* recording the hotkey. |
@@ -200,8 +200,8 @@ When using this feature, the following applies:
 ```
 
 ## CLI arguments
-| Argument                    | Description                                                                         |
-|-----------------------------|-------------------------------------------------------------------------------------|
+| Argument | Description |
+|----------|-------------|
 | `/profile=<profile name>`   | Startup with a specific profile.                                                    |
 | `/noUI`                     | Disable the configuration UI completely. This decreases memory usage by almost 60%. |
 | `/debug`                    | Add shortcuts to `ListVars`, `ListHotkeys` and `View Log`  in the tray menu.        |
@@ -258,11 +258,11 @@ ahk2exe.exe /in ".\src\MicMute.ahk" /out ".\src\MicMute.exe";
 
 ## Libraries and resources used
 
-| Library                                                               | License                                                                        |
-|-----------------------------------------------------------------------|--------------------------------------------------------------------------------|
+| Library | License |
+|---------|---------|
 | [Material Design icons](https://github.com/Templarian/MaterialDesign) | [Apache 2.0](https://github.com/Templarian/MaterialDesign/blob/master/LICENSE) |
 | [BASS audio library](https://www.un4seen.com)                         | [License](https://www.un4seen.com/#license)                                    |
-| [Lexikos/VA.ahk](https://github.com/ahkscript/VistaAudio)             | [License](https://github.com/ahkscript/VistaAudio/blob/master/LICENSE)         |
+| [VA.ahk](https://github.com/SaifAqqad/VA.ahk)             | [License](https://github.com/SaifAqqad/VA.ahk/blob/master/LICENSE)         |
 | [Bulma CSS framework](https://bulma.io/)                              | [MIT](https://github.com/jgthms/bulma/blob/master/LICENSE)                     |
 | [G33kDude/cJson.ahk](https://github.com/G33kDude/cJson.ahk)           | [MIT](https://github.com/G33kDude/cJson.ahk/blob/main/LICENSE)                 |
 | [G33kDude/Neutron.ahk](https://github.com/G33kDude/Neutron.ahk)       | [MIT](https://github.com/G33kDude/Neutron.ahk/blob/master/LICENSE)             |

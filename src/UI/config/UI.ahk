@@ -393,7 +393,7 @@ UI_checkMicOptions(){
 
 ; returns a list of all microphones, even if they are not currently available
 UI_getMicrophonesList(){
-    inputDevices:= new StackSet("Default", VA_GetCaptureDeviceList()*)
+    inputDevices:= new StackSet("Default", VA_GetDeviceList("capture")*)
     for i, mic in current_profile.Microphone {
         inputDevices.push(mic.Name)
     }

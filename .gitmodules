@@ -4,3 +4,6 @@
 [submodule "src/Lib/Neutron"]
 	path = src/Lib/Neutron
 	url = https://github.com/SaifAqqad/Neutron.ahk
+[submodule "src/Lib/VA"]
+	path = src/Lib/VA
+	url = https://github.com/SaifAqqad/VA.ahk

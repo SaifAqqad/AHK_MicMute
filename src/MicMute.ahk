@@ -23,7 +23,7 @@ SetWorkingDir %A_ScriptDir%
 #SingleInstance force
 
 #Include, <WinUtils>
-#Include, <VA>
+#Include, <VA\VA>
 #Include, <cJson\Dist\cJson>
 #Include, <Neutron\Neutron>
 #Include, <StackSet>
