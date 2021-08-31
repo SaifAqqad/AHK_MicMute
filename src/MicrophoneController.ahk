@@ -52,12 +52,27 @@ Class MicrophoneController {
         this.callFeedback:=1
         Critical, Off
     }
-    
+        
+    updateState(p_notify:=""){
+        if(p_notify) ; callback
+            this.state:= !!p_notify.Muted
+        else
+            this.state:= VA_GetMasterMute(this.microphone)+0
+
+        this.state_func.Call(this)
+        if(this.callFeedback){
+            this.feedback_func.Call(this)
+            this.callFeedback:=0
+        }
+    }
+
     enableController(){
-        if(this.hotkeys_set.exists(HotkeyPanel.hotkeyToKeys(this.muteHotkey,1))
-           || this.hotkeys_set.exists(HotkeyPanel.hotkeyToKeys(this.unmuteHotkey,1)))
-            Throw, Format("[MicrophoneController] Found conflicting hotkeys in profile '{}'", current_profile.ProfileName)
+        if(this.state!=-1 && (MicrophoneController.hotkeys_set.exists(HotkeyPanel.hotkeyToKeys(this.muteHotkey,1))
+           || MicrophoneController.hotkeys_set.exists(HotkeyPanel.hotkeyToKeys(this.unmuteHotkey,1))))
+            Throw, Format("Found conflicting hotkeys in profile '{}'", current_profile.ProfileName)
         Try{
+            if(HotkeyPanel.hotkeyToKeys(this.muteHotkey,1)="")
+                Throw, "Invalid hotkeys"
             if (this.muteHotkey=this.unmuteHotkey){
                 if(this.isPushToTalk){
                     VA_SetMasterMute(1, this.microphone)
@@ -76,10 +91,10 @@ Class MicrophoneController {
                 Hotkey, % this.unmuteHotkey, % funcObj, On
             } 
         }catch{
-            Throw, Format("[MicrophoneController] Invalid hotkeys in profile '{}'",current_profile.ProfileName)
+            Throw, Format("Invalid hotkeys in profile '{}'",current_profile.ProfileName)
         }
-        this.hotkeys_set.push(HotkeyPanel.hotkeyToKeys(this.muteHotkey,1))
-        this.hotkeys_set.push(HotkeyPanel.hotkeyToKeys(this.unmuteHotkey,1))
+        MicrophoneController.hotkeys_set.push(HotkeyPanel.hotkeyToKeys(this.muteHotkey,1))
+        MicrophoneController.hotkeys_set.push(HotkeyPanel.hotkeyToKeys(this.unmuteHotkey,1))
         this.callback:= VA_CreateAudioEndpointCallback(ObjBindMethod(this, "updateState"), this.microphone)
         util_log(Format("[MicrophoneController] Enabled: {}", this.microphone))
     }
@@ -89,20 +104,11 @@ Class MicrophoneController {
         Hotkey, % this.unmuteHotkey, Off, Off
         Try VA_ReleaseAudioEndpointCallback(VA_GetDevice(this.microphone),this.callback)
         this.callback:=""
-        MicrophoneController.hotkeys_set:= new StackSet
         util_log(Format("[MicrophoneController] Disabled: {}", this.microphone))
     }
-    
-    updateState(p_notify:=""){
-        if(p_notify) ; callback
-            this.state:= !!p_notify.Muted
-        else
-            this.state:= VA_GetMasterMute(this.microphone)+0
 
-        this.state_func.Call(this)
-        if(this.callFeedback){
-            this.feedback_func.Call(this)
-            this.callFeedback:=0
-        }
- }
+    resetHotkeySet(){
+        MicrophoneController.hotkeys_set:= new StackSet
+    }
+
 }

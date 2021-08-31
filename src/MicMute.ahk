@@ -151,6 +151,7 @@ switchProfile(p_name:=""){
             mic.disableController()
         }
     }
+    MicrophoneController.resetHotkeySet()
     ;set current_profile to the new profile
     Try current_profile:= config_obj.getProfile(p_name)
     catch err{
