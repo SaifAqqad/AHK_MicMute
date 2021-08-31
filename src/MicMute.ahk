@@ -69,6 +69,8 @@ config_obj.exportConfig()
 OnExit(Func("exitMicMute"))
 ; listen for sys theme changes
 OnMessage(WM_SETTINGCHANGE, "updateSysTheme")
+; listen for window changes
+registerWindowHook()
 ; run the update checker once, 5 seconds after launching
 if(A_IsCompiled && !arg_reload && config_obj.AllowUpdateChecker=1){
     cfunc:= ObjBindMethod(VersionChecker, "CheckForUpdates")
@@ -346,6 +348,17 @@ parseArgs(){
             case "logFile": arg_logFile:= val3
         }
     }
+}
+
+registerWindowHook(){
+    DllCall( "RegisterShellHookWindow", UInt,A_ScriptHwnd )
+    MsgNum := DllCall( "RegisterWindowMessage", Str,"SHELLHOOK" )
+    OnMessage( MsgNum, "onWindowChange" )
+}
+
+onWindowChange(wParam, lParam){
+    if(wParam=1)
+        showElevatedWarning()
 }
 
 showElevatedWarning(){
