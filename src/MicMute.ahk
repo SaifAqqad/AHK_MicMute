@@ -21,6 +21,7 @@ SetWorkingDir %A_ScriptDir%
 #InstallMouseHook
 #InstallKeybdHook
 #SingleInstance force
+#MaxThreadsPerHotkey 1
 
 #Include, <WinUtils>
 #Include, <VA\VA>
@@ -47,8 +48,7 @@ SetWorkingDir %A_ScriptDir%
 Global config_obj, osd_obj, overlay_obj, mic_controllers, current_profile
 , mute_sound, unmute_sound, ptt_on_sound, ptt_off_sound
 , sys_theme, ui_theme, isFirstLaunch:=0
-, watched_profiles, watched_profile
-, func_update_state, last_modif_time
+, watched_profiles, watched_profile, last_modif_time
 , arg_isDebug:=0, arg_profile:="", arg_noUI:=0, arg_reload:= 0, arg_logFile:="*"
 , resources_obj:= new ResourcesManager()
 , A_Version:= A_IsCompiled? util_getFileSemVer(A_ScriptFullPath) : U_Version 
@@ -80,13 +80,6 @@ util_log("[Main] MicMute startup took " A_startupTime "ms")
 
 initilizeMicMute(default_profile:=""){
     util_log("[Main] Initilizing MicMute")
-    ;make sure hotkeys are disabled before reinitilization
-    if(mic_controllers)
-        for i,mic in mic_controllers
-            mic.disableHotkeys()
-    ;destroy existing guis 
-    overlay_obj.destroy()
-    osd_obj.destroy()
     ;initilize globals
     config_obj:= new Config()
     , osd_obj:=""
@@ -139,25 +132,23 @@ switchProfile(p_name:=""){
     Critical, On
     ;turn off profile-specific timers
     Try{
-        SetTimer, % func_update_state, Off
         SetTimer, checkIsIdle, Off
-    }
-    ;unmute and disable hotkeys for all existing microphones
-    if(mic_controllers){
-        for i, mic in mic_controllers{
-            VA_SetMasterMute(0,mic.microphone)
-            mic.disableHotkeys()
-        }
     }
     ;destroy existing guis 
     overlay_obj.destroy()
     osd_obj.destroy()
+    sp_obj.__free()
     ;reset tray icon and tooltip
     tray_defaults()
     ;uncheck the profile in the tray menu
     Menu, profiles, Uncheck, % current_profile.ProfileName
-    ;reset the hotkeys set in MicrophoneController class
-    MicrophoneController.resetHotkeysSet()
+    ;unmute and disable hotkeys for all existing microphones
+    if(mic_controllers){
+        for i, mic in mic_controllers{
+            VA_SetMasterMute(0,mic.microphone)
+            mic.disableController()
+        }
+    }
     ;set current_profile to the new profile
     Try current_profile:= config_obj.getProfile(p_name)
     catch err{
@@ -178,8 +169,12 @@ switchProfile(p_name:=""){
     for i, mic in current_profile.Microphone {
         Try {
             ;create a new MicrophoneController object for each mic
-            mc:= new MicrophoneController(mic, current_profile.PTTDelay, Func("showFeedback"))
-            mc.enableHotkeys()
+            mc:= new MicrophoneController(mic, current_profile.PTTDelay, Func("showFeedback"), Func("onUpdateState"))
+            ; mute mics on startup
+            if(config_obj.MuteOnStartup)
+                VA_SetMasterMute(1,mic.Name)
+            mc.enableController()
+            mc.updateState()
             mic_controllers.Push(mc)
         }Catch, err {
             util_log(err)
@@ -190,7 +185,7 @@ switchProfile(p_name:=""){
     ;check the profile in the tray menu
     Menu, profiles, Check, % current_profile.ProfileName
     ;handle tray toggle option
-    tray_add("Toggle microphone", ObjBindMethod(mic_controllers[1],"setMuteState",-1))
+    tray_add("Toggle microphone", ObjBindMethod(mic_controllers[1],"setMuteState",-2))
     tray_toggleMic(1)
     if(mic_controllers[1].isPushToTalk)
         tray_toggleMic(0)
@@ -203,25 +198,15 @@ switchProfile(p_name:=""){
     }
     ;handle multiple microphones
     if(mic_controllers.Length()>1){
-        func_update_state:= Func("updateStateMutliple")
         tray_toggleMic(0)
     }else{
-        func_update_state:= Func("updateState")
-        if(current_profile.OnscreenOverlay)
+        if(current_profile.OnscreenOverlay){
             overlay_obj:= new Overlay(current_profile)
+            overlay_obj.setState(mic_controllers[1].state)
+        }
     }
-    ;turn on profile-specific timers
-    if (current_profile.UpdateWithSystem)
-        SetTimer, % func_update_state, 1500
     if (current_profile.afkTimeout)
         SetTimer, checkIsIdle, 1000  
-    ; mute mics on startup
-    if(config_obj.MuteOnStartup){
-        for i, mic in mic_controllers 
-            VA_SetMasterMute(1,mic.microphone)
-    }
-    ;get initial state  
-    func_update_state.Call()
     ;show switching-profile OSD
     if(config_obj.SwitchProfileOSD)
         osd_obj.showAndHide(Format("Profile: {}", current_profile.ProfileName))
@@ -229,8 +214,6 @@ switchProfile(p_name:=""){
 }
 
 showFeedback(mic_obj){
-    ;update global state to make sure the tray icon is updated
-    func_update_state.Call()
     ; if sound fb is enabled -> play the sound file
     if (current_profile.SoundFeedback){
         file:= resources_obj.getSoundFile(mic_obj.state,mic_obj.isPushToTalk)
@@ -254,9 +237,8 @@ editConfig(){
         Thread, NoTimers, 1
         if(current_profile){
             for i, mic in mic_controllers 
-                mic.disableHotkeys()
+                mic.disableController()
             overlay_obj.destroy()
-            Try SetTimer, % func_update_state, Off
             SetTimer, checkIsIdle, Off
             SetTimer, checkLinkedApps, Off
         }
@@ -307,21 +289,11 @@ checkLinkedApps(){
     }
 }
 
-updateState(){
-    mic_controllers[1].updateState()
-    tray_update(mic_controllers[1])
-    if(overlay_obj)
-        overlay_obj.setState(mic_controllers[1].state)
-    showElevatedWarning()
-}
-
-updateStateMutliple(){
-    ;for each MicrophoneController -> update its state
-    for i, mc in mic_controllers {
-        mc.updateState()
-    }
-    tray_defaults()
-    showElevatedWarning()
+onUpdateState(mic){
+    if(mic_controllers.Length()>1)
+        return tray_defaults()
+    tray_update(mic)
+    overlay_obj.setState(mic.state)
 }
 
 updateSysTheme(wParam:="", lParam:=""){
@@ -336,14 +308,18 @@ updateSysTheme(wParam:="", lParam:=""){
         ui_theme:= config_obj.PreferTheme = -1? !reg : config_obj.PreferTheme
         osd_obj.setTheme(ui_theme)
         UI_updateTheme()
+        Sleep, 100
+        onUpdateState(mic_controllers[1])
     }
 }
 
 exitMicMute(){
     util_log("[Main] Exiting MicMute")
     config_obj.exportConfig()
-    for i, mic in mic_controllers 
+    for i, mic in mic_controllers {
         VA_SetMasterMute(0,mic.microphone)
+        mic.disableController()
+    }
 }
 
 reloadMicMute(p_profile:=""){
