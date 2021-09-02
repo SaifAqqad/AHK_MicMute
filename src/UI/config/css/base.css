@@ -361,6 +361,11 @@ a {
     overflow: hidden;
 }
 
+.tooltip-offset-right[data-title]:after{
+    bottom: 125%;
+    left: 0%;
+}
+
 [data-title] {
     position: relative;
 }
