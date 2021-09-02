@@ -39,7 +39,9 @@ global ui_obj, about_obj, current_profile, hotkey_panels, current_hp
                   ,{ selector: ".OverlayOnMuteOnly-label"
                      , string: "Only show the overlay when the microphone is muted"}
                   ,{ selector: ".multiple-mics-label"
-                     , string: "Setup hotkeys for multiple microphones simultaneously"}]
+                     , string: "Setup hotkeys for multiple microphones simultaneously"}
+                  ,{ selector: ".ForceMicrophoneState-label"
+                     , string: "Prevent other apps from changing the microphone's state"}]
 
 UI_create(p_onExitCallback){
     util_log("[UI] Creating 'config' window")
@@ -135,10 +137,10 @@ UI_reset(){
         ui_obj.doc.getElementById("MuteOnStartup").setAttribute("checked", 1)
     else
         ui_obj.doc.getElementById("MuteOnStartup").removeAttribute("checked")
-    if(config_obj.UseCustomSounds)
-        ui_obj.doc.getElementById("UseCustomSounds").setAttribute("checked", 1)
+    if(config_obj.ForceMicrophoneState)
+        ui_obj.doc.getElementById("ForceMicrophoneState").setAttribute("checked", 1)
     else
-        ui_obj.doc.getElementById("UseCustomSounds").removeAttribute("checked")
+        ui_obj.doc.getElementById("ForceMicrophoneState").removeAttribute("checked")
     if(config_obj.SwitchProfileOSD)
         ui_obj.doc.getElementById("SwitchProfileOSD").setAttribute("checked", 1)
     else

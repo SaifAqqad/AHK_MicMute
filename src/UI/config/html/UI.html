@@ -535,6 +535,16 @@
                                 <span class="SwitchProfileOSD-label">Switching-profile OSD</span>
                             </label>
                         </div>
+                        <!-- Force Mic state -->
+                        <div class="tag is-small option has-tooltip"
+                            onclick="ahk.UI_onGlobalOption('ForceMicrophoneState',1);this.blur()" tabindex=0
+                            onkeydown="switch(event.keyCode){case 32:case 13:this.click()}">
+                            <label class="checkbox">
+                                <input tabindex="0" type="checkbox" name="ForceMicrophoneState" id="ForceMicrophoneState"
+                                    disabled>
+                                <span class="ForceMicrophoneState-label tooltip-offset-right">Force microphone state</span>
+                            </label>
+                        </div>
                     </div>
                     <div class="column is-5">
                         <!-- default profile -->

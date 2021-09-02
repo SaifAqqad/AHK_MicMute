@@ -172,7 +172,7 @@ switchProfile(p_name:=""){
     for i, mic in current_profile.Microphone {
         Try {
             ;create a new MicrophoneController object for each mic
-            mc:= new MicrophoneController(mic, current_profile.PTTDelay, Func("showFeedback"), Func("onUpdateState"))
+            mc:= new MicrophoneController(mic, current_profile.PTTDelay, config_obj.ForceMicrophoneState, Func("showFeedback"), Func("onUpdateState"))
             ; mute mics on startup
             if(config_obj.MuteOnStartup)
                 VA_SetMasterMute(1,mic.Name)
@@ -373,6 +373,7 @@ showElevatedWarning(){
         tray_defaults()
         TrayTip, MicMute, Detected an application running with administrator privileges. You need to run MicMute as administrator for the hotkeys to work with it.
         lastP:= pName
+        onUpdateState(mic_controllers[1])
     }
 }
 

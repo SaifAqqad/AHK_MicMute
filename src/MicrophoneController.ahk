@@ -1,7 +1,7 @@
 Class MicrophoneController {
     static hotkeys_set, generic_state_string:= {0:"Microphone Online",1:"Microphone Muted",-1:"Microphone Unavailable"}
 
-    __New(mic_obj, ptt_delay:=0, feedback_func:="", state_func:=""){
+    __New(mic_obj, ptt_delay:=0, force_current_state:=0, feedback_func:="", state_func:=""){
         this.state:=0
         this.ptt_key:=""
         this.microphone:= mic_obj.Name
@@ -11,6 +11,7 @@ Class MicrophoneController {
         this.unmuteHotkey:= mic_obj.UnmuteHotkey
         this.isPushToTalk:= mic_obj.PushToTalk
         this.ptt_delay:= ptt_delay
+        this.force_current_state:= force_current_state
         this.feedback_func:= feedback_func
         this.state_func:= state_func
         _n:= this.microphone == "capture"? VA_GetDeviceName(VA_GetDevice("capture")) : this.microphone
@@ -53,10 +54,13 @@ Class MicrophoneController {
         Critical, Off
     }
         
-    updateState(p_notify:=""){
-        if(p_notify) ; callback
-            this.state:= !!p_notify.Muted
-        else
+    updateState(callback:=""){
+        if(callback){
+            if(this.force_current_state && this.state != callback.Muted)
+                VA_SetMasterMute(this.state, this.microphone)
+            else
+                this.state:= callback.Muted
+        }else
             this.state:= VA_GetMasterMute(this.microphone)+0
 
         this.state_func.Call(this)
