@@ -25,7 +25,7 @@ SetWorkingDir %A_ScriptDir%
 
 #Include, <WinUtils>
 #Include, <VA\VA>
-#Include, <cJson\Dist\cJson>
+#Include, <cJson\Dist\JSON>
 #Include, <Neutron\Neutron>
 #Include, <StackSet>
 #Include, <SoundPlayer>

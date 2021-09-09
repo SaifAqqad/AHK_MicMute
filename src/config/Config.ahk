@@ -39,7 +39,7 @@ class Config {
         jsonFile:=FileOpen("config.json", "R")
         jsonStr:=jsonFile.Read()
         jsonFile.Close()
-        jsonObj:= cJson.Loads(jsonStr)
+        jsonObj:= JSON.Load(jsonStr)
         for prop,val in jsonObj { ; apply json object props over config object props
             if(prop = "profiles")
                 for i, profile in val ; to ensure new props are added to existing profiles
@@ -83,7 +83,7 @@ class Config {
 
     exportConfig(){
         util_log("[Config] exporting the config object")
-        jsonStr:= cJson.Dumps(this)
+        jsonStr:= JSON.Dump(this,4)
         jsonFile:=FileOpen("config.json", "w")
         jsonFile.Write(jsonStr)
         jsonFile.Close()

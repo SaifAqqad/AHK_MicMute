@@ -14,7 +14,7 @@ class VersionChecker{
         http.Open("GET", url, true)
         http.Send()
         http.WaitForResponse()
-        obj:= cJson.loads(http.ResponseText)
+        obj:= JSON.load(http.ResponseText)
         ObjRelease(http)
         return obj[prop]
     }
