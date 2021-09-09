@@ -44,6 +44,7 @@ class ResourcesManager {
             for type, file in this.SoundFile {
                 this.soundFile[type]:= this.getResourcePtr(file)
             }
+            this.extractResources("bass.dll")
         }else{
             ; if not -> prepend the path to all resources
             for type, filePath in this.SoundFile {
@@ -64,8 +65,6 @@ class ResourcesManager {
             this.defaultIcon.group:= "1"
             this.pngIcon:= this.RES_FOLDER . this.pngIcon
         }
-        if(A_IsCompiled)
-            this.extractResources("bass.dll")
     }
 
     getSoundFile(state, isPtt:=0){
