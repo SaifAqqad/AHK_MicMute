@@ -27,7 +27,7 @@ jobs:
           Expand-Archive -Path ".\bass24.zip" -DestinationPath ".\base24\";
           Copy-Item -Path ".\base24\x64\bass.dll" -Destination ".\src\Lib\bass.dll" -Force;
           echo "Running Ahk2Exe";
-          Invoke-Expression "$(scoop prefix autohotkey)\Compiler\Ahk2Exe.exe /Silent /in '.\src\MicMute.ahk' /out '.\MicMute.exe' /bin `"$(scoop prefix autohotkey)\Compiler\Unicode 64-bit.bin`"  /compress '0' /Verbose 2>&1 | echo";
+          Invoke-Expression "$(scoop prefix autohotkey)\Compiler\Ahk2Exe.exe /silent verbose /in '.\src\MicMute.ahk' /out '.\MicMute.exe' 2>&1 | echo";
           echo "Calculating SHA256 hash";
           (Get-FileHash '.\MicMute.exe').Hash  | Tee-Object -FilePath  .\MicMute.sha256;
       
