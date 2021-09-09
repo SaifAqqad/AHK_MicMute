@@ -1,18 +1,15 @@
 ;compiler directives
 ;@Ahk2Exe-Let Res = %A_ScriptDir%\resources
 ;@Ahk2Exe-Let UI = %A_ScriptDir%\UI\config
-;@Ahk2Exe-Let Version = 1.2.1
+;@Ahk2Exe-Let Version = 1.2.2
 ;@Ahk2Exe-IgnoreBegin
-    U_Version:= "1.2.1"
+    U_Version:= "1.2.2"
 ;@Ahk2Exe-IgnoreEnd
 ;@Ahk2Exe-SetMainIcon %U_Res%\MicMute.ico
 ;@Ahk2Exe-SetVersion %U_Version%
 ;@Ahk2Exe-SetName MicMute
 ;@Ahk2Exe-SetDescription MicMute
 ;@Ahk2Exe-Bin Unicode 64*
-/*@Ahk2Exe-Keep
-FileInstall, Lib\bass.dll, %A_ScriptDir%\bass.dll
-*/
 
 #NoEnv
 SetBatchLines -1

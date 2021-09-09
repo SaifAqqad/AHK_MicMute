@@ -1,5 +1,6 @@
 class ResourcesManager {
     
+    ;@Ahk2Exe-AddResource *10 Lib\bass.dll
     ;@Ahk2Exe-AddResource %U_Res%\MicMute.png
     ;@Ahk2Exe-AddResource %U_Res%\MicMute.ico, 2000
     ;@Ahk2Exe-AddResource %U_Res%\black_unmute.ico, 3080
@@ -63,6 +64,8 @@ class ResourcesManager {
             this.defaultIcon.group:= "1"
             this.pngIcon:= this.RES_FOLDER . this.pngIcon
         }
+        if(A_IsCompiled)
+            this.extractResources("bass.dll")
     }
 
     getSoundFile(state, isPtt:=0){
@@ -80,6 +83,13 @@ class ResourcesManager {
                     if pData := DllCall("LockResource", "UInt", hData, "PTR")
                         return { ptr: pData
                               , size: DllCall( "SizeofResource", "UInt", hMod, "UInt", hRes, "PTR")}
+    }
+
+    extractResources(resource){
+        if(FileExist(resource) || !(res:= this.getResourcePtr(resource)))
+            return
+        _f:= FileOpen(resource, "w")
+        _f.RawWrite(res.ptr, res.size)
     }
 
     loadCustomSounds(){
