@@ -6,7 +6,7 @@ class Overlay {
         this.hwnd:= ui_hwnd
         this.locked:=1
         this.state:= -1
-        this.onMuteOnly:= config.OverlayOnMuteOnly
+        this.showOn:= config.OverlayShow ; 0 -> on-unmute, 1 -> on-mute, 2 -> always
         ; setup default icons
         this.iconObj:= {0: resources_obj.icoFile["white_unmute"].clone()
                        ,1: resources_obj.icoFile["white_mute"].clone()}
@@ -59,7 +59,7 @@ class Overlay {
         OnMessage(0x46, this.onPosChangeFunc)
 
         ;register toggle hotkeys
-        if(!onMuteOnly){
+        if(this.showOn=2){
             toggleFunc:= objBindMethod(this, "setShow")
             Try Hotkey, ^!F9, % toggleFunc, On
         }
@@ -72,8 +72,8 @@ class Overlay {
             return
         try{
             Gui,% this.Hwnd ":Default"
-            if(this.onMuteOnly)
-                this.setShow(state)
+            if(this.showOn != 2)
+                this.setShow(state==this.showOn)
             GuiControl,, % this.iconHwnd, % Format("*w40 *h-1 *icon{} {}", this.iconObj[state].group, this.iconObj[state].file)
             this.state:= state
         }

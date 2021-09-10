@@ -36,8 +36,6 @@ global ui_obj, about_obj, current_profile, hotkey_panels, current_hp
                      , string: "Show an OSD when muting or unmuting the microphone"}
                   ,{ selector: ".OnscreenOverlay-label"
                      , string: "Show the microphone's state in an always-on-top overlay"}
-                  ,{ selector: ".OverlayOnMuteOnly-label"
-                     , string: "Only show the overlay when the microphone is muted"}
                   ,{ selector: ".multiple-mics-label"
                      , string: "Setup hotkeys for multiple microphones simultaneously"}
                   ,{ selector: ".ForceMicrophoneState-label"
@@ -108,7 +106,7 @@ UI_setProfile(neutron, p_profile){
     ui_obj.doc.getElementById("output_device").value:= current_profile.SoundFeedbackDevice
     ui_obj.doc.getElementById("OnscreenFeedback").checked:= current_profile.OnscreenFeedback
     ui_obj.doc.getElementById("OnscreenOverlay").checked:= current_profile.OnscreenOverlay
-    ui_obj.doc.getElementById("OverlayOnMuteOnly").checked:= current_profile.OverlayOnMuteOnly
+    ui_obj.doc.getElementById("OverlayShow").value:= current_profile.OverlayShow
     ui_obj.doc.getElementById("OverlayUseCustomIcons").checked:= current_profile.OverlayUseCustomIcons
     ui_obj.doc.getElementById("ExcludeFullscreen").checked:= current_profile.ExcludeFullscreen
     ui_obj.doc.getElementById("OSDPos_x").value:= current_profile.OSDPos.x==-1? "" : current_profile.OSDPos.x
@@ -202,7 +200,7 @@ UI_onSaveProfile(neutron, noReset:=0){
     current_profile.OnscreenFeedback:= ui_obj.doc.getElementById("OnscreenFeedback").checked? 1 : 0
     current_profile.OnscreenOverlay:= ui_obj.doc.getElementById("OnscreenOverlay").checked? 1 : 0
     current_profile.ExcludeFullscreen:= ui_obj.doc.getElementById("ExcludeFullscreen").checked? 1 : 0
-    current_profile.OverlayOnMuteOnly:= ui_obj.doc.getElementById("OverlayOnMuteOnly").checked? 1 : 0
+    current_profile.OverlayShow:= ui_obj.doc.getElementById("OverlayShow").value
     current_profile.OverlayUseCustomIcons:= ui_obj.doc.getElementById("OverlayUseCustomIcons").checked? 1 : 0
     current_profile.afkTimeout:= (val:= ui_obj.doc.getElementById("afkTimeout").value)? val+0 : 0
     current_profile.LinkedApp:= ui_obj.doc.getElementById("LinkedApp").value
@@ -523,11 +521,9 @@ UI_onToggleMultiple(){
     is_multiple_mics:= ui_obj.doc.getElementById("multiple_mics").checked
     if(is_multiple_mics){
         ui_obj.doc.getElementById("OnscreenOverlay_tag").classList.add("hidden")
-        ui_obj.doc.getElementById("OverlayOnMuteOnly_tag").classList.add("hidden")
         ui_obj.doc.getElementById("onscreen_overlay_group").classList.add("row-hidden")
     }else{
         ui_obj.doc.getElementById("OnscreenOverlay_tag").classList.remove("hidden")
-        ui_obj.doc.getElementById("OverlayOnMuteOnly_tag").classList.remove("hidden")
         ui_obj.doc.getElementById("onscreen_overlay_group").classList.remove("row-hidden")
         if(hotkey_panels.Count()>1)
             for mic, panel in hotkey_panels
