@@ -1,9 +1,9 @@
 ;compiler directives
 ;@Ahk2Exe-Let Res = %A_ScriptDir%\resources
 ;@Ahk2Exe-Let UI = %A_ScriptDir%\UI\config
-;@Ahk2Exe-Let Version = 1.2.2
+;@Ahk2Exe-Let Version = 1.2.3
 ;@Ahk2Exe-IgnoreBegin
-    U_Version:= "1.2.2"
+    U_Version:= "1.2.3"
 ;@Ahk2Exe-IgnoreEnd
 ;@Ahk2Exe-SetMainIcon %U_Res%\MicMute.ico
 ;@Ahk2Exe-SetVersion %U_Version%
@@ -79,6 +79,13 @@ util_log("[Main] MicMute startup took " A_startupTime "ms")
 
 initilizeMicMute(default_profile:=""){
     util_log("[Main] Initilizing MicMute")
+    ;make sure hotkeys are disabled before reinitilization
+    if(mic_controllers)
+        for i,mic in mic_controllers
+            mic.disableHotkeys()
+    ;destroy existing guis 
+    overlay_obj.destroy()
+    osd_obj.destroy()
     ;initilize globals
     config_obj:= new Config()
     , osd_obj:=""
