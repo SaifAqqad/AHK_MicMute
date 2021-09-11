@@ -64,8 +64,9 @@ input[type="text"]:disabled {
 }
 
 [data-title]:after {
-    background-color: #1A1A1A !important;
-    color: #c9c9c9;
+    background-color: #2B2B2B !important;
+    border-color: #1D1D1D !important;
+    color: #F1F1F1;
 }
 
 input[type=range].slider::-ms-fill-upper {

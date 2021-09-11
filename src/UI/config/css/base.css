@@ -190,6 +190,7 @@ input[type="number"]:disabled {
 
 .title {
     margin-top: 0;
+    font-weight: 600 !important;
 }
 
 .type-radio {
@@ -335,30 +336,31 @@ a {
 .has-tooltip[data-title]:hover:after,
 .has-tooltip[data-title]:focus:after{
     opacity: 1;
-    transition: all 0.2s ease-in-out 0.3s;
+    transition: all 0.2s ease-in-out 0.8s;
     visibility: visible;
 }
 
 [data-title]:after {
     content: attr(data-title);
-    background-color: #ffffff;
-    color: #111;
+    background-color: #F2F2F2;
+    color: #2B2B2B;
     font-size: 0.76rem ;
     font-weight: 400 !important;
-    text-align: center;
     position: absolute;
-    padding: 0.4em 1em  0.5em 1em!important;
+    padding: 4px 8px !important;
     bottom: 160%;
     left: -50%;
-    width: 200px;
-    height: max-content;
-    white-space: pre-wrap;
-    box-shadow: rgba(0, 0, 0, 0.11) 0 3px 4px, rgba(0, 0, 0, 0.096) 0 0.5px 1px;
+    max-width: 250px !important;
+    min-width: 190px !important;
+    line-height: 1.2rem !important;
     opacity: 0;
-    border-radius: 5px;
+    border-radius: 6px;
+    border: 1px solid #D5D5D5;
     z-index: 99999;
     visibility: hidden;
     overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: pre-line;
 }
 
 .tooltip-offset-right[data-title]:after{
