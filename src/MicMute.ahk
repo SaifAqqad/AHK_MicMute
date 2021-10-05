@@ -280,7 +280,8 @@ checkConfigDiff(){
 
 checkLinkedApps(){
     if(watched_profile){
-        if(!WinExist("ahk_exe " . watched_profile.LinkedApp)){
+        WinGet, minState, MinMax, % "ahk_exe " . watched_profile.LinkedApp ; -1 -> minimized
+        if(!WinExist("ahk_exe " . watched_profile.LinkedApp) || minState == -1){
             util_log("[Main] Linked app closed: " . watched_profile.LinkedApp)
             switchProfile(config_obj.DefaultProfile)
             watched_profile:=""
@@ -288,7 +289,8 @@ checkLinkedApps(){
         return
     }
     for i, prof in watched_profiles {
-        if(WinExist("ahk_exe " . prof.LinkedApp)){
+        WinGet, minState, MinMax, % "ahk_exe " . prof.LinkedApp
+        if(WinExist("ahk_exe " . prof.LinkedApp) && (minState!="" && minState!=-1)){
             util_log("[Main] Detected linked app: " . prof.LinkedApp)
             watched_profile:= prof
             switchProfile(prof.ProfileName)
