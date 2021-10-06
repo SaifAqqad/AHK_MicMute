@@ -42,15 +42,16 @@ SetWorkingDir %A_ScriptDir%
 #Include, HotkeyPanel.ahk
 #Include, UI.ahk
 
-Global config_obj, osd_obj, overlay_obj, mic_controllers, current_profile
+Global config_obj, current_profile, mic_controllers
 , mute_sound, unmute_sound, ptt_on_sound, ptt_off_sound
-, sys_theme, ui_theme, isFirstLaunch:=0
+, sys_theme, ui_theme, WM_SETTINGCHANGE:= 0x001A
 , watched_profiles, watched_profile, last_modif_time
 , arg_isDebug:=0, arg_profile:="", arg_noUI:=0, arg_reload:= 0, arg_logFile:="*"
-, resources_obj:= new ResourcesManager()
+, resources_obj:= new ResourcesManager(), isFirstLaunch:=0
 , A_Version:= A_IsCompiled? util_getFileSemVer(A_ScriptFullPath) : U_Version 
-, WM_SETTINGCHANGE:= 0x001A, sp_obj
+, sound_player, osd_wnd, overlay_wnd
 , A_log:="", A_startupTime:= A_TickCount
+
 ; parse cli args
 parseArgs()
 util_log("MicMute v" . A_Version)
@@ -84,12 +85,12 @@ initilizeMicMute(default_profile:=""){
         for i,mic in mic_controllers
             mic.disableHotkeys()
     ;destroy existing guis 
-    overlay_obj.destroy()
-    osd_obj.destroy()
+    overlay_wnd.destroy()
+    osd_wnd.destroy()
     ;initilize globals
     config_obj:= new Config()
-    , osd_obj:=""
-    , overlay_obj:=""
+    , osd_wnd:=""
+    , overlay_wnd:=""
     , mic_controllers:=""
     , watched_profiles:= Array()
     , current_profile:=""
@@ -100,7 +101,7 @@ initilizeMicMute(default_profile:=""){
     , ptt_off_sound:=""
     , sys_theme:=""
     , last_modif_time:= ""
-    , sp_obj:=""
+    , sound_player:=""
     tray_defaults()
     ;add profiles with linked apps to watched_profiles
     for i,profile in config_obj.Profiles {
@@ -141,9 +142,9 @@ switchProfile(p_name:=""){
         SetTimer, checkIsIdle, Off
     }
     ;destroy existing guis 
-    overlay_obj.destroy()
-    osd_obj.destroy()
-    sp_obj.__free()
+    overlay_wnd.destroy()
+    osd_wnd.destroy()
+    sound_player.__free()
     ;reset tray icon and tooltip
     tray_defaults()
     ;uncheck the profile in the tray menu
@@ -169,8 +170,8 @@ switchProfile(p_name:=""){
     if(current_profile.SoundFeedbackUseCustomSounds)
         resources_obj.loadCustomSounds()
     ;create a new OSD object for the profile
-    osd_obj:= new OSD(current_profile.OSDPos, current_profile.ExcludeFullscreen)
-    osd_obj.setTheme(ui_theme)
+    osd_wnd:= new OSD(current_profile.OSDPos, current_profile.ExcludeFullscreen)
+    osd_wnd.setTheme(ui_theme)
     ;initilize mic_controllers
     mic_controllers:= Array()
     for i, mic in current_profile.Microphone {
@@ -198,25 +199,25 @@ switchProfile(p_name:=""){
         tray_toggleMic(0)
     ; setup sound player
     if(current_profile.SoundFeedback){
-        sp_obj:= new SoundPlayer()
-        if(!sp_obj.setDevice(current_profile.SoundFeedbackDevice))
-            sp_obj.setDevice("Default")
-        sp_obj.play(resources_obj.getSoundFile(0),0) ;test playback to remove initial pop
+        sound_player:= new SoundPlayer()
+        if(!sound_player.setDevice(current_profile.SoundFeedbackDevice))
+            sound_player.setDevice("Default")
+        sound_player.play(resources_obj.getSoundFile(0),0) ;test playback to remove initial pop
     }
     ;handle multiple microphones
     if(mic_controllers.Length()>1){
         tray_toggleMic(0)
     }else{
         if(current_profile.OnscreenOverlay){
-            overlay_obj:= new Overlay(current_profile)
-            overlay_obj.setState(mic_controllers[1].state)
+            overlay_wnd:= new Overlay(current_profile)
+            overlay_wnd.setState(mic_controllers[1].state)
         }
     }
     if (current_profile.afkTimeout)
         SetTimer, checkIsIdle, 1000  
     ;show switching-profile OSD
     if(config_obj.SwitchProfileOSD)
-        osd_obj.showAndHide(Format("Profile: {}", current_profile.ProfileName))
+        osd_wnd.showAndHide(Format("Profile: {}", current_profile.ProfileName))
     Critical, Off
 }
 
@@ -224,17 +225,17 @@ showFeedback(mic_obj){
     ; if sound fb is enabled -> play the sound file
     if (current_profile.SoundFeedback){
         file:= resources_obj.getSoundFile(mic_obj.state,mic_obj.isPushToTalk)
-        sp_obj.play(file)
+        sound_player.play(file)
     }    
     ; if osd is enabled -> show and hide after 1 sec
     if (current_profile.OnscreenFeedback){ ;use generic/mic.name state string
         str:= (mic_obj[(mic_controllers.Length()>1? "": "generic_") "state_string"][mic_obj.state])
-        osd_obj.showAndHide(str, !mic_obj.state)
+        osd_wnd.showAndHide(str, !mic_obj.state)
     }
 }
 
 editConfig(){
-    Try osd_obj.destroy()
+    Try osd_wnd.destroy()
     if(GetKeyState("Shift", "P") || arg_noUI){
         if(progPath:=util_GetFileAssoc("json"))
             Run, %ProgPath% "%A_ScriptDir%\config.json",
@@ -245,7 +246,7 @@ editConfig(){
         if(current_profile){
             for i, mic in mic_controllers 
                 mic.disableController()
-            overlay_obj.destroy()
+            overlay_wnd.destroy()
             SetTimer, checkIsIdle, Off
             SetTimer, checkLinkedApps, Off
         }
@@ -302,7 +303,7 @@ onUpdateState(mic){
     if(mic_controllers.Length()>1)
         return tray_defaults()
     tray_update(mic)
-    overlay_obj.setState(mic.state)
+    overlay_wnd.setState(mic.state)
 }
 
 updateSysTheme(wParam:="", lParam:=""){
@@ -315,7 +316,7 @@ updateSysTheme(wParam:="", lParam:=""){
         RegRead, reg
         , HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize, AppsUseLightTheme
         ui_theme:= config_obj.PreferTheme = -1? !reg : config_obj.PreferTheme
-        osd_obj.setTheme(ui_theme)
+        osd_wnd.setTheme(ui_theme)
         UI_updateTheme()
         Sleep, 100
         onUpdateState(mic_controllers[1])
