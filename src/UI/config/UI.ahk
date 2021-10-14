@@ -682,10 +682,11 @@ UI_close(neutron:=""){
 UI_updateTheme(){
     if(ui_theme){
         ui_obj.doc.getElementById("css_dark").removeAttribute("disabled")
+        ui_obj.SetWindowFillColor(0x272727)
         about_obj.doc.getElementById("css_dark").removeAttribute("disabled")
-    }
-    else{
+    }else{
         ui_obj.doc.getElementById("css_dark").setAttribute("disabled","1")
+        ui_obj.SetWindowFillColor(0xF3F3F3)
         about_obj.doc.getElementById("css_dark").setAttribute("disabled","1")
     }
 }
