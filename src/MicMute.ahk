@@ -180,7 +180,7 @@ switchProfile(p_name:=""){
             mc:= new MicrophoneController(mic, current_profile.PTTDelay, config_obj.ForceMicrophoneState, Func("showFeedback"), Func("onUpdateState"))
             ; mute mics on startup
             if(config_obj.MuteOnStartup)
-                VA_SetMasterMute(1,mic.Name)
+                VA_SetMasterMute(1,mc.microphone)
             mc.enableController()
             mc.updateState()
             mic_controllers.Push(mc)

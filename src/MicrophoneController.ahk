@@ -55,15 +55,17 @@ Class MicrophoneController {
     }
         
     updateState(callback:=""){
+        Critical, On
         if(callback){
             if(this.force_current_state && this.state != callback.Muted)
                 VA_SetMasterMute(this.state, this.microphone)
             else
                 this.state:= callback.Muted
-        }else
+        }else{
             this.state:= VA_GetMasterMute(this.microphone)+0
-
+        }
         this.state_func.Call(this)
+        Critical, Off
         if(this.callFeedback){
             this.feedback_func.Call(this)
             this.callFeedback:=0
