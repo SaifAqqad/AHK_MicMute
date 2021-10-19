@@ -72,10 +72,10 @@ class Overlay {
             return
         try{
             Gui,% this.Hwnd ":Default"
-            if(this.showOn != 2)
-                this.setShow(state==this.showOn)
             GuiControl,, % this.iconHwnd, % Format("*w40 *h-1 *icon{} {}", this.iconObj[state].group, this.iconObj[state].file)
             this.state:= state
+            if(this.showOn != 2)
+                this.setShow(state==this.showOn)
         }
         return this
     }
