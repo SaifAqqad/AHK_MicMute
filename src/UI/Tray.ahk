@@ -23,7 +23,8 @@ tray_init(){
     tray_add("Help",Func("tray_launchHelp"))
     if(!arg_noUI)
         tray_add("About",Func("tray_about"))
-    tray_add("Exit",Func("tray_exit"))        
+    tray_add("Reload",Func("tray_Reload"))
+    tray_add("Exit",Func("tray_exit"))  
 
     Menu, Tray, Click, 1
     Menu, Tray, Default, 1&
@@ -114,6 +115,10 @@ tray_about(){
 
 tray_exit(){
     ExitApp
+}
+
+tray_Reload(){
+    initilizeMicMute(current_profile.ProfileName)
 }
 
 tray_checkForUpdates(){

@@ -83,7 +83,7 @@ initilizeMicMute(default_profile:=""){
     ;make sure hotkeys are disabled before reinitilization
     if(mic_controllers)
         for i,mic in mic_controllers
-            mic.disableHotkeys()
+            mic.disableController()
     ;destroy existing guis 
     overlay_wnd.destroy()
     osd_wnd.destroy()
