@@ -39,7 +39,7 @@ scoop install micmute
    You can download [MicMute](https://github.com/SaifAqqad/AHK_MicMute/releases/latest/download/MicMute.exe) and use it standalone.
 
 ## Usage
-![The first time you launch MicMute, a configuration window will open](./src/resources/configwindow_1.png)      
+![The first time you launch MicMute, a configuration window will open](./screenshots/configwindow_1.png)      
 <small>The first time you launch MicMute, a configuration window will open</small>
 
 1. Select your microphone from the list.
@@ -54,15 +54,19 @@ scoop install micmute
 
 ### Notes
 * You can change a profile's name by right clicking it.
-* ~~When Changing the microphone, make sure to clear the hotkey for the previous one before setting up the new one, unless you want to control multiple microphones simultaneously.~~ This no longer applies for version [1.1.0](https://github.com/SaifAqqad/AHK_MicMute/releases/tag/1.1.0) and later.
+  <details>
+  <summary>GIF</summary>
+
+  ![OSD](./screenshots/rename_profiles.gif)
+  </details>
 * When you set up a hotkey for a microphone, a `*` will appear before the microphone's name
 <hr>
 
 ### Hotkey options
-| Option | Description |
-|--------|-------------|
-| Passthrough       | If this is turned off, the hotkey will only work for MicMute and will be hidden from the rest of the system. So turn this on if you want the hotkey to work for other apps.                                                                                                    |
-| Wildcard          | If this is turned on, the hotkey will work even if you press extra modifiers, so for example if the hotkey is <kbd>Ctrl</kbd> <kbd>M</kbd> and you press <kbd>Ctrl</kbd> <kbd>Shift</kbd> <kbd>M</kbd> , the hotkey will still be triggered.                                   |
+| Option            | Description                                                                                                                                                                                                                                                                    |
+|-------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Passthrough       | If this is turned off, the hotkey will only work for MicMute and will be hidden from the rest of the system.                                                                                                                                                                   |
+| Wildcard          | If this is turned off, the hotkey will not work if you press extra modifiers. for example if the hotkey is <kbd>Ctrl</kbd> <kbd>M</kbd> and you press <kbd>Ctrl</kbd> <kbd>Shift</kbd> <kbd>M</kbd> , the hotkey will not be triggered.                                        |
 | Neutral modifiers | If this is turned off, the hotkey can have a specific modifier (Right or Left) instead of a neutral one (example: <kbd>RCtrl</kbd> instead of <kbd>Ctrl</kbd>, this will only be triggered by the right control key). This option should be set *before* recording the hotkey. |
 <hr>
 
@@ -90,7 +94,7 @@ Show an OSD when muting/unmuting the microphones.
 * <details>
   <summary>GIF</summary>
 
-  ![OSD](./src/resources/OSD.gif)
+  ![OSD](./screenshots/OSD.gif)
   </details>
 * You can change the OSD position (default position is the bottom center of the screen, above the taskbar).
 * You can exclude fullscreen apps/games from the OSD, this is needed for some games that lose focus when the OSD is shown.
@@ -101,7 +105,7 @@ Show the microphone's state in an always-on-top overlay.
 *  <details>
     <summary>GIF</summary>
 
-    ![overlay](https://user-images.githubusercontent.com/47293197/122362722-0c4bbe80-cf61-11eb-881f-e11b0b06f025.gif)
+    ![overlay](./screenshots/Overlay.gif)
    </details>
 * <kbd>CTRL</kbd> <kbd>ALT</kbd> <kbd>F9</kbd> toggles show/hide
 * <kbd>CTRL</kbd> <kbd>ALT</kbd> <kbd>F10</kbd> toggles locked/unlocked 
@@ -117,7 +121,7 @@ Show the microphone's state in an always-on-top overlay.
 <hr>
 
 ### Linked applications
-Link a profile to an app/game, when the app is launched, MicMute automatically switches to that profile, when the app closes, MicMute switches back to the default profile.
+Link a profile to an app/game, when the app becomes visible (not minimized or hidden), MicMute will automatically switch to that profile, when the app is minimized/hidden/closed, MicMute will switch back to the default profile.
 <hr>
 
 ### Global options
@@ -200,8 +204,8 @@ When using this feature, the following applies:
 ```
 
 ## CLI arguments
-| Argument | Description |
-|----------|-------------|
+| Argument                    | Description                                                                         |
+|-----------------------------|-------------------------------------------------------------------------------------|
 | `/profile=<profile name>`   | Startup with a specific profile.                                                    |
 | `/noUI`                     | Disable the configuration UI completely. This decreases memory usage by almost 60%. |
 | `/debug`                    | Add shortcuts to `ListVars`, `ListHotkeys` and `View Log`  in the tray menu.        |
@@ -258,11 +262,11 @@ ahk2exe.exe /in ".\src\MicMute.ahk" /out ".\src\MicMute.exe";
 
 ## Libraries and resources used
 
-| Library | License |
-|---------|---------|
+| Library                                                               | License                                                                        |
+|-----------------------------------------------------------------------|--------------------------------------------------------------------------------|
 | [Material Design icons](https://github.com/Templarian/MaterialDesign) | [Apache 2.0](https://github.com/Templarian/MaterialDesign/blob/master/LICENSE) |
 | [BASS audio library](https://www.un4seen.com)                         | [License](https://www.un4seen.com/#license)                                    |
-| [VA.ahk](https://github.com/SaifAqqad/VA.ahk)             | [License](https://github.com/SaifAqqad/VA.ahk/blob/master/LICENSE)         |
+| [VA.ahk](https://github.com/SaifAqqad/VA.ahk)                         | [License](https://github.com/SaifAqqad/VA.ahk/blob/master/LICENSE)             |
 | [Bulma CSS framework](https://bulma.io/)                              | [MIT](https://github.com/jgthms/bulma/blob/master/LICENSE)                     |
 | [G33kDude/cJson.ahk](https://github.com/G33kDude/cJson.ahk)           | [MIT](https://github.com/G33kDude/cJson.ahk/blob/main/LICENSE)                 |
 | [G33kDude/Neutron.ahk](https://github.com/G33kDude/Neutron.ahk)       | [MIT](https://github.com/G33kDude/Neutron.ahk/blob/master/LICENSE)             |
