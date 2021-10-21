@@ -14,9 +14,11 @@ Class MicrophoneController {
         this.force_current_state:= force_current_state
         this.feedback_func:= feedback_func
         this.state_func:= state_func
-        _n:= this.microphone == "capture"? VA_GetDeviceName(VA_GetDevice("capture")) : this.microphone
-        RegExMatch(_n, "(.+) \(.+\)", match)
-        this.name:= match1? match1 : _n
+        this.name:= mic_obj.Name
+        if(this.name == "default")
+            try this.name:= VA_GetDeviceName(VA_GetDevice("capture")) 
+        RegExMatch(this.name, "(.+) \(.+\)", match)
+        this.name:= match1? match1 : this.name
         if (StrLen(this.name)>14)
             this.name:= SubStr(this.name, 1, 12) . Chr(0x2026) ; fix overflow with ellipsis
         this.state_string:= {0:this.name . " Online",1:this.name . " Muted"}
