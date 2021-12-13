@@ -123,9 +123,10 @@
                                         <path fill="currentColor"
                                             d="M12,2A3,3 0 0,1 15,5V11A3,3 0 0,1 12,14A3,3 0 0,1 9,11V5A3,3 0 0,1 12,2M19,11C19,14.53 16.39,17.44 13,17.93V21H11V17.93C7.61,17.44 5,14.53 5,11H7A5,5 0 0,0 12,16A5,5 0 0,0 17,11H19Z" />
                                     </svg> Microphone
-                                    <span class="tag is-small tag-is-small has-tooltip" tabindex=0
+                                    <span class="tag tag-is-small has-tooltip" tabindex=0
                                         style="margin-top: 0px;"
-                                        onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
+                                        onkeydown="switch(event.keyCode){case 32:case 69: event.preventDefault(); this.oncontextmenu.call() ;break; case 13:this.click()}"
+                                        oncontextmenu="ahk.UI_showHelpModal('Multiple Microphones')"
                                         onclick="ahk.UI_flipVal('multiple_mics');ahk.UI_onChange('UI_onToggleMultiple');this.blur()">
                                         <label class="checkbox">
                                             <input type="checkbox" name="multiple_mics" id="multiple_mics" disabled>
@@ -317,12 +318,13 @@
                                                 </label>
                                             </div>
                                             <!-- Use custom sounds -->
-                                            <div class="tag is-small option" tabindex=0
+                                            <div class="tag is-small option has-tooltip" tabindex=0
                                                 onclick="ahk.UI_flipVal('UseCustomSounds');ahk.UI_onChange('');this.blur()"
-                                                onkeydown="switch(event.keyCode){case 32:case 13:this.click()}">
+                                                oncontextmenu="ahk.UI_showHelpModal('Custom Sounds')"
+                                                onkeydown="switch(event.keyCode){case 32:case 69: event.preventDefault(); this.oncontextmenu.call() ;break; case 13:this.click()}">
                                                 <label class="checkbox">
                                                     <input type="checkbox" id="UseCustomSounds" disabled>
-                                                    <span>Use custom sounds</span>
+                                                    <span class="UseCustomSounds-label">Use custom sounds</span>
                                                 </label>
                                             </div>
                                         </div>
@@ -424,8 +426,10 @@
                                                     <span>Enabled</span>
                                                 </label>
                                             </div>
-                                            <div class="tag is-small option" id="OverlayUseCustomIcons_tag" tabindex=0
-                                                onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
+                                            <div class="tag is-small option has-tooltip" id="OverlayUseCustomIcons_tag"
+                                                tabindex=0
+                                                onkeydown="switch(event.keyCode){case 32:case 69: event.preventDefault(); this.oncontextmenu.call() ;break; case 13:this.click()}"
+                                                oncontextmenu="ahk.UI_showHelpModal('Custom Icons')"
                                                 onclick="ahk.UI_flipVal('OverlayUseCustomIcons');ahk.UI_onChange('');this.blur()">
                                                 <label class="checkbox">
                                                     <input type="checkbox" id="OverlayUseCustomIcons" disabled>
@@ -437,8 +441,8 @@
                                             <label class="label title is-7 noselect">Show Overlay</label>
                                             <div class="control is-expanded ">
                                                 <div class="select is-fullwidth is-small is-primary">
-                                                    <select class="input-elem" name="OverlayShow" id="OverlayShow" onchange="ahk.UI_onChange('')"
-                                                        tabindex=0>
+                                                    <select class="input-elem" name="OverlayShow" id="OverlayShow"
+                                                        onchange="ahk.UI_onChange('')" tabindex=0>
                                                         <option value="2" selected>Always</option>
                                                         <option value="1">On-mute only</option>
                                                         <option value="0">On-unmute only</option>
@@ -584,13 +588,32 @@
                 </div>
             </div>
         </div>
-        <!-- profile rename -->
-        <div class="visible hidden" id="page_mask" onclick="ahk.UI_hideProfileRename();this.blur()"></div>
-        <div class="field visible hidden" id="profile_name">
-            <input class="input is-primary input-elem" placeholder="Profile name" name="profile_name_field"
-                id="profile_name_field" onkeydown="ahk.UI_hideProfileRename(event)" tabindex=0
-                onblur="ahk.UI_onChangeProfileName(event);ahk.UI_hideProfileRename()">
+        <!-- profile rename modal -->
+        <div id="profileRenameModal" class="custom-modal">
+            <div class="page-mask visible hidden" onclick="ahk.UI_hideProfileRename();this.blur()"></div>
+            <div class="modal-contents field visible hidden">
+                <input class="input is-primary input-elem" placeholder="Profile name" name="profile_name_field"
+                    id="profile_name_field" onkeydown="ahk.UI_hideProfileRename(event)" tabindex=0
+                    onblur="ahk.UI_onChangeProfileName(event);ahk.UI_hideProfileRename()">
+            </div>
         </div>
+        <!-- help modal -->
+        <div id="helpModal" class="custom-modal">
+            <div class="page-mask visible hidden" onclick="ahk.UI_hideHelpModal();this.blur()"></div>
+            <div class="modal-card modal-contents visible hidden">
+                <header class="modal-card-head">
+                    <p class="modal-card-title"></p>
+                    <button class="delete" aria-label="close" onclick="ahk.UI_hideHelpModal()"></button>
+                </header>
+                <div class="card" onkeydown="ahk.UI_hideHelpModal(event)">
+                    <div class="card-content">
+                        <p class="content">
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
     <!-- notification -->
     <div class="notification visible hidden" id="notification">

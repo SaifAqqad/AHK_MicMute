@@ -35,6 +35,11 @@ label,
     color: #3C3C3C;
 }
 
+code{
+    color: #ff6920 !important;
+    font-weight: 100 !important;
+}
+
 body,
 div,
 input,
@@ -215,6 +220,15 @@ input[type="number"]:disabled {
     transform: translateY(-2px);
 }
 
+.tag-empty{
+    color: #ff6920 !important;
+}
+.tag-empty:hover,
+.tag-empty:focus {
+    transform: none !important;
+    background-color: #FBFBFB !important;
+}
+
 .tag-is-small{
     font-size: 10px !important;
 }
@@ -364,7 +378,7 @@ a {
 }
 
 .tooltip-offset-right[data-title]:after{
-    bottom: 125%;
+    bottom: 140%;
     left: 0%;
 }
 
@@ -384,7 +398,7 @@ a {
     transition: visibility 0s 0.1s, opacity 0.1s linear !important;
 }
 
-#profile_name {
+.modal-contents {
     position: fixed;
     width: 400px;
     left: 50%;
@@ -392,13 +406,29 @@ a {
     transform: translate(-50%, -50%);
 }
 
-#page_mask {
+
+.page-mask {
     background: rgba(0, 0, 0, 0.5);
     position: fixed;
     top: 0;
     right: 0;
     bottom: 0;
     left: 0;
+}
+
+.modal-card-head {
+    border-bottom-color: #ff572d;
+}
+
+/* Fix bulma z-index issue #2611 */
+.custom-modal,
+.custom-modal > *{ 
+    z-index: 5 !important;
+}
+
+.custom-modal .card{
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
 }
 
 .select:not(.is-multiple):not(.is-loading):hover::after {

@@ -37,9 +37,64 @@ global ui_obj, about_obj, current_profile, hotkey_panels, current_hp
                   ,{ selector: ".OnscreenOverlay-label"
                      , string: "Show the microphone's state in an always-on-top overlay"}
                   ,{ selector: ".multiple-mics-label"
-                     , string: "Setup hotkeys for multiple microphones simultaneously"}
+                     , string: "Right click to view instructions"}
                   ,{ selector: ".ForceMicrophoneState-label"
-                     , string: "Prevent other apps from changing the microphone's state"}]
+                     , string: "Prevent other apps from changing the mic's state"}
+                  ,{ selector: ".UseCustomSounds-label"
+                     , string: "Right click to view instructions"}
+                  ,{ selector: ".OverlayUseCustomIcons-label"
+                     , string: "Right click to view instructions"}]
+, UI_helpText:= { "Custom Sounds" : "
+                (LTrim
+                <ol>
+                    <li>Turn on the option in the config UI</li>
+                    <li>Place the sound files (<code>mp3</code>,<code>wav</code>) in the same folder as <code>MicMute.exe</code></li>
+                    <li>
+                        Rename them as:
+                        <ul>
+                            <li>
+                                <p><strong>Mute sound</strong>: <code>mute</code> </p>
+                            </li>
+                            <li>
+                                <p><strong>Unmute sound</strong>: <code>unmute</code> </p>
+                            </li>
+                            <li>
+                                <p><strong>PTT on</strong>: <code>ptt_on</code> </p>
+                            </li>
+                            <li>
+                                <p><strong>PTT off</strong>: <code>ptt_off</code></p>
+                            </li>
+                        </ul>
+                    </li>
+                </ol>
+                )"
+                , "Custom Icons" : "
+                (LTrim
+                <ol>
+                    <li>Turn on the option in the config UI</li>
+                    <li>Place the icons (<code>ico</code>/<code>png</code>/<code>jpeg</code>) in the same folder as <code>MicMute.exe</code></li>
+                    <li>
+                        Rename them as:
+                        <ul>
+                            <li>
+                                <p><strong>Mute icon</strong>: <code>overlay_mute</code> </p>
+                            </li>
+                            <li>
+                                <p><strong>Unmute icon</strong>: <code>overlay_unmute</code> </p>
+                            </li>
+                        </ul>
+                    </li>
+                </ol>
+                )"
+                , "Multiple Microphones" : "
+                (LTrim
+                <p>You can have active hotkeys for multiple microphones simultaneously, to do this:</p>
+                <ol>
+                    <li>Toggle the <div class='tag tag-empty'>Multiple</div> option </li>
+                    <li>Select another microphone from the list </li>
+                    <li>Setup the hotkeys</li>
+                </ol>
+                )"}
 
 UI_create(p_onExitCallback){
     util_log("[UI] Creating 'config' window")
@@ -64,7 +119,7 @@ UI_Show(p_profile){
     UI_switchToTab("", ".main-tabs", "profiles_tab")
     UI_addTooltips()
     tray_defaults()
-    ui_obj.Gui(Format("+LabelUI_ +MinSize{:i}x{:i}",745*UI_scale,500*UI_scale))
+    ui_obj.Gui(Format("+LabelUI_ +MinSize{:i}x{:i}",785*UI_scale,500*UI_scale))
     ui_obj.Show(Format("Center w{:i} h{:i}",820*UI_scale,650*UI_scale),"MicMute")
     ui_obj.doc.focus()
 }
@@ -562,8 +617,8 @@ UI_onRefreshAppsList(neutron){
 UI_displayProfileRename(neutron, p_profile){
     if(current_profile.ProfileName != p_profile)
         UI_setProfile(neutron,p_profile)
-    ui_obj.doc.getElementById("page_mask").classList.remove("hidden")
-    ui_obj.doc.getElementById("profile_name").classList.remove("hidden")
+    ui_obj.qs("#profileRenameModal > .page-mask").classList.remove("hidden")
+    ui_obj.qs("#profileRenameModal > .modal-contents").classList.remove("hidden")
     ui_obj.qs(".main").classList.add("is-clipped")
     field:= ui_obj.doc.getElementById("profile_name_field")
     field.focus()
@@ -571,8 +626,8 @@ UI_displayProfileRename(neutron, p_profile){
 }
 
 UI_hideProfileRename(neutron, event:=""){
-    maskElem:= ui_obj.doc.getElementById("page_mask")
-    pElem:= ui_obj.doc.getElementById("profile_name")
+    maskElem:= ui_obj.qs("#profileRenameModal > .page-mask")
+    pElem:= ui_obj.qs("#profileRenameModal > .modal-contents")
     if(!event){
         maskElem.classList.add("hidden")
         pElem.classList.add("hidden")
@@ -585,6 +640,25 @@ UI_hideProfileRename(neutron, event:=""){
             maskElem.classList.add("hidden")
             pElem.classList.add("hidden")
             ui_obj.qs(".main").classList.remove("is-clipped")
+    }
+}
+
+UI_showHelpModal(neutron, title){
+    ui_obj.qs("#helpModal .modal-card-title").innerText:= title
+    ui_obj.qs("#helpModal .content").innerHTML:= UI_helpText[title]
+    ui_obj.qs("#helpModal > .page-mask").classList.remove("hidden")
+    ui_obj.qs("#helpModal > .modal-contents").classList.remove("hidden")
+    ui_obj.qs(".main").classList.add("is-clipped")
+    ui_obj.qs("#helpModal .card").focus()
+}
+
+UI_hideHelpModal(neutron, event:=""){
+    maskElem:= ui_obj.qs("#helpModal > .page-mask")
+    pElem:= ui_obj.qs("#helpModal > .modal-contents")
+    if(!event || event.keyCode = 0x1B || event.keyCode = 0x0D){
+        maskElem.classList.add("hidden")
+        pElem.classList.add("hidden")
+        ui_obj.qs(".main").classList.remove("is-clipped")
     }
 }
 
