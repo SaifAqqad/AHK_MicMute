@@ -1,9 +1,9 @@
 ;compiler directives
 ;@Ahk2Exe-Let Res = %A_ScriptDir%\resources
 ;@Ahk2Exe-Let UI = %A_ScriptDir%\UI\config
-;@Ahk2Exe-Let Version = 1.2.3
+;@Ahk2Exe-Let Version = 1.2.4
 ;@Ahk2Exe-IgnoreBegin
-    U_Version:= "1.2.3"
+    U_Version:= "1.2.4"
 ;@Ahk2Exe-IgnoreEnd
 ;@Ahk2Exe-SetMainIcon %U_Res%\MicMute.ico
 ;@Ahk2Exe-SetVersion %U_Version%
@@ -42,15 +42,32 @@ SetWorkingDir %A_ScriptDir%
 #Include, HotkeyPanel.ahk
 #Include, UI.ahk
 
-Global config_obj, current_profile, mic_controllers
-, mute_sound, unmute_sound, ptt_on_sound, ptt_off_sound
-, sys_theme, ui_theme, WM_SETTINGCHANGE:= 0x001A
-, watched_profiles, watched_profile, last_modif_time
-, arg_isDebug:=0, arg_profile:="", arg_noUI:=0, arg_reload:= 0, arg_logFile:="*"
-, resources_obj:= new ResourcesManager(), isFirstLaunch:=0
+Global config_obj
+, current_profile
+, mic_controllers
+, mute_sound
+, unmute_sound
+, ptt_on_sound
+, ptt_off_sound
+, sys_theme
+, ui_theme
+, WM_SETTINGCHANGE:= 0x001A
+, watched_profiles
+, watched_profile
+, last_modif_time
+, arg_isDebug:=0
+, arg_profile:=""
+, arg_noUI:=0
+, arg_reload:= 0
+, arg_logFile:="*"
+, resources_obj:= new ResourcesManager()
+, isFirstLaunch:=0
 , A_Version:= A_IsCompiled? util_getFileSemVer(A_ScriptFullPath) : U_Version 
-, sound_player, osd_wnd, overlay_wnd
-, A_log:="", A_startupTime:= A_TickCount
+, sound_player
+, osd_wnd
+, overlay_wnd
+, A_log:=""
+, A_startupTime:= A_TickCount
 
 ; parse cli args
 parseArgs()
