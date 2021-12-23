@@ -8,8 +8,8 @@ class Config {
     ForceMicrophoneState:=0
 
     __New(p_DefaultProfile:=""){
-        if(!FileExist("config.json") || util_IsFileEmpty("config.json")){
-            if(FileExist("config.ini")){
+        if(!FileExist(A_ScriptDir "\config.json") || util_IsFileEmpty(A_ScriptDir "\config.json")){
+            if(FileExist(A_ScriptDir "\config.ini")){
                 isFirstLaunch:=0
                 this.importIniConfig()
             }else{
@@ -36,7 +36,7 @@ class Config {
 
     importConfig(){
         util_log("[Config] Importing config.json")
-        jsonFile:=FileOpen("config.json", "R")
+        jsonFile:=FileOpen(A_ScriptDir "\config.json", "R")
         jsonStr:=jsonFile.Read()
         jsonFile.Close()
         jsonObj:= JSON.Load(jsonStr)
@@ -68,7 +68,7 @@ class Config {
                     , "UnmuteHotkey":""
                     , "UpdateWithSystem":1}
         for key in iniProfile {
-            IniRead, iniVal, config.ini, settings, %key%
+            IniRead, iniVal, %A_ScriptDir%\config.json, settings, %key%
             if(iniVal = "ERROR")
                 continue
             if val is number
@@ -84,7 +84,7 @@ class Config {
     exportConfig(){
         util_log("[Config] exporting the config object")
         jsonStr:= JSON.Dump(this,4)
-        jsonFile:=FileOpen("config.json", "w")
+        jsonFile:=FileOpen(A_ScriptDir "\config.json", "w")
         jsonFile.Write(jsonStr)
         jsonFile.Close()
     }
