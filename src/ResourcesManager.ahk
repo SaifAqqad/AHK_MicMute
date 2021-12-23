@@ -12,6 +12,7 @@ class ResourcesManager {
     ;@Ahk2Exe-AddResource %U_Res%\ptt_off.wav
     ;@Ahk2Exe-AddResource %U_Res%\ptt_on.wav
     ;@Ahk2Exe-AddResource *10 %U_UI%\html\UI.html
+    ;@Ahk2Exe-AddResource *10 %U_UI%\html\Updater.html
     ;@Ahk2Exe-AddResource *10 %U_UI%\html\about.html
     ;@Ahk2Exe-AddResource %U_UI%\css\bulma.css
     ;@Ahk2Exe-AddResource %U_UI%\css\base.css
@@ -30,7 +31,8 @@ class ResourcesManager {
     defaultIcon:= {file:"MicMute.ico",group:"-2000"}
     pngIcon:= "MicMute.png"
     htmlFile:= { UI: "UI.html"
-               , about: "about.html"}
+               , about: "about.html"
+               , Updater: "Updater.html"}
     cssFile:= [{ name:"bulma",file: "bulma.css"}
               ,{ name:"base",file:"base.css"}
               ,{ name:"dark",file:"dark.css"}]

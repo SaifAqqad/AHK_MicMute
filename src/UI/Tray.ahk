@@ -122,7 +122,7 @@ tray_Reload(){
 }
 
 tray_checkForUpdates(){
-    VersionChecker.CheckForUpdates(1)
+    updater_obj.CheckForUpdates(1)
 }
 
 tray_noFunc(){

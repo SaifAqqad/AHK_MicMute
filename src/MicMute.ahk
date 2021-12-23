@@ -30,7 +30,7 @@ SetWorkingDir %A_ScriptDir%
 #Include, %A_ScriptDir%
 #Include, ResourcesManager.ahk
 #Include, MicrophoneController.ahk
-#Include, VersionChecker.ahk
+#Include, Updater.ahk
 #Include, %A_ScriptDir%\config
 #Include, ProfileTemplate.ahk
 #Include, Config.ahk
@@ -41,8 +41,10 @@ SetWorkingDir %A_ScriptDir%
 #Include, %A_ScriptDir%\UI\config
 #Include, HotkeyPanel.ahk
 #Include, UI.ahk
+#Include, UpdaterUI.ahk
 
-Global config_obj
+Global A_startupTime:= A_TickCount
+, config_obj
 , current_profile
 , mic_controllers
 , mute_sound
@@ -60,6 +62,8 @@ Global config_obj
 , arg_noUI:=0
 , arg_reload:= 0
 , arg_logFile:="*"
+, arg_isUpdater:=0
+, arg_installPath:=""
 , resources_obj:= new ResourcesManager()
 , isFirstLaunch:=0
 , A_Version:= A_IsCompiled? util_getFileSemVer(A_ScriptFullPath) : U_Version 
@@ -67,13 +71,22 @@ Global config_obj
 , osd_wnd
 , overlay_wnd
 , A_log:=""
-, A_startupTime:= A_TickCount
+, updater_obj:= new Updater(A_ScriptDir)
+, updater_UI:=""
 
 ; parse cli args
 parseArgs()
+tray_defaults()
 util_log("MicMute v" . A_Version)
 util_log(Format("[Main] Running as user {}, A_IsAdmin = {}", A_UserName, A_IsAdmin))
 OnError(Func("util_log"))
+if(arg_isUpdater){
+    util_log("[Main] Updater mode")
+    updater_UI:= new UpdaterUI()
+    return
+}else{
+    Try FileDelete, %A_Temp%\MicMuteUpdater.exe
+}
 ; create config gui window
 if(!arg_noUI)
     UI_create(Func("reloadMicMute"))
@@ -88,7 +101,7 @@ OnMessage(WM_SETTINGCHANGE, "updateSysTheme")
 registerWindowHook()
 ; run the update checker once, 5 seconds after launching
 if(A_IsCompiled && !arg_reload && config_obj.AllowUpdateChecker=1){
-    cfunc:= ObjBindMethod(VersionChecker, "CheckForUpdates")
+    cfunc:= ObjBindMethod(updater_obj, "CheckForUpdates")
     SetTimer, % cfunc, -5000
 }
 A_startupTime:= A_TickCount - A_startupTime
@@ -371,6 +384,8 @@ parseArgs(){
             case "profile": arg_profile:= val3
             case "reload": arg_reload:= (val3=""? 1 : val3)
             case "logFile": arg_logFile:= val3
+            case "updater": arg_isUpdater:= (val3=""? 1 : val3)
+            case "installPath": arg_installPath:= val3
         }
     }
 }
@@ -408,4 +423,10 @@ configMsg(err){
         editConfig()
     IfMsgBox, Cancel
         ExitApp, -2
+}
+
+runUpdater(){
+    FileCopy, %A_ScriptFullPath%, %A_Temp%\MicMuteUpdater.exe, 1
+    Run, "%A_Temp%\MicMuteUpdater.exe" "/updater=1" "/installPath=%A_ScriptDir%"
+    ExitApp, 1
 }

@@ -9,7 +9,7 @@ body {
     scrollbar-shadow-color: #4E4E4E;
 }
 
-header {
+.title-bar-header {
     color: #d9d9d9 !important;
     background: #272727 !important;
 }
@@ -63,6 +63,7 @@ a:focus,
 p,
 body,
 .card,
+.box,
 h1,
 h2,
 h3,
@@ -119,4 +120,9 @@ input[type="checkbox"]:checked+span {
 
 #notification label{
     color: #d9d9d9 !important;
+}
+
+.card-footer,
+.card-footer *{
+    border-color: #555555 !important;
 }
