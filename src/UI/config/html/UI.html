@@ -528,7 +528,7 @@
             <div class="container visible hidden tab-hidden" id="global_options_tab_content">
                 <div id="global_options_container" class="columns">
                     <!-- Global options -->
-                    <div class="column is-7">
+                    <div class="column is-8">
                         <label class="label title is-6 noselect">Options</label>
                         <!-- Mute on startup -->
                         <div class="tag is-small option" onclick="ahk.UI_onGlobalOption('MuteOnStartup',1);this.blur()"
@@ -559,8 +559,17 @@
                                     state</span>
                             </label>
                         </div>
+                        <div class="tag is-small option has-tooltip"
+                        onclick="ahk.UI_onGlobalOption('AllowUpdateChecker',1);this.blur()" tabindex=0
+                        onkeydown="switch(event.keyCode){case 32:case 13:this.click()}">
+                        <label class="checkbox">
+                            <input tabindex="0" type="checkbox" name="AllowUpdateChecker" id="AllowUpdateChecker"
+                                disabled>
+                            <span class="AllowUpdateChecker-label">Check for updates on startup</span>
+                        </label>
                     </div>
-                    <div class="column is-5">
+                    </div>
+                    <div class="column is-4">
                         <!-- default profile -->
                         <label class="label title is-6 noselect" for="default_profile">Default
                             Profile</label>

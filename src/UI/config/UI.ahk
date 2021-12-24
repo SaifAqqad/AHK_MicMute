@@ -198,6 +198,10 @@ UI_reset(){
         ui_obj.doc.getElementById("SwitchProfileOSD").setAttribute("checked", 1)
     else
         ui_obj.doc.getElementById("SwitchProfileOSD").removeAttribute("checked")
+    if(config_obj.AllowUpdateChecker)
+        ui_obj.doc.getElementById("AllowUpdateChecker").setAttribute("checked", 1)
+    else
+        ui_obj.doc.getElementById("AllowUpdateChecker").removeAttribute("checked")    
     ui_obj.doc.getElementById("PreferTheme").value:= config_obj.PreferTheme
 }
 
