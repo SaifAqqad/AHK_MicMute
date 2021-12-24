@@ -14,6 +14,10 @@ class Updater {
     update(){
         if(InStr(this.installDir, A_ScriptDir))
             return -2
+        if(!DllCall("Wininet.dll\InternetGetConnectedState", "Str", 0x43, "Int", 0)){ ; no internet connection
+            this.logError("No internet connection")
+            return -5
+        }
         updateFunc:= this.installationMethod . "Update"
         if(IsObject(this[updateFunc]))
             return this[updateFunc]()
@@ -28,7 +32,12 @@ class Updater {
             switch asset.name {
                 case "MicMute.exe", "MicMute.sha256":
                     this.loggerFunc.call("Downloading " asset.name " (" asset.size/1024/1024 " MB)")
-                    this.downloadToFile(asset.browser_download_url, "latest_" . asset.name)
+                    Try this.downloadToFile(asset.browser_download_url, "latest_" . asset.name)
+                    catch err{
+                        this.logError("Downloading " asset.name " failed (" err.message ")")
+                        this.cleanUp()
+                        return -1
+                    }
             }
         }
         if(FileExist(this.installDir . "latest_MicMute.sha256") && !this.skipHashCheck){
@@ -36,14 +45,13 @@ class Updater {
             FileRead, latest_hash, % this.installDir . "latest_MicMute.sha256"
             downloadedHash:= this.getFileHash(this.installDir . "latest_MicMute.exe")
             if(latest_hash != downloadedHash){
-                this.loggerFunc.call("Error: Hash mismatch. Expected: " latest_hash " Got: " downloadedHash, -1)
-                FileDelete, % this.installDir . "latest_MicMute.sha256"
-                FileDelete, % this.installDir . "latest_MicMute.exe"
+                this.logError("Hash mismatch.`nExpected: " latest_hash " Got: " downloadedHash)
+                this.cleanUp()
                 return -1
             }
             this.loggerFunc.call("Hash matches")
         }
-        this.loggerFunc.call("Replacing the old executable")
+        this.loggerFunc.call("Replacing the executable")
         Filecopy, % this.installDir "latest_MicMute.exe", % this.installDir "MicMute.exe", 1
         this.cleanUp()
         this.loggerFunc.call("MicMute Updated successfully", 1)
@@ -55,11 +63,16 @@ class Updater {
         psScript = "& {scoop update;scoop update micmute;Write-Host -NoNewLine 'Press any key to exit...';$null=$Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');Exit $LASTEXITCODE;}"
         RunWait, Powershell.exe -NoProfile -NonInteractive -Command %psScript%, %A_ScriptDir%, UseErrorLevel, powershellPID
         if(ErrorLevel){
-            this.loggerFunc.call("Error: Scoop update failed.", -1)
+            this.logError("Scoop update failed")
             return -1
         }
+        arg_installPath.= "..\current"
         this.loggerFunc.call("Scoop update successful", 1)
         return 0
+    }
+
+    logError(err){
+        this.loggerFunc.call("Error: " err, -1)
     }
 
     CheckForUpdates(isTray:=0){
@@ -129,7 +142,6 @@ class Updater {
     }
 
     cleanUp(){
-        this.loggerFunc.call("Cleaning up")
         Try FileDelete, % this.installDir . "latest_MicMute.exe"
         Try FileDelete, % this.installDir . "latest_MicMute.sha256"
     }

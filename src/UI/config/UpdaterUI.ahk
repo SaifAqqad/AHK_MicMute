@@ -13,19 +13,18 @@ class UpdaterUI extends NeutronWindow{
         this.doc.getElementById("MicMute_icon").setAttribute("src", resources_obj.pngIcon)
         for i, css in resources_obj.cssFile {
             if(!this.doc.getElementById("css_" css.name))
-                this.doc.head.insertAdjacentHTML("beforeend",Format(template_link, css.name, css.file))
+                this.doc.getElementById("inline_styles").insertAdjacentHTML("beforebegin",Format(template_link, css.name, css.file))
         }
-        RegRead, isLightTheme, HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize, AppsUseLightTheme
-        if(isLightTheme)
-            this.doc.getElementById("css_dark").setAttribute("disabled","1")
+        OnMessage(WM_SETTINGCHANGE, ObjBindMethod(this, "updateUITheme"))
+        this.updateUITheme()
     }
 
     show(){
         this.setUIState("pre-update")
         this.resetDetail()
-        this.appendDetail("Current version: " A_Version)
-        this.appendDetail("Latest version: " updater_obj.getLatestVersion())
-        this.appendDetail("Installation method: " updater_obj.installationMethod)
+        this.appendDetail("Current version: <span class='has-text-primary'>" A_Version "</span>")
+        this.appendDetail("Latest version:  <span class='has-text-primary'>" updater_obj.getLatestVersion() "</span>")
+        this.appendDetail("Installation method: <span class='has-text-primary'>" updater_obj.installationMethod "</span>")
         base.Gui("+LabelUpdaterUI_ +MinSize780x510 -Resize")
         base.Show("Center w780 h510","MicMute Updater")
     }
@@ -58,6 +57,16 @@ class UpdaterUI extends NeutronWindow{
         if(restart)
             Run, % arg_installPath "\MicMute.exe" , % arg_installPath, UseErrorLevel
         ExitApp, 0
+    }
+
+    updateUITheme(wParam:="", lParam:=""){
+        if(!lParam || StrGet(lParam) == "ImmersiveColorSet"){
+            RegRead, isLightTheme, HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize, AppsUseLightTheme
+            if(isLightTheme)
+                this.doc.getElementById("css_dark").setAttribute("disabled","1")
+            else
+                this.doc.getElementById("css_dark").removeAttribute("disabled")
+        }
     }
 
     resetDetail(){

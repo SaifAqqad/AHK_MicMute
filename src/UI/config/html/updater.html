@@ -3,10 +3,7 @@
 
     <head>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <link rel="stylesheet" href="../css/bulma.css">
-        <link rel="stylesheet" href="../css/base.css">
-        <!-- <link rel="stylesheet" href="../css/dark.css"> -->
-        <style>
+        <style id="inline_styles">
             header {
                 height: 30px;
             }
@@ -34,7 +31,7 @@
                 top: 20%;
                 left: 50%;
                 transform: translate(-50%, -15%);
-                max-width: 700px !important
+                max-width: 600px !important
             }
 
             #label {
@@ -52,6 +49,14 @@
                 width: 800% !important;
             }
 
+            #status_heading {
+                height: 1.5em;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+
             #current_status {
                 cursor: default;
             }
@@ -60,13 +65,9 @@
                 margin-top: 20px;
                 padding-top: 0;
                 height: 7.5em;
-                overflow-y: scroll;
+                overflow-y: auto;
                 box-sizing: content-box;
                 line-height: 2em;
-            }
-
-            #current_status {
-                color: #ff6920;
             }
 
             .progress {
@@ -95,8 +96,10 @@
             </div>
             <div class="card">
                 <div class="card-content">
-                    <p id="heading" class="pre-update ">An update for MicMute is available, click on 'Update' to start updating</p>
-                    <p id="status_heading" class="post-update during-update is-hidden">Current status: <span id="current_status"></span></p>
+                    <p id="heading" class="pre-update">An update for MicMute is available, click on <span class="has-text-primary">Update</span> to start
+                        updating</p>
+                    <p id="status_heading" class="post-update during-update is-hidden">Current status: <span class="has-text-primary"
+                            id="current_status"></span></p>
                     <div class="box" id="details">
                     </div>
                 </div>
