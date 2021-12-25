@@ -9,7 +9,8 @@ body {
     scrollbar-shadow-color: #4E4E4E;
 }
 
-.title-bar-header {
+.title-bar-header ,
+.modal-card-head{
     color: #d9d9d9 !important;
     background: #272727 !important;
 }

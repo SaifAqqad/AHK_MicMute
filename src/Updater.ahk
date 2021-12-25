@@ -1,7 +1,7 @@
 class Updater {
     latestVersionInfo:= { "scoop": { "url": "https://github.com/lukesampson/scoop-extras/raw/master/bucket/micmute.json"
                                   , "prop": "version" }
-                       , "github": { "url": "https://api.github.com/repos/SaifAqqad/exampleRepo/releases/latest"
+                       , "github": { "url": "https://api.github.com/repos/SaifAqqad/AHK_MicMute/releases/latest"
                                   , "prop": "tag_name" }}
 
     __New(installDir, loggerFunc:="", skipHashCheck:=0){
@@ -14,7 +14,7 @@ class Updater {
     update(){
         if(InStr(this.installDir, A_ScriptDir))
             return -2
-        if(!DllCall("Wininet.dll\InternetGetConnectedState", "Str", 0x43, "Int", 0)){ ; no internet connection
+        if(!this.isInternetConnected()){
             this.logError("No internet connection")
             return -5
         }
@@ -42,10 +42,10 @@ class Updater {
         }
         if(FileExist(this.installDir . "latest_MicMute.sha256") && !this.skipHashCheck){
             this.loggerFunc.call("Checking hash of MicMute.exe")
-            FileRead, latest_hash, % this.installDir . "latest_MicMute.sha256"
+            FileRead, actualHash, % this.installDir . "latest_MicMute.sha256"
             downloadedHash:= this.getFileHash(this.installDir . "latest_MicMute.exe")
-            if(latest_hash != downloadedHash){
-                this.logError("Hash mismatch.`nExpected: " latest_hash " Got: " downloadedHash)
+            if(actualHash != downloadedHash){
+                this.logError("Hash mismatch.`nExpected: " actualHash " Got: " downloadedHash)
                 this.cleanUp()
                 return -1
             }
@@ -75,40 +75,16 @@ class Updater {
         this.loggerFunc.call("Error: " err, -1)
     }
 
-    CheckForUpdates(isTray:=0){
-        static isRetry:= 0
-        util_log("[Updater] Checking for updates...")
-        Try {
-            if(!DllCall("Wininet.dll\InternetGetConnectedState", "Str", 0x43, "Int", 0)){ ; no internet
-                util_log("[Updater] No internet connection")
-                if(!isTray && !isRetry){ ; retry after 1min if auto checking for updates
-                    util_log("[Updater] Retrying in 1 minute...")
-                    cfunc:= ObjBindMethod(Updater, "CheckForUpdates")
-                    SetTimer, % cfunc, -60000
-                    isRetry:= 1
-                    return
-                }
-                Throw, Exception("No internet connection") 
-            }
-            latestVer := this.getLatestVersion()
-        }catch err{
-            util_log("[Updater] An error occured: " err.Message)
-            if(isTray){
-                MsgBox, 16, MicMute, An error occured while fetching the latest version
-            }
+    CheckForUpdates(isBackground:=1){
+        if(!this.isInternetConnected()){
+            this.loggerFunc.call("No internet connection")
             return
-        }        
-        util_log("[Updater] latest version: " latestVer)
-        if(latestVer && latestVer != A_Version){
-            txt:= "A new version of MicMute is available`n"
-            MsgBox, 68, MicMute, %txt%Do you want to download the update from GitHub?
-            IfMsgBox, OK
-                return
-            IfMsgBox, No
-                return
-            runUpdater()
-        }else if(isTray){
-            MsgBox, 64, MicMute, You have the latest version installed
+        }
+        latestVersion:= this.getLatestVersion()
+        if(latestVersion && latestVersion != A_Version){
+            if(isBackground)
+                TrayTip, MicMute, % "An Update for MicMute is available, click 'Check for updates' in the tray menu to update"
+            return latestVersion
         }
     }
 
@@ -144,6 +120,10 @@ class Updater {
     cleanUp(){
         Try FileDelete, % this.installDir . "latest_MicMute.exe"
         Try FileDelete, % this.installDir . "latest_MicMute.sha256"
+    }
+
+    isInternetConnected(){
+        return DllCall("Wininet.dll\InternetGetConnectedState", "Str", 0x43, "Int", 0)
     }
 
     downloadToFile(url, name){

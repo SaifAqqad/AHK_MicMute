@@ -778,10 +778,12 @@ UI_createAbout(){
     about_obj.Gui("-Resize")
 }
 
-UI_showAbout(neutron:=""){
+UI_showAbout(neutron:="", isCheckingForUpdates:=0){
     util_log("[UI] Showing 'about' window")
     tray_defaults()
-    about_obj.show(Format("Center w{:i} h{:i}",500*UI_scale,300*UI_scale),"About MicMute")
+    if(isCheckingForUpdates)
+        UI_checkForUpdates(neutron)
+    about_obj.show(Format("Center w{:i} h{:i}", 500*UI_scale, 300*UI_scale), "About MicMute")
     about_obj.doc.focus()
 }
 
@@ -791,12 +793,34 @@ UI_exitAbout(neutron){
     UI_createAbout()
 }
 
+UI_checkForUpdates(neutron:=""){
+    refreshButton:= about_obj.doc.getElementById("refresh_button")
+    refreshButton.classList.add("is-loading")
+    latestVersion:= updater_obj.getLatestVersion()
+    if(latestVersion){
+        about_obj.doc.getElementById("latest_version").innerText:= latestVersion
+        refreshButton.classList.add("push-right")
+        if(latestVersion > A_Version){
+            about_obj.doc.getElementById("update_button").classList.remove("is-hidden")
+        }
+    }
+    refreshButton.classList.remove("is-loading")
+    refreshButton.blur()
+}
+
+UI_launchUpdater(neutron:=""){
+    MsgBox, 65, MicMute, % "This will restart MicMute in updater mode"
+    IfMsgBox, OK
+        runUpdater()
+    about_obj.doc.getElementById("update_button").blur()
+}
+
 UI_launchURL(neutron:="", url:=""){
     Run, %url%, %A_Desktop%
 }
 
-UI_launchReleasePage(neutron:=""){
-    url:= "https://github.com/SaifAqqad/AHK_MicMute/releases/tag/" . A_Version
+UI_launchReleasePage(neutron:="", version:=""){
+    url:= "https://github.com/SaifAqqad/AHK_MicMute/releases/tag/" . (version? version : A_Version)
     Run, %url%, %A_Desktop%
 }
 

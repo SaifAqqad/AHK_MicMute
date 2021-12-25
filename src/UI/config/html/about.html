@@ -1,92 +1,145 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <style>
-        header {
-            height: 30px;
-        }
+    <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <style>
+            header {
+                height: 30px;
+            }
 
-        body {
-            overflow: hidden;
-            font-family: 'Segoe UI Variable Display', 'Segoe UI';
-        }
+            body {
+                overflow: hidden;
+                font-family: 'Segoe UI Variable Display', 'Segoe UI';
+            }
 
 
-        #MicMute_icon {
-            width: 38px;
-            height: 38px;
-            border-radius: 23%;
-            box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.02);
-            transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+            #MicMute_icon {
+                width: 38px;
+                height: 38px;
+                border-radius: 23%;
+                box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.02);
+                transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
 
-        img#MicMute_icon:hover,
-        label:hover>img#MicMute_icon {
-            box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.055), 0px 0px 20px 0px rgba(255, 87, 45, 0.63), 0px 9px 46px 8px rgba(0, 0, 0, 0.055);
-        }
+            img#MicMute_icon:hover,
+            label:hover>img#MicMute_icon {
+                box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.055), 0px 0px 20px 0px rgba(255, 87, 45, 0.63), 0px 9px 46px 8px rgba(0, 0, 0, 0.055);
+            }
 
-        #info {
-            position: absolute;
-            top: 40%;
-            left: 80px;
-            transform: translateY(-50%);
-            margin-right: 100px;
-        }
+            #info {
+                position: absolute;
+                top: 40%;
+                left: 80px;
+                transform: translateY(-50%);
+                margin-right: 100px;
+            }
 
-        #label {
-            font-size: 2rem;
-            font-weight: 600;
-            cursor: default;
-        }
+            #label {
+                font-size: 2rem;
+                font-weight: 600;
+                cursor: pointer !important;
+            }
 
-        #stats {
-            margin-top: 3px;
-            font-size: 14px;
-        }
+            #stats {
+                margin-top: 3px;
+                font-size: 14px;
+            }
 
-        #license {
-            left: 90px;
-            margin-right: 50px;
-            position: fixed;
-            bottom: 20px;
-            font-size: 11px;
-        }
-    </style>
-</head>
+            #license {
+                left: 90px;
+                margin-right: 50px;
+                position: fixed;
+                bottom: 20px;
+                font-size: 11px;
+            }
 
-<body class="noselect" oncontextmenu="return false">
-    <header class="title-bar-header">
-        <span class="title-bar" onmousedown="neutron.DragTitleBar()"></span>
-        <span class="title-btn title-btn-close" onclick="ahk.UI_exitAbout()">r</span>
-    </header>
-    <div id='info'>
-        <div>
-            <label id='label' tabindex=0 onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
-                onclick="ahk.UI_launchURL('https://github.com/SaifAqqad/AHK_MicMute')"><img id='MicMute_icon' src='' />
-                MicMute</label>
-        </div>
-        <div id='stats'>
-            <div>Version: <a id="version" tabindex=0 onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
-                    onclick="ahk.UI_launchReleasePage()"></a>
+            .status-row {
+                margin-top: 0.4em;
+            }
+
+            .status-row>a {
+                margin-left: 0.2em;
+            }
+
+            #refresh_button {
+                margin-left: 0em;
+                height: 1.8em;
+                width: 1.6em;
+            }
+
+            #update_button {
+                height: 1.8em;
+            }
+
+            .push-right {
+                margin-left: 1em !important;
+            }
+
+            div.has-addons.is-grouped {
+                display: inline-flex;
+            }
+
+            .field.has-addons :not(:last-child).control {
+                margin-right: -1px !important;
+            }
+        </style>
+    </head>
+
+    <body class="noselect" oncontextmenu="return false">
+        <header class="title-bar-header">
+            <span class="title-bar" onmousedown="neutron.DragTitleBar()"></span>
+            <span class="title-btn title-btn-close" onclick="ahk.UI_exitAbout()">r</span>
+        </header>
+        <div id='info'>
+            <div>
+                <label id='label' tabindex=0 onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
+                    onclick="ahk.UI_launchURL('https://github.com/SaifAqqad/AHK_MicMute')"><img id='MicMute_icon' src='../../../resources/MicMute.png' />
+                    MicMute</label>
             </div>
-            <div>Author: <a tabindex=0 onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
-                    onclick="ahk.UI_launchURL('https://github.com/SaifAqqad')">Saif Aqqad</a></div>
+
+            <div id='stats'>
+                <div class="status-row">Installed version: <a id="version" tabindex=0 onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
+                        onclick="ahk.UI_launchReleasePage()"></a>
+                </div>
+                <div class="status-row">Latest version:
+                    <a id="latest_version" tabindex=0 onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
+                        onclick="ahk.UI_launchReleasePage(this.innerText)"></a>
+                    <div class="field has-addons is-grouped">
+                        <p class="control">
+                            <button type="button" class="button is-small is-primary is-outlined" id="refresh_button"
+                                onclick="ahk.UI_checkForUpdates()">
+                                <span class="icon is-small">
+                                    <svg style="width:16px;height:16px" focusable="false" viewBox="0 0 24 24">
+                                        <path fill="currentColor"
+                                            d="M17.65,6.35C16.2,4.9 14.21,4 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20C15.73,20 18.84,17.45 19.73,14H17.65C16.83,16.33 14.61,18 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6C13.66,6 15.14,6.69 16.22,7.78L13,11H20V4L17.65,6.35Z" />
+                                    </svg>
+                                </span>
+                            </button>
+                        </p>
+                        <p class="control">
+                            <button type="button" class="button is-small is-primary is-outlined is-hidden" id="update_button" onclick="ahk.UI_launchUpdater()">
+                                <svg style="width:14px;height:14px" viewBox="10 0 24 24">
+                                    <path fill="currentColor" d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z" />
+                                </svg> Update
+                            </button>
+                        </p>
+                    </div>
+                </div>
+                <div class="status-row">Author: <a tabindex=0 onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
+                        onclick="ahk.UI_launchURL('https://github.com/SaifAqqad')">Saif Aqqad</a></div>
+            </div>
         </div>
-    </div>
-    <div id="license">
-        <div> MicMute's code is public domain and is licensed under <a tabindex=0
-                onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
-                onclick="ahk.UI_launchURL('https://github.com/SaifAqqad/AHK_MicMute/blob/master/LICENSE')">The
-                Unlicense</a>.
+        <div id="license">
+            <div> MicMute's code is public domain and is licensed under <a tabindex=0 onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
+                    onclick="ahk.UI_launchURL('https://github.com/SaifAqqad/AHK_MicMute/blob/master/LICENSE')">The
+                    Unlicense</a>.
+            </div>
+            <div>
+                MicMute uses several libraries, each with their own <a tabindex=0 onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
+                    onclick="ahk.UI_launchURL('https://github.com/SaifAqqad/AHK_MicMute#libraries-and-resources-used')">license</a>.
+            </div>
         </div>
-        <div>
-            MicMute uses several libraries, each with their own <a tabindex=0
-                onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
-                onclick="ahk.UI_launchURL('https://github.com/SaifAqqad/AHK_MicMute#libraries-and-resources-used')">license</a>.
-        </div>
-    </div>
-</body>
+    </body>
 
 </html>

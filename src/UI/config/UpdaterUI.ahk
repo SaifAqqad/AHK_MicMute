@@ -22,7 +22,7 @@ class UpdaterUI extends NeutronWindow{
     show(){
         this.setUIState("pre-update")
         this.resetDetail()
-        this.appendDetail("Current version: <span class='has-text-primary'>" A_Version "</span>")
+        this.appendDetail("Installed version: <span class='has-text-primary'>" A_Version "</span>")
         this.appendDetail("Latest version:  <span class='has-text-primary'>" updater_obj.getLatestVersion() "</span>")
         this.appendDetail("Installation method: <span class='has-text-primary'>" updater_obj.installationMethod "</span>")
         base.Gui("+LabelUpdaterUI_ +MinSize780x510 -Resize")

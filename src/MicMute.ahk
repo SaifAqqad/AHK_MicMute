@@ -71,7 +71,7 @@ Global A_startupTime:= A_TickCount
 , osd_wnd
 , overlay_wnd
 , A_log:=""
-, updater_obj:= new Updater(A_ScriptDir)
+, updater_obj:= new Updater(A_ScriptDir, Func("util_log"))
 , updater_UI:=""
 
 ; parse cli args
@@ -99,10 +99,10 @@ OnExit(Func("exitMicMute"))
 OnMessage(WM_SETTINGCHANGE, "updateSysTheme")
 ; listen for window changes
 registerWindowHook()
-; run the update checker once, 5 seconds after launching
+; run the update checker once, 10 seconds after launching
 if(A_IsCompiled && !arg_reload && config_obj.AllowUpdateChecker=1){
     cfunc:= ObjBindMethod(updater_obj, "CheckForUpdates")
-    SetTimer, % cfunc, -5000
+    SetTimer, % cfunc, -10000
 }
 A_startupTime:= A_TickCount - A_startupTime
 util_log("[Main] MicMute startup took " A_startupTime "ms")
@@ -147,13 +147,11 @@ initilizeMicMute(default_profile:=""){
     ;initilize tray
     tray_init()
     if(config_obj.AllowUpdateChecker==-1){
-        MsgBox, 35, MicMute, Allow MicMute to connect to the internet and check for updates on startup?
+        MsgBox, 36, MicMute, Allow MicMute to connect to the internet and check for updates on startup?
         IfMsgBox, Yes
             config_obj.AllowUpdateChecker:= 1
         IfMsgBox, No
             config_obj.AllowUpdateChecker:= 0
-        IfMsgBox, Cancel
-            config_obj.AllowUpdateChecker:= -1
     }
     ;on first launch -> immediately call editConfig()
     if(isFirstLaunch){
@@ -426,6 +424,9 @@ configMsg(err){
 }
 
 runUpdater(){
+    if(!A_IsCompiled)
+        return
+    util_log("[Main] Restarting MicMute in updater mode")
     FileCopy, %A_ScriptFullPath%, %A_Temp%\MicMuteUpdater.exe, 1
     Run, "%A_Temp%\MicMuteUpdater.exe" "/updater=1" "/installPath=%A_ScriptDir%"
     ExitApp, 1

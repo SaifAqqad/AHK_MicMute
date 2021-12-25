@@ -122,7 +122,7 @@ tray_Reload(){
 }
 
 tray_checkForUpdates(){
-    updater_obj.CheckForUpdates(1)
+    UI_showAbout("",1)
 }
 
 tray_noFunc(){
