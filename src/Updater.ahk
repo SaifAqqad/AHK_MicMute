@@ -97,6 +97,10 @@ class Updater {
     }
 
     getLatestVersion(){
+        if(!this.isInternetConnected()){
+            this.loggerFunc.call("No internet connection")
+            return
+        }
         infoJson := this.latestVersionInfo[this.installationMethod]
         return this.getPropFromURL(infoJson.url, infoJson.prop) 
     }
