@@ -5,8 +5,6 @@ Class MicrophoneController {
         this.state:=0
         this.ptt_key:=""
         this.microphone:= mic_obj.Name
-        if(mic_obj.Name = "default")
-            this.microphone:= "capture"            
         this.muteHotkey:= mic_obj.MuteHotkey
         this.unmuteHotkey:= mic_obj.UnmuteHotkey
         this.isPushToTalk:= mic_obj.PushToTalk
@@ -14,16 +12,20 @@ Class MicrophoneController {
         this.force_current_state:= force_current_state
         this.feedback_func:= feedback_func
         this.state_func:= state_func
-        this.name:= mic_obj.Name
-        if(this.name == "default")
-            try this.name:= VA_GetDeviceName(VA_GetDevice("capture")) 
-        RegExMatch(this.name, "(.+) \(.+\)", match)
-        this.name:= match1? match1 : this.name
-        if (StrLen(this.name)>14)
-            this.name:= SubStr(this.name, 1, 12) . Chr(0x2026) ; fix overflow with ellipsis
-        this.state_string:= {0:this.name . " Online",1:this.name . " Muted"}
         this.callFeedback:=0
         this.callback:= ""
+        switch mic_obj.Name {
+            case "default": 
+                this.microphone:= "capture"
+                try this.friendly_name:= VA_GetDeviceName(VA_GetDevice("capture")) 
+            default : 
+                this.friendly_name:= mic_obj.Name
+        }
+        RegExMatch(this.friendly_name, "(.+) \(.+\)", match)
+        this.friendly_name:= match1? match1 : this.friendly_name
+        if (StrLen(this.friendly_name)>14)
+            this.friendly_name:= SubStr(this.friendly_name, 1, 12) . Chr(0x2026) ; fix overflow with ellipsis
+        this.state_string:= {0:this.friendly_name . " Online",1:this.friendly_name . " Muted",-1:this.friendly_name . " Unavailable"}
     }
 
     ptt(){
