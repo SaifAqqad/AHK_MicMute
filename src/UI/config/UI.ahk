@@ -119,7 +119,7 @@ UI_Show(p_profile){
     UI_switchToTab("", ".main-tabs", "profiles_tab")
     UI_addTooltips()
     tray_defaults()
-    ui_obj.Gui(Format("+LabelUI_ +MinSize{:i}x{:i}",785*UI_scale,500*UI_scale))
+    ui_obj.Gui(Format("+LabelUI_ +MinSize{:i}x{:i} +OwnDialogs",785*UI_scale,500*UI_scale))
     ui_obj.Show(Format("Center w{:i} h{:i}",820*UI_scale,650*UI_scale),"MicMute")
     ui_obj.doc.focus()
 }
@@ -529,6 +529,7 @@ UI_onGlobalOption(neutron, option, setState){
 }
 
 UI_onOSDset(){
+    ui_obj.Gui("+OwnDialogs")
     pox_x:= ui_obj.doc.getElementByID("OSDPos_x")
     pox_y:= ui_obj.doc.getElementByID("OSDPos_y")
     MsgBox, 65, MicMute, Click OK then drag the OSD to the `nwanted position and right click it`nor click Cancel to reset.
@@ -734,6 +735,7 @@ UI_showElemID(elemId){
 }
 
 UI_warnProfileIsDirty(){
+    ui_obj.Gui("+OwnDialogs")
     MsgBox, 52, MicMute, % Format("You have unsaved changes in profile '{}'`nDo you want to save them before continuing?",current_profile.ProfileName)
     IfMsgBox, Yes
         UI_onSaveProfile("", 1)
@@ -785,6 +787,7 @@ UI_showAbout(neutron:="", isCheckingForUpdates:=0){
         UI_checkForUpdates(neutron)
     about_obj.show(Format("Center w{:i} h{:i}", 500*UI_scale, 300*UI_scale), "About MicMute")
     about_obj.doc.focus()
+    about_obj.Gui("+OwnDialogs")
 }
 
 UI_exitAbout(neutron){
@@ -809,6 +812,7 @@ UI_checkForUpdates(neutron:=""){
 }
 
 UI_launchUpdater(neutron:=""){
+    about_obj.Gui("+OwnDialogs")
     MsgBox, 65, MicMute, % "This will restart MicMute in updater mode"
     IfMsgBox, OK
         runUpdater()
