@@ -8,7 +8,7 @@ global ui_obj, about_obj, current_profile, hotkey_panels, current_hp
 , template_app:= "<option value='{1:}' {3:} >{2:}</option>"
 , template_profile_tag:= "
 (
-    <span class=""tag is-medium has-tooltip"" tabindex=0 onkeydown=""switch(event.keyCode){case 32:case 69: event.preventDefault(); this.oncontextmenu.call() ;break; case 13:this.click()}""
+    <span class=""tag is-medium has-tooltip"" tabindex=0 role=""button"" aria-label=""{1:}"" aria-pressed=""false""  onkeydown=""switch(event.keyCode){case 32:case 69: event.preventDefault(); this.oncontextmenu.call() ;break; case 13:this.click()}""
         id=""tag_profile_{1:}"" oncontextmenu=""ahk.UI_displayProfileRename('{1:}')"" onClick=""ahk.UI_setProfile('{1:}');this.blur()"">
         <label class=""radio"">
             <input type=""radio"" name=""profiles_radio"" value=""{1:}"" id=""profile_{1:}"" disabled>
@@ -722,6 +722,7 @@ UI_addTooltips(){
 UI_flipVal(neutron,elemId){
     elem:= ui_obj.doc.getElementById(elemId)
     elem.checked := !elem.checked
+    elem.setAttribute("aria-pressed", elem.checked? "true" : "false")
 }
 
 UI_hideElemID(elemId){

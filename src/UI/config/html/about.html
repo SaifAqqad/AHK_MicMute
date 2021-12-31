@@ -89,11 +89,11 @@
     <body class="noselect" oncontextmenu="return false">
         <header class="title-bar-header">
             <span class="title-bar" onmousedown="neutron.DragTitleBar()"></span>
-            <span class="title-btn title-btn-close" onclick="ahk.UI_exitAbout()">r</span>
+            <span class="title-btn title-btn-close" tabindex=0 aria-label="close" role="button" onclick="ahk.UI_exitAbout()">r</span>
         </header>
         <div id='info'>
             <div>
-                <label id='label' tabindex=0 onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
+                <label id='label' tabindex=0 role="button" onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
                     onclick="ahk.UI_launchURL('https://github.com/SaifAqqad/AHK_MicMute')"><img id='MicMute_icon' src='../../../resources/MicMute.png' />
                     MicMute</label>
             </div>
@@ -107,8 +107,7 @@
                         onclick="ahk.UI_launchReleasePage(this.innerText)"></a>
                     <div class="field has-addons is-grouped">
                         <p class="control">
-                            <button type="button" class="button is-small is-primary is-outlined" id="refresh_button"
-                                onclick="ahk.UI_checkForUpdates()">
+                            <button type="button" class="button is-small is-primary is-outlined" id="refresh_button" onclick="ahk.UI_checkForUpdates()">
                                 <span class="icon is-small">
                                     <svg style="width:16px;height:16px" focusable="false" viewBox="0 0 24 24">
                                         <path fill="currentColor"
