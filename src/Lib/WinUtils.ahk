@@ -97,3 +97,17 @@ util_log(msg){
     A_log.= msg
     Try FileOpen(arg_logFile, "a").Write(msg)
 }
+
+util_toString(obj){
+    if(!IsObject(obj))
+        return obj . ""
+    isArray := obj.Length()? 1 : 0
+    output_str := isArray? "[ ": "{ "
+    for key, val in obj {
+        output_str.= (isArray? "" : (key . ": ")) . util_toString(val) . ", "
+    }
+    if(InStr(output_str, ","))
+        output_str:= SubStr(output_str, 1, -2) . " "
+    output_str .= isArray? "]": "}"
+    return output_str
+}
