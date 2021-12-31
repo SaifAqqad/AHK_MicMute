@@ -180,7 +180,7 @@ switchProfile(p_name:=""){
     ;unmute and disable hotkeys for all existing microphones
     if(mic_controllers){
         for i, mic in mic_controllers{
-            VA_SetMasterMute(0,mic.microphone)
+            mic.setMuteState(0, 0)
             mic.disableController()
         }
     }
@@ -208,9 +208,16 @@ switchProfile(p_name:=""){
             mc:= new MicrophoneController(mic, current_profile.PTTDelay, config_obj.ForceMicrophoneState, Func("showFeedback"), Func("onUpdateState"))
             ; mute mics on startup
             if(config_obj.MuteOnStartup)
-                VA_SetMasterMute(1,mc.microphone)
+                mic.setMuteState(1, 0)
             mc.enableController()
             mc.updateState()
+            if(mic.Name = "all microphones"){
+                while(ctrlr:= mic_controllers.Pop()){ ; disable and remove previously added controllers
+                    ctrlr.disableController()
+                }
+                mic_controllers.Push(mc)
+                break
+            }
             mic_controllers.Push(mc)
         }Catch, err {
             util_log(err)
@@ -257,7 +264,11 @@ showFeedback(mic_obj){
     }    
     ; if osd is enabled -> show and hide after 1 sec
     if (current_profile.OnscreenFeedback){ ;use generic/mic.name state string
-        str:= (mic_obj[(mic_controllers.Length()>1? "": "generic_") "state_string"][mic_obj.state])
+        if(mic_obj.isMicrophoneArray || mic_controllers.Length()>1)
+            state_string:= mic_obj.state_string
+        else
+            state_string:= mic_obj.generic_state_string
+        str:= state_string[mic_obj.state]
         osd_wnd.showAndHide(str, !mic_obj.state)
     }
 }
@@ -355,7 +366,7 @@ exitMicMute(){
     util_log("[Main] Exiting MicMute")
     config_obj.exportConfig()
     for i, mic in mic_controllers {
-        VA_SetMasterMute(0,mic.microphone)
+        mic.setMuteState(0, 0)
         mic.disableController()
     }
 }

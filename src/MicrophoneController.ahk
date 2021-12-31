@@ -15,6 +15,11 @@ Class MicrophoneController {
         this.callFeedback:=0
         this.callback:= ""
         switch mic_obj.Name {
+            case "all microphones": 
+                this.microphone:= VA_GetDeviceList("capture")
+                this.isMicrophoneArray:= 1
+                this.force_current_state:= 1
+                this.friendly_name:= "Microphones"
             case "default": 
                 this.microphone:= "capture"
                 try this.friendly_name:= VA_GetDeviceName(VA_GetDevice("capture")) 
@@ -36,9 +41,9 @@ Class MicrophoneController {
         this.setMuteState(1)
     }
 
-    setMuteState(state){
+    setMuteState(state, callFeedback:=1){
         if(this.state = -1){
-            util_log(Format("[MicrophoneController] Attempting Reset: {}", this.microphone))
+            util_log(Format("[MicrophoneController] Attempting Reset: {}", util_toString(this.microphone)))
             this.disableController()
             this.enableController()
         }
@@ -47,33 +52,47 @@ Class MicrophoneController {
             case this.state: return
             case -2: state:= !this.state
         }
-        if(VA_SetMasterMute(state, this.microphone) = -1){ ;failing
+        if(this.isMicrophoneArray){
+            for i, mic in this.Microphone {
+                if(this._setMuteState(state, mic) = -1)
+                    return
+            }
+        }else{
+            if(this._setMuteState(state, this.microphone) = -1)
+                return
+        }
+        Critical, Off
+        this.callFeedback:= callFeedback
+    }
+
+    _setMuteState(state, mic){
+        if(VA_SetMasterMute(state, mic) = -1){ ;failing
             this.state:= -1
             this.state_func.Call(this)
-            return util_log("[MicrophoneController] " this.microphone " is unavailable")
+            util_log("[MicrophoneController] " util_toString(this.microphone) " is unavailable")
         }else{
             this.state:= state
         }
-        this.callFeedback:=1
-        Critical, Off
+        return this.state
     }
         
-    updateState(callback:=""){
+    updateState(micName:= "", callback:=""){
         Critical, On
         if(callback){
             if(this.force_current_state && this.state != callback.Muted)
-                VA_SetMasterMute(this.state, this.microphone)
+                VA_SetMasterMute(this.state, micName)
             else
                 this.state:= callback.Muted
         }else{
-            this.state:= VA_GetMasterMute(this.microphone)+0
+            micName:= this.isMicrophoneArray? this.microphone[1] : this.microphone
+            this.state:= VA_GetMasterMute(micName)+0
         }
         this.state_func.Call(this)
-        Critical, Off
         if(this.callFeedback){
-            this.feedback_func.Call(this)
             this.callFeedback:=0
+            this.feedback_func.Call(this)
         }
+        Critical, Off
     }
 
     enableController(){
@@ -85,7 +104,7 @@ Class MicrophoneController {
                 Throw, "Invalid hotkeys"
             if (this.muteHotkey=this.unmuteHotkey){
                 if(this.isPushToTalk){
-                    VA_SetMasterMute(1, this.microphone)
+                    this.setMuteState(1,0)
                     this.ptt_key:= (StrSplit(this.muteHotkey, [" ","#","!","^","+","&",">","<","*","~","$","UP"], " `t")).Pop()
                     funcObj:= ObjBindMethod(this,"ptt")
                     Hotkey, % this.muteHotkey , % funcObj, On
@@ -105,16 +124,30 @@ Class MicrophoneController {
         }
         MicrophoneController.hotkeys_set.push(HotkeyPanel.hotkeyToKeys(this.muteHotkey,1))
         MicrophoneController.hotkeys_set.push(HotkeyPanel.hotkeyToKeys(this.unmuteHotkey,1))
-        this.callback:= VA_CreateAudioEndpointCallback(ObjBindMethod(this, "updateState"), this.microphone)
-        util_log(Format("[MicrophoneController] Enabled: {}", this.microphone))
+        if(this.isMicrophoneArray){
+            this.callback:= Object()
+            for i, mic in this.microphone {
+                this.callback[mic]:= VA_CreateAudioEndpointCallback(ObjBindMethod(this, "updateState", mic), mic)
+            }
+        }else{
+            this.callback:= VA_CreateAudioEndpointCallback(ObjBindMethod(this, "updateState", this.microphone), this.microphone)
+        }
+        util_log(Format("[MicrophoneController] Enabled: {}", util_toString(this.microphone)))
     }
     
     disableController(){
         Hotkey, % this.muteHotkey, Off, Off
         Hotkey, % this.unmuteHotkey, Off, Off
-        Try VA_ReleaseAudioEndpointCallback(VA_GetDevice(this.microphone),this.callback)
-        this.callback:=""
-        util_log(Format("[MicrophoneController] Disabled: {}", this.microphone))
+        if(this.isMicrophoneArray){
+            for micName, cb in this.callback {
+                Try VA_ReleaseAudioEndpointCallback(VA_GetDevice(micName),cb)
+            }
+            this.callback:=""
+        }else{
+            Try VA_ReleaseAudioEndpointCallback(VA_GetDevice(this.microphone),this.callback)
+            this.callback:=""
+        }
+        util_log(Format("[MicrophoneController] Disabled: {}", util_toString(this.microphone)))
     }
 
     resetHotkeySet(){
