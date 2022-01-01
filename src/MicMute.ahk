@@ -82,6 +82,7 @@ util_log(Format("[Main] Running as user {}, A_IsAdmin = {}", A_UserName, A_IsAdm
 OnError(Func("util_log"))
 if(arg_isUpdater){
     util_log("[Main] Updater mode")
+    tray_init_updater()
     updater_UI:= new UpdaterUI()
     return
 }else{

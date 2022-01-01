@@ -35,6 +35,16 @@ tray_init(){
         Menu, Tray, Uncheck, Start on boot
 }
 
+tray_init_updater(){
+    Menu, Tray, DeleteAll
+    Menu, Tray, NoStandard
+    Menu, Tray, UseErrorLevel, On
+    util_log("[Tray] Initilizing updater tray menu")
+    tray_defaults()
+    tray_add("Help",Func("tray_launchHelp"))
+    tray_add("Exit",Func("tray_exit"))  
+}
+
 tray_defaults(){
     ico:= resources_obj.defaultIcon
     Menu, Tray, Tip, MicMute 
