@@ -106,7 +106,7 @@ tray_launchHelp(){
     if(GetKeyState("Shift", "P"))
         tray_showLog()
     else
-        Run, https://github.com/SaifAqqad/AHK_MicMute#usage, %A_Desktop%
+        UI_launchURL("", "README.md#usage")
 }
 
 tray_about(){
@@ -134,6 +134,7 @@ tray_showLog(){
     Gui, llv:New, +Labeltray_llv
     Gui, Add, ListView, NoSortHdr r20 w700, Log
     Gui, Add, Button, w80 gtray_llvRefresh, Refresh Log
+    Gui, Add, Button, w80 x+5 gtray_llvCopy, Copy Log
     tray_llvRefresh()
     Gui, show, , MicMute Logs
 }
@@ -145,6 +146,10 @@ tray_llvRefresh(){
         LV_Add("",line)
     }
     LV_Modify(LV_GetCount(), "Vis")
+}
+
+tray_llvCopy(){
+    Clipboard := StrReplace(A_Log, A_UserName, "***")
 }
 
 tray_llvClose(){

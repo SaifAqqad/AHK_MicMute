@@ -820,7 +820,10 @@ UI_launchUpdater(neutron:=""){
     about_obj.doc.getElementById("update_button").blur()
 }
 
-UI_launchURL(neutron:="", url:=""){
+UI_launchURL(neutron:="", url:="", isFullUrl:=0){
+    repoUrl:= "https://github.com/SaifAqqad/AHK_MicMute/blob/" A_Version "/"
+    if(!isFullUrl)
+        url:= repoUrl . url
     Run, %url%, %A_Desktop%
 }
 
