@@ -66,7 +66,7 @@ class Updater {
             this.logError("Scoop update failed")
             return -1
         }
-        arg_installPath.= "..\current"
+        arg_installPath.= "\..\current"
         this.loggerFunc.call("Scoop update successful", 1)
         return 0
     }
@@ -81,9 +81,12 @@ class Updater {
             return
         }
         latestVersion:= this.getLatestVersion()
-        if(latestVersion && latestVersion != A_Version){
-            if(isBackground)
-                TrayTip, MicMute, % "An Update for MicMute is available, click 'Check for updates' in the tray menu to update"
+        if(latestVersion && util_VerCmp(latestVersion, A_Version) = 1){
+            if(isBackground){
+                tray_defaults()
+                TrayTip, MicMute, % "A new version of MicMute is available, click 'Check for updates' in the tray menu to update"
+                onUpdateState(mic_controllers[1])
+            }
             return latestVersion
         }
     }

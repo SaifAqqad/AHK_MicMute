@@ -804,7 +804,7 @@ UI_checkForUpdates(neutron:=""){
     if(latestVersion){
         about_obj.doc.getElementById("latest_version").innerText:= latestVersion
         refreshButton.classList.add("push-right")
-        if(latestVersion != A_Version){
+        if(util_VerCmp(latestVersion, A_Version) = 1){
             about_obj.doc.getElementById("update_button").classList.remove("is-hidden")
         }
     }

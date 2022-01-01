@@ -111,3 +111,9 @@ util_toString(obj){
     output_str .= isArray? "]": "}"
     return output_str
 }
+
+util_VerCmp(V1, V2) { ; VerCmp() for Windows by SKAN on D35T/D37L @ tiny.cc/vercmp 
+    Return ( ( V1 := Format("{:04X}{:04X}{:04X}{:04X}", StrSplit(V1 . "...", ".",, 5)*) )
+           < ( V2 := Format("{:04X}{:04X}{:04X}{:04X}", StrSplit(V2 . "...", ".",, 5)*) ) )
+           ? -1 : ( V2<V1 ) ? 1 : 0
+}
