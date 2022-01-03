@@ -612,8 +612,10 @@ UI_onRefreshAppsList(neutron){
     select.innerHTML:=""
     select.insertAdjacentHTML("beforeend", Format(template_app, "", "Select an app", "selected"))
     for i, process in list.data {
+        WinGetTitle, winTitle, ahk_exe %process%
+        winTitle:= winTitle? winTitle " (" process ")" : process
         select.insertAdjacentHTML("beforeend"
-        , Format(template_app, process, process, process = current_profile.LinkedApp? "selected" : ""))    
+        , Format(template_app, process, winTitle, process = current_profile.LinkedApp? "selected" : ""))    
     }
     if(neutron)
         UI_notify("Refreshed running apps")
