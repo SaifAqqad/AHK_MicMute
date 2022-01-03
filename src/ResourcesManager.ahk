@@ -77,7 +77,7 @@ class ResourcesManager {
         }
     }
 
-    ; Based on ResRead() by SKAN //www.autohotkey.com/board/topic/57631-crazy-scripting-resource-only-dll-for-dummies-36l-v07/?p=609282
+    ; Based on ResRead() by SKAN https://www.autohotkey.com/board/topic/57631-crazy-scripting-resource-only-dll-for-dummies-36l-v07/?p=609282
     getResourcePtr(resource){
         if hMod := DllCall("GetModuleHandle", "UInt", 0, "PTR")
             if hRes := DllCall("FindResource", "UInt", hMod, "Str", resource, "UInt", 10, "PTR")

@@ -419,7 +419,6 @@ showElevatedWarning(){
         return
     if(util_isProcessElevated(pid)){
         util_log("[Main] Detected elevated app: " pName " (" pid ")")
-        tray_defaults()
         TrayTip, MicMute, Detected an application running with administrator privileges. You need to run MicMute as administrator for the hotkeys to work with it.
         lastP:= pName
         onUpdateState(mic_controllers[1])

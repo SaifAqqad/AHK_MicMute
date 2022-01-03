@@ -73,7 +73,7 @@ Class OSD {
         text:= this.processText(text)
         GuiControl, Text, % this.hwndTxt, %text%
         ;show the OSD
-        Gui, Show, % Format("w{} h{} NoActivate x{} y{}", this.width, this.height, this.pos.x, this.pos.y)
+        Gui, Show, % Format("w{} h{} NA x{} y{}", this.width, this.height, this.pos.x, this.pos.y)
         ;make the OSD corners rounded
         WinGetPos,,,Width, Height, % "ahk_id " . this.hwnd
         WinSet, Region, % Format("w{} h{} 0-0 R{3:i}-{3:i}", Width, Height, 15*this.scale ), % "ahk_id " . this.hwnd
