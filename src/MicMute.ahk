@@ -211,7 +211,7 @@ switchProfile(p_name:=""){
             if(config_obj.MuteOnStartup)
                 mic.setMuteState(1, 0)
             mc.enableController()
-            mc.updateState()
+            mc.onUpdateState()
             if(mic.Name = "all microphones"){
                 while(ctrlr:= mic_controllers.Pop()){ ; disable and remove previously added controllers
                     ctrlr.disableController()
