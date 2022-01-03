@@ -209,7 +209,7 @@ switchProfile(p_name:=""){
             mc:= new MicrophoneController(mic, current_profile.PTTDelay, config_obj.ForceMicrophoneState, Func("showFeedback"), Func("onUpdateState"))
             ; mute mics on startup
             if(config_obj.MuteOnStartup)
-                mic.setMuteState(1, 0)
+                mc.setMuteState(1, 0)
             mc.enableController()
             mc.onUpdateState()
             if(mic.Name = "all microphones"){
