@@ -111,7 +111,7 @@ Show the microphone's state in an always-on-top overlay.
 * <kbd>CTRL</kbd> <kbd>ALT</kbd> <kbd>F10</kbd> toggles locked/unlocked 
 * You can drag the overlay to change its position when it's unlocked
 * Games need to be set to `Windowed fullscreen` or `Borderless` for the overlay to show up on top
-* You have the option to only show the overlay when the microphone is muted
+* You can set the overlay to only show if the microphone is muted or unmuted
 * You can use custom icons for the overlay. 
     To do this, turn on the option in the config UI, then place the icons (`ico`/`png`/`jpeg`) in the same folder as `MicMute.exe` and rename them as:  
     -  Mute icon: `overlay_mute`
@@ -134,18 +134,27 @@ Show an OSD with the profile's name when switching to it.
 UI Theme can be set to `System Theme`, `Dark` or `Light`
 
 <small>This does *not* affect the tray icon color, which is always based on the system theme</small>
+
+#### 4. Force Microphone State
+Prevent other apps from changing the microphone's state (i.e mute/unmute the microphone).
+##### Note: This might break the unmute functionality in some apps, if this happens you'll need to unmute the microphone using MicMute before unmuting inside the app)
 <hr>
 
 ### Controlling multiple microphones
-Starting with version [0.9.0](https://github.com/SaifAqqad/AHK_MicMute/releases/tag/0.9.0), You can have active hotkeys for multiple microphones simultaneously.
-To do this, toggle the `Multiple` option then select another microphone from the list and setup hotkeys for it.
+You can have multiple active hotkeys to control different microphones simultaneously.
+To do this, turn on the `Multiple` option then select another microphone from the list and setup hotkeys for it.
 
 When using this feature, the following applies:
 
 * The tray icon will be the static MicMute icon
-* The tray icon will no longer act as a toggle button, and the tray menu option to toggle the microphone will be disabled.
+* The tray icon will no longer act as a toggle button, and the tray menu option to toggle the microphone will be disabled
 * The [On-screen feedback](#2-on-screen-feedback) OSD will show the microphone name when muting/unmuting
 * The [On-screen overlay](#3-on-screen-overlay) is disabled
+
+#### Alternatively, you can control all the microphones at once with the same hotkey by selecting `All Microphones` from the microphones list. 
+When using this feature, the following applies: 
+* The `Multiple` option will be disabled
+* The [`Force Microphone State`](#4-force-microphone-state) option will be enabled
 <hr>
 
 ## Known issues
@@ -270,3 +279,11 @@ ahk2exe.exe /in ".\src\MicMute.ahk" /out ".\src\MicMute.exe";
 | [Bulma CSS framework](https://bulma.io/)                              | [MIT](https://github.com/jgthms/bulma/blob/master/LICENSE)                     |
 | [G33kDude/cJson.ahk](https://github.com/G33kDude/cJson.ahk)           | [MIT](https://github.com/G33kDude/cJson.ahk/blob/main/LICENSE)                 |
 | [G33kDude/Neutron.ahk](https://github.com/G33kDude/Neutron.ahk)       | [MIT](https://github.com/G33kDude/Neutron.ahk/blob/master/LICENSE)             |
+
+## Credits
+This project would not exist without these people:
+* [G33kDude](https://github.com/G33kDude)
+* [Lexikos](https://github.com/Lexikos)
+* [SKAN](https://www.autohotkey.com/boards/memberlist.php?mode=viewprofile&u=54) 
+* [jNizM](https://github.com/jNizM)
+* probably more...
