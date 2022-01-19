@@ -282,8 +282,9 @@ ahk2exe.exe /in ".\src\MicMute.ahk" /out ".\src\MicMute.exe";
 
 ## Credits
 This project would not exist without these people:
-* [G33kDude](https://github.com/G33kDude)
-* [Lexikos](https://github.com/Lexikos)
-* [SKAN](https://www.autohotkey.com/boards/memberlist.php?mode=viewprofile&u=54) 
+* [mistificat0r](https://sourceforge.net/u/mistificat0r/profile/) (The original MicMute)
+* [G33kDude](https://github.com/G33kDude) (cJson, Neutron, etc)
+* [Lexikos](https://github.com/Lexikos) (Autohotkey, VA.ahk)
+* [SKAN](https://www.autohotkey.com/boards/memberlist.php?mode=viewprofile&u=54) (ResRead, VerCmp, etc)
 * [jNizM](https://github.com/jNizM)
 * probably more...
