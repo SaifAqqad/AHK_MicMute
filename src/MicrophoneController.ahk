@@ -12,7 +12,7 @@ Class MicrophoneController {
         this.force_current_state:= force_current_state
         this.feedback_callback:= feedback_callback
         this.state_callback:= state_callback
-        this.callFeedback:=0
+        this.shouldCallFeedback:=0
         this.va_callback:= ""
         switch mic_obj.Name {
             case "all microphones": 
@@ -41,7 +41,7 @@ Class MicrophoneController {
         this.setMuteState(1)
     }
 
-    setMuteState(state, callFeedback:=1){
+    setMuteState(state, shouldCallFeedback:=1){
         if(this.state = -1){
             util_log(Format("[MicrophoneController] Attempting Reset: {}", util_toString(this.microphone)))
             this.disableController()
@@ -71,7 +71,7 @@ Class MicrophoneController {
             }
         }
         Critical, Off
-        this.callFeedback:= callFeedback
+        this.shouldCallFeedback:= shouldCallFeedback
         return
         s_failure:
             this.state:= -1
@@ -92,8 +92,8 @@ Class MicrophoneController {
             this.state:= VA_GetMasterMute(micName)+0
         }
         this.state_callback.Call(this)
-        if(this.callFeedback){
-            this.callFeedback:=0
+        if(this.shouldCallFeedback){
+            this.shouldCallFeedback:=0
             this.feedback_callback.Call(this)
         }
         Critical, Off
