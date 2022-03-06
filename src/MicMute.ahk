@@ -65,6 +65,7 @@ Global A_startupTime:= A_TickCount
 , arg_logFile:="*"
 , arg_isUpdater:=0
 , arg_installPath:=""
+, args_str:=""
 , resources_obj:= new ResourcesManager()
 , isFirstLaunch:=0
 , A_Version:= A_IsCompiled? util_getFileSemVer(A_ScriptFullPath) : U_Version 
@@ -390,11 +391,19 @@ parseArgs(){
         if(!match)
             continue
         switch val1 {
-            case "debug": arg_isDebug:= (val3=""? 1 : val3)
-            case "noui": arg_noUI:= (val3=""? 1 : val3)
-            case "profile": arg_profile:= val3
+            case "debug": 
+                arg_isDebug:= (val3=""? 1 : val3)
+                args_str.= val " "
+            case "noui": 
+                arg_noUI:= (val3=""? 1 : val3)
+                args_str.= val " "
+            case "profile": 
+                arg_profile:= val3
+                args_str.= val " "
             case "reload": arg_reload:= (val3=""? 1 : val3)
-            case "logFile": arg_logFile:= val3
+            case "logFile": 
+                arg_logFile:= val3
+                args_str.= val " "
             case "updater": arg_isUpdater:= (val3=""? 1 : val3)
             case "installPath": arg_installPath:= val3
         }
