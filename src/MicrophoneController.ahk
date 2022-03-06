@@ -16,7 +16,9 @@ Class MicrophoneController {
         this.va_callback:= ""
         switch mic_obj.Name {
             case "all microphones": 
-                this.microphone:= VA_GetDeviceList("capture")
+                this.microphone:= Array()
+                for i, mic in VA_GetDeviceList("capture") 
+                    this.microphone.Push(mic ":capture")
                 this.isMicrophoneArray:= 1
                 this.force_current_state:= 1
                 this.friendly_name:= "Microphones"
@@ -25,6 +27,7 @@ Class MicrophoneController {
                 try this.friendly_name:= VA_GetDeviceName(VA_GetDevice("capture")) 
             default : 
                 this.friendly_name:= mic_obj.Name
+                this.microphone.= ":capture"
         }
         RegExMatch(this.friendly_name, "(.+) \(.+\)", match)
         this.friendly_name:= match1? match1 : this.friendly_name
