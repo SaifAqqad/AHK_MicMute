@@ -14,6 +14,14 @@ jobs:
       - name: Initialize submodules
         uses: snickerbockers/submodules-init@v4
 
+      - name: Download Bass lib
+        shell: pwsh
+        run: |
+          Invoke-WebRequest "www.un4seen.com/files/bass24.zip" -OutFile ".\bass24.zip";
+          Expand-Archive -Path ".\bass24.zip" -DestinationPath ".\base24\";
+          Remove-Item -Path ".\bass24.zip" -Force
+          Copy-Item -Path ".\base24\x64\bass.dll" -Destination ".\src\Lib\bass.dll" -Force;
+
       - name: Compile MicMute
         uses: SaifAqqad/GitHub-Action-Ahk2Exe@main
         with:
