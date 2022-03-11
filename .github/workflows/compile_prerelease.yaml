@@ -4,33 +4,39 @@ on:
     branches:
       - master
   workflow_dispatch:
+
 jobs:
-  compile:
+  compile_prerelease:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
 
-      - name: submodules-init
+      - name: Initialize submodules
         uses: snickerbockers/submodules-init@v4
 
-      - name: Compile MicMute
-        id: compile_micmute
+      - name: Download Bass lib
         shell: pwsh
         run: |
-          Set-ExecutionPolicy RemoteSigned -scope CurrentUser -Force;
-          Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')
-          scoop bucket add utils https://github.com/SaifAqqad/utils.git;
-          scoop bucket add extras;
-          scoop install extras/autohotkey utils/ahk2exe_beta;
-          echo "Downloading bass library";
           Invoke-WebRequest "www.un4seen.com/files/bass24.zip" -OutFile ".\bass24.zip";
           Expand-Archive -Path ".\bass24.zip" -DestinationPath ".\base24\";
+          Remove-Item -Path ".\bass24.zip" -Force
           Copy-Item -Path ".\base24\x64\bass.dll" -Destination ".\src\Lib\bass.dll" -Force;
-          echo "Running Ahk2Exe";
-          Invoke-Expression "$(scoop prefix autohotkey)\Compiler\Ahk2Exe.exe /silent verbose /in '.\src\MicMute.ahk' /out '.\MicMute.exe' 2>&1 | echo";
-          echo "Calculating SHA256 hash";
-          (Get-FileHash '.\MicMute.exe').Hash  | Tee-Object -FilePath  .\MicMute.sha256;
+
+      - name: Compile MicMute
+        uses: SaifAqqad/GitHub-Action-Ahk2Exe@main
+        with:
+          in: '.\src\MicMute.ahk'
+          out: '.\MicMute.exe'
+
+      - name: Calculate file hash
+        shell: pwsh
+        run: (Get-FileHash '.\MicMute.exe').Hash  | Tee-Object -FilePath  .\MicMute.sha256;
       
+      - uses: actions/upload-artifact@v3
+        with:
+          name: MicMute
+          path: ./MicMute.*
+
       - name: Create release
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
