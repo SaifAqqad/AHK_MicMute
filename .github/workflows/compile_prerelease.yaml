@@ -23,7 +23,7 @@ jobs:
           Copy-Item -Path ".\base24\x64\bass.dll" -Destination ".\src\Lib\bass.dll" -Force;
 
       - name: Compile MicMute
-        uses: SaifAqqad/GitHub-Action-Ahk2Exe@main
+        uses: nekocodeX/GitHub-Action-Ahk2Exe@v1.1.0
         with:
           in: '.\src\MicMute.ahk'
           out: '.\MicMute.exe'
