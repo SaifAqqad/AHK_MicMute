@@ -162,6 +162,8 @@ UI_setProfile(neutron, p_profile){
     ui_obj.doc.getElementById("OnscreenFeedback").checked:= current_profile.OnscreenFeedback
     ui_obj.doc.getElementById("OnscreenOverlay").checked:= current_profile.OnscreenOverlay
     ui_obj.doc.getElementById("OverlayShow").value:= current_profile.OverlayShow
+    ui_obj.doc.getElementById("OverlayShowLevelMeter").checked:= current_profile.OverlayShowLevelMeter
+    ui_obj.doc.getElementById("OverlayLevelSensitivity").value:= current_profile.OverlayLevelSensitivity
     ui_obj.doc.getElementById("OverlayUseCustomIcons").checked:= current_profile.OverlayUseCustomIcons
     ui_obj.doc.getElementById("ExcludeFullscreen").checked:= current_profile.ExcludeFullscreen
     ui_obj.doc.getElementById("OSDPos_x").value:= current_profile.OSDPos.x==-1? "" : current_profile.OSDPos.x
@@ -170,6 +172,7 @@ UI_setProfile(neutron, p_profile){
     ui_obj.doc.getElementById("afkTimeout").value:= !current_profile.afkTimeout? "" : current_profile.afkTimeout
     ui_obj.doc.getElementById("PTTDelay").value:= current_profile.PTTDelay
     UI_onUpdateDelay(current_profile.PTTDelay)
+    UI_onUpdateLevelSensitivity(current_profile.OverlayLevelSensitivity)
     innerCont.classList.remove("hidden")
     UI_profileIsDirty:= 0
 }
@@ -260,7 +263,9 @@ UI_onSaveProfile(neutron, noReset:=0){
     current_profile.OnscreenOverlay:= ui_obj.doc.getElementById("OnscreenOverlay").checked? 1 : 0
     current_profile.ExcludeFullscreen:= ui_obj.doc.getElementById("ExcludeFullscreen").checked? 1 : 0
     current_profile.OverlayShow:= ui_obj.doc.getElementById("OverlayShow").value
+    current_profile.OverlayShowLevelMeter:= ui_obj.doc.getElementById("OverlayShowLevelMeter").checked? 1 : 0
     current_profile.OverlayUseCustomIcons:= ui_obj.doc.getElementById("OverlayUseCustomIcons").checked? 1 : 0
+    current_profile.OverlayLevelSensitivity:= ui_obj.doc.getElementById("OverlayLevelSensitivity").value+0
     current_profile.afkTimeout:= (val:= ui_obj.doc.getElementById("afkTimeout").value)? val+0 : 0
     current_profile.LinkedApp:= ui_obj.doc.getElementById("LinkedApp").value
     current_profile.PTTDelay:= ui_obj.doc.getElementById("PTTDelay").value+0
@@ -550,6 +555,10 @@ UI_onConfirmOSDPos(x,y){
     ui_obj.doc.getElementByID("OSDPos_x").value:= x
     ui_obj.doc.getElementByID("OSDPos_y").value:= y
     Gui, % ui_obj.hWnd ":Restore"
+}
+
+UI_onUpdateLevelSensitivity(sensitivity){
+    ui_obj.doc.getElementByID("OverlayLevelSensitivity_text").value:= sensitivity . "%"
 }
 
 UI_onChangeProfileName(neutron, event){
