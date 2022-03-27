@@ -163,23 +163,27 @@ Class MicrophoneController {
 
     setLevelCallback(level_callback:=""){
         if(level_callback){ ;enable
+            micPeriod:=defaultMicPeriod:=30
             if(this.isMicrophoneArray){
                 this.audioMeter:= Array()
                 for i, mic in this.microphone {
+                    currMicPeriod:=""
+                    VA_GetDevicePeriod(mic, currMicPeriod)
+                    micPeriod:= Min(micPeriod,currMicPeriod)
                     this.audioMeter.Push(VA_GetAudioMeter(mic))
                 }
             }else{
                 this.audioMeter:= VA_GetAudioMeter(this.microphone)
+                VA_GetDevicePeriod(this.microphone, micPeriod)
             }
             this.level_callback:= level_callback
             lvlUpdateFunc:= this.lvlUpdateFunc
-            SetTimer, % lvlUpdateFunc, 30
-
+            SetTimer, % lvlUpdateFunc, % micPeriod ? micPeriod : defaultMicPeriod
         }else{ ;disable
             this.audioMeter:=""
             this.level_callback:=""
             lvlUpdateFunc:= this.lvlUpdateFunc
-            Try SetTimer, % lvlUpdateFunc, Off
+            Try SetTimer, % lvlUpdateFunc, Delete
         }
     }
 
