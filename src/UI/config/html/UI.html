@@ -416,17 +416,9 @@
                                                     <span class="OverlayUseCustomIcons-label">Use custom icons</span>
                                                 </label>
                                             </div>
-                                            <div class="tag is-small option has-tooltip" id="OverlayShowLevelMeter_tag" tabindex=0 role="button"
-                                                aria-pressed="false" onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
-                                                onclick="ahk.UI_flipVal('OverlayShowLevelMeter');ahk.UI_onChange('');this.blur()">
-                                                <label class="checkbox">
-                                                    <input type="checkbox" id="OverlayShowLevelMeter" disabled>
-                                                    <span class="OverlayShowLevelMeter-label">Show level meter</span>
-                                                </label>
-                                            </div>
                                         </div>
                                         <div class="column is-5">
-                                            <label class="label title is-7 noselect" for="OverlayShow">Show Overlay</label>
+                                            <label class="label title is-7 noselect">Show Overlay</label>
                                             <div class="control is-expanded ">
                                                 <div class="select is-fullwidth is-small is-primary">
                                                     <select class="input-elem" name="OverlayShow" id="OverlayShow" onchange="ahk.UI_onChange('')" tabindex=0>
@@ -436,21 +428,7 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <br />
-                                            <label class="label title is-7 noselect" for="OverlayLevelSensitivity">Level meter sensitivity</label>
-                                            <div class="control is-expanded ">
-                                                <div class="columns is-mobile">
-                                                    <div class="column is-5">
-                                                        <input class="input is-primary is-small input-elem" placeholder="%" disabled type="text"
-                                                            id="OverlayLevelSensitivity_text" value="100%">
-                                                    </div>
-                                                    <div class="column">
-                                                        <input class="slider is-small" min="0" max="500" step="50" value="100" type="range" tabindex=0
-                                                            id="OverlayLevelSensitivity"
-                                                            onchange="ahk.UI_onChange('UI_onUpdateLevelSensitivity',event.target.value)">
-                                                    </div>
-                                                </div>
-                                            </div>
+
                                         </div>
                                     </div>
                                 </div>

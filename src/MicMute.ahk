@@ -248,9 +248,6 @@ switchProfile(p_name:=""){
         if(current_profile.OnscreenOverlay){
             overlay_wnd:= new Overlay(current_profile)
             overlay_wnd.setState(mic_controllers[1].state)
-            ; setup level callback
-            if(current_profile.OverlayShowLevelMeter)
-                mic_controllers[1].setLevelCallback(ObjBindMethod(overlay_wnd, "setLevel"))
         }
     }
     if (current_profile.afkTimeout)

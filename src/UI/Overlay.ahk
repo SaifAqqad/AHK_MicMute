@@ -7,7 +7,6 @@ class Overlay {
         this.locked:=1
         this.state:= -1
         this.showOn:= config.OverlayShow ; 0 -> on-unmute, 1 -> on-mute, 2 -> always
-        this.levelSensitivity:= config.OverlayLevelSensitivity/100
         ; setup default icons
         this.iconObj:= {0: resources_obj.icoFile["white_unmute"].clone()
                        ,1: resources_obj.icoFile["white_mute"].clone()}
@@ -29,10 +28,6 @@ class Overlay {
         ;add the icon to the overlay        
         Gui, Add, Picture, % "w40 h-1 Hwndico_hwnd Icon" this.iconObj[0].group, % this.iconObj[1].file
         this.iconHwnd:= ico_hwnd
-        if(config.OverlayShowLevelMeter){
-            Gui, Add, Progress, % "w10 h40 x+5 Hwndprog_hwnd Vertical Background232323 cc0c0c0" ,0
-            this.progressHwnd:= prog_hwnd
-        }
 
         ;set the overlay color/transparency
         Gui, Color, 232323
@@ -81,14 +76,6 @@ class Overlay {
             this.state:= state
             if(this.showOn != 2)
                 this.setShow(state==this.showOn)
-        }
-        return this
-    }
-
-    setLevel(lvl){
-        try{
-            Gui,% this.Hwnd ":Default"
-            GuiControl,, % this.progressHwnd, % Round(lvl * this.levelSensitivity)
         }
         return this
     }

@@ -12,9 +12,6 @@ Class MicrophoneController {
         this.force_current_state:= force_current_state
         this.feedback_callback:= feedback_callback
         this.state_callback:= state_callback
-        this.level_callback:=""
-        this.audioMeter:=""
-        this.lvlUpdateFunc:= ObjBindMethod(this, "onLevelUpdate")
         this.callFeedback:=0
         this.va_callback:= ""
         switch mic_obj.Name {
@@ -157,49 +154,7 @@ Class MicrophoneController {
             Try VA_ReleaseAudioEndpointCallback(VA_GetDevice(this.microphone),this.va_callback)
             this.va_callback:=""
         }
-        this.setLevelCallback("")
         util_log(Format("[MicrophoneController] Disabled: {}", util_toString(this.microphone)))
-    }
-
-    setLevelCallback(level_callback:=""){
-        if(level_callback){ ;enable
-            micPeriod:=defaultMicPeriod:=30
-            if(this.isMicrophoneArray){
-                this.audioMeter:= Array()
-                for i, mic in this.microphone {
-                    currMicPeriod:=""
-                    VA_GetDevicePeriod(mic, currMicPeriod)
-                    micPeriod:= Min(micPeriod,currMicPeriod)
-                    this.audioMeter.Push(VA_GetAudioMeter(mic))
-                }
-            }else{
-                this.audioMeter:= VA_GetAudioMeter(this.microphone)
-                VA_GetDevicePeriod(this.microphone, micPeriod)
-            }
-            this.level_callback:= level_callback
-            lvlUpdateFunc:= this.lvlUpdateFunc
-            SetTimer, % lvlUpdateFunc, % micPeriod ? micPeriod : defaultMicPeriod
-        }else{ ;disable
-            this.audioMeter:=""
-            this.level_callback:=""
-            lvlUpdateFunc:= this.lvlUpdateFunc
-            Try SetTimer, % lvlUpdateFunc, Delete
-        }
-    }
-
-    onLevelUpdate(){
-        peakLvl:=0
-        if(this.isMicrophoneArray){
-            for i, audioMeter in this.audioMeter {
-                currentPeakLvl:=""
-                VA_IAudioMeterInformation_GetPeakValue(audioMeter, currentPeakLvl)
-                peakLvl:= Max(peakLvl, currentPeakLvl)
-            }
-        }else{
-            VA_IAudioMeterInformation_GetPeakValue(this.audioMeter, peakLvl)
-        }
-        peakLvl:= Round(peakLvl*100)
-        this.level_callback.Call(peakLvl)
     }
 
     resetHotkeySet(){
