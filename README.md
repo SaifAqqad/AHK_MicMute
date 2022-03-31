@@ -158,6 +158,7 @@ When using this feature, the following applies:
 <hr>
 
 ## Known issues
+*  [Valorant](https://playvalorant.com) might detect MicMute as a cheat [#59](https://github.com/SaifAqqad/AHK_MicMute/issues/59)
 * When running AutoHotkey alongside [Microsoft Powertoys](https://github.com/microsoft/PowerToys), they might conflict with each other, which may result in the hotkeys not working at all. [microsoft/PowerToys#2132](https://github.com/microsoft/PowerToys/issues/2132)
 
 * [Albion Online](https://albiononline.com/en/home) detects MicMute as a botting tool, the games blacklists anything written in autohotkey and marks it as a botting tool. [#23](https://github.com/SaifAqqad/AHK_MicMute/issues/23)
