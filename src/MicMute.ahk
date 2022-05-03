@@ -210,10 +210,7 @@ switchProfile(p_name:=""){
         Try {
             ;create a new MicrophoneController object for each mic
             if(InStr(mic.Name, "VMR_") = 1){
-                if(VoicemeeterController.isVoicemeeterInstalled())
-                    mc:= new VoicemeeterController(mic, current_profile.PTTDelay, config_obj.ForceMicrophoneState, Func("showFeedback"), Func("onUpdateState"))
-                else
-                    Throw, "Voicemeeter is not installed"
+                mc:= new VoicemeeterController(mic, config_obj.VoicemeeterPath, current_profile.PTTDelay, config_obj.ForceMicrophoneState, Func("showFeedback"), Func("onUpdateState"))
             }else{
                 mc:= new MicrophoneController(mic, current_profile.PTTDelay, config_obj.ForceMicrophoneState, Func("showFeedback"), Func("onUpdateState"))
             }
@@ -377,8 +374,8 @@ exitMicMute(){
     util_log("[Main] Exiting MicMute")
     config_obj.exportConfig()
     for i, mic in mic_controllers {
-        mic.setMuteState(0, 0)
         mic.disableController()
+        mic.setMuteState(0, 0)
     }
 }
 

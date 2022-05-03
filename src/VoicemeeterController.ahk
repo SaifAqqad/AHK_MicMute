@@ -1,9 +1,9 @@
 class VoicemeeterController extends MicrophoneController{
     static voicemeeter:="", BUS_STRIP_REGEX:= "iO)VMR_(?<type>\w+)\[(?<index>\d)\]", activeControllers:=[]
 
-    __New(mic_obj, ptt_delay:=0, force_current_state:=0, feedback_callback:="", state_callback:=""){
+    __New(mic_obj, voicemeeter_path="", ptt_delay:=0, force_current_state:=0, feedback_callback:="", state_callback:=""){
         if(!this.voicemeeter)
-            VoicemeeterController.voicemeeter:= new VMR().login()
+            VoicemeeterController.voicemeeter:= new VMR(voicemeeter_path).login()
         microphoneMatch:=""
         RegExMatch(mic_obj.Name, this.BUS_STRIP_REGEX, microphoneMatch)
         this.microphoneType:= microphoneMatch.type
@@ -19,8 +19,8 @@ class VoicemeeterController extends MicrophoneController{
         this.state_callback:= state_callback
         this.shouldCallFeedback:=0
         this.microphone:= this.voicemeeter[this.microphoneType][this.microphoneIndex]
-        this.friendly_name:= this.microphone.label? this.microphone.label : this.microphoneName "[" this.microphoneIndex "]"
-        this.state_string:= {0:this.friendly_name . " Online",1:this.friendly_name . " Muted",-1:this.friendly_name . " Unavailable"}
+        this.friendly_name:= this.microphone.label? this.microphone.label : this.microphone.name
+        this.state_string:= {0:this.friendly_name . " Online",1:this.friendly_name . " Muted", -1:this.friendly_name . " Unavailable"}
         this.voicemeeter.onUpdateParameters:= ObjBindMethod(VoicemeeterController, "_activeControllersCallback")
     }
 
@@ -37,8 +37,8 @@ class VoicemeeterController extends MicrophoneController{
     }
 
     onUpdateState(){
+        newState:= !!this.microphone.mute
         Critical, On
-        newState:= this.microphone.mute
         if(this.force_current_state && this.state != newState)
             this.microphone.mute := this.state
         else
@@ -60,9 +60,13 @@ class VoicemeeterController extends MicrophoneController{
         this.activeControllers.RemoveAt(this.id)
     }
 
-    isVoicemeeterInstalled(){
-        static vmr_installed:= VMR.__getDLLPath()? 1 : 0
-        return vmr_installed
+    isVoicemeeterInstalled(p_path:=""){
+        try{
+            new VMR(p_path)
+        }catch{
+            return 0
+        }
+        return 1
     }
 
     _activeControllersCallback(){
