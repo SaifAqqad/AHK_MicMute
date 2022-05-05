@@ -3,7 +3,7 @@ global ui_obj, about_obj, current_profile, hotkey_panels, current_hp
 , input_hook, input_hook_timer, key_set, modifier_set, is_multiple_mics:=0
 , template_link:= "<link rel='stylesheet' id='css_{1:}' href='{2:}'>"
 , template_default_profile:= "<option value='{1:}' {2:} >{1:}</option>"
-, template_mic:= "<option value='{1:}' id='mic_{1:}' {2:} >{1:}</option>"
+, template_mic:= "<option value='{1:}' id='mic_{1:}' {2:} >{3:}</option>"
 , template_output:= "<option value='{1:}' id='output_{1:}' {2:}>{1:}</option>"
 , template_app:= "<option value='{1:}' {3:} >{2:}</option>"
 , template_profile_tag:= "
@@ -212,12 +212,21 @@ UI_onChange(neutron, funcName, params*){
 }
 
 UI_resetMicSelect(){
+    if(config_obj.VoicemeeterIntegration && VoicemeeterController.isVoicemeeterInstalled(config_obj.VoicemeeterPath))
+        vm:= VoicemeeterController.initVoicemeeter(config_obj.VoicemeeterPath)
     select:= ui_obj.doc.getElementById("microphone")
     select.innerHTML:=""
     devices:= UI_getMicrophonesList()
     for i, device in devices {
-        select.insertAdjacentHTML("beforeend", Format(template_mic, device,""))
-    }
+        if(InStr(device, "VMR_") && vm){
+            deviceInfo:=""
+            RegExMatch(device, VoicemeeterController.BUS_STRIP_REGEX, deviceInfo)
+            deviceName:= "Voicemeeter " (vm[deviceInfo.type][deviceInfo.index]).name
+            select.insertAdjacentHTML("beforeend", Format(template_mic, device, "", deviceName))
+        }else{
+            select.insertAdjacentHTML("beforeend", Format(template_mic, device, "", device))
+        }
+    }    
     select.value:= "Default"
 }
 
@@ -453,10 +462,25 @@ UI_checkMicOptions(){
 ; returns a list of all microphones, even if they are not currently available
 UI_getMicrophonesList(){
     inputDevices:= new StackSet("Default", "All Microphones", VA_GetDeviceList("capture")*)
+    inputDevices.pushAll(VMR_GetDeviceList()*)
     for i, mic in current_profile.Microphone {
         inputDevices.push(mic.Name)
     }
     return inputDevices.data
+}
+
+VMR_GetDeviceList(){
+    deviceList:= Array()
+    if(config_obj.VoicemeeterIntegration && VoicemeeterController.isVoicemeeterInstalled(config_obj.VoicemeeterPath)){
+        vm:= VoicemeeterController.initVoicemeeter(config_obj.VoicemeeterPath)
+        for i, bus in vm.bus {
+            deviceList.push("VMR_Bus[" i "]")
+        }
+        for i, strip in vm.strip {
+            deviceList.push("VMR_Strip[" i "]")
+        }
+    }
+    return deviceList
 }
 
 UI_onUpdateDelay(delay){

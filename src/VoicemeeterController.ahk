@@ -2,8 +2,7 @@ class VoicemeeterController extends MicrophoneController{
     static voicemeeter:="", BUS_STRIP_REGEX:= "iO)VMR_(?<type>\w+)\[(?<index>\d)\]", activeControllers:=[]
 
     __New(mic_obj, voicemeeter_path="", ptt_delay:=0, force_current_state:=0, feedback_callback:="", state_callback:=""){
-        if(!this.voicemeeter)
-            VoicemeeterController.voicemeeter:= new VMR(voicemeeter_path).login()
+        this.initVoicemeeter(voicemeeter_path)
         microphoneMatch:=""
         RegExMatch(mic_obj.Name, this.BUS_STRIP_REGEX, microphoneMatch)
         this.microphoneType:= microphoneMatch.type
@@ -67,6 +66,12 @@ class VoicemeeterController extends MicrophoneController{
             return 0
         }
         return 1
+    }
+
+    initVoicemeeter(p_path:=""){
+        if(!VoicemeeterController.voicemeeter)
+            VoicemeeterController.voicemeeter:= new VMR(p_path).login()
+        return VoicemeeterController.voicemeeter
     }
 
     _activeControllersCallback(){

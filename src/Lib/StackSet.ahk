@@ -16,6 +16,11 @@ class StackSet{
         this.occurrences[p_value]:=1
         return 1
     }
+
+    pushAll(elements*){
+        for i, val in elements
+            this.push(val)
+    }
     
     pop(){
         val:= this.data.Pop()
