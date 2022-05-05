@@ -192,7 +192,7 @@
                                                 <div class="field has-addons">
                                                     <div class="control is-expanded">
                                                         <input class="input is-primary input-elem is-small" type="text" name="mute_input" id="mute_input"
-                                                            disabled onclick="alert('spam')" placeholder="Click Record">
+                                                            disabled placeholder="Click Record">
                                                     </div>
                                                     <div class="control " id="mute_record">
                                                         <button type="button" class="button is-small is-primary is-outlined" tabindex=0
@@ -500,6 +500,7 @@
                 </div>
             </div>
             <div class="container visible hidden tab-hidden" id="global_options_tab_content">
+                <!-- Global options -->
                 <div id="global_options_container" class="columns">
                     <!-- Global options -->
                     <div class="column is-8">
@@ -531,12 +532,21 @@
                                     state</span>
                             </label>
                         </div>
+                        <!-- Allow update checker -->
                         <div class="tag is-small option has-tooltip" role="button" aria-pressed="false"
                             onclick="ahk.UI_onGlobalOption('AllowUpdateChecker',1);this.blur()" tabindex=0
                             onkeydown="switch(event.keyCode){case 32:case 13:this.click()}">
                             <label class="checkbox">
                                 <input tabindex="0" type="checkbox" name="AllowUpdateChecker" id="AllowUpdateChecker" disabled>
                                 <span class="AllowUpdateChecker-label">Check for updates on startup</span>
+                            </label>
+                        </div>
+                        <!-- Voicemeeter integration -->
+                        <div class="tag is-small option" onclick="ahk.UI_onGlobalOption('VoicemeeterIntegration',1);this.blur()" tabindex=0
+                            onkeydown="switch(event.keyCode){case 32:case 13:this.click()}" role="button" aria-pressed="false">
+                            <label class="checkbox">
+                                <input type="checkbox" name="VoicemeeterIntegration" id="VoicemeeterIntegration" disabled>
+                                <span>Voicemeeter integration</span>
                             </label>
                         </div>
                     </div>
