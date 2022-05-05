@@ -7,6 +7,7 @@ class Config {
     AllowUpdateChecker:=-1
     ForceMicrophoneState:=0
     VoicemeeterPath:=""
+    VoicemeeterIntegration:=0
 
     __New(p_DefaultProfile:=""){
         if(!FileExist(A_ScriptDir "\config.json") || util_IsFileEmpty(A_ScriptDir "\config.json")){
