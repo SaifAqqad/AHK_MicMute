@@ -474,7 +474,8 @@ VMR_GetDeviceList(){
     if(config_obj.VoicemeeterIntegration && VoicemeeterController.isVoicemeeterInstalled(config_obj.VoicemeeterPath)){
         vm:= VoicemeeterController.initVoicemeeter(config_obj.VoicemeeterPath)
         for i, bus in vm.bus {
-            deviceList.push("VMR_Bus[" i "]")
+            if(!bus.isPhysical())
+                deviceList.push("VMR_Bus[" i "]")
         }
         for i, strip in vm.strip {
             deviceList.push("VMR_Strip[" i "]")
