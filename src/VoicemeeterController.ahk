@@ -31,7 +31,6 @@ class VoicemeeterController extends MicrophoneController{
         }
         this.state:= this.microphone.mute:= state
         this.shouldCallFeedback:= shouldCallFeedback
-        this.onUpdateState()
         Critical, Off
     }
 
