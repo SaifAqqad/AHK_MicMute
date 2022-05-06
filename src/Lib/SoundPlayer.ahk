@@ -76,7 +76,6 @@ class SoundPlayer {
     }
 
     __free(){
-        DllCall(this.BASS_DLLPATH . this.BASS_DLL . "\BASS_Free")
         DllCall("FreeLibrary", UInt, this.BASS_DLLCALL)
     }
 }
