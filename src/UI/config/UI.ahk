@@ -122,6 +122,15 @@ UI_Show(p_profile){
     ui_obj.Gui(Format("+LabelUI_ +MinSize{:i}x{:i} +OwnDialogs",785*UI_scale,500*UI_scale))
     ui_obj.Show(Format("Center w{:i} h{:i}",820*UI_scale,650*UI_scale),"MicMute")
     ui_obj.doc.focus()
+    if(Arg_isDebug || A_DebuggerName)
+        Hotkey, ^F10, UI_HotReload
+}
+
+UI_HotReload(){
+    ui_obj.load(resources_obj.htmlFile.UI)
+    UI_enableIeFeatures(features,1)
+    UI_loadCss(ui_obj)
+    UI_Show(current_profile.ProfileName)
 }
 
 UI_enableIeFeatures(f_obj, delete:=0){
@@ -421,10 +430,11 @@ UI_onStop(type, InputHook:=""){
     util_log(Format("[UI] {} hotkey set to: {}", type, current_hp[type].hotkey))
 }
 
-UI_onClearHotkey(){
+UI_onClearHotkey(neutron:=""){
     mic:= ui_obj.doc.getElementById("microphone").value
     hotkey_panels[mic]:= new HotkeyPanel("","",1)
     UI_setHotkeyPanel(hotkey_panels[mic], 200)
+    UI_profileIsDirty:=1
 }
 
 UI_onRefreshDeviceList(neutron){

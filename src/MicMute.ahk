@@ -74,6 +74,7 @@ Global A_startupTime:= A_TickCount
 , osd_wnd
 , overlay_wnd
 , A_log:=""
+, A_DebuggerName:= A_DebuggerName
 , updater_obj:= new Updater(A_ScriptDir, Func("util_log"))
 , updater_UI:=""
 
