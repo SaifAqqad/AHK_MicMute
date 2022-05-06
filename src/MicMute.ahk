@@ -22,6 +22,7 @@ SetWorkingDir %A_ScriptDir%
 
 #Include, <WinUtils>
 #Include, <VA\VA>
+#Include, <VMR\dist\VMR>
 #Include, <cJson\Dist\JSON>
 #Include, <Neutron\Neutron>
 #Include, <StackSet>
@@ -30,6 +31,7 @@ SetWorkingDir %A_ScriptDir%
 #Include, %A_ScriptDir%
 #Include, ResourcesManager.ahk
 #Include, MicrophoneController.ahk
+#Include, VoicemeeterController.ahk
 #Include, Updater.ahk
 #Include, %A_ScriptDir%\config
 #Include, ProfileTemplate.ahk
@@ -96,7 +98,7 @@ if(!arg_noUI)
 initilizeMicMute(arg_profile)
 ; export the processed config object
 config_obj.exportConfig()
-OnExit(Func("exitMicMute"))
+OnExit(Func("exitMicMute"), -1)
 ; listen for sys theme changes
 OnMessage(WM_SETTINGCHANGE, "updateSysTheme")
 ; listen for window changes
@@ -207,7 +209,14 @@ switchProfile(p_name:=""){
     for i, mic in current_profile.Microphone {
         Try {
             ;create a new MicrophoneController object for each mic
-            mc:= new MicrophoneController(mic, current_profile.PTTDelay, config_obj.ForceMicrophoneState, Func("showFeedback"), Func("onUpdateState"))
+            if(InStr(mic.Name, "VMR_") = 1){
+                if(config_obj.VoicemeeterIntegration)
+                    mc:= new VoicemeeterController(mic, config_obj.VoicemeeterPath, current_profile.PTTDelay, config_obj.ForceMicrophoneState, Func("showFeedback"), Func("onUpdateState"))
+                else
+                    throw Exception("Voicemeeter integration is disabled")
+            }else{
+                mc:= new MicrophoneController(mic, current_profile.PTTDelay, config_obj.ForceMicrophoneState, Func("showFeedback"), Func("onUpdateState"))
+            }
             ; mute mics on startup
             if(config_obj.MuteOnStartup)
                 mc.setMuteState(1, 0)
@@ -368,8 +377,8 @@ exitMicMute(){
     util_log("[Main] Exiting MicMute")
     config_obj.exportConfig()
     for i, mic in mic_controllers {
-        mic.setMuteState(0, 0)
         mic.disableController()
+        mic.setMuteState(0, 0)
     }
 }
 
