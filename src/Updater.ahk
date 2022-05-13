@@ -129,7 +129,19 @@ class Updater {
     }
 
     isInternetConnected(){
-        return DllCall("Wininet.dll\InternetGetConnectedState", "Str", 0x43, "Int", 0)
+        if(!DllCall("Wininet.dll\InternetGetConnectedState", "Str", 0x43, "Int", 0))
+            return 0
+        http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
+        try{
+            http.Open("HEAD", "https://api.github.com", false)
+            http.send()
+        }catch e {
+            ObjRelease(http)
+            return 0
+        }
+        is_success:= http.Status == 200
+        ObjRelease(http)
+        return is_success
     }
 
     downloadToFile(url, name){
