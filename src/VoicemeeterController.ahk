@@ -43,6 +43,9 @@ class VoicemeeterController extends MicrophoneController{
             this.state:= newState
         this.state_callback.Call(this)
         if(this.shouldCallFeedback){
+            hotkeyId:= this.state? this.muteHotkeyId : (this.unmuteHotkeyId? this.unmuteHotkeyId : this.muteHotkeyId)
+            if(hotkeyId>1)
+                return
             this.shouldCallFeedback:=0
             this.feedback_callback.Call(this)
         }

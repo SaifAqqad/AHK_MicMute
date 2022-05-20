@@ -1,5 +1,5 @@
 Class MicrophoneController {
-    static hotkeys_set, generic_state_string:= {0:"Microphone Online",1:"Microphone Muted",-1:"Microphone Unavailable"}
+    static generic_state_string:= {0:"Microphone Online",1:"Microphone Muted",-1:"Microphone Unavailable"}
 
     __New(mic_obj, ptt_delay:=0, force_current_state:=0, feedback_callback:="", state_callback:=""){
         this.state:=0
@@ -97,6 +97,9 @@ Class MicrophoneController {
         }
         this.state_callback.Call(this)
         if(this.shouldCallFeedback){
+            hotkeyId:= this.state? this.muteHotkeyId : this.unmuteHotkeyId
+            if(hotkeyId>1)
+                return
             this.shouldCallFeedback:=0
             this.feedback_callback.Call(this)
         }
@@ -104,9 +107,6 @@ Class MicrophoneController {
     }
 
     enableController(){
-        if(this.state!=-1 && (MicrophoneController.hotkeys_set.exists(HotkeyPanel.hotkeyToKeys(this.muteHotkey,1))
-           || MicrophoneController.hotkeys_set.exists(HotkeyPanel.hotkeyToKeys(this.unmuteHotkey,1))))
-            Throw, Format("Found conflicting hotkeys in profile '{}'", current_profile.ProfileName)
         Try{
             if(HotkeyPanel.hotkeyToKeys(this.muteHotkey,1)="")
                 Throw, "Invalid hotkeys"
@@ -114,31 +114,25 @@ Class MicrophoneController {
                 if(this.isPushToTalk){
                     this.setMuteState(1,0)
                     this.ptt_key:= (StrSplit(this.muteHotkey, [" ","#","!","^","+","&",">","<","*","~","$","UP"], " `t")).Pop()
-                    funcObj:= ObjBindMethod(this,"ptt")
-                    Hotkey, % this.muteHotkey , % funcObj, On
+                    this.muteHotkeyId:= this.unmuteHotkeyId:= HotkeyManager.register(this.muteHotkey, ObjBindMethod(this, "ptt"), this)
                     SetTimer, checkIsIdle, Off
                 }else{
-                    funcObj:= ObjBindMethod(this,"setMuteState",-2)
-                    Hotkey, % this.muteHotkey , % funcObj, On
+                    this.muteHotkeyId:= this.unmuteHotkeyId:= HotkeyManager.register(this.muteHotkey, ObjBindMethod(this,"setMuteState",-2), this)
                 }
             }else{
-                funcObj:= ObjBindMethod(this,"setMuteState",1)
-                Hotkey, % this.muteHotkey, % funcObj, On
-                funcObj:= ObjBindMethod(this,"setMuteState",0)
-                Hotkey, % this.unmuteHotkey, % funcObj, On
+                this.muteHotkeyId:= HotkeyManager.register(this.muteHotkey, ObjBindMethod(this,"setMuteState",1), this)
+                this.unmuteHotkeyId:= HotkeyManager.register(this.unmuteHotkey, ObjBindMethod(this,"setMuteState",0), this)
             } 
         }catch{
             Throw, Format("Invalid hotkeys in profile '{}'",current_profile.ProfileName)
         }
-        MicrophoneController.hotkeys_set.push(HotkeyPanel.hotkeyToKeys(this.muteHotkey,1))
-        MicrophoneController.hotkeys_set.push(HotkeyPanel.hotkeyToKeys(this.unmuteHotkey,1))
         this.enableCallback()
         util_log(Format("[MicrophoneController] Enabled: {}", util_toString(this.microphoneName)))
     }
 
     disableController(){
-        Hotkey, % this.muteHotkey, Off, Off
-        Hotkey, % this.unmuteHotkey, Off, Off
+        HotkeyManager.unregister(this.muteHotkey,this.muteHotkeyId)
+        HotkeyManager.unregister(this.unmuteHotkey,this.unmuteHotkeyId)
         this.disableCallback()
         util_log(Format("[MicrophoneController] Disabled: {}", util_toString(this.microphoneName)))
     }

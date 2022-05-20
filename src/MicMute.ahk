@@ -29,6 +29,7 @@ SetWorkingDir %A_ScriptDir%
 #Include, <SoundPlayer>
 
 #Include, %A_ScriptDir%
+#Include, HotkeyManager.ahk
 #Include, ResourcesManager.ahk
 #Include, MicrophoneController.ahk
 #Include, VoicemeeterController.ahk
@@ -254,6 +255,14 @@ switchProfile(p_name:=""){
     ;handle multiple microphones
     if(mic_controllers.Length()>1){
         tray_toggleMic(0)
+        ; handle multiple microphones with the same hotkey
+        for hotkeyStr, registrations in HotkeyManager.registeredHotkeys {
+            if(registrations.Length()>1){
+                for i, registration in registrations {
+                    registration.callbackObj.force_current_state:= 1
+                }
+            } 
+        }
     }else{
         if(current_profile.OnscreenOverlay){
             overlay_wnd:= new Overlay(current_profile)
@@ -276,7 +285,8 @@ showFeedback(mic_obj){
     }    
     ; if osd is enabled -> show and hide after 1 sec
     if (current_profile.OnscreenFeedback){ ;use generic/mic.name state string
-        if(mic_obj.isMicrophoneArray || mic_controllers.Length()>1)
+        hotkeyRegistrations:= HotkeyManager.registeredHotkeys[mic_obj.state? mic_obj.muteHotkey : mic_obj.unmuteHotkey]
+        if(mic_obj.isMicrophoneArray || (mic_controllers.Length()>1 && hotkeyRegistrations.length() == 1))
             state_string:= mic_obj.state_string
         else
             state_string:= mic_obj.generic_state_string
