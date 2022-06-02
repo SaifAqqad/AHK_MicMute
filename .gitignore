@@ -6,3 +6,4 @@ config.json
 bulma
 .sass-cache
 *.dll
+*.psd
