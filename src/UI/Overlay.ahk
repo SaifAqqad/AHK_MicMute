@@ -1,4 +1,6 @@
 class Overlay {
+    iconWidth:= "w48"
+    iconHeight:= "h-1"
     __New(config){
         util_log("[Overlay] Creating overlay window")
         ;create the overlay
@@ -8,8 +10,8 @@ class Overlay {
         this.state:= -1
         this.showOn:= config.OverlayShow ; 0 -> on-unmute, 1 -> on-mute, 2 -> always
         ; setup default icons
-        this.iconObj:= {0: resources_obj.icoFile["white_unmute"].clone()
-                       ,1: resources_obj.icoFile["white_mute"].clone()}
+        this.iconObj:= {0: resources_obj.getIcon(ICON_ID_OVERLAY + ICON_ID_UNMUTE + ICON_ID_WHITE)
+                       ,1: resources_obj.getIcon(ICON_ID_OVERLAY + ICON_ID_MUTE + ICON_ID_WHITE)}
         ; check if we're using custom icons
         if(config.OverlayUseCustomIcons){
             Loop, Files, overlay_unmute.* 
@@ -26,7 +28,7 @@ class Overlay {
             }
         }
         ;add the icon to the overlay        
-        Gui, Add, Picture, % "w40 h-1 Hwndico_hwnd Icon" this.iconObj[0].group, % this.iconObj[1].file
+        Gui, Add, Picture, % this.iconWidth " " this.iconHeight " Hwndico_hwnd Icon" this.iconObj[0].group, % this.iconObj[1].file
         this.iconHwnd:= ico_hwnd
 
         ;set the overlay color/transparency
@@ -72,7 +74,7 @@ class Overlay {
             return
         try{
             Gui,% this.Hwnd ":Default"
-            GuiControl,, % this.iconHwnd, % Format("*w40 *h-1 *icon{} {}", this.iconObj[state].group, this.iconObj[state].file)
+            GuiControl,, % this.iconHwnd, % Format("*{} *{} *icon{} {}", this.iconWidth, this.iconHeight, this.iconObj[state].group, this.iconObj[state].file)
             this.state:= state
             if(this.showOn != 2)
                 this.setShow(state==this.showOn)

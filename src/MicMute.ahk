@@ -5,7 +5,7 @@
 ;@Ahk2Exe-IgnoreBegin
     U_Version:= "1.2.5"
 ;@Ahk2Exe-IgnoreEnd
-;@Ahk2Exe-SetMainIcon %U_Res%\MicMute.ico
+;@Ahk2Exe-SetMainIcon %U_Res%\icons\1000.ico
 ;@Ahk2Exe-SetVersion %U_Version%
 ;@Ahk2Exe-SetName MicMute
 ;@Ahk2Exe-SetDescription MicMute

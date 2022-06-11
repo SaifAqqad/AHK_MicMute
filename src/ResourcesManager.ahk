@@ -1,35 +1,48 @@
-class ResourcesManager {
-    
-    ;@Ahk2Exe-AddResource *10 Lib\bass.dll
-    ;@Ahk2Exe-AddResource %U_Res%\MicMute.png
-    ;@Ahk2Exe-AddResource %U_Res%\MicMute.ico, 2000
-    ;@Ahk2Exe-AddResource %U_Res%\black_unmute.ico, 3080
-    ;@Ahk2Exe-AddResource %U_Res%\black_mute.ico, 4080
-    ;@Ahk2Exe-AddResource %U_Res%\white_unmute.ico, 3090
-    ;@Ahk2Exe-AddResource %U_Res%\white_mute.ico, 4090
-    ;@Ahk2Exe-AddResource %U_Res%\mute.wav
-    ;@Ahk2Exe-AddResource %U_Res%\unmute.wav
-    ;@Ahk2Exe-AddResource %U_Res%\ptt_off.wav
-    ;@Ahk2Exe-AddResource %U_Res%\ptt_on.wav
-    ;@Ahk2Exe-AddResource *10 %U_UI%\html\UI.html
-    ;@Ahk2Exe-AddResource *10 %U_UI%\html\Updater.html
-    ;@Ahk2Exe-AddResource *10 %U_UI%\html\about.html
-    ;@Ahk2Exe-AddResource %U_UI%\css\bulma.css
-    ;@Ahk2Exe-AddResource %U_UI%\css\base.css
-    ;@Ahk2Exe-AddResource %U_UI%\css\dark.css
 
+global ICON_ID_APP:= 1000
+, ICON_ID_TRAY:= 2000
+, ICON_ID_OVERLAY:= 3000
+, ICON_ID_MUTE:= 100
+, ICON_ID_UNMUTE:= 200
+, ICON_ID_WHITE:= 10
+, ICON_ID_BLACK:= 20
+
+;@Ahk2Exe-AddResource *10 Lib\bass.dll
+; app icons
+;@Ahk2Exe-AddResource %U_Res%\icons\1000.png
+;@Ahk2Exe-AddResource %U_Res%\icons\1000.ico, 1000
+; tray icons
+;@Ahk2Exe-AddResource %U_Res%\icons\2110.ico, 2110
+;@Ahk2Exe-AddResource %U_Res%\icons\2120.ico, 2120
+;@Ahk2Exe-AddResource %U_Res%\icons\2210.ico, 2210
+;@Ahk2Exe-AddResource %U_Res%\icons\2220.ico, 2220
+; overlay icons
+;@Ahk2Exe-AddResource %U_Res%\icons\3110.ico, 3110
+;@Ahk2Exe-AddResource %U_Res%\icons\3120.ico, 3120
+;@Ahk2Exe-AddResource %U_Res%\icons\3210.ico, 3210
+;@Ahk2Exe-AddResource %U_Res%\icons\3220.ico, 3220
+; mute/unmute sounds
+;@Ahk2Exe-AddResource %U_Res%\mute.wav
+;@Ahk2Exe-AddResource %U_Res%\unmute.wav
+;@Ahk2Exe-AddResource %U_Res%\ptt_off.wav
+;@Ahk2Exe-AddResource %U_Res%\ptt_on.wav
+; UI resources
+;@Ahk2Exe-AddResource *10 %U_UI%\html\UI.html
+;@Ahk2Exe-AddResource *10 %U_UI%\html\Updater.html
+;@Ahk2Exe-AddResource *10 %U_UI%\html\about.html
+;@Ahk2Exe-AddResource %U_UI%\css\bulma.css
+;@Ahk2Exe-AddResource %U_UI%\css\base.css
+;@Ahk2Exe-AddResource %U_UI%\css\dark.css
+
+class ResourcesManager {
     static RES_FOLDER:= A_ScriptDir . "\resources\"
     , UI_FOLDER:= A_ScriptDir . "\UI\config\"
+
     soundFile:= { mute: "mute.wav"
                 , unmute: "unmute.wav"
                 , ptt_off: "ptt_off.wav"
                 , ptt_on: "ptt_on.wav"}
-    icoFile:= { black_mute: {file:"black_mute.ico",group:"-4080"}
-              , black_unmute: {file:"black_unmute.ico",group:"-3080"}
-              , white_mute: {file:"white_mute.ico",group:"-4090"}
-              , white_unmute: {file:"white_unmute.ico",group:"-3090"}}
-    defaultIcon:= {file:"MicMute.ico",group:"-2000"}
-    pngIcon:= "MicMute.png"
+    pngIcon:= ICON_ID_APP ".png"
     htmlFile:= { UI: "UI.html"
                , about: "about.html"
                , Updater: "Updater.html"}
@@ -38,11 +51,6 @@ class ResourcesManager {
               ,{ name:"dark",file:"dark.css"}]
     __New(){
         if(A_IsCompiled){
-            ;if we're running the compiled version -> set icon's 'file' property to executable full path
-            this.defaultIcon.file:= A_ScriptFullPath
-            for obj, ico in this.icoFile {
-                ico.file:= A_ScriptFullPath
-            }
             for type, file in this.SoundFile {
                 this.soundFile[type]:= this.getResourcePtr(file)
             }
@@ -52,20 +60,13 @@ class ResourcesManager {
             for type, filePath in this.SoundFile {
                 this.soundFile[type]:= {file: this.RES_FOLDER . filePath}
             }
-
-            for obj, ico in this.icoFile {
-                ico.file:= this.RES_FOLDER . ico.file
-                ico.group:= "1"
-            }
             for name,file in this.htmlFile { ;neutron prepends "A_WorkingDir/" to the file
                 this.htmlFile[name]:= "UI/config/html/" . file
             }
             for i,css in this.cssFile {
                 css.file:= this.UI_FOLDER . "css\" . css.file
             }
-            this.defaultIcon.file:= this.RES_FOLDER . this.defaultIcon.file
-            this.defaultIcon.group:= "1"
-            this.pngIcon:= this.RES_FOLDER . this.pngIcon
+            this.pngIcon:= this.RES_FOLDER "icons\" this.pngIcon
         }
     }
 
@@ -107,11 +108,17 @@ class ResourcesManager {
         }
     }
 
-    getIcoFile(state){
+    getTrayIcon(state){        
         if(state = -1)
-            return this.defaultIcon
-        color:= sys_theme? "white" : "black"
-        state:= state? "mute" : "unmute"
-        return this.icoFile[color "_" state]
+            return this.getIcon(ICON_ID_APP)
+        iconId := ICON_ID_TRAY
+        iconId += state? ICON_ID_MUTE : ICON_ID_UNMUTE
+        iconId += sys_theme? ICON_ID_WHITE : ICON_ID_BLACK
+        return this.getIcon(iconId)
+    }
+
+    getIcon(iconId){
+        return A_IsCompiled? {file: A_ScriptFullPath, group: -iconId} 
+                : {file: this.RES_FOLDER "icons\" iconId ".ico", group: 1}
     }
 }
