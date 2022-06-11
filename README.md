@@ -1,5 +1,5 @@
 <h1 align="center">
-    <img src="./src/resources/MicMute.ico" width="32" height="32"></img>
+    <img src="./src/resources/icons/1000.ico" width="32" height="32"></img>
     MicMute
 </h1>
 <p align="center">
