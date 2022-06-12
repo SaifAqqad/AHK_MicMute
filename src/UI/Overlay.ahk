@@ -1,157 +1,49 @@
-class Overlay {
-    iconWidth:= "w48"
-    iconHeight:= "h-1"
-    __New(config){
-        util_log("[Overlay] Creating overlay window")
-        ;create the overlay
-        Gui, New, +Hwndui_hwnd +AlwaysOnTop -SysMenu +E0x20 ToolWindow, MicMute overlay
-        this.hwnd:= ui_hwnd
-        this.locked:=1
-        this.state:= -1
-        this.showOn:= config.OverlayShow ; 0 -> on-unmute, 1 -> on-mute, 2 -> always
-        ; setup default icons
-        this.iconObj:= {0: resources_obj.getIcon(ICON_ID_OVERLAY + ICON_ID_UNMUTE + ICON_ID_WHITE)
-                       ,1: resources_obj.getIcon(ICON_ID_OVERLAY + ICON_ID_MUTE + ICON_ID_WHITE)}
-        ; check if we're using custom icons
-        if(config.OverlayUseCustomIcons){
-            Loop, Files, overlay_unmute.* 
-            {
-                this.iconObj[0].group:= 1
-                this.iconObj[0].file:= A_LoopFileLongPath
-                break
-            }
-            Loop, Files, overlay_mute.* 
-            {
-                this.iconObj[1].group:= 1
-                this.iconObj[1].file:= A_LoopFileLongPath
-                break
-            }
+class Overlay{
+    static GDI_TOKEN:=0
+    , BACKGROUND_COLOR:= 0x232323
+    , BACKGROUND_TRANSPARENCY:= 0xb0000000
+
+    __New(options:=""){
+        if(Overlay.GDI_TOKEN = 0){
+            Overlay.GDI_TOKEN := Gdip_Startup()
+            OnExit(Func("Gdip_Shutdown").bind(Overlay.GDI_TOKEN))
         }
-        ;add the icon to the overlay        
-        Gui, Add, Picture, % this.iconWidth " " this.iconHeight " Hwndico_hwnd Icon" this.iconObj[0].group, % this.iconObj[1].file
-        this.iconHwnd:= ico_hwnd
-
-        ;set the overlay color/transparency
-        Gui, Color, 232323
-        DetectHiddenWindows, 1
-        WinSet, TransColor, 232323 210, % "ahk_id " this.hwnd
-        DetectHiddenWindows, 0
-        
-        ;remove the title bar
-        Gui -Caption 
-        
-        ;set overlay position
-        this.pos:= config.OverlayPos
-        if !(this.pos.x > -1 && this.pos.y > -1){
-            SysGet, res, Monitor
-            this.pos.x:= resRight - 100
-            this.pos.y:= 50
-        }
-
-        ;show the overlay
-        Gui, Show, % Format("NA x{} y{}",this.pos.x,this.pos.y), MicMute overlay
-        this.shown:= 1
-
-        ;set the overlay's handler functions
-        this.onDragFunc:= ObjBindMethod(this, "__onDrag")
-        this.onPosChangeFunc:= ObjBindMethod(this, "__onPosChange")
-
-        ;register message handlers
-        OnMessage(0x201, this.onDragFunc)
-        OnMessage(0x46, this.onPosChangeFunc)
-
-        ;register toggle hotkeys
-        if(this.showOn=2){
-            toggleFunc:= objBindMethod(this, "setShow")
-            Try Hotkey, ^!F9, % toggleFunc, On
-        }
-        lockFunc:= objBindMethod(this, "toggleLock")
-        Try Hotkey, ^!F10, % lockFunc, On
+        this.options:= options
+        this.deviceContext:= CreateCompatibleDC()
+        this.canvas:= CreateDIBSection(options.width, options.height, this.deviceContext)
+        this.graphics:= Gdip_GraphicsFromHDC(this.deviceContext)
+        this.setGraphicsOptions()
+        this.backgroundBrush:= Gdip_BrushCreateSolid(Overlay.BACKGROUND_COLOR | Overlay.BACKGROUND_TRANSPARENCY)
+        this.imageWidth:= options.width - 8 ; leave 8px left/right
+        this.imageHeight:= options.height - 8 ; leave 8px top/bottom
+        this.imageXPos:= this.imageYPos:= 4
     }
 
-    setState(state){
-        if(state==this.state)
-            return
-        try{
-            Gui,% this.Hwnd ":Default"
-            GuiControl,, % this.iconHwnd, % Format("*{} *{} *icon{} {}", this.iconWidth, this.iconHeight, this.iconObj[state].group, this.iconObj[state].file)
-            this.state:= state
-            if(this.showOn != 2)
-                this.setShow(state==this.showOn)
-        }
-        return this
+    setGraphicsOptions(){
+        ; SmoothingModeAntiAlias8x8 = 6
+        Gdip_SetSmoothingMode(this.graphics, 6)
+        ; InterpolationModeHighQualityBicubic = 7
+        Gdip_SetInterpolationMode(this.graphics, 7)
     }
 
-    toggleLock(){
-        Try {
-            Gui,% this.Hwnd ":Default"
-            if(!this.shown)
-                this.setShow(1)
-            if(this.locked){
-                Gui, -E0x20
-                DetectHiddenWindows, 1
-                WinSet, TransColor, Off, % "ahk_id " this.hwnd
-                DetectHiddenWindows, 0
-                this.locked:= 0
-            }else{
-                Gui, +E0x20
-                DetectHiddenWindows, 1
-                WinSet, TransColor, 232323 190, % "ahk_id " this.hwnd
-                DetectHiddenWindows, 0
-                this.locked:= 1
-            }
-        }
-        return this
+    fillBackground(){
+        Gdip_FillRoundedRectangle(this.graphics, this.backgroundBrush, 0, 0, this.options.width, this.options.height, 5)
     }
 
-    setShow(showHide:=-1){
-        Try {
-            Gui,% this.Hwnd ":Default"
-            if(showHide == this.shown)
-                return
-            _setShowHide:
-            switch showHide {
-                case -1: 
-                    showHide:= !this.shown
-                    Goto, _setShowHide
-                    return
-                case 0:
-                    Gui, Hide
-                    this.shown:= 0
-                case 1:
-                    Gui, Show, % Format("NA x{} y{}",this.pos.x,this.pos.y), MicMute overlay
-                    this.shown:= 1
-            }
-        }
-        return this
+    drawImage(image){
+        Gdip_DrawImage(this.graphics, image.bitMap
+                    , this.imageXPos, this.imageYPos, this.imageWidth, this.imageHeight
+                    , 0, 0, image.width, image.height)
     }
 
-    destroy(){
-        Try {
-            Gui,% this.Hwnd ":Default"
-            Gui, Destroy
-        }
-        Hotkey, ^!F9, Off, Off UseErrorLevel
-        Hotkey, ^!F10, Off, Off UseErrorLevel
-        return this
+    clear(){
+        Gdip_GraphicsClear(this.graphics)
     }
 
-    __onDrag(wParam, lParam, msg, hwnd){
-        if(hwnd = this.hwnd)
-            PostMessage, 0xA1, 2,,, % "ahk_id " this.hwnd
-    }
-
-    __onPosChange(wParam, lParam, msg, hwnd){
-        if(hwnd != this.hwnd)
-            return
-        WinGetPos, xPos, yPos,,, % "ahk_id " this.hwnd
-        if(xPos!=""){
-            this.pos.x:= xPos
-            this.pos.y:= yPos
-        }
-    }
-
-    __Delete(){
-        this.destroy()
+    dispose(){
+        Gdip_DeleteBrush(this.backgroundBrush)
+        DeleteObject(this.canvas)
+        DeleteDC(this.deviceContext)
+        Gdip_DeleteGraphics(this.graphics)
     }
 }
