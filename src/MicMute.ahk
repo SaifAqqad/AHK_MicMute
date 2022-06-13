@@ -25,6 +25,7 @@ SetWorkingDir %A_ScriptDir%
 #Include, <VMR\dist\VMR>
 #Include, <cJson\Dist\JSON>
 #Include, <Neutron\Neutron>
+#Include, <Gdip\Gdip_All>
 #Include, <StackSet>
 #Include, <SoundPlayer>
 
