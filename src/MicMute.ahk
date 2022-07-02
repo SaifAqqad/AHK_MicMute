@@ -25,6 +25,7 @@ SetWorkingDir %A_ScriptDir%
 #Include, <VMR\dist\VMR>
 #Include, <cJson\Dist\JSON>
 #Include, <Neutron\Neutron>
+#Include, <Gdip\Gdip_All>
 #Include, <StackSet>
 #Include, <SoundPlayer>
 
@@ -265,7 +266,11 @@ switchProfile(p_name:=""){
         }
     }else{
         if(current_profile.OnscreenOverlay){
-            overlay_wnd:= new Overlay(current_profile)
+            overlay_wnd:= new Overlay({size: 44
+            , theme: 0
+            , pos: current_profile.OverlayPos
+            , showOn: current_profile.OverlayShow
+            , useCustomIcons: current_profile.OverlayUseCustomIcons})
             overlay_wnd.setState(mic_controllers[1].state)
         }
     }
