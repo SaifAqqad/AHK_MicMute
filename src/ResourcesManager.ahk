@@ -9,7 +9,7 @@ global ICON_ID_APP:= 1000
 
 ;@Ahk2Exe-AddResource *10 Lib\bass.dll
 ; app icons
-;@Ahk2Exe-AddResource %U_Res%\icons\1000.png
+;@Ahk2Exe-AddResource %U_Res%\icons\1000.png, icon.png
 ;@Ahk2Exe-AddResource %U_Res%\icons\1000.ico, 1000
 ; tray icons
 ;@Ahk2Exe-AddResource %U_Res%\icons\2110.ico, 2110
@@ -42,7 +42,7 @@ class ResourcesManager {
                 , unmute: "unmute.wav"
                 , ptt_off: "ptt_off.wav"
                 , ptt_on: "ptt_on.wav"}
-    pngIcon:= ICON_ID_APP ".png"
+    pngIcon:= "icon.png"
     htmlFile:= { UI: "UI.html"
                , about: "about.html"
                , Updater: "Updater.html"}
@@ -66,7 +66,7 @@ class ResourcesManager {
             for i,css in this.cssFile {
                 css.file:= this.UI_FOLDER . "css\" . css.file
             }
-            this.pngIcon:= this.RES_FOLDER "icons\" this.pngIcon
+            this.pngIcon:= this.RES_FOLDER "icons\" ICON_ID_APP ".png"
         }
     }
 
