@@ -69,14 +69,18 @@ class Overlay{
                 break
             }
         }
-        
-        ; this.icons:= {0:{file:"3210.ico",group:1}, 1:{file:"3110.ico",group:1}}
 
-        this.icons[0].bitmap:= Gdip_CreateBitmapFromFile(this.icons[0].file, this.icons[0].group)
+        if(this.icons[0].group!=1){ ; icon is an internal resource
+            this.icons[0].group:= util_indexOfIconResource(A_ScriptFullPath, Abs(this.icons[0].group))
+        }
+        this.icons[0].bitmap:= Gdip_CreateBitmapFromFile(this.icons[0].file, this.icons[0].group, this.options.IconSize)
         this.icons[0].width:= Gdip_GetImageWidth(this.icons[0].bitmap)
         this.icons[0].height:= Gdip_GetImageHeight(this.icons[0].bitmap)
-        
-        this.icons[1].bitmap:= Gdip_CreateBitmapFromFile(this.icons[1].file, this.icons[1].group)
+
+        if(this.icons[1].group!=1){ ; icon is an internal resource
+            this.icons[1].group:= util_indexOfIconResource(A_ScriptFullPath, Abs(this.icons[1].group))
+        }
+        this.icons[1].bitmap:= Gdip_CreateBitmapFromFile(this.icons[1].file, this.icons[1].group, this.options.IconSize)
         this.icons[1].width:= Gdip_GetImageWidth(this.icons[1].bitmap)
         this.icons[1].height:= Gdip_GetImageHeight(this.icons[1].bitmap)
     }
