@@ -266,8 +266,8 @@ switchProfile(p_name:=""){
         }
     }else{
         if(current_profile.OnscreenOverlay){
-            overlay_wnd:= new Overlay({size: 44
-            , theme: 0
+            overlay_wnd:= new Overlay({size: current_profile.overlaySize
+            , theme: current_profile.overlayTheme
             , pos: current_profile.OverlayPos
             , showOn: current_profile.OverlayShow
             , useCustomIcons: current_profile.OverlayUseCustomIcons})

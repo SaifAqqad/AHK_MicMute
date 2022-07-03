@@ -18,6 +18,8 @@ class ProfileTemplate{
         this.OSDPos:={x:-1,y:-1}
         this.OverlayPos:={x:-1,y:-1}
         this.OverlayShow:=2
+        this.overlayTheme:=0
+        this.overlaySize:=44
         this.OverlayUseCustomIcons:=0
         if(IsObject(p_name_Obj)){
             onMuteOnly:= p_name_Obj.Delete("OverlayOnMuteOnly")
