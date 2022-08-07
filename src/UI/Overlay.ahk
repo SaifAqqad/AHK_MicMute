@@ -206,15 +206,17 @@ class Overlay{
     }
 
     destroy(){
-        Gui, % this.hwnd ":Default"
-        Gui, Destroy
-        OnMessage(0x201, this.onDragFunc, 0)
-        OnMessage(0x46, this.onPosChangeFunc, 0)
-        Gdip_DeleteBrush(this.backgroundBrush)
-        DeleteObject(this.canvas)
-        DeleteDC(this.deviceContext)
-        Gdip_DeleteGraphics(this.graphics)
-        for i, iconObj in this.icons 
-            Gdip_DisposeImage(iconObj.bitmap)
+        try{
+            Gui, % this.hwnd ":Default"
+            Gui, Destroy
+            OnMessage(0x201, this.onDragFunc, 0)
+            OnMessage(0x46, this.onPosChangeFunc, 0)
+            Gdip_DeleteBrush(this.backgroundBrush)
+            DeleteObject(this.canvas)
+            DeleteDC(this.deviceContext)
+            Gdip_DeleteGraphics(this.graphics)
+            for i, iconObj in this.icons 
+                Gdip_DisposeImage(iconObj.bitmap)
+        }
     }
 }
