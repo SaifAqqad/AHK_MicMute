@@ -172,6 +172,9 @@ UI_setProfile(neutron, p_profile){
     ui_obj.doc.getElementById("OnscreenOverlay").checked:= current_profile.OnscreenOverlay
     ui_obj.doc.getElementById("OverlayShow").value:= current_profile.OverlayShow
     ui_obj.doc.getElementById("OverlayUseCustomIcons").checked:= current_profile.OverlayUseCustomIcons
+    ui_obj.doc.getElementById("OverlayTheme").value:= current_profile.OverlayTheme
+    ui_obj.doc.getElementById("OverlaySize").value:= current_profile.OverlaySize
+    UI_onUpdateOverlaySize(current_profile.OverlaySize)
     ui_obj.doc.getElementById("ExcludeFullscreen").checked:= current_profile.ExcludeFullscreen
     ui_obj.doc.getElementById("OSDPos_x").value:= current_profile.OSDPos.x==-1? "" : current_profile.OSDPos.x
     ui_obj.doc.getElementById("OSDPos_y").value:= current_profile.OSDPos.y==-1? "" : current_profile.OSDPos.y
@@ -283,6 +286,8 @@ UI_onSaveProfile(neutron, noReset:=0){
     current_profile.ExcludeFullscreen:= ui_obj.doc.getElementById("ExcludeFullscreen").checked? 1 : 0
     current_profile.OverlayShow:= ui_obj.doc.getElementById("OverlayShow").value
     current_profile.OverlayUseCustomIcons:= ui_obj.doc.getElementById("OverlayUseCustomIcons").checked? 1 : 0
+    current_profile.OverlayTheme:= ui_obj.doc.getElementById("OverlayTheme").value
+    current_profile.OverlaySize:= ui_obj.doc.getElementById("OverlaySize").value
     current_profile.afkTimeout:= (val:= ui_obj.doc.getElementById("afkTimeout").value)? val+0 : 0
     current_profile.LinkedApp:= ui_obj.doc.getElementById("LinkedApp").value
     current_profile.PTTDelay:= ui_obj.doc.getElementById("PTTDelay").value+0
@@ -500,6 +505,10 @@ VMR_GetDeviceList(){
 
 UI_onUpdateDelay(delay){
     ui_obj.doc.getElementByID("PTTDelay_text").value:= delay . " ms"
+}
+
+UI_onUpdateOverlaySize(size){
+    ui_obj.doc.getElementByID("OverlaySize_text").value:= size . " px"
 }
 
 UI_onHotkeyType(type, delay:=0){
