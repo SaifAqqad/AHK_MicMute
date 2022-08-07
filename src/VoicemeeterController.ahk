@@ -63,16 +63,20 @@ class VoicemeeterController extends MicrophoneController{
 
     isVoicemeeterInstalled(p_path:=""){
         try{
+            util_log("[VoicemeeterController] Checking if Voicemeeter is installed at " . (p_path? p_path : "default path"))
             new VMR(p_path)
-        }catch{
+        }catch err{
+            util_log("[VoicemeeterController] " . err.Message)
             return 0
         }
         return 1
     }
 
     initVoicemeeter(p_path:=""){
-        if(!VoicemeeterController.voicemeeter)
+        if(!VoicemeeterController.voicemeeter){
             VoicemeeterController.voicemeeter:= new VMR(p_path).login()
+            util_log("[VoicemeeterController] Initialized Voicemeeter at: " . VBVMR.DLL_PATH)
+        }
         return VoicemeeterController.voicemeeter
     }
 
