@@ -237,6 +237,15 @@
                                                         <span class="nt-label">Neutral modifiers</span>
                                                     </label>
                                                 </div>
+                                                <!-- Hybrid PTT -->
+                                                <div class="tag is-small option has-tooltip " id="hybrid_ptt_tag" tabindex=0 role="button" aria-pressed="false"
+                                                    onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
+                                                    onclick="ahk.UI_flipVal('hybrid_ptt');ahk.UI_onChange('UI_updateHotkeyOption','hybrid_ptt', 1);this.blur()">
+                                                    <label class="checkbox">
+                                                        <input type="checkbox" id="hybrid_ptt" disabled>
+                                                        <span class="hybrid_ptt-label">Hybrid PTT</span>
+                                                    </label>
+                                                </div>
                                             </div>
                                         </div>
                                         <!-- unmute hotkey box -->

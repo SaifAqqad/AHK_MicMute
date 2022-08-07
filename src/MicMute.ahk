@@ -244,7 +244,7 @@ switchProfile(p_name:=""){
     ;handle tray toggle option
     tray_add("Toggle microphone", ObjBindMethod(mic_controllers[1],"setMuteState",-2))
     tray_toggleMic(1)
-    if(mic_controllers[1].isPushToTalk)
+    if(mic_controllers[1].isPushToTalk && !mic_controllers[1].isHybridPTT)
         tray_toggleMic(0)
     ; setup sound player
     if(current_profile.SoundFeedback){

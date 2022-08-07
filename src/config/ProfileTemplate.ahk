@@ -4,7 +4,8 @@ class ProfileTemplate{
         this.Microphone:= [{Name:"Default"
         ,MuteHotkey:""
         ,UnmuteHotkey:""
-        ,PushToTalk:0}]
+        ,PushToTalk:0
+        ,HybridPTT:0}]
         this.SoundFeedback:=0
         this.SoundFeedbackDevice:="Default"
         this.SoundFeedbackUseCustomSounds:=0

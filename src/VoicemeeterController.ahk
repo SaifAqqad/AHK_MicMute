@@ -11,6 +11,7 @@ class VoicemeeterController extends MicrophoneController{
         this.muteHotkey:= mic_obj.MuteHotkey
         this.unmuteHotkey:= mic_obj.UnmuteHotkey
         this.isPushToTalk:= mic_obj.PushToTalk
+        this.isHybridPTT:= mic_obj.HybridPTT
         this.ptt_key:=""
         this.ptt_delay:= ptt_delay
         this.force_current_state:= force_current_state

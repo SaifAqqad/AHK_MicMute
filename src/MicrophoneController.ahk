@@ -8,6 +8,7 @@ Class MicrophoneController {
         this.muteHotkey:= mic_obj.MuteHotkey
         this.unmuteHotkey:= mic_obj.UnmuteHotkey
         this.isPushToTalk:= mic_obj.PushToTalk
+        this.isHybridPTT:= mic_obj.HybridPTT
         this.ptt_delay:= ptt_delay
         this.force_current_state:= force_current_state
         this.feedback_callback:= feedback_callback
@@ -43,6 +44,16 @@ Class MicrophoneController {
         if(this.ptt_delay)
             sleep, % this.ptt_delay
         this.setMuteState(1)
+    }
+
+    hybridPtt(){
+        ; toggle the mute state
+        this.setMuteState(-2)
+        if(this.state = 1) ; mic is muted
+            return
+        KeyWait, % this.ptt_key
+        if(A_TimeSinceThisHotkey >= 150) ; it's ptt
+            this.setMuteState(1)
     }
 
     setMuteState(state, shouldCallFeedback:=1){
@@ -114,7 +125,7 @@ Class MicrophoneController {
                 if(this.isPushToTalk){
                     this.setMuteState(1,0)
                     this.ptt_key:= (StrSplit(this.muteHotkey, [" ","#","!","^","+","&",">","<","*","~","$","UP"], " `t")).Pop()
-                    this.muteHotkeyId:= this.unmuteHotkeyId:= HotkeyManager.register(this.muteHotkey, ObjBindMethod(this, "ptt"), this)
+                    this.muteHotkeyId:= this.unmuteHotkeyId:= HotkeyManager.register(this.muteHotkey, ObjBindMethod(this, (this.isHybridPTT? "hybridPtt": "ptt")), this)
                     SetTimer, checkIsIdle, Off
                 }else{
                     this.muteHotkeyId:= this.unmuteHotkeyId:= HotkeyManager.register(this.muteHotkey, ObjBindMethod(this,"setMuteState",-2), this)
@@ -122,7 +133,7 @@ Class MicrophoneController {
             }else{
                 this.muteHotkeyId:= HotkeyManager.register(this.muteHotkey, ObjBindMethod(this,"setMuteState",1), this)
                 this.unmuteHotkeyId:= HotkeyManager.register(this.unmuteHotkey, ObjBindMethod(this,"setMuteState",0), this)
-            } 
+            }
         }catch{
             Throw, Format("Invalid hotkeys in profile '{}'",current_profile.ProfileName)
         }

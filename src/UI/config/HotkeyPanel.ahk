@@ -12,6 +12,7 @@ class HotkeyPanel{
              , passthrough: 0
              , nt: 1
              , hotkey_h: ""}
+    hybrid_ptt:=0
     hotkeyType:=""
 
     __New(muteStr:="", unmuteStr:="", type:=""){
