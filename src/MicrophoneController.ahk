@@ -52,7 +52,7 @@ Class MicrophoneController {
         if(this.state = 1) ; mic is muted
             return
         KeyWait, % this.ptt_key
-        if(A_TimeSinceThisHotkey < 150) ; it's a toggle
+        if(A_TimeSinceThisHotkey < 200) ; it's a toggle
             return
         if(this.ptt_delay)
             sleep, % this.ptt_delay
