@@ -37,6 +37,7 @@ SetWorkingDir %A_ScriptDir%
 #Include, Updater.ahk
 #Include, %A_ScriptDir%\config
 #Include, ProfileTemplate.ahk
+#Include, MicrophoneTemplate.ahk
 #Include, Config.ahk
 #Include, %A_ScriptDir%\UI
 #Include, OSD.ahk
