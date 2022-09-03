@@ -1,11 +1,7 @@
 class ProfileTemplate{
     __New(p_name_Obj){
         this.ProfileName:= p_name_Obj
-        this.Microphone:= [{Name:"Default"
-        ,MuteHotkey:""
-        ,UnmuteHotkey:""
-        ,PushToTalk:0
-        ,HybridPTT:0}]
+        this.Microphone:= Array(new MicrophoneTemplate("Default", "", ""))
         this.SoundFeedback:=0
         this.SoundFeedbackDevice:="Default"
         this.SoundFeedbackUseCustomSounds:=0
@@ -30,10 +26,10 @@ class ProfileTemplate{
                 this[prop]:= val
             }
             if(!IsObject(this.Microphone)){
-                this.Microphone:= Array({Name: this.Delete("Microphone")
-                ,MuteHotkey: this.Delete("MuteHotkey")
-                ,UnmuteHotkey: this.Delete("UnmuteHotkey")
-                ,PushToTalk: this.Delete("PushToTalk")})
+                this.Microphone:= Array( new MicrophoneTemplate(this.Delete("Microphone")
+                    ,this.Delete("MuteHotkey")
+                    ,this.Delete("UnmuteHotkey")
+                    ,this.Delete("PushToTalk")))
             }
         }
     }

@@ -309,18 +309,14 @@ UI_onSaveProfile(neutron, noReset:=0){
             hp.unmute:= hp.mute
         if(!hp.isTypeValid())
             Continue
-        current_profile.Microphone.Push({ Name: mic
-                                        , MuteHotkey: hp.mute.hotkey
-                                        , UnmuteHotkey: hp.unmute.hotkey
-                                        , PushToTalk: (hp.hotkeyType = 2? 1 : 0)
-                                        , HybridPTT: hp.hybrid_ptt})
+        current_profile.Microphone.Push(new MicrophoneTemplate(mic
+        , hp.mute.hotkey
+        , hp.unmute.hotkey
+        , (hp.hotkeyType = 2? 1 : 0)
+        , hp.hybrid_ptt))
     }
     if(!current_profile.Microphone.Length()){
-        current_profile.Microphone.Push({ Name: "Default"
-                                        , MuteHotkey: ""
-                                        , UnmuteHotkey: ""
-                                        , PushToTalk: 0
-                                        , HybridPTT: 0})    
+        current_profile.Microphone.Push(new MicrophoneTemplate("Default", "", ""))    
     }
     config_obj.exportConfig()
     if(!noReset){
