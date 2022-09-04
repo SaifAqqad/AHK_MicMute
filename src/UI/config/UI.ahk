@@ -240,7 +240,7 @@ UI_resetMicSelect(){
         if(InStr(device, "VMR_") && vm){
             deviceInfo:=""
             RegExMatch(device, VoicemeeterController.BUS_STRIP_REGEX, deviceInfo)
-            deviceName:= "Voicemeeter " (vm[deviceInfo.type][deviceInfo.index]).name
+            deviceName:= "Voicemeeter - " (vm[deviceInfo.type][deviceInfo.index]).name
             select.insertAdjacentHTML("beforeend", Format(template_mic, device, "", deviceName))
         }else{
             select.insertAdjacentHTML("beforeend", Format(template_mic, device, "", device))

@@ -1,5 +1,20 @@
 class VoicemeeterController extends MicrophoneController{
-    static voicemeeter:="", BUS_STRIP_REGEX:= "iO)VMR_(?<type>\w+)\[(?<index>\d)\]", activeControllers:=[]
+    static voicemeeter:=""
+    , BUS_STRIP_REGEX:= "iO)VMR_(?<type>\w+)\[(?<index>\d)\]"
+    , STRIP_PROPERTIES:=
+    ( Join LTrim ; ahk
+        {
+            "A1": 1,
+            "A2": 1,
+            "A3": 1,
+            "A4": 1,
+            "A5": 1,
+            "B1": 1,
+            "B2": 1,
+            "B3": 1
+        }
+    )
+    , activeControllers:=[]
 
     __New(mic_obj, voicemeeter_path="", ptt_delay:=0, force_current_state:=0, feedback_callback:="", state_callback:=""){
         this.initVoicemeeter(voicemeeter_path)
@@ -12,6 +27,12 @@ class VoicemeeterController extends MicrophoneController{
         this.unmuteHotkey:= mic_obj.UnmuteHotkey
         this.isPushToTalk:= mic_obj.PushToTalk
         this.isHybridPTT:= mic_obj.HybridPTT
+        this.prop:= "mute"
+        this.isInvertedProp:= 0
+        if(this.microphoneType = "Strip" && mic_obj.VMRStripProperty){
+            this.prop:= mic_obj.VMRStripProperty
+            this.isInvertedProp:= this.STRIP_PROPERTIES[mic_obj.VMRStripProperty] || 0
+        }
         this.ptt_key:=""
         this.ptt_delay:= ptt_delay
         this.force_current_state:= force_current_state
@@ -30,16 +51,16 @@ class VoicemeeterController extends MicrophoneController{
             case this.state: return
             case -2: state:= !this.state
         }
-        this.state:= this.microphone.mute:= state
+        this.state:= this.setStateProp(state)
         this.shouldCallFeedback:= shouldCallFeedback
         Critical, Off
     }
 
     onUpdateState(){
-        newState:= !!this.microphone.mute
+        newState:= !!this.getStateProp()
         Critical, On
         if(this.force_current_state && this.state != newState)
-            this.microphone.mute := this.state
+            this.setStateProp(this.state)
         else
             this.state:= newState
         this.state_callback.Call(this)
@@ -51,6 +72,15 @@ class VoicemeeterController extends MicrophoneController{
             this.feedback_callback.Call(this)
         }
         Critical, Off
+    }
+
+    getStateProp(){
+        return this.microphone[this.prop] ^ this.isInvertedProp
+    }
+
+    setStateProp(state){
+        this.microphone[this.prop]:= state ^ this.isInvertedProp
+        return state
     }
     
     enableCallback(){
