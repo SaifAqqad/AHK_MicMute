@@ -19,10 +19,9 @@
    * AFK timeout (auto mute when idling for longer than a specific time interval)
    * Optional sound and on-screen feedback with ability to use custom sounds
    * Always-on-top overlay to show the microphone's state
+   * Voicemeeter integration
 
 ## Installation
-<sub>Note: Starting with [v1.1.1](https://github.com/SaifAqqad/AHK_MicMute/releases/tag/1.1.1), MicMute.exe is 64-bit only.</sub>
-
 ### A. Install using [Scoop](https://scoop.sh)
 
 ```powershell
@@ -37,6 +36,7 @@ scoop install micmute
 
 ### B. Use standalone executable
    You can download [MicMute](https://github.com/SaifAqqad/AHK_MicMute/releases/latest/download/MicMute.exe) and use it standalone.
+###### Note: The config file will be saved in the same directory as the executable.
 
 ## Usage
 ![The first time you launch MicMute, a configuration window will open](./screenshots/configwindow_1.png)      
@@ -63,11 +63,12 @@ scoop install micmute
 <hr>
 
 ### Hotkey options
-| Option            | Description                                                                                                                                                                                                                                                                    |
-|-------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Passthrough       | If this is turned off, the hotkey will only work for MicMute and will be hidden from the rest of the system.                                                                                                                                                                   |
-| Wildcard          | If this is turned off, the hotkey will not work if you press extra modifiers. for example if the hotkey is <kbd>Ctrl</kbd> <kbd>M</kbd> and you press <kbd>Ctrl</kbd> <kbd>Shift</kbd> <kbd>M</kbd> , the hotkey will not be triggered.                                        |
-| Neutral modifiers | If this is turned off, the hotkey can have a specific modifier (Right or Left) instead of a neutral one (example: <kbd>RCtrl</kbd> instead of <kbd>Ctrl</kbd>, this will only be triggered by the right control key). This option should be set *before* recording the hotkey. |
+| Option            | Description                                                                                                                                                      |
+|-------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Passthrough       | Hotkey presses will passthrough to the system (They won't be exclusive to MicMute).                                                                              |
+| Wildcard          | Trigger the hotkey even if it's pressed with extra modifiers/keys.                                                                                               |
+| Neutral modifiers | MicMute won't differentiate between Left and Right modifiers (i.e Left/Right shift will both be Shift). This option should be set *before* recording the hotkey. |
+| Hybrid PTT        | Turns a PTT hotkey into a Hybrid PTT/Toggle hotkey (Long press -> PTT, short press -> toggle).                                                                   |
 <hr>
 
 ### Feedback options
@@ -112,8 +113,9 @@ Show the microphone's state in an always-on-top overlay.
 * You can drag the overlay to change its position when it's unlocked
 * Games need to be set to `Windowed fullscreen` or `Borderless` for the overlay to show up on top
 * You can set the overlay to only show if the microphone is muted or unmuted
+* You can set the overlay's size and theme (light/dark)
 * You can use custom icons for the overlay. 
-    To do this, turn on the option in the config UI, then place the icons (`ico`/`png`/`jpeg`) in the same folder as `MicMute.exe` and rename them as:  
+    To use this feature, turn on the option in the config UI, then place the icons (`ico`/`png`/`jpeg`) in the same folder as `MicMute.exe` and rename them as:  
     -  Mute icon: `overlay_mute`
     -  Unmute icon: `overlay_unmute`
    
@@ -135,9 +137,20 @@ UI Theme can be set to `System Theme`, `Dark` or `Light`
 
 <small>This does *not* affect the tray icon color, which is always based on the system theme</small>
 
-#### 4. Force Microphone State
+#### 4. Force microphone state
 Prevent other apps from changing the microphone's state (i.e mute/unmute the microphone).
 ##### Note: This might break the unmute functionality in some apps, if this happens you'll need to unmute the microphone using MicMute before unmuting inside the app)
+
+#### 5. Voicemeeter integration
+You can control Voicemeeter's inputs and outputs using MicMute, after turning on the option, refresh the microphones list and you should see voicemeeter's inputs (strips) and outputs (buses) in the microphone dropdown.
+<details>
+  <summary>Image</summary>
+
+  ![Image](./screenshots/configwindow_5.png)
+  </details>
+
+By default, MicMute will use the bus/strip's `mute` property, in the case of a strip, it can be set to any other property (`A1`, `A3`, `B3`, etc..) by changing the `VMRStripProperty` value in the [config file](#editing-the-config-file).
+
 <hr>
 
 ### Controlling multiple microphones
@@ -172,44 +185,51 @@ When using this feature, the following applies:
 ```json
 //config.json example 
 {
-    "AllowUpdateChecker": 0,
-    "DefaultProfile": "Default",
-    "MuteOnStartup": 1,
-    "PreferTheme": -1,
-    "Profiles": [
-        {
-            "afkTimeout": 2,
-            "ExcludeFullscreen": 0,
-            "LinkedApp": "",
-            "Microphone": [
-                {
-                    "MuteHotkey": "~*RShift",
-                    "Name": "Microphone (AmazonBasics Desktop Mini Mic)",
-                    "PushToTalk": 0,
-                    "UnmuteHotkey": "~*RShift"
-                }
-            ],
-            "OnscreenFeedback": 0,
-            "OnscreenOverlay": 1,
-            "OSDPos": {
-                "x": -1,
-                "y": -1
-            },
-            "OverlayOnMuteOnly": 0,
-            "OverlayPos": {
-                "x": 2486,
-                "y": 387
-            },
-            "OverlayUseCustomIcons": 0,
-            "ProfileName": "Default",
-            "PTTDelay": 50,
-            "SoundFeedback": 1,
-            "SoundFeedbackDevice": "Default",
-            "SoundFeedbackUseCustomSounds": 0,
-            "UpdateWithSystem": 1
-        }
-    ],
-    "SwitchProfileOSD": 1
+	"AllowUpdateChecker": 1,
+	"DefaultProfile": "Default",
+	"ForceMicrophoneState": 0,
+	"MuteOnStartup": 1,
+	"PreferTheme": -1,
+	"Profiles": [
+		{
+			"afkTimeout": 0,
+			"ExcludeFullscreen": 0,
+			"LinkedApp": "",
+			"Microphone": [
+				{
+					"HybridPTT": 0,
+					"MuteHotkey": "*RShift",
+					"Name": "Microphone (AmazonBasics Desktop Mini Mic)",
+					"PushToTalk": 0,
+					"UnmuteHotkey": "*RShift",
+					"VMRStripProperty": ""
+				}
+			],
+			"OnscreenFeedback": 0,
+			"OnscreenOverlay": 1,
+			"OSDPos": {
+				"x": -1,
+				"y": -1
+			},
+			"OverlayPos": {
+				"x": 2318,
+				"y": 429
+			},
+			"OverlayShow": "2",
+			"OverlaySize": "59",
+			"OverlayTheme": "1",
+			"OverlayUseCustomIcons": 1,
+			"ProfileName": "Default",
+			"PTTDelay": 100,
+			"SoundFeedback": 1,
+			"SoundFeedbackDevice": "Default",
+			"SoundFeedbackUseCustomSounds": 0,
+			"UpdateWithSystem": 1
+		}
+	],
+	"SwitchProfileOSD": 1,
+	"VoicemeeterIntegration": 1,
+	"VoicemeeterPath": ""
 }
 ```
 
@@ -236,7 +256,7 @@ You can install them using [scoop](https://scoop.sh):
     Set-ExecutionPolicy RemoteSigned -scope CurrentUser;
 
     # This runs the scoop installer script.
-    iwr -useb get.scoop.sh | iex;
+    irm get.scoop.sh | iex
     ```
 2. Install prerequisites
     ```powershell
@@ -277,6 +297,8 @@ ahk2exe.exe /in ".\src\MicMute.ahk" /out ".\src\MicMute.exe";
 | [Material Design icons](https://github.com/Templarian/MaterialDesign) | [Apache 2.0](https://github.com/Templarian/MaterialDesign/blob/master/LICENSE) |
 | [BASS audio library](https://www.un4seen.com)                         | [License](https://www.un4seen.com/#license)                                    |
 | [VA.ahk](https://github.com/SaifAqqad/VA.ahk)                         | [License](https://github.com/SaifAqqad/VA.ahk/blob/master/LICENSE)             |
+| [VMR.ahk](https://github.com/SaifAqqad/VMR.ahk)                       | [License](https://github.com/SaifAqqad/VMR.ahk/blob/master/LICENSE)            |
+| [mmikeww/AHKv2-Gdip](https://github.com/mmikeww/AHKv2-Gdip)           | [License](https://www.autohotkey.com/boards/viewtopic.php?t=6517)             |
 | [Bulma CSS framework](https://bulma.io/)                              | [MIT](https://github.com/jgthms/bulma/blob/master/LICENSE)                     |
 | [G33kDude/cJson.ahk](https://github.com/G33kDude/cJson.ahk)           | [MIT](https://github.com/G33kDude/cJson.ahk/blob/main/LICENSE)                 |
 | [G33kDude/Neutron.ahk](https://github.com/G33kDude/Neutron.ahk)       | [MIT](https://github.com/G33kDude/Neutron.ahk/blob/master/LICENSE)             |
