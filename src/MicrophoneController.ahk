@@ -23,6 +23,9 @@ Class MicrophoneController {
                 this.isMicrophoneArray:= 1
                 this.force_current_state:= 1
                 this.friendly_name:= "Microphones"
+                this.updateMicMethod := ObjBindMethod(this, "UpdateMicArray")
+                ;WM_DEVICECHANGE := 0x0219
+                OnMessage(0x0219, this.updateMicMethod)
             case "default": 
                 this.microphone:= "capture"
                 try this.friendly_name:= VA_GetDeviceName(VA_GetDevice("capture")) 
@@ -144,6 +147,19 @@ Class MicrophoneController {
         util_log(Format("[MicrophoneController] Enabled: {}", util_toString(this.microphoneName)))
     }
 
+    UpdateMicArray(wParam:="", lParam:=""){
+        if(wParam != 0x0007 || !this.isMicrophoneArray)
+            return
+        util_log("[MicrophoneController] Updating Microphones")
+        this.microphone:= Array()
+        for i, mic in VA_GetDeviceList("capture") {
+            micName:= mic . ":capture"
+            this.microphone.Push(micName)
+            ; reapply current state on any new mic
+            VA_SetMasterMute(this.state, micName)
+        }
+    }
+
     disableController(){
         HotkeyManager.unregister(this.muteHotkey,this.muteHotkeyId)
         HotkeyManager.unregister(this.unmuteHotkey,this.unmuteHotkeyId)
@@ -172,6 +188,7 @@ Class MicrophoneController {
             Try VA_ReleaseAudioEndpointCallback(VA_GetDevice(this.microphone),this.va_callback)
             this.va_callback:=""
         }
+        OnMessage(0x0219, this.updateMicMethod, 0)
     }
     resetHotkeySet(){
         MicrophoneController.hotkeys_set:= new StackSet()
