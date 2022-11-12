@@ -27,9 +27,8 @@ jobs:
         run: |
           $cwd = (Get-Item .).FullName;
           Invoke-WebRequest "https://github.com/joshuacc/ahkpm/releases/download/0.5.0/ahkpm-0.5.0.msi" -OutFile "$cwd\ahkpm.msi";
-          msiexec.exe /a $cwd\ahkpm.msi /qn TARGETDIR=$cwd\ahkpmDir
-          $ahkpmCommand = "$cwd\ahkpmDir\ahkpm\ahkpm.exe install";
-          Invoke-Expression $ahkpmCommand
+          Start-Process "MSIEXEC" -ArgumentList "/a `"$cwd\ahkpm.msi`" /qn TARGETDIR=`"$cwd\ahkpmDir`"" -Wait -NoNewWindow
+          Start-Process "$cwd\ahkpmDir\ahkpm\ahkpm.exe" -ArgumentList "install" -WorkingDirectory "$cwd" -Wait -NoNewWindow
 
       - name: Compile MicMute
         uses: nekocodeX/GitHub-Action-Ahk2Exe@v1.1.0
