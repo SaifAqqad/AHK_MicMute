@@ -243,10 +243,10 @@ When using this feature, the following applies:
 
 Example: `MicMute.exe "/profile=profile 1" /noUI /debug /logFile=MicMute.log`
 ## Compile instructions
-<small>Note: Run the following commands in powershell, not command prompt.</small>
+<small>Note: Run the following commands in powershell, *not* command prompt.</small>
 
 ### 1. Install prerequisites
-You'll need [AutoHotkey (Ahk2Exe)](https://www.autohotkey.com/) and [git](https://git-scm.com/download/win) in your path.
+You'll need [AutoHotkey (Ahk2Exe)](https://www.autohotkey.com/), [git](https://git-scm.com/download/win) and [ahkpm](https://ahkpm.dev/) in your path.
 
 You can install them using [scoop](https://scoop.sh):
 
@@ -262,29 +262,28 @@ You can install them using [scoop](https://scoop.sh):
     ```powershell
     scoop install git;
     scoop bucket add extras;
-    scoop install autohotkey;
+    scoop install autohotkey ahkpm;
     ```
-### 2. Clone the repository (and submodules)
+### 2. Clone the repository
     
 ```powershell
-git clone --recurse-submodules https://github.com/SaifAqqad/AHK_MicMute.git;
+git clone https://github.com/SaifAqqad/AHK_MicMute.git;
 cd .\AHK_MicMute\;
 ```
 
-If you had already cloned the repository without submodules, Run the following command:
-
+### 3. Install the dependencies
 ```powershell
-git submodule update --init --recursive;
+ahkpm install;
 ```
 
-### 3. Download and extract BASS library
+### 4. Download and extract BASS library
 ```powershell
 Invoke-WebRequest "www.un4seen.com/files/bass24.zip" -OutFile ".\bass24.zip";
 Expand-Archive ".\bass24.zip" -DestinationPath ".\base24\";
 Copy-Item ".\base24\x64\bass.dll" -Destination ".\src\Lib\bass.dll";
 ```
 
-### 4. Run the compiler
+### 5. Run the compiler
 
 ```powershell
 ahk2exe.exe /in ".\src\MicMute.ahk" /out ".\src\MicMute.exe";

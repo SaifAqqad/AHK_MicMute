@@ -20,29 +20,37 @@ SetWorkingDir %A_ScriptDir%
 #SingleInstance force
 #MaxThreadsPerHotkey 1
 
+; /Lib
 #Include, <WinUtils>
-#Include, <VA\VA>
-#Include, <VMR\dist\VMR>
-#Include, <cJson\Dist\JSON>
-#Include, <Neutron\Neutron>
-#Include, <Gdip\Gdip_All>
 #Include, <StackSet>
 #Include, <SoundPlayer>
 
+; ahkpm
+#Include, %A_ScriptDir%\..\ahkpm-modules\github.com\
+#Include, G33kDude\cJson.ahk\Dist\JSON.ahk
+#Include, G33kDude\Neutron.ahk\Neutron.ahk
+#Include, SaifAqqad\VA.ahk\VA.ahk
+#Include, SaifAqqad\VMR.ahk\dist\VMR.ahk
+#Include, mmikeww\AHKv2-Gdip\Gdip_All.ahk
+
+; MicMute scripts
 #Include, %A_ScriptDir%
 #Include, HotkeyManager.ahk
 #Include, ResourcesManager.ahk
 #Include, MicrophoneController.ahk
 #Include, VoicemeeterController.ahk
 #Include, Updater.ahk
+
 #Include, %A_ScriptDir%\config
 #Include, ProfileTemplate.ahk
 #Include, MicrophoneTemplate.ahk
 #Include, Config.ahk
+
 #Include, %A_ScriptDir%\UI
 #Include, OSD.ahk
 #Include, Overlay.ahk
 #Include, Tray.ahk
+
 #Include, %A_ScriptDir%\UI\config
 #Include, HotkeyPanel.ahk
 #Include, UI.ahk
