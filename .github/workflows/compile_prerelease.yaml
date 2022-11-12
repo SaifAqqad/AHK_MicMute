@@ -22,6 +22,15 @@ jobs:
           Remove-Item -Path ".\bass24.zip" -Force
           Copy-Item -Path ".\base24\x64\bass.dll" -Destination ".\src\Lib\bass.dll" -Force;
 
+      - name: Download dependencies
+        shell: pwsh
+        run: |
+          $cwd = (Get-Item .).FullName;
+          Invoke-WebRequest "https://github.com/joshuacc/ahkpm/releases/download/0.5.0/ahkpm-0.5.0.msi" -OutFile "$cwd\ahkpm.msi";
+          msiexec.exe /a $cwd\ahkpm.msi /qn TARGETDIR=$cwd\ahkpmDir
+          $ahkpmCommand = "$cwd\ahkpmDir\ahkpm\ahkpm.exe install";
+          Invoke-Expression $ahkpmCommand
+
       - name: Compile MicMute
         uses: nekocodeX/GitHub-Action-Ahk2Exe@v1.1.0
         with:
