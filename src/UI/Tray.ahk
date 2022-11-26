@@ -46,7 +46,7 @@ tray_init_updater(){
 }
 
 tray_defaults(){
-    ico:= resources_obj.defaultIcon
+    ico:= resources_obj.getIcon(ICON_ID_APP)
     Menu, Tray, Tip, MicMute 
     Menu, Tray, Icon, % ico.file, % ico.group,0
 }
