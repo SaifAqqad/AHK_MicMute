@@ -279,8 +279,7 @@ switchProfile(p_name:=""){
             , theme: current_profile.overlayTheme
             , pos: current_profile.OverlayPos
             , showOn: current_profile.OverlayShow
-            , useCustomIcons: current_profile.OverlayUseCustomIcons})
-            overlay_wnd.setState(mic_controllers[1].state)
+            , useCustomIcons: current_profile.OverlayUseCustomIcons}, mic_controllers[1].state)
         }
     }
     if (current_profile.afkTimeout)

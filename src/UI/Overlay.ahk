@@ -4,7 +4,7 @@ class Overlay{
     , BACKGROUND_TRANSPARENCY:= 0xef000000
     , PADDING_SIZE:= 4
 
-    __New(options:=""){
+    __New(options:="", initialState:=0){
         this.options:= options.Clone()
         this.options.IconSize:= this.options.size
         ; center icon in overlay: padding=4 -> x=4, y=4
@@ -22,7 +22,7 @@ class Overlay{
 
         this.onDragFunc:= ObjBindMethod(this, "_onDrag")
         this.onPosChangeFunc:= ObjBindMethod(this, "_onPosChange")
-        this.state := 0
+        this.state := initialState
         this.locked:= 1
 
         this._setupGdip()
@@ -30,7 +30,7 @@ class Overlay{
         this._createWindow()
         this._setupHotkeys()
         this.draw()
-        this.setShow(1)
+        this.setShow(this.options.showOn == 2 || this.state == this.options.showOn)
     }
 
     _setupHotkeys(){
