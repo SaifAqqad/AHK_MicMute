@@ -6,6 +6,7 @@
   "website": "https://github.com/SaifAqqad/AHK_MicMute",
   "license": "Unlicense",
   "issueTracker": "https://github.com/SaifAqqad/AHK_MicMute/issues",
+  "include": "",
   "author": {
     "name": "Saif Alaqqad",
     "email": "",
@@ -15,7 +16,7 @@
     "github.com/G33kDude/Neutron.ahk": "branch:master",
     "github.com/G33kDude/cJson.ahk": "branch:main",
     "github.com/SaifAqqad/VA.ahk": "1.0.0",
-    "github.com/SaifAqqad/VMR.ahk": "1.0.0",
+    "github.com/SaifAqqad/VMR.ahk": "^1.1.0",
     "github.com/mmikeww/AHKv2-Gdip": "branch:master"
   }
 }
