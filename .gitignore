@@ -8,3 +8,4 @@ bulma
 *.dll
 *.psd
 ahkpm-modules
+.vscode/*
