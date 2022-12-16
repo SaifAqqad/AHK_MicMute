@@ -189,6 +189,14 @@
                                                 <span id="push_to_talk_label">Push-to-talk</span>
                                             </label>
                                         </div>
+                                        <div class="tag is-medium" tabindex=0 role="button" aria-pressed="false" aria-labelledby="push_to_mute_label"
+                                            onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
+                                            onclick="document.getElementById('hktype_3').checked=1;ahk.UI_onChange('UI_onHotkeyType',3,120);this.blur()">
+                                            <label class="radio">
+                                                <input type="radio" name="hotkeyType" id="hktype_3" disabled>
+                                                <span id="push_to_mute_label">Push-to-mute</span>
+                                            </label>
+                                        </div>
                                     </div>
                                     <div class="visible" id="hotkey_panels_group">
                                         <!-- mute hotkey box -->

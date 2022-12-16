@@ -9,6 +9,7 @@ Class MicrophoneController {
         this.unmuteHotkey:= mic_obj.UnmuteHotkey
         this.isPushToTalk:= mic_obj.PushToTalk
         this.isHybridPTT:= mic_obj.HybridPTT
+        this.isInverted:= mic_obj.Inverted
         this.ptt_delay:= ptt_delay
         this.force_current_state:= force_current_state
         this.feedback_callback:= feedback_callback
@@ -41,25 +42,25 @@ Class MicrophoneController {
         this.state_string:= {0:this.friendly_name . " Online",1:this.friendly_name . " Muted",-1:this.friendly_name . " Unavailable"}
     }
 
-    ptt(){
-        this.setMuteState(0)
+    ptt(state:=0){
+        this.setMuteState(state)
         KeyWait, % this.ptt_key
         if(this.ptt_delay)
             sleep, % this.ptt_delay
-        this.setMuteState(1)
+        this.setMuteState(!state)
     }
 
-    hybridPtt(){
+    hybridPtt(state:= 0){
         ; toggle the mute state
         this.setMuteState(-2)
-        if(this.state = 1) ; mic is muted
+        if(this.state = !state)
             return
         KeyWait, % this.ptt_key
         if(A_TimeSinceThisHotkey < 200) ; it's a toggle
             return
         if(this.ptt_delay)
             sleep, % this.ptt_delay
-        this.setMuteState(1)
+        this.setMuteState(!state)
     }
 
     setMuteState(state, shouldCallFeedback:=1){
@@ -129,9 +130,12 @@ Class MicrophoneController {
                 Throw, "Invalid hotkeys"
             if (this.muteHotkey=this.unmuteHotkey){
                 if(this.isPushToTalk){
-                    this.setMuteState(1,0)
                     this.ptt_key:= (StrSplit(this.muteHotkey, [" ","#","!","^","+","&",">","<","*","~","$","UP"], " `t")).Pop()
-                    this.muteHotkeyId:= this.unmuteHotkeyId:= HotkeyManager.register(this.muteHotkey, ObjBindMethod(this, (this.isHybridPTT? "hybridPtt": "ptt")), this)
+                    this.setMuteState(!this.isInverted, 0)
+                    
+                    pttMethod:= ObjBindMethod(this, (this.isHybridPTT? "hybridPtt": "ptt"), !!this.isInverted)
+                    this.muteHotkeyId:= this.unmuteHotkeyId:= HotkeyManager.register(this.muteHotkey, pttMethod, this)
+                    
                     SetTimer, checkIsIdle, Off
                 }else{
                     this.muteHotkeyId:= this.unmuteHotkeyId:= HotkeyManager.register(this.muteHotkey, ObjBindMethod(this,"setMuteState",-2), this)

@@ -182,7 +182,7 @@ class HotkeyPanel{
     isTypeValid(){
         switch this.hotkeyType {
             case 0: return this.mute.hotkey && this.unmute.hotkey
-            case 1,2: return this.mute.hotkey == this.unmute.hotkey
+            case 1,2,3: return this.mute.hotkey == this.unmute.hotkey
         }
     }
 

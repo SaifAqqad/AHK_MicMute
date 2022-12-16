@@ -158,8 +158,15 @@ UI_setProfile(neutron, p_profile){
     for i, mic in current_profile.Microphone {
         if(mic.Name = "capture" || !ui_obj.doc.getElementById("mic_" mic.Name))
             mic.Name:= "Default"
-        hType:= mic.MuteHotkey == mic.UnmuteHotkey? (mic.PushToTalk? 2 : 1) : 0
-        hotkey_panels[mic.Name]:= new HotkeyPanel(mic.MuteHotkey,mic.UnmuteHotkey,htype)
+        if(mic.MuteHotkey != mic.UnmuteHotkey)
+            htype:= 0
+        else if(mic.Inverted)
+            htype:= 3
+        else if(mic.PushToTalk)
+            htype:= 2
+        else
+            htype:= 1
+        hotkey_panels[mic.Name]:= new HotkeyPanel(mic.MuteHotkey, mic.UnmuteHotkey, htype)
         hotkey_panels[mic.Name].hybrid_ptt:= mic.HybridPTT
     }
     ui_obj.doc.getElementById("multiple_mics").checked:= is_multiple_mics:= current_profile.Microphone.Length()>1
@@ -312,8 +319,9 @@ UI_onSaveProfile(neutron, noReset:=0){
         current_profile.Microphone.Push(new MicrophoneTemplate(mic
         , hp.mute.hotkey
         , hp.unmute.hotkey
-        , (hp.hotkeyType = 2? 1 : 0)
-        , hp.hybrid_ptt))
+        , (hp.hotkeyType >= 2? 1 : 0)
+        , hp.hybrid_ptt
+        , (hp.hotkeyType == 3? 1 : 0)))
     }
     if(!current_profile.Microphone.Length()){
         current_profile.Microphone.Push(new MicrophoneTemplate("Default", "", ""))    
@@ -535,21 +543,26 @@ UI_onHotkeyType(type, delay:=0){
         delay_row.classList.add("is-hidden")
         hybrid_ptt_tag.classList.add("is-hidden")
         ui_obj.doc.getElementByID("mute_label").innerText:= "Mute hotkey"
-    }
-    if(type == 1){
+    }else if(type == 1){
         u_box.classList.add("box-hidden")
         afk_row.classList.remove("is-hidden")
         delay_row.classList.add("is-hidden")
         hybrid_ptt_tag.classList.add("is-hidden")
         ui_obj.doc.getElementByID("mute_label").innerText:= "Toggle hotkey"
         SetTimer, % hideElemFunc, -100
-    }
-    if(type == 2){
+    }else if(type == 2){
         u_box.classList.add("box-hidden")
         afk_row.classList.add("is-hidden")
         delay_row.classList.remove("is-hidden")
         hybrid_ptt_tag.classList.remove("is-hidden")
         ui_obj.doc.getElementByID("mute_label").innerText:= "Push-to-talk hotkey"
+        SetTimer, % hideElemFunc, -100
+    }else if(type == 3){
+        u_box.classList.add("box-hidden")
+        afk_row.classList.add("is-hidden")
+        delay_row.classList.remove("is-hidden")
+        hybrid_ptt_tag.classList.remove("is-hidden")
+        ui_obj.doc.getElementByID("mute_label").innerText:= "Push-to-mute hotkey"
         SetTimer, % hideElemFunc, -100
     }
     if(delay)
