@@ -1,5 +1,5 @@
 class UpdaterUI extends NeutronWindow{
-    static UI_STATES := ["pre-update", "during-update", "post-update"]
+    static UI_STATES := ["pre-update", "during-update", "post-update", "post-error"]
     
     __New(){
         base.__New()
@@ -43,13 +43,16 @@ class UpdaterUI extends NeutronWindow{
     onUpdateState(str, updaterStatus:=0){
         this.appendDetail(str)
         this.doc.getElementById("current_status").innerText := str
-        if(updaterStatus)
+        if(updaterStatus < 0)
+            this.setUIState("post-error")
+        else if(updaterStatus > 0)
             this.setUIState("post-update")
     }
 
     onClickUpdate(){
         this.setUIState("during-update")
         this.resetDetail()
+        Sleep, 200
         updater_obj.update()
     }
 

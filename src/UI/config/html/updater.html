@@ -1,116 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
 
-    <head>
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <style id="inline_styles">
-            header {
-                height: 30px;
-            }
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <style id="inline_styles">
+        header {
+            height: 30px;
+        }
 
-            body {
-                overflow: hidden;
-                font-family: 'Segoe UI Variable Display', 'Segoe UI';
-            }
+        body {
+            overflow: hidden;
+            font-family: 'Segoe UI Variable Display', 'Segoe UI';
+        }
+
+        #MicMute_icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 23%;
+            box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.02);
+            transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        img#MicMute_icon:hover,
+        label:hover>img#MicMute_icon {
+            box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.055), 0px 0px 20px 0px rgba(255, 87, 45, 0.63), 0px 9px 46px 8px rgba(0, 0, 0, 0.055);
+        }
+
+        .container {
+            top: 20%;
+            left: 50%;
+            transform: translate(-50%, -15%);
+            max-width: 600px !important
+        }
+
+        #label {
+            font-size: 2rem;
+            font-weight: 600;
+            cursor: default;
+            margin-bottom: 5% !important;
+        }
+
+        .card-content {
+            height: 250px;
+        }
+
+        .card {
+            width: 800% !important;
+        }
+
+        #status_heading {
+            height: 1.5em;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
 
 
-            #MicMute_icon {
-                width: 38px;
-                height: 38px;
-                border-radius: 23%;
-                box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.02);
-                transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            }
+        #current_status {
+            cursor: default;
+        }
 
-            img#MicMute_icon:hover,
-            label:hover>img#MicMute_icon {
-                box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.055), 0px 0px 20px 0px rgba(255, 87, 45, 0.63), 0px 9px 46px 8px rgba(0, 0, 0, 0.055);
-            }
+        #details {
+            margin-top: 20px;
+            padding-top: 0;
+            height: 7.5em;
+            overflow-y: auto;
+            box-sizing: content-box;
+            line-height: 2em;
+        }
 
-            .container {
-                top: 20%;
-                left: 50%;
-                transform: translate(-50%, -15%);
-                max-width: 600px !important
-            }
+        .progress {
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 1.5rem;
+        }
 
-            #label {
-                font-size: 2rem;
-                font-weight: 600;
-                cursor: default;
-                margin-bottom: 5% !important;
-            }
+        .single-item {
+            border-right-width: 0 !important;
+        }
+    </style>
+</head>
 
-            .card-content {
-                height: 250px;
-            }
-
-            .card {
-                width: 800% !important;
-            }
-
-            #status_heading {
-                height: 1.5em;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-            }
-
-
-            #current_status {
-                cursor: default;
-            }
-
-            #details {
-                margin-top: 20px;
-                padding-top: 0;
-                height: 7.5em;
-                overflow-y: auto;
-                box-sizing: content-box;
-                line-height: 2em;
-            }
-
-            .progress {
-                width: 80%;
-                margin-left: auto;
-                margin-right: auto;
-                margin-top: 1.5rem;
-            }
-
-            .single-item {
-                border-right-width: 0 !important;
-            }
-        </style>
-    </head>
-
-    <body class="noselect" oncontextmenu="return false">
-        <header class="title-bar-header">
-            <span class="title-bar" onmousedown="neutron.DragTitleBar()"></span>
-            <span class="title-btn title-btn-close pre-update post-update" onclick="neutron.Close()">r</span>
-        </header>
-        <div class="container">
-            <div id='label'>
-                <label>
-                    <img id='MicMute_icon' src='../../../resources/MicMute.png' /> MicMute
-                </label>
-            </div>
-            <div class="card">
-                <div class="card-content">
-                    <p id="heading" class="pre-update">An update for MicMute is available, click on <span class="has-text-primary">Update</span> to start
-                        updating</p>
-                    <p id="status_heading" class="post-update during-update is-hidden">Current status: <span class="has-text-primary"
-                            id="current_status"></span></p>
-                    <div class="box" id="details">
-                    </div>
-                </div>
-                <footer class="card-footer">
-                    <progress class="progress is-small is-primary during-update is-hidden" max="100">100%</progress>
-                    <a onclick="neutron.onClickUpdate()" class="card-footer-item pre-update is-hidden single-item">Update</a>
-                    <a onclick="neutron.onClickExit(0)" class="card-footer-item post-update is-hidden">Exit</a>
-                    <a onclick="neutron.onClickExit(1)" class="card-footer-item post-update is-hidden">Exit & restart MicMute</a>
-                </footer>
-            </div>
+<body class="noselect" oncontextmenu="return false">
+    <header class="title-bar-header">
+        <span class="title-bar" onmousedown="neutron.DragTitleBar()"></span>
+        <span class="title-btn title-btn-close pre-update post-update post-error" onclick="neutron.Close()">r</span>
+    </header>
+    <div class="container">
+        <div id='label'>
+            <label>
+                <img id='MicMute_icon' src='../../../resources/MicMute.png' /> MicMute
+            </label>
         </div>
-    </body>
+        <div class="card">
+            <div class="card-content">
+                <p id="heading" class="pre-update">
+                    An update for MicMute is available, click on <span class="has-text-primary">Update</span> to start updating
+                </p>
+                <p id="heading" class="post-error is-hidden">
+                    An error occured while updating
+                </p>
+                <p id="status_heading" class="post-update during-update is-hidden">
+                    Current status: <span class="has-text-primary" id="current_status"></span>
+                </p>
+                <div class="box" id="details">
+                </div>
+            </div>
+            <footer class="card-footer">
+                <progress class="progress is-small is-primary during-update is-hidden" max="100">100%</progress>
+                <a onclick="neutron.onClickUpdate()" class="card-footer-item pre-update is-hidden single-item">Update</a>
+                <a onclick="neutron.onClickUpdate()" class="card-footer-item post-error is-hidden">Retry</a>
+                <a onclick="neutron.onClickExit(0)" class="card-footer-item post-update post-error is-hidden">Exit</a>
+                <a onclick="neutron.onClickExit(1)" class="card-footer-item post-update post-error is-hidden">Exit & restart MicMute</a>
+            </footer>
+        </div>
+    </div>
+</body>
 
 </html>

@@ -26,8 +26,14 @@ class Updater {
 
     githubUpdate(){
         latestInfo:= this.getObjFromURL(this.latestVersionInfo.github.url)
+        if(!latestInfo){
+            this.logError("Failed to fetch latest release info")
+            return -1
+        }
+
         version:= latestInfo.tag_name
         this.loggerFunc.call("Updating MicMute to v" + version)
+
         for i, asset in latestInfo.assets {
             switch asset.name {
                 case "MicMute.exe", "MicMute.sha256":
@@ -40,6 +46,7 @@ class Updater {
                     }
             }
         }
+
         if(FileExist(this.installDir . "latest_MicMute.sha256") && !this.skipHashCheck){
             this.loggerFunc.call("Checking hash of MicMute.exe")
             FileRead, actualHash, % this.installDir . "latest_MicMute.sha256"
@@ -51,16 +58,28 @@ class Updater {
             }
             this.loggerFunc.call("Hash matches")
         }
+
         this.loggerFunc.call("Replacing the executable")
         Filecopy, % this.installDir "latest_MicMute.exe", % this.installDir "MicMute.exe", 1
         this.cleanUp()
+        
         this.loggerFunc.call("MicMute Updated successfully", 1)
         return 0
     }
 
     scoopUpdate(){
         this.loggerFunc.call("Running 'scoop update micmute' in powershell")
-        psScript = "& {scoop update;scoop update micmute;Write-Host -NoNewLine 'Press any key to exit...';$null=$Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');Exit $LASTEXITCODE;}"
+        this.loggerFunc.call("Waiting for powershell to finish...")
+        psScript = 
+        ( LTrim Join`s
+            "& {
+                scoop update;
+                scoop update micmute;
+                Write-Host -NoNewLine 'Press any key to exit...';
+                $null=$Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
+                Exit $LASTEXITCODE;
+            }"
+        )
         RunWait, Powershell.exe -NoProfile -NonInteractive -Command %psScript%, %A_ScriptDir%, UseErrorLevel, powershellPID
         if(ErrorLevel){
             this.logError("Scoop update failed")
@@ -114,13 +133,18 @@ class Updater {
     }
 
     getObjFromURL(url){
-        http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
-        http.Open("GET", url, true)
-        http.Send()
-        http.WaitForResponse()
-        obj:= JSON.Load(http.ResponseText)
-        ObjRelease(http)
-        return obj
+        try {
+            http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
+            http.Open("GET", url, true)
+            http.Send()
+            http.WaitForResponse()
+            obj:= JSON.Load(http.ResponseText)
+            ObjRelease(http)
+            return obj
+        } catch err {
+            this.logError("Failed to fetch " url "`n" err.message)
+            return ""
+        }
     }
 
     cleanUp(){
