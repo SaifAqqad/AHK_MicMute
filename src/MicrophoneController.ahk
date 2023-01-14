@@ -16,6 +16,7 @@ Class MicrophoneController {
         this.state_callback:= state_callback
         this.shouldCallFeedback:=0
         this.va_callback:= ""
+        this.microphoneIds:= Object()
         switch mic_obj.Name {
             case "all microphones": 
                 this.microphone:= Array()
@@ -76,8 +77,8 @@ Class MicrophoneController {
         }
         if(this.isMicrophoneArray){
             numFails:=0
-            for i, mic in this.Microphone 
-                numFails+= !!VA_SetMasterMute(state, mic)
+            for i, mic in this.Microphone
+                numFails+= !!this.setMuteStateVA(state, mic)
             if(numFails = this.Microphone.Length()){
                 Goto, s_failure
                 return
@@ -85,7 +86,7 @@ Class MicrophoneController {
                 this.state:= state
             }
         }else{
-            if(VA_SetMasterMute(state, this.Microphone) = -1){ ;failing
+            if(this.setMuteStateVA(state, this.Microphone) != 0){ ;failing
                 Goto, s_failure
                 return
             }else{
@@ -102,16 +103,33 @@ Class MicrophoneController {
         return
     }
 
+    setMuteStateVA(state, mic){
+        ; Use cached microphone id
+        result := VA_SetMasterMute(state, this.getMicId(mic))
+        return result == 0? result : VA_SetMasterMute(state, this.microphoneIds[mic]:= VA_GetDevice(mic))
+    }
+
+    getMicId(micName){
+        ; Prevent caching the default device (which can change)
+        if(micName == "capture")
+            return micName
+
+        micId := this.microphoneIds[micName]
+        if(!micId)
+            micId := this.microphoneIds[micName]:= VA_GetDevice(micName)
+        return micId
+    }
+
     onUpdateState(micName:= "", callback:=""){
         Critical, On
         if(callback){
             if(this.force_current_state && this.state != callback.Muted)
-                VA_SetMasterMute(this.state, micName)
+                this.setMuteStateVA(this.state, micName)
             else
                 this.state:= callback.Muted
         }else{
             micName:= this.isMicrophoneArray? this.microphone[1] : this.microphone
-            this.state:= VA_GetMasterMute(micName)+0
+            this.state:= VA_GetMasterMute(this.getMicId(micName))+0
         }
         this.state_callback.Call(this)
         if(this.shouldCallFeedback){
@@ -132,10 +150,10 @@ Class MicrophoneController {
                 if(this.isPushToTalk){
                     this.ptt_key:= (StrSplit(this.muteHotkey, [" ","#","!","^","+","&",">","<","*","~","$","UP"], " `t")).Pop()
                     this.setMuteState(!this.isInverted, 0)
-                    
+
                     pttMethod:= ObjBindMethod(this, (this.isHybridPTT? "hybridPtt": "ptt"), !!this.isInverted)
                     this.muteHotkeyId:= this.unmuteHotkeyId:= HotkeyManager.register(this.muteHotkey, pttMethod, this)
-                    
+
                     SetTimer, checkIsIdle, Off
                 }else{
                     this.muteHotkeyId:= this.unmuteHotkeyId:= HotkeyManager.register(this.muteHotkey, ObjBindMethod(this,"setMuteState",-2), this)
@@ -156,11 +174,12 @@ Class MicrophoneController {
             return
         util_log("[MicrophoneController] Updating Microphones")
         this.microphone:= Array()
+        this.microphoneIds:= Object()
         for i, mic in VA_GetDeviceList("capture") {
             micName:= mic . ":capture"
             this.microphone.Push(micName)
             ; reapply current state on any new mic
-            VA_SetMasterMute(this.state, micName)
+            this.setMuteStateVA(this.state, micName)
         }
     }
 
@@ -175,27 +194,28 @@ Class MicrophoneController {
         if(this.isMicrophoneArray){
             this.va_callback:= Object()
             for i, mic in this.microphone {
-                this.va_callback[mic]:= VA_CreateAudioEndpointCallback(ObjBindMethod(this, "onUpdateState", mic), mic)
+                this.va_callback[mic]:= VA_CreateAudioEndpointCallback(ObjBindMethod(this, "onUpdateState", mic), this.getMicId(mic))
             }
         }else{
-            this.va_callback:= VA_CreateAudioEndpointCallback(ObjBindMethod(this, "onUpdateState", this.microphone), this.microphone)
+            this.va_callback:= VA_CreateAudioEndpointCallback(ObjBindMethod(this, "onUpdateState", this.microphone), this.getMicId(this.microphone))
         }
     }
 
     disableCallback(){
         if(this.isMicrophoneArray){
             for micName, cb in this.va_callback {
-                Try VA_ReleaseAudioEndpointCallback(VA_GetDevice(micName),cb)
+                Try VA_ReleaseAudioEndpointCallback(this.getMicId(micName), cb)
             }
             this.va_callback:=""
         }else{
-            Try VA_ReleaseAudioEndpointCallback(VA_GetDevice(this.microphone),this.va_callback)
+            Try VA_ReleaseAudioEndpointCallback(this.getMicId(this.microphone), this.va_callback)
             this.va_callback:=""
         }
+        this.microphoneIds:= Object()
         OnMessage(0x0219, this.updateMicMethod, 0)
     }
+
     resetHotkeySet(){
         MicrophoneController.hotkeys_set:= new StackSet()
     }
-
 }
