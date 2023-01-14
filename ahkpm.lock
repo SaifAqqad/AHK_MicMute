@@ -3,7 +3,7 @@
   "dependencies": {
     "github.com/G33kDude/Neutron.ahk": "branch:master",
     "github.com/G33kDude/cJson.ahk": "branch:main",
-    "github.com/SaifAqqad/VA.ahk": "1.0.0",
+    "github.com/SaifAqqad/VA.ahk": "1.x.x",
     "github.com/SaifAqqad/VMR.ahk": "^1.1.0",
     "github.com/mmikeww/AHKv2-Gdip": "branch:master"
   },
@@ -24,8 +24,8 @@
     },
     {
       "name": "github.com/SaifAqqad/VA.ahk",
-      "version": "1.0.0",
-      "sha": "df2e9af88fd07fd81128a41f4c58bd3644cd4a24",
+      "version": "1.x.x",
+      "sha": "d3372366d4af190a39931f10f66d2a94b9b85f2e",
       "installPath": "ahkpm-modules/github.com/SaifAqqad/VA.ahk",
       "dependencies": {}
     },
