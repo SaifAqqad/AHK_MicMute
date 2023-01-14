@@ -1,9 +1,11 @@
+#Requires AutoHotkey v1.1.35+
+
 ;compiler directives
 ;@Ahk2Exe-Let Res = %A_ScriptDir%\resources
 ;@Ahk2Exe-Let UI = %A_ScriptDir%\UI\config
-;@Ahk2Exe-Let Version = 1.2.6
+;@Ahk2Exe-Let Version = 1.2.7
 ;@Ahk2Exe-IgnoreBegin
-    U_Version:= "1.2.6"
+    U_Version:= "1.2.7"
 ;@Ahk2Exe-IgnoreEnd
 ;@Ahk2Exe-SetMainIcon %U_Res%\icons\1000.ico
 ;@Ahk2Exe-SetVersion %U_Version%
