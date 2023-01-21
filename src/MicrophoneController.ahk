@@ -106,7 +106,14 @@ Class MicrophoneController {
     setMuteStateVA(state, mic){
         ; Use cached microphone id
         result := VA_SetMasterMute(state, this.getMicId(mic))
-        return result == 0? result : VA_SetMasterMute(state, this.microphoneIds[mic]:= VA_GetDevice(mic))
+        if result in 0,1 ; success
+            return 0
+
+        ; Update the cached microphone id and retry
+        result := VA_SetMasterMute(state, this.microphoneIds[mic]:= VA_GetDevice(mic))
+        if result in 0,1 ; success
+            return 0
+        return result
     }
 
     getMicId(micName){
@@ -149,7 +156,13 @@ Class MicrophoneController {
             if (this.muteHotkey=this.unmuteHotkey){
                 if(this.isPushToTalk){
                     this.ptt_key:= (StrSplit(this.muteHotkey, [" ","#","!","^","+","&",">","<","*","~","$","UP"], " `t")).Pop()
-                    this.setMuteState(!this.isInverted, 0)
+   
+                    if(this.isMicrophoneArray){
+                        for i, mic in this.Microphone
+                            this.setMuteStateVA(!this.isInverted, mic)
+                    }else{
+                        this.setMuteStateVA(!this.isInverted, this.microphone)
+                    }
 
                     pttMethod:= ObjBindMethod(this, (this.isHybridPTT? "hybridPtt": "ptt"), !!this.isInverted)
                     this.muteHotkeyId:= this.unmuteHotkeyId:= HotkeyManager.register(this.muteHotkey, pttMethod, this)
