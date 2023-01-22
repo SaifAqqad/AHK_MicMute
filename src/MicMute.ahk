@@ -59,37 +59,36 @@ SetWorkingDir %A_ScriptDir%
 #Include, UpdaterUI.ahk
 
 Global A_startupTime:= A_TickCount
-, config_obj
-, current_profile
-, mic_controllers
-, mute_sound
-, unmute_sound
-, ptt_on_sound
-, ptt_off_sound
-, sys_theme
-, ui_theme
-, WM_SETTINGCHANGE:= 0x001A
-, watched_profiles
-, watched_profile
-, last_modif_time
-, arg_isDebug:=0
-, arg_profile:=""
-, arg_noUI:=0
-, arg_reload:= 0
-, arg_logFile:="*"
-, arg_isUpdater:=0
-, arg_installPath:=""
-, args_str:=""
-, resources_obj:= new ResourcesManager()
-, isFirstLaunch:=0
-, A_Version:= A_IsCompiled? util_getFileSemVer(A_ScriptFullPath) : U_Version 
-, sound_player
-, osd_wnd
-, overlay_wnd
-, A_log:=""
-, A_DebuggerName:= A_DebuggerName
-, updater_obj:= new Updater(A_ScriptDir, Func("util_log"))
-, updater_UI:=""
+    , config_obj
+    , current_profile
+    , mic_controllers
+    , mute_sound
+    , unmute_sound
+    , ptt_on_sound
+    , ptt_off_sound
+    , watched_profiles
+    , watched_profile
+    , last_modif_time
+    , arg_isDebug:=0
+    , arg_profile:=""
+    , arg_noUI:=0
+    , arg_reload:= 0
+    , arg_logFile:="*"
+    , arg_isUpdater:=0
+    , arg_installPath:=""
+    , args_str:=""
+    , resources_obj:= new ResourcesManager()
+    , isFirstLaunch:=0
+    , A_Version:= A_IsCompiled? util_getFileSemVer(A_ScriptFullPath) : U_Version
+    , sound_player
+    , osd_wnd
+    , overlay_wnd
+    , A_log:=""
+    , A_DebuggerName:= A_DebuggerName
+    , updater_obj:= new Updater(A_ScriptDir, Func("util_log"))
+    , updater_UI:=""
+    , WM_SETTINGCHANGE:= 0x001A
+    , WM_DEVICECHANGE := 0x0219
 
 ; parse cli args
 parseArgs()
@@ -103,7 +102,7 @@ if(arg_isUpdater){
     updater_UI:= new UpdaterUI()
     return
 }else{
-    Try FileDelete, %A_Temp%\MicMuteUpdater.exe
+    try FileDelete, %A_Temp%\MicMuteUpdater.exe
 }
 ; create config gui window
 if(!arg_noUI)
@@ -130,29 +129,28 @@ initilizeMicMute(default_profile:=""){
     util_log("[Main] Initilizing MicMute")
     ;make sure hotkeys are disabled before reinitilization
     if(mic_controllers)
-        for i,mic in mic_controllers
+        for _i,mic in mic_controllers
             mic.disableController()
     ;destroy existing guis 
     overlay_wnd.destroy()
     osd_wnd.destroy()
     ;initilize globals
     config_obj:= new Config()
-    , osd_wnd:=""
-    , overlay_wnd:=""
-    , mic_controllers:=""
-    , watched_profiles:= Array()
-    , current_profile:=""
-    , watched_profile:=""
-    , mute_sound:=""
-    , unmute_sound:=""
-    , ptt_on_sound:=""
-    , ptt_off_sound:=""
-    , sys_theme:=""
-    , last_modif_time:= ""
-    , sound_player:=""
+        , osd_wnd:=""
+        , overlay_wnd:=""
+        , mic_controllers:=""
+        , watched_profiles:= Array()
+        , current_profile:=""
+        , watched_profile:=""
+        , mute_sound:=""
+        , unmute_sound:=""
+        , ptt_on_sound:=""
+        , ptt_off_sound:=""
+        , last_modif_time:= ""
+        , sound_player:=""
     tray_defaults()
     ;add profiles with linked apps to watched_profiles
-    for i,profile in config_obj.Profiles {
+    for _i,profile in config_obj.Profiles {
         if(profile.LinkedApp)
             watched_profiles.Push(profile)
     }
@@ -183,94 +181,106 @@ initilizeMicMute(default_profile:=""){
 
 switchProfile(p_name:=""){
     Critical, On
+
     ;turn off profile-specific timers
-    Try{
-        SetTimer, checkIsIdle, Off
-    }
+    try SetTimer, checkIsIdle, Off
+
     ;destroy existing guis 
     overlay_wnd.destroy()
     osd_wnd.destroy()
     sound_player.__free()
+
     ;reset tray icon and tooltip
     tray_defaults()
+
     ;uncheck the profile in the tray menu
     Menu, profiles, Uncheck, % current_profile.ProfileName
+
     ;unmute and disable hotkeys for all existing microphones
     if(mic_controllers){
-        for i, mic in mic_controllers{
+        for _i, mic in mic_controllers{
             mic.setMuteState(0, 0)
             mic.disableController()
         }
     }
-    MicrophoneController.resetHotkeySet()
+
     ;set current_profile to the new profile
-    Try current_profile:= config_obj.getProfile(p_name)
+    try current_profile:= config_obj.getProfile(p_name)
     catch err{
         current_profile:= config_obj.Profiles[1]
         configMsg(err)
         return
     }
     util_log("[Main] Switching to profile '" current_profile.ProfileName "'")
+
     ; create a new resource object
     resources_obj:= new ResourcesManager()
     if(current_profile.SoundFeedbackUseCustomSounds)
         resources_obj.loadCustomSounds()
+
     ;create a new OSD object for the profile
     osd_wnd:= new OSD(current_profile.OSDPos, current_profile.ExcludeFullscreen)
-    osd_wnd.setTheme(ui_theme)
+    osd_wnd.setTheme(util_getSystemTheme().Apps)
+
     ;initilize mic_controllers
     mic_controllers:= Array()
-    for i, mic in current_profile.Microphone {
+    for _i, mic in current_profile.Microphone {
         Try {
             ;create a new MicrophoneController object for each mic
             if(InStr(mic.Name, "VMR_") = 1){
                 if(config_obj.VoicemeeterIntegration)
-                    mc:= new VoicemeeterController(mic, config_obj.VoicemeeterPath, current_profile.PTTDelay, config_obj.ForceMicrophoneState, Func("showFeedback"), Func("onUpdateState"))
+                    controller:= new VoicemeeterController(mic, config_obj.VoicemeeterPath, current_profile.PTTDelay, config_obj.ForceMicrophoneState, Func("showFeedback"), Func("onUpdateState"))
                 else
                     throw Exception("Voicemeeter integration is disabled")
             }else{
-                mc:= new MicrophoneController(mic, current_profile.PTTDelay, config_obj.ForceMicrophoneState, Func("showFeedback"), Func("onUpdateState"))
+                controller:= new MicrophoneController(mic, current_profile.PTTDelay, config_obj.ForceMicrophoneState, Func("showFeedback"), Func("onUpdateState"))
             }
             ; mute mics on startup
             if(config_obj.MuteOnStartup)
-                mc.setMuteState(1, 0)
-            mc.enableController()
-            mc.onUpdateState()
-            if(mic.Name = "all microphones"){
+                controller.setMuteState(1, 0)
+            controller.enableController()
+            controller.onUpdateState()
+            if(controller.isMicrophoneArray){
                 while(ctrlr:= mic_controllers.Pop()){ ; disable and remove previously added controllers
                     ctrlr.disableController()
                 }
-                mic_controllers.Push(mc)
+                mic_controllers.Push(controller)
                 break
             }
-            mic_controllers.Push(mc)
+            mic_controllers.Push(controller)
         }Catch, err {
             util_log(err)
             configMsg(err)
             return
         }
     }
+
     ;check the profile in the tray menu
     Menu, profiles, Check, % current_profile.ProfileName
+
     ;handle tray toggle option
     tray_add("Toggle microphone", ObjBindMethod(mic_controllers[1],"setMuteState",-2))
-    tray_toggleMic(1)
+    tray_setToggleMic(1)
     if(mic_controllers[1].isPushToTalk && !mic_controllers[1].isHybridPTT)
-        tray_toggleMic(0)
+        tray_setToggleMic(0)
+
     ; setup sound player
     if(current_profile.SoundFeedback){
         sound_player:= new SoundPlayer()
         if(!sound_player.setDevice(current_profile.SoundFeedbackDevice))
             sound_player.setDevice("Default")
-        sound_player.play(resources_obj.getSoundFile(0),0) ;test playback to remove initial pop
+        ; test playback to remove initial pop
+        sound_player.play(resources_obj.getSoundFile(0),0)
     }
+
     ;handle multiple microphones
     if(mic_controllers.Length()>1){
-        tray_toggleMic(0)
+        MicrophoneController.isUsingMultipleMicrophones:= 1
+        tray_setToggleMic(0)
         ; handle multiple microphones with the same hotkey
-        for hotkeyStr, registrations in HotkeyManager.registeredHotkeys {
+        for _hotkeyStr, registrations in HotkeyManager.registeredHotkeys {
             if(registrations.Length()>1){
-                for i, registration in registrations {
+                for _i, registration in registrations {
                     registration.callbackObj.force_current_state:= 1
                 }
             } 
@@ -284,6 +294,7 @@ switchProfile(p_name:=""){
             , useCustomIcons: current_profile.OverlayUseCustomIcons}, mic_controllers[1].state)
         }
     }
+
     if (current_profile.afkTimeout)
         SetTimer, checkIsIdle, 1000  
     ;show switching-profile OSD
@@ -292,55 +303,56 @@ switchProfile(p_name:=""){
     Critical, Off
 }
 
-showFeedback(mic_obj){
-    ; if sound fb is enabled -> play the sound file
+showFeedback(microphone){
     if (current_profile.SoundFeedback){
-        file:= resources_obj.getSoundFile(mic_obj.state,mic_obj.isPushToTalk)
+        file:= resources_obj.getSoundFile(microphone.state, microphone.isPushToTalk)
         sound_player.play(file)
     }    
-    ; if osd is enabled -> show and hide after 1 sec
-    if (current_profile.OnscreenFeedback){ ;use generic/mic.name state string
-        hotkeyRegistrations:= HotkeyManager.registeredHotkeys[mic_obj.state? mic_obj.muteHotkey : mic_obj.unmuteHotkey]
-        if(mic_obj.isMicrophoneArray || (mic_controllers.Length()>1 && hotkeyRegistrations.length() == 1))
-            state_string:= mic_obj.state_string
-        else
-            state_string:= mic_obj.generic_state_string
-        str:= state_string[mic_obj.state]
-        osd_wnd.showAndHide(str, !mic_obj.state)
-    }
+
+    if (current_profile.OnscreenFeedback)
+        osd_wnd.showAndHide(microphone.getStateString(), !microphone.state)
 }
 
 editConfig(){
-    Try osd_wnd.destroy()
+    ; Check if shift is pressed or noUI arg is enabled
+    ; and open the config file with the default program
     if(GetKeyState("Shift", "P") || arg_noUI){
         if(progPath:=util_GetFileAssoc("json"))
-            Run, %ProgPath% "%A_ScriptDir%\config.json",
+            Run, %progPath% "%A_ScriptDir%\config.json",
         else
             Run, notepad.exe "%A_ScriptDir%\config.json",
-    }else{
-        Thread, NoTimers, 1
-        if(current_profile){
-            for i, mic in mic_controllers 
-                mic.disableController()
-            overlay_wnd.destroy()
-            SetTimer, checkIsIdle, Off
-            SetTimer, checkLinkedApps, Off
-        }
-        setTimer, checkConfigDiff, Off
-        last_modif_time:= ""
-        tray_toggleMic(0)
-        tray_defaults()
-        UI_show(current_profile.ProfileName)
+        return
     }
+
+    try osd_wnd.destroy()
+    Thread, NoTimers, 1
+    if(current_profile){
+        for _i, mic in mic_controllers 
+            mic.disableController()
+        overlay_wnd.destroy()
+        SetTimer, checkIsIdle, Off
+        SetTimer, checkLinkedApps, Off
+    }
+    setTimer, checkConfigDiff, Off
+    last_modif_time:= ""
+    tray_setToggleMic(0)
+    tray_defaults()
+    UI_show(current_profile.ProfileName)
 }
 
 checkIsIdle(){
-    if (A_TimeIdlePhysical > current_profile.afkTimeout * 60000){
-        util_log("[Main] User is idle")
-        for i, mic in mic_controllers
-            if(!mic.isPushToTalk)
-                mic.setMuteState(1)
+    static wasIdle:= 0
+    if (A_TimeIdlePhysical < current_profile.afkTimeout * 60000){
+        wasIdle:=0
+        return
     }
+
+    if(!wasIdle)
+        util_log("[Main] User is idle")
+    wasIdle:= 1
+    for _i, mic in mic_controllers
+        if(!mic.isPushToTalk)
+            mic.setMuteState(1)
 }
 
 ;checks for changes to the config file
@@ -365,7 +377,7 @@ checkLinkedApps(){
         }
         return
     }
-    for i, prof in watched_profiles {
+    for _i, prof in watched_profiles {
         WinGet, minState, MinMax, % "ahk_exe " . prof.LinkedApp
         if(WinExist("ahk_exe " . prof.LinkedApp) && (minState!="" && minState!=-1)){
             util_log("[Main] Detected linked app: " . prof.LinkedApp)
@@ -382,17 +394,10 @@ onUpdateState(mic){
     overlay_wnd.setState(mic.state)
 }
 
-updateSysTheme(wParam:="", lParam:=""){
+updateSysTheme(_wParam:="", lParam:=""){
     if(!lParam || StrGet(lParam) == "ImmersiveColorSet"){
-        ;read system theme
-        RegRead, reg
-        , HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize, SystemUsesLightTheme
-        sys_theme:= !reg
-        ;read apps theme
-        RegRead, reg
-        , HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize, AppsUseLightTheme
-        ui_theme:= config_obj.PreferTheme = -1? !reg : config_obj.PreferTheme
-        osd_wnd.setTheme(ui_theme)
+        themes:= util_getSystemTheme()
+        osd_wnd.setTheme(themes.Apps)
         UI_updateTheme()
         Sleep, 100
         onUpdateState(mic_controllers[1])
@@ -402,7 +407,7 @@ updateSysTheme(wParam:="", lParam:=""){
 exitMicMute(){
     util_log("[Main] Exiting MicMute")
     config_obj.exportConfig()
-    for i, mic in mic_controllers {
+    for _i, mic in mic_controllers {
         mic.disableController()
         mic.setMuteState(0, 0)
     }
@@ -420,7 +425,7 @@ reloadMicMute(p_profile:=""){
 
 parseArgs(){
     arg_regex:= "i)\/([\w]+)(=(.+))?"
-    for i,arg in A_Args {
+    for _i, arg in A_Args {
         match:= RegExMatch(arg, arg_regex, val)
         if(!match)
             continue
@@ -450,14 +455,14 @@ registerWindowHook(){
     OnMessage( MsgNum, "onWindowChange" )
 }
 
-onWindowChange(wParam, lParam){
+onWindowChange(wParam, _lParam){
     if(wParam=1)
         showElevatedWarning()
 }
 
 showElevatedWarning(){
     static lastP:=""
-    WinGet, pid, PID, A
+    WinGet, pid, pid, A
     WinGet, pName, ProcessName, A
     if(A_IsAdmin || !pName || pName == lastP)
         return

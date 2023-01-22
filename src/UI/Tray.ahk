@@ -15,7 +15,7 @@ tray_init(){
     tray_add("Edit configuration", Func("editConfig"))
 
     Menu, Tray, Add, ;seperator line
-    
+
     tray_add("Start on boot",Func("tray_autoStart"))
     if(Arg_isDebug || A_DebuggerName)
         tray_add("Debug", ":Debug")
@@ -28,7 +28,7 @@ tray_init(){
 
     Menu, Tray, Click, 1
     Menu, Tray, Default, 1&
-    
+
     if (util_StartupTaskExists())
         Menu, Tray, Check, Start on boot
     else
@@ -52,7 +52,7 @@ tray_defaults(){
 }
 
 tray_update(mic_obj){
-    tooltipText:= mic_obj.generic_state_string[mic_obj.state]
+    tooltipText:= mic_obj.genericStateString[mic_obj.state]
     ico:= resources_obj.getTrayIcon(mic_obj.state)
     Menu, Tray, Tip, % tooltipText
     Menu, Tray, Icon, % ico.file, % ico.group,0
@@ -74,13 +74,13 @@ tray_autoStart(){
             MsgBox, 36, MicMute, A startup shortcut in '%A_Programs%\Startup\' was found`nDo you want to replace it with a scheduled task?
             IfMsgBox, No
                 return
-            Try FileDelete, %startup_shortcut%
+            try FileDelete, %startup_shortcut%
         }
         Menu, Tray, % util_CreateStartupTask()? "Check" : "Uncheck", Start on boot
     }
 }
 
-tray_toggleMic(onOff){
+tray_setToggleMic(onOff){
     if(onOff){
         Menu, Tray, Enable, 1&
         Menu, Tray, Default, 1&
@@ -88,12 +88,11 @@ tray_toggleMic(onOff){
         Menu, Tray, Disable, 1&
         Menu, Tray, NoDefault
     }
-    
 }
 
 tray_createProfilesMenu(){
-    Try Menu, profiles, DeleteAll
-    for i, p_profile in config_obj.Profiles{
+    try Menu, profiles, DeleteAll
+    for _i, p_profile in config_obj.Profiles{
         funcObj:= Func("switchProfile").bind(p_profile.ProfileName)
         Menu, profiles, Add, % p_profile.ProfileName, % funcObj, +Radio
     }
@@ -152,7 +151,7 @@ tray_showLog(){
 tray_llvRefresh(){
     Gui, llv:Default
     LV_Delete()
-    for i, line in StrSplit(A_log, "`n") {
+    for _i, line in StrSplit(A_log, "`n") {
         LV_Add("",line)
     }
     LV_Modify(LV_GetCount(), "Vis")

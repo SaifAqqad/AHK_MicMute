@@ -64,7 +64,7 @@ class HotkeyPanel{
             keySet.pop()
         ; check modifier count
         modifierCount:= 0
-        for i, value in keySet.data 
+        for _i, value in keySet.data 
             modifierCount += this.isModifier(value)
         keyCount:= keySet.data.Length() - modifierCount
         switch modifierCount {
@@ -84,7 +84,7 @@ class HotkeyPanel{
         isModifierHotkey:= modifierCount = keySet.data.Length()
         ; append hotkey parts
         str := ""
-        for i, value in keySet.data {
+        for _i, value in keySet.data {
             ; if the part is a modifier and the hotkey is not a modifier-only hotkey => append symbol
             if (this.isModifier(value) && !isModifierHotkey)
                 str .=  this.modifierToSymbol(value)

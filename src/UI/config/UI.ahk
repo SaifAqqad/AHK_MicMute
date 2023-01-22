@@ -108,6 +108,7 @@ UI_create(p_onExitCallback){
     ui_obj.load(resources_obj.htmlFile.UI)
     UI_enableIeFeatures(features,1)
     UI_loadCss(ui_obj)
+    OnMessage(WM_SETTINGCHANGE, Func("UI_updateTheme"))
     onExitCallback:= p_onExitCallback
     UI_createAbout()
 }
@@ -115,7 +116,7 @@ UI_create(p_onExitCallback){
 UI_Show(p_profile){
     Thread, NoTimers
     util_log("[UI] Showing 'config' window")
-    updateSysTheme()
+    UI_updateTheme()
     UI_reset()
     UI_setProfile("", p_profile)
     UI_switchToTab("", ".main-tabs", "profiles_tab")
@@ -146,7 +147,7 @@ UI_enableIeFeatures(f_obj, delete:=0){
 
 }
 
-UI_setProfile(neutron, p_profile){
+UI_setProfile(_neutron, p_profile){
     if(UI_profileIsDirty)
         UI_warnProfileIsDirty()
     current_profile:= config_obj.getProfile(p_profile)
@@ -155,7 +156,7 @@ UI_setProfile(neutron, p_profile){
     innerCont.classList.add("hidden")
     sleep, 200
     hotkey_panels:= {}
-    for i, mic in current_profile.Microphone {
+    for _i, mic in current_profile.Microphone {
         if(mic.Name = "capture" || !ui_obj.doc.getElementById("mic_" mic.Name))
             mic.Name:= "Default"
         if(mic.MuteHotkey != mic.UnmuteHotkey)
@@ -202,7 +203,7 @@ UI_reset(){
     defaultProfile:= ui_obj.doc.getElementById("default_profile")
     profiles.innerHTML:=""
     defaultProfile.innerHTML:=""
-    for i, profile in config_obj.Profiles {
+    for _i, profile in config_obj.Profiles {
         profiles.insertAdjacentHTML("beforeend",Format(template_profile_tag,profile.ProfileName))
         selected:= profile.ProfileName == config_obj.DefaultProfile? "selected" : ""
         defaultProfile.insertAdjacentHTML("beforeend",Format(template_default_profile, profile.ProfileName, selected))
@@ -231,7 +232,7 @@ UI_reset(){
     ui_obj.doc.getElementById("PreferTheme").value:= config_obj.PreferTheme
 }
 
-UI_onChange(neutron, funcName, params*){
+UI_onChange(_neutron, funcName, params*){
     if(fn:=Func(funcName))
         fn.call(params*)
     UI_profileIsDirty:= 1
@@ -243,7 +244,7 @@ UI_resetMicSelect(){
     select:= ui_obj.doc.getElementById("microphone")
     select.innerHTML:=""
     devices:= UI_getMicrophonesList()
-    for i, device in devices {
+    for _i, device in devices {
         if(InStr(device, "VMR_") && vm){
             deviceInfo:=""
             RegExMatch(device, VoicemeeterController.BUS_STRIP_REGEX, deviceInfo)
@@ -352,7 +353,7 @@ UI_onCreateProfile(neutron){
         profileIndex:= config_obj.Profiles.Length()+1
     Try config_obj.getProfile("Profile " . profileIndex)
     catch {
-        newProf:= config_obj.createProfile("Profile " . profileIndex)
+        config_obj.createProfile("Profile " . profileIndex)
         UI_reset()
         UI_setProfile(neutron, "Profile " . profileIndex++)
         UI_notify("Profile created")
@@ -398,7 +399,7 @@ UI_onRecord(type){
     Hotkey, *XButton2, % funcObj, On UseErrorLevel
 }
 
-UI_addKey(type, InputHook, VK, SC){
+UI_addKey(type, _InputHook, VK, SC){
     key_name:= GetKeyName(Format("vk{:x}sc{:x}", VK, SC))
     , inputElem:= ui_obj.doc.getElementByID(type "_input")
     , unq:=""
@@ -414,7 +415,7 @@ UI_addKey(type, InputHook, VK, SC){
         inputElem.value := inputElem.value . key_name . " + "
 }
 
-UI_onStop(type, InputHook:=""){
+UI_onStop(type, _InputHook:=""){
     ;if the func is not called by the input hook -> stop the input hook
     if(input_hook.InProgress){
         input_hook.Stop()
@@ -449,7 +450,7 @@ UI_onStop(type, InputHook:=""){
     util_log(Format("[UI] {} hotkey set to: {}", type, current_hp[type].hotkey))
 }
 
-UI_onClearHotkey(neutron:=""){
+UI_onClearHotkey(_neutron:=""){
     mic:= ui_obj.doc.getElementById("microphone").value
     hotkey_panels[mic]:= new HotkeyPanel("","",1)
     UI_setHotkeyPanel(hotkey_panels[mic], 200)
@@ -470,7 +471,7 @@ UI_onRefreshOutputDeviceList(neutron){
     select:= ui_obj.doc.getElementById("output_device")
     select.innerHTML:= ""
     devices:= new SoundPlayer().devices
-    for i, device in devices {
+    for _i, device in devices {
         select.insertAdjacentHTML("beforeend", Format(template_output, device, device = current_profile.SoundFeedbackDevice? "selected":""))
     }
     if(current_profile.SoundFeedbackDevice != select.value)
@@ -481,7 +482,7 @@ UI_onRefreshOutputDeviceList(neutron){
 
 UI_checkMicOptions(){
     devices:= UI_getMicrophonesList(), numPanels:=0
-    for i, device in devices {
+    for _i, device in devices {
         micOption:= ui_obj.doc.getElementById("mic_" device)
         if(hotkey_panels[device].mute.hotkey_h){
             micOption.innerText:= (InStr(micOption.innerText, "*")? "" : "* ") . micOption.innerText
@@ -496,7 +497,7 @@ UI_checkMicOptions(){
 UI_getMicrophonesList(){
     inputDevices:= new StackSet("Default", "All Microphones", VA_GetDeviceList("capture")*)
     inputDevices.pushAll(VMR_GetDeviceList()*)
-    for i, mic in current_profile.Microphone {
+    for _i, mic in current_profile.Microphone {
         inputDevices.push(mic.Name)
     }
     return inputDevices.data
@@ -510,7 +511,7 @@ VMR_GetDeviceList(){
             if(!bus.isPhysical())
                 deviceList.push("VMR_Bus[" i "]")
         }
-        for i, strip in vm.strip {
+        for i, _strip in vm.strip {
             deviceList.push("VMR_Strip[" i "]")
         }
     }
@@ -590,7 +591,7 @@ UI_asyncOnSetMicrophone(mic_name){
     ui_obj.doc.getElementById("hotkeys_panel").classList.remove("hidden")
 }
 
-UI_onGlobalOption(neutron, option, setState){
+UI_onGlobalOption(_neutron, option, setState){
     elem:= ui_obj.doc.getElementById(option)
     if(setState)
         elem.checked:= !elem.checked
@@ -608,7 +609,7 @@ UI_onOSDset(){
         Goto, _reset
     ui_obj.Minimize()
     editor_osd:= new OSD(current_profile.OSDPos,,Func("UI_onConfirmOSDPos"))
-    editor_osd.setTheme(ui_theme)
+    editor_osd.setTheme(util_getSystemTheme().Apps)
     editor_osd.showPosEditor()
     return
     _reset:
@@ -682,7 +683,7 @@ UI_onRefreshAppsList(neutron){
         list.push(current_profile.LinkedApp)
     select.innerHTML:=""
     select.insertAdjacentHTML("beforeend", Format(template_app, "", "Select an app", "selected"))
-    for i, process in list.data {
+    for _i, process in list.data {
         WinGetTitle, winTitle, ahk_exe %process%
         winTitle:= winTitle? winTitle " (" process ")" : process
         select.insertAdjacentHTML("beforeend"
@@ -703,7 +704,7 @@ UI_displayProfileRename(neutron, p_profile){
     field.setSelectionRange(ln:=StrLen(field.value),ln)
 }
 
-UI_hideProfileRename(neutron, event:=""){
+UI_hideProfileRename(_neutron, event:=""){
     maskElem:= ui_obj.qs("#profileRenameModal > .page-mask")
     pElem:= ui_obj.qs("#profileRenameModal > .modal-contents")
     if(!event){
@@ -721,7 +722,7 @@ UI_hideProfileRename(neutron, event:=""){
     }
 }
 
-UI_showHelpModal(neutron, title){
+UI_showHelpModal(_neutron, title){
     ui_obj.qs("#helpModal .modal-card-title").innerText:= title
     ui_obj.qs("#helpModal .content").innerHTML:= UI_helpText[title]
     ui_obj.qs("#helpModal > .page-mask").classList.remove("hidden")
@@ -730,7 +731,7 @@ UI_showHelpModal(neutron, title){
     ui_obj.qs("#helpModal .card").focus()
 }
 
-UI_hideHelpModal(neutron, event:=""){
+UI_hideHelpModal(_neutron, event:=""){
     maskElem:= ui_obj.qs("#helpModal > .page-mask")
     pElem:= ui_obj.qs("#helpModal > .modal-contents")
     if(!event || event.keyCode = 0x1B || event.keyCode = 0x0D){
@@ -762,14 +763,14 @@ UI_switchToTab(neutron, rootSelector, tabID){
         UI_switchToTab(neutron, ".profile-tabs", "hotkeys_tab")
 }
 
-UI_updateThemeOption(neutron:=""){
+UI_updateThemeOption(_neutron:=""){
     config_obj.PreferTheme:= ui_obj.doc.getElementById("PreferTheme").value+0
     updateSysTheme()
     config_obj.exportConfig()
     UI_notify("Configuration saved")
 }
 
-UI_updateDefaultProfile(neutron){
+UI_updateDefaultProfile(_neutron){
     config_obj.DefaultProfile:= ui_obj.doc.getElementById("default_profile").value
     config_obj.exportConfig()
     UI_notify("Configuration saved")
@@ -778,21 +779,21 @@ UI_updateDefaultProfile(neutron){
 UI_loadCss(neutron){
     neutron.doc.getElementById("MicMute_icon").setAttribute("src", resources_obj.pngIcon)
     neutron.doc.getElementById("version").innerText:= A_Version
-    for i, css in resources_obj.cssFile {
+    for _i, css in resources_obj.cssFile {
         if(!neutron.doc.getElementById("css_" css.name))
             neutron.doc.head.insertAdjacentHTML("beforeend",Format(template_link, css.name, css.file))
     }
 }
 
 UI_addTooltips(){
-    for i,tt in UI_tooltips {
+    for _i, tt in UI_tooltips {
         elemList:= ui_obj.qsa(tt.selector)
-        for i, element in ui_obj.Each(elemList)
+        for _i, element in ui_obj.Each(elemList)
             element.setAttribute("data-title",tt.string)
     }
 }
 
-UI_flipVal(neutron,elemId){
+UI_flipVal(_neutron, elemId){
     elem:= ui_obj.doc.getElementById(elemId)
     elem.checked := !elem.checked
     elem.setAttribute("aria-pressed", elem.checked? "true" : "false")
@@ -821,11 +822,11 @@ UI_notify(txt){
     SetTimer, UI_dismissNotif, -2000
 }
 
-UI_dismissNotif(neutron:=""){
+UI_dismissNotif(_neutron:=""){
     ui_obj.doc.getElementById("notification").classList.add("hidden")
 }
 
-UI_close(neutron:=""){
+UI_close(_neutron:=""){
     if(UI_profileIsDirty)
         UI_warnProfileIsDirty()
     ui_obj.Hide()
@@ -833,8 +834,12 @@ UI_close(neutron:=""){
     ui_obj.Close()
 }
 
-UI_updateTheme(){
-    if(ui_theme){
+UI_updateTheme(_wParam:="", lParam:=""){
+    if(lParam && StrGet(lParam) != "ImmersiveColorSet")
+        return
+
+    theme := util_getSystemTheme()
+    if(theme.Apps){
         ui_obj.doc.getElementById("css_dark").removeAttribute("disabled")
         ui_obj.SetWindowFillColor(0x272727)
         about_obj.doc.getElementById("css_dark").removeAttribute("disabled")
@@ -864,13 +869,13 @@ UI_showAbout(neutron:="", isCheckingForUpdates:=0){
     about_obj.Gui("+OwnDialogs")
 }
 
-UI_exitAbout(neutron){
+UI_exitAbout(_neutron){
     about_obj.Close()
     about_obj.Destroy()
     UI_createAbout()
 }
 
-UI_checkForUpdates(neutron:=""){
+UI_checkForUpdates(_neutron:=""){
     refreshButton:= about_obj.doc.getElementById("refresh_button")
     refreshButton.classList.add("is-loading")
     Try latestVersion:= updater_obj.getLatestVersion()
@@ -885,7 +890,7 @@ UI_checkForUpdates(neutron:=""){
     refreshButton.blur()
 }
 
-UI_launchUpdater(neutron:=""){
+UI_launchUpdater(_neutron:=""){
     about_obj.Gui("+OwnDialogs")
     MsgBox, 65, MicMute, % "This will restart MicMute in updater mode"
     IfMsgBox, OK
@@ -893,14 +898,14 @@ UI_launchUpdater(neutron:=""){
     about_obj.doc.getElementById("update_button").blur()
 }
 
-UI_launchURL(neutron:="", url:="", isFullUrl:=0){
+UI_launchURL(_neutron:="", url:="", isFullUrl:=0){
     repoUrl:= "https://github.com/SaifAqqad/AHK_MicMute/blob/" A_Version "/"
     if(!isFullUrl)
         url:= repoUrl . url
     Run, %url%, %A_Desktop%
 }
 
-UI_launchReleasePage(neutron:="", version:=""){
+UI_launchReleasePage(_neutron:="", version:=""){
     url:= "https://github.com/SaifAqqad/AHK_MicMute/releases/tag/" . (version? version : A_Version)
     Run, %url%, %A_Desktop%
 }

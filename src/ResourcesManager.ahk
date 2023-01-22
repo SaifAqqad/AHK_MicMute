@@ -113,7 +113,7 @@ class ResourcesManager {
             return this.getIcon(ICON_ID_APP)
         iconId := ICON_ID_TRAY
         iconId += state? ICON_ID_MUTE : ICON_ID_UNMUTE
-        iconId += sys_theme? ICON_ID_WHITE : ICON_ID_BLACK
+        iconId += util_getSystemTheme().System? ICON_ID_WHITE : ICON_ID_BLACK
         return this.getIcon(iconId)
     }
 

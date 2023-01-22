@@ -17,7 +17,7 @@ util_CreateStartupTask(){
     task:= scheduler.NewTask(0) ;TaskDefinition object
     task.RegistrationInfo.Description:= "Launch MicMute on startup"
     task.Settings.ExecutionTimeLimit:= "PT0S" ;enable the task to run indefinitely
-    task.Settings.DisallowStartIfOnBatteries:= 0  ;why is this enabled by default o_o
+    task.Settings.DisallowStartIfOnBatteries:= 0 ;why is this enabled by default o_o
     task.Settings.StopIfGoingOnBatteries:= 0 ;bruh ^^^
     trigger:= task.Triggers.Create(9) ;onLogon trigger = 9
     trigger.UserId:= A_ComputerName . "\" . A_UserName
@@ -26,9 +26,9 @@ util_CreateStartupTask(){
     action:= task.Actions.Create(0) ;ExecAction = 0
     action.Path:= A_ScriptFullPath
     action.Arguments:= args_str
-    action.WorkingDirectory:= A_ScriptDir 
-    Try scheduler.GetFolder("\").RegisterTaskDefinition("MicMute",task,6,"","",3)
-    Catch {
+    action.WorkingDirectory:= A_ScriptDir
+    try scheduler.GetFolder("\").RegisterTaskDefinition("MicMute",task,6,"","",3)
+    catch {
         return 0
     }
     return 1
@@ -70,6 +70,19 @@ util_isProcessElevated(vPID){
     return vRet ? vIsElevated : -1
 }
 
+; Returns the current system theme | 0 : light mode, 1 : dark mode
+util_getSystemTheme(){
+    RegRead, reg
+        , HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize, SystemUsesLightTheme
+    sysTheme := !reg
+
+    RegRead, reg
+        , HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize, AppsUseLightTheme
+    appsTheme := config_obj.PreferTheme == -1? !reg : config_obj.PreferTheme
+
+    return {"System": sysTheme, "Apps": appsTheme}
+}
+
 ; By lexikos https://www.autohotkey.com/boards/viewtopic.php?p=49047#p49047
 util_indexOfIconResource(Filename, ID)
 {
@@ -77,18 +90,18 @@ util_indexOfIconResource(Filename, ID)
     ; If the DLL isn't already loaded, load it as a data file.
     loaded := !hmod
         && hmod := DllCall("LoadLibraryEx", "str", Filename, "ptr", 0, "uint", 0x2, "ptr")
-    
+
     enumproc := RegisterCallback("util_indexOfIconResource_EnumIconResources","F")
     param := {ID: ID, index: 0, result: 0}
-    
+
     ; Enumerate the icon group resources. (RT_GROUP_ICON=14)
     DllCall("EnumResourceNames", "ptr", hmod, "ptr", 14, "ptr", enumproc, "ptr", &param)
     DllCall("GlobalFree", "ptr", enumproc)
-    
+
     ; If we loaded the DLL, free it now.
     if loaded
         DllCall("FreeLibrary", "ptr", hmod)
-    
+
     return param.result
 }
 
@@ -100,11 +113,10 @@ util_indexOfIconResource_EnumIconResources(hModule, lpszType, lpszName, lParam)
     if (lpszName = param.ID)
     {
         param.result := param.index
-        return false    ; break
+        return false ; break
     }
     return true
 }
-
 
 ; Returns true if the file is empty
 util_IsFileEmpty(file){
@@ -149,8 +161,9 @@ util_toString(obj){
     return output_str
 }
 
-util_VerCmp(V1, V2) { ; VerCmp() for Windows by SKAN on D35T/D37L @ tiny.cc/vercmp 
-    Return ( ( V1 := Format("{:04X}{:04X}{:04X}{:04X}", StrSplit(V1 . "...", ".",, 5)*) )
-           < ( V2 := Format("{:04X}{:04X}{:04X}{:04X}", StrSplit(V2 . "...", ".",, 5)*) ) )
-           ? -1 : ( V2<V1 ) ? 1 : 0
+; VerCmp() for Windows by SKAN on D35T/D37L @ tiny.cc/vercmp
+util_VerCmp(V1, V2) {
+    return ( ( V1 := Format("{:04X}{:04X}{:04X}{:04X}", StrSplit(V1 . "...", ".",, 5)*) )
+        < ( V2 := Format("{:04X}{:04X}{:04X}{:04X}", StrSplit(V2 . "...", ".",, 5)*) ) )
+        ? -1 : ( V2<V1 ) ? 1 : 0
 }

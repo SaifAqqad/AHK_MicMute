@@ -40,8 +40,8 @@ class VoicemeeterController extends MicrophoneController{
         this.state_callback:= state_callback
         this.shouldCallFeedback:=0
         this.microphone:= this.voicemeeter[this.microphoneType][this.microphoneIndex]
-        this.friendly_name:= this.microphone.label? this.microphone.label : this.microphone.name
-        this.state_string:= {0:this.friendly_name . " Online",1:this.friendly_name . " Muted", -1:this.friendly_name . " Unavailable"}
+        this.shortName:= this.microphone.label? this.microphone.label : this.microphone.name
+        this.stateString:= {0:this.shortName . " Online",1:this.shortName . " Muted", -1:this.shortName . " Unavailable"}
         this.voicemeeter.onUpdateParameters:= ObjBindMethod(VoicemeeterController, "_activeControllersCallback")
     }
 
@@ -112,7 +112,7 @@ class VoicemeeterController extends MicrophoneController{
     }
 
     _activeControllersCallback(){
-        for i, ctrlr in VoicemeeterController.activeControllers {
+        for _i, ctrlr in VoicemeeterController.activeControllers {
             ctrlr.onUpdateState()
         }
     }
