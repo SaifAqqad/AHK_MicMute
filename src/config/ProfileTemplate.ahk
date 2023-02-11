@@ -18,6 +18,7 @@ class ProfileTemplate{
         this.OverlayTheme:=0
         this.OverlaySize:=48
         this.OverlayUseCustomIcons:=0
+        this.MicrophoneActions:= Array()
         if(IsObject(p_name_Obj)){
             onMuteOnly:= p_name_Obj.Delete("OverlayOnMuteOnly")
             if(onMuteOnly)

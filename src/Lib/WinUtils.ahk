@@ -167,3 +167,15 @@ util_VerCmp(V1, V2) {
         < ( V2 := Format("{:04X}{:04X}{:04X}{:04X}", StrSplit(V2 . "...", ".",, 5)*) ) )
         ? -1 : ( V2<V1 ) ? 1 : 0
 }
+
+; base64 function By jNizM https://github.com/jNizM/AHK_Scripts
+util_b64Encode(string)
+{
+    VarSetCapacity(bin, StrPut(string, "UTF-16")) && len := StrPut(string, &bin, "UTF-16") - 1 
+    if !(DllCall("crypt32\CryptBinaryToString", "ptr", &bin, "uint", len*2, "uint", 0x1 | 0x40000000, "ptr", 0, "uint*", size))
+        throw Exception("CryptBinaryToString failed", -1)
+    VarSetCapacity(buf, size << 1, 0)
+    if !(DllCall("crypt32\CryptBinaryToString", "ptr", &bin, "uint", len*2, "uint", 0x1 | 0x40000000, "ptr", &buf, "uint*", size))
+        throw Exception("CryptBinaryToString failed", -1)
+    return StrGet(&buf)
+}

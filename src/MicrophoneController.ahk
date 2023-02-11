@@ -50,9 +50,11 @@ Class MicrophoneController {
 
         RegExMatch(this.shortName, "(.+)\s+\(.+\)", match)
         this.shortName:= match1? match1 : this.shortName
-        if (StrLen(this.shortName)>14)
-            this.shortName:= SubStr(this.shortName, 1, 12) . Chr(0x2026) ; fix overflow with ellipsis
-        this.stateString:= {0:this.shortName . " Online",1:this.shortName . " Muted",-1:this.shortName . " Unavailable"}
+
+        stateMicName:= this.shortName
+        if (StrLen(stateMicName)>14)
+            stateMicName:= SubStr(stateMicName, 1, 12) . Chr(0x2026) ; fix overflow with ellipsis
+        this.stateString:= {0:stateMicName . " Online",1:stateMicName . " Muted",-1:stateMicName . " Unavailable"}
     }
 
     ptt(state:=0){

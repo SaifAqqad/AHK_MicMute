@@ -43,6 +43,11 @@ SetWorkingDir %A_ScriptDir%
 #Include, VoicemeeterController.ahk
 #Include, Updater.ahk
 
+#Include, %A_ScriptDir%\actions
+#Include, MicrophoneAction.ahk
+#Include, PowershellAction.ahk
+#Include, ProgramAction.ahk
+
 #Include, %A_ScriptDir%\config
 #Include, ProfileTemplate.ahk
 #Include, MicrophoneTemplate.ahk
@@ -68,6 +73,7 @@ Global A_startupTime:= A_TickCount
     , ptt_off_sound
     , watched_profiles
     , watched_profile
+    , mic_actions
     , last_modif_time
     , arg_isDebug:=0
     , arg_profile:=""
@@ -146,6 +152,7 @@ initilizeMicMute(default_profile:=""){
         , unmute_sound:=""
         , ptt_on_sound:=""
         , ptt_off_sound:=""
+        , mic_actions:=""
         , last_modif_time:= ""
         , sound_player:=""
     tray_defaults()
@@ -295,6 +302,14 @@ switchProfile(p_name:=""){
         }
     }
 
+    mic_actions:=""
+    if(current_profile.MicrophoneActions.Length() > 0){
+        mic_actions:= Array()
+        for _i, action in current_profile.MicrophoneActions {
+            mic_actions.Push(MicrophoneAction.Create(action))
+        }
+    }
+
     if (current_profile.afkTimeout)
         SetTimer, checkIsIdle, 1000  
     ;show switching-profile OSD
@@ -311,6 +326,10 @@ showFeedback(microphone){
 
     if (current_profile.OnscreenFeedback)
         osd_wnd.showAndHide(microphone.getStateString(), !microphone.state)
+
+    for _i, action in mic_actions {
+        action.run(microphone)
+    }
 }
 
 editConfig(){
