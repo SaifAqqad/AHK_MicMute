@@ -11,9 +11,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Initialize submodules
-        uses: snickerbockers/submodules-init@v4
-
       - name: Download Bass lib
         shell: pwsh
         run: |
@@ -26,7 +23,7 @@ jobs:
         shell: pwsh
         run: |
           $cwd = (Get-Item .).FullName;
-          Invoke-WebRequest "https://github.com/joshuacc/ahkpm/releases/download/0.5.0/ahkpm-0.5.0.msi" -OutFile "$cwd\ahkpm.msi";
+          Invoke-WebRequest "https://github.com/joshuacc/ahkpm/releases/download/0.7.0/ahkpm-0.7.0.msi" -OutFile "$cwd\ahkpm.msi";
           Start-Process "MSIEXEC" -ArgumentList "/a `"$cwd\ahkpm.msi`" /qn TARGETDIR=`"$cwd\ahkpmDir`"" -Wait -NoNewWindow
           Start-Process "$cwd\ahkpmDir\ahkpm\ahkpm.exe" -ArgumentList "install" -WorkingDirectory "$cwd" -Wait -NoNewWindow
 
