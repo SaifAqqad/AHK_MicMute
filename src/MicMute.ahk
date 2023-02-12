@@ -60,6 +60,7 @@ SetWorkingDir %A_ScriptDir%
 
 #Include, %A_ScriptDir%\UI\config
 #Include, HotkeyPanel.ahk
+#Include, UITemplates.ahk
 #Include, UI.ahk
 #Include, UpdaterUI.ahk
 

@@ -1,21 +1,6 @@
 global ui_obj, about_obj, current_profile, hotkey_panels, current_hp
 , onExitCallback, UI_scale:= A_ScreenDPI/96, UI_profileIsDirty:= 0
 , input_hook, input_hook_timer, key_set, modifier_set, is_multiple_mics:=0
-, template_link:= "<link rel='stylesheet' id='css_{1:}' href='{2:}'>"
-, template_default_profile:= "<option value='{1:}' {2:} >{1:}</option>"
-, template_mic:= "<option value='{1:}' id='mic_{1:}' {2:} >{3:}</option>"
-, template_output:= "<option value='{1:}' id='output_{1:}' {2:}>{1:}</option>"
-, template_app:= "<option value='{1:}' {3:} >{2:}</option>"
-, template_profile_tag:= "
-(
-    <span class=""tag is-medium has-tooltip"" tabindex=0 role=""button"" aria-label=""{1:}"" aria-pressed=""false""  onkeydown=""switch(event.keyCode){case 32:case 69: event.preventDefault(); this.oncontextmenu.call() ;break; case 13:this.click()}""
-        id=""tag_profile_{1:}"" oncontextmenu=""ahk.UI_displayProfileRename('{1:}')"" onClick=""ahk.UI_setProfile('{1:}');this.blur()"">
-        <label class=""radio"">
-            <input type=""radio"" name=""profiles_radio"" value=""{1:}"" id=""profile_{1:}"" disabled>
-            <span data-title=""Right click to edit profile name"" >{1:}</span>
-        </label>
-    </span>
-)"
 , UI_tooltips:= [ { selector: ".passthrough-label"
                      , string: "The hotkey's keystrokes won't be hidden from the OS"}
                   ,{ selector: ".wildcard-label"
@@ -45,58 +30,9 @@ global ui_obj, about_obj, current_profile, hotkey_panels, current_hp
                   ,{ selector: ".OverlayUseCustomIcons-label"
                      , string: "Right click to view instructions"}
                   ,{ selector: ".hybrid_ptt-label"
-                     , string: "Short press will toggle the microphone"}]
-, UI_helpText:= { "Custom Sounds" : "
-                (LTrim
-                <ol>
-                    <li>Turn on the option in the config UI</li>
-                    <li>Place the sound files (<code>mp3</code>,<code>wav</code>) in the same folder as <code>MicMute.exe</code></li>
-                    <li>
-                        Rename them as:
-                        <ul>
-                            <li>
-                                <p><strong>Mute sound</strong>: <code>mute</code> </p>
-                            </li>
-                            <li>
-                                <p><strong>Unmute sound</strong>: <code>unmute</code> </p>
-                            </li>
-                            <li>
-                                <p><strong>PTT on</strong>: <code>ptt_on</code> </p>
-                            </li>
-                            <li>
-                                <p><strong>PTT off</strong>: <code>ptt_off</code></p>
-                            </li>
-                        </ul>
-                    </li>
-                </ol>
-                )"
-                , "Custom Icons" : "
-                (LTrim
-                <ol>
-                    <li>Turn on the option in the config UI</li>
-                    <li>Place the icons (<code>ico</code>/<code>png</code>/<code>jpeg</code>) in the same folder as <code>MicMute.exe</code></li>
-                    <li>
-                        Rename them as:
-                        <ul>
-                            <li>
-                                <p><strong>Mute icon</strong>: <code>overlay_mute</code> </p>
-                            </li>
-                            <li>
-                                <p><strong>Unmute icon</strong>: <code>overlay_unmute</code> </p>
-                            </li>
-                        </ul>
-                    </li>
-                </ol>
-                )"
-                , "Multiple Microphones" : "
-                (LTrim
-                <p>You can have active hotkeys for multiple microphones simultaneously, to do this:</p>
-                <ol>
-                    <li>Toggle the <div class='tag tag-empty'>Multiple</div> option </li>
-                    <li>Select another microphone from the list </li>
-                    <li>Setup the hotkeys</li>
-                </ol>
-                )"}
+                     , string: "Short press will toggle the microphone"}
+                  ,{ selector: ".mic-actions-label"
+                     , string: "Run programs/scripts when muting/unmuting the microphone"}]
 
 UI_create(p_onExitCallback){
     util_log("[UI] Creating 'config' window")
@@ -113,7 +49,7 @@ UI_create(p_onExitCallback){
     UI_createAbout()
 }
 
-UI_Show(p_profile){
+UI_Show(p_profile, setPos:=1){
     Thread, NoTimers
     util_log("[UI] Showing 'config' window")
     UI_updateTheme()
@@ -123,7 +59,7 @@ UI_Show(p_profile){
     UI_addTooltips()
     tray_defaults()
     ui_obj.Gui(Format("+LabelUI_ +MinSize{:i}x{:i} +OwnDialogs",785*UI_scale,500*UI_scale))
-    ui_obj.Show(Format("Center w{:i} h{:i}",820*UI_scale,650*UI_scale),"MicMute")
+    ui_obj.Show(Format("{} w{:i} h{:i}", setPos? "Center" : "",820*UI_scale,650*UI_scale),"MicMute")
     ui_obj.doc.focus()
     if(Arg_isDebug || A_DebuggerName)
         Hotkey, ^F10, UI_HotReload
@@ -133,7 +69,7 @@ UI_HotReload(){
     ui_obj.load(resources_obj.htmlFile.UI)
     UI_enableIeFeatures(features,1)
     UI_loadCss(ui_obj)
-    UI_Show(current_profile.ProfileName)
+    UI_Show(current_profile.ProfileName, 0)
 }
 
 UI_enableIeFeatures(f_obj, delete:=0){
@@ -193,6 +129,7 @@ UI_setProfile(_neutron, p_profile){
     ui_obj.doc.getElementById("afkTimeout").value:= !current_profile.afkTimeout? "" : current_profile.afkTimeout
     ui_obj.doc.getElementById("PTTDelay").value:= current_profile.PTTDelay
     UI_onUpdateDelay(current_profile.PTTDelay)
+    UI_onRefreshMicActions("")
     innerCont.classList.remove("hidden")
     UI_profileIsDirty:= 0
 }
@@ -761,6 +698,36 @@ UI_switchToTab(neutron, rootSelector, tabID){
     wantedTabContent.classList.remove("hidden")
     if(tabID == "profiles_tab")
         UI_switchToTab(neutron, ".profile-tabs", "hotkeys_tab")
+}
+
+UI_onCreateMicAction(neutron:=""){
+    ; TODO: show the action editor pop up
+}
+
+UI_onEditMicAction(neutron:="", actionIndex:=""){
+    action:= current_profile.MicrophoneActions[actionIndex]
+    ; TODO: show the action editor pop up
+}
+
+UI_onRefreshMicActions(neutron:=""){
+    actionsContainer:= ui_obj.doc.getElementById("MicActions")
+    actionsContainer.innerHTML:= ""
+
+    for i, action in current_profile.MicrophoneActions {
+        actionLabel:= Format(template_action_label[action.Type], UI_getActionText(action))
+        actionTag:= Format(template_action_tag, i, action.Type "Action", actionLabel)
+
+        actionsContainer.insertAdjacentHTML("beforeend", actionTag)
+    }
+}
+
+UI_getActionText(action){
+    switch action.Type {
+        case "Powershell":
+            return SubStr(action.Script, 1, 12) . "&#x2026;"
+        case "Program":
+            return util_splitPath(action.Program).fileName
+    }
 }
 
 UI_updateThemeOption(_neutron:=""){
