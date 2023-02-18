@@ -30,9 +30,14 @@ global ICON_ID_APP:= 1000
 ;@Ahk2Exe-AddResource *10 %U_UI%\html\UI.html
 ;@Ahk2Exe-AddResource *10 %U_UI%\html\Updater.html
 ;@Ahk2Exe-AddResource *10 %U_UI%\html\about.html
-;@Ahk2Exe-AddResource %U_UI%\css\bulma.css
-;@Ahk2Exe-AddResource %U_UI%\css\base.css
-;@Ahk2Exe-AddResource %U_UI%\css\dark.css
+;@Ahk2Exe-AddResource *10 %U_UI%\html\PowershellActionEditor.html
+;@Ahk2Exe-AddResource *10 %U_UI%\js\codemirror.js
+;@Ahk2Exe-AddResource *10 %U_UI%\js\powershell.js
+;@Ahk2Exe-AddResource *10 %U_UI%\css\bulma.css
+;@Ahk2Exe-AddResource *10 %U_UI%\css\base.css
+;@Ahk2Exe-AddResource *10 %U_UI%\css\dark.css
+;@Ahk2Exe-AddResource *10 %U_UI%\css\codemirror.css
+;@Ahk2Exe-AddResource *10 %U_UI%\css\railscasts.css
 
 class ResourcesManager {
     static RES_FOLDER:= A_ScriptDir . "\resources\"
@@ -45,10 +50,16 @@ class ResourcesManager {
     pngIcon:= "icon.png"
     htmlFile:= { UI: "UI.html"
                , about: "about.html"
-               , Updater: "Updater.html"}
+               , Updater: "Updater.html"
+               , PowershellActionEditor: "PowershellActionEditor.html"
+               , ProgramActionEditor: "ProgramActionEditor.html"}
     cssFile:= [{ name:"bulma",file: "bulma.css"}
               ,{ name:"base",file:"base.css"}
-              ,{ name:"dark",file:"dark.css"}]
+              ,{ name:"dark",file:"dark.css"}
+              ,{ name:"codemirror",file:"codemirror.css"}
+              ,{ name:"railscasts",file:"railscasts.css"}]
+    jsFile:= [{ name:"codemirror",file:"codemirror.js"}
+             ,{ name:"powershell",file:"powershell.js"}]
     __New(){
         if(A_IsCompiled){
             for type, file in this.SoundFile {
@@ -65,6 +76,9 @@ class ResourcesManager {
             }
             for i,css in this.cssFile {
                 css.file:= this.UI_FOLDER . "css\" . css.file
+            }
+            for i,js in this.jsFile {
+                js.file:= this.UI_FOLDER . "js\" . js.file
             }
             this.pngIcon:= this.RES_FOLDER "icons\" ICON_ID_APP ".png"
         }

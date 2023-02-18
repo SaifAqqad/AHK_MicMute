@@ -136,3 +136,11 @@ input[type="checkbox"]:checked+span {
 :-ms-input-placeholder {
     color: #c5c4c4 !important;
 }
+
+.dropdown-content{
+    background-color: #313131 !important;
+}
+
+.dropdown-item{
+    color: #d9d9d9 !important;
+}

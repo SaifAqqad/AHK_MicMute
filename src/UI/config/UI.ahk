@@ -1,4 +1,4 @@
-global ui_obj, about_obj, current_profile, hotkey_panels, current_hp
+global ui_obj, about_obj, current_profile, hotkey_panels, current_hp, action_editor
 , onExitCallback, UI_scale:= A_ScreenDPI/96, UI_profileIsDirty:= 0
 , input_hook, input_hook_timer, key_set, modifier_set, is_multiple_mics:=0
 , UI_tooltips:= [ { selector: ".passthrough-label"
@@ -700,13 +700,69 @@ UI_switchToTab(neutron, rootSelector, tabID){
         UI_switchToTab(neutron, ".profile-tabs", "hotkeys_tab")
 }
 
-UI_onCreateMicAction(neutron:=""){
-    ; TODO: show the action editor pop up
+UI_SetMicActionsDropdown(neutron:="", state:="", wait:=""){
+    dropdown:= ui_obj.doc.getElementById("mic_actions_dropdown")
+    if(wait)
+        sleep, % wait
+    if(state == 1)
+        dropdown.classList.add("is-active")
+    else if(state == -1)
+        dropdown.classList.toggle("is-active")
+    else
+        dropdown.classList.remove("is-active")
+}
+
+UI_onCreateMicAction(neutron:="", actionType:=""){
+    actionIndex:= current_profile.MicrophoneActions.Length() + 1
+    exitCallback:= Func("UI_onSaveMicAction").Bind(actionIndex)
+
+    switch actionType
+    {
+        case PowershellAction.TypeName:
+            actionConfig:= PowershellAction.getConfig()
+            action_editor:= new PowershellActionEditor(actionConfig, exitCallback)
+            
+        case ProgramAction.TypeName:
+            actionConfig:= ProgramAction.getConfig()
+            action_editor:= new ProgramActionEditor(actionConfig, exitCallback)
+    }
+    ui_obj.Gui("+Disabled")
+    action_editor.show(ui_obj.hWnd)
 }
 
 UI_onEditMicAction(neutron:="", actionIndex:=""){
     action:= current_profile.MicrophoneActions[actionIndex]
-    ; TODO: show the action editor pop up
+    if(!action)
+        return
+    
+    exitCallback:= Func("UI_onSaveMicAction").Bind(actionIndex)
+
+    switch action.Type
+    {
+        case PowershellAction.TypeName:
+            action_editor:= new PowershellActionEditor(action.Clone(), exitCallback)
+            
+        case ProgramAction.TypeName:
+            action_editor:= new ProgramActionEditor(action.Clone(), exitCallback)
+    }
+    ui_obj.Gui("+Disabled")
+    action_editor.show(ui_obj.hWnd)
+}
+
+UI_onSaveMicAction(actionIndex, actionConfig){
+    action_editor:= ""
+    ui_obj.Gui("-Disabled")
+    WinActivate, % "ahk_id " ui_obj.hWnd
+
+    if(!actionConfig)
+        return
+    
+    if(actionConfig == -1){
+        current_profile.MicrophoneActions.RemoveAt(actionIndex)
+    }else{
+        current_profile.MicrophoneActions[actionIndex]:= actionConfig
+    }
+    UI_onRefreshMicActions()
 }
 
 UI_onRefreshMicActions(neutron:=""){

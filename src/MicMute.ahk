@@ -64,6 +64,11 @@ SetWorkingDir %A_ScriptDir%
 #Include, UI.ahk
 #Include, UpdaterUI.ahk
 
+#Include, %A_ScriptDir%\UI\config\actions
+#Include, ActionEditor.ahk
+#Include, PowershellActionEditor.ahk
+#Include, ProgramActionEditor.ahk
+
 Global A_startupTime:= A_TickCount
     , config_obj
     , current_profile

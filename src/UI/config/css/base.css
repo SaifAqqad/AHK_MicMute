@@ -381,6 +381,11 @@ a {
     white-space: pre-line;
 }
 
+input[type=range].slider
+{
+    padding-bottom: 0 !important;
+}
+
 .tooltip-offset-right[data-title]:after{
     bottom: 140%;
     left: 0%;
@@ -495,4 +500,22 @@ button:not(.is-outlined):focus{
 
 .is-clipped{
     overflow-y: hidden !important;
+}
+
+.dropdown-menu{
+    min-width: 0;
+}
+
+.dropdown-item,
+.dropdown-item *{
+    transition: none !important;
+}
+
+a.dropdown-item, button.dropdown-item{
+    padding-right: 2rem !important;
+}
+
+a.dropdown-item:hover, button.dropdown-item:hover{
+    background-color: #ff572d !important;
+    color: white !important;
 }
