@@ -18,7 +18,7 @@ class ProgramAction extends MicrophoneAction {
         }
     }
 
-    _exportConfig(){
+    getConfig(){
         return { "Type": this.TypeName, "Program": this.Program, "Args": this.Args}
     }
 

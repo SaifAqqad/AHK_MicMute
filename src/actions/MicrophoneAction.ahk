@@ -5,8 +5,8 @@ class MicrophoneAction {
             "${microphone.name}": "{1}",
             "${microphone.fullName}": "{2}",
             "${microphone.state}": "{3}",
-            "${microphone.state.text}": "{4}",
-            "${microphone.state.bool}": "{5}"
+            "${microphone.muteState}": "{4}",
+            "${microphone.hotkeyTriggered}": "{5}"
         }
     )
 
@@ -28,7 +28,7 @@ class MicrophoneAction {
         Throw, Exception("Not implemented")
     }
 
-    _exportConfig(){
+    getConfig(){
         Throw, Exception("Not implemented")
     }
 
@@ -49,10 +49,10 @@ class MicrophoneAction {
         ( Join LTrim ; ahk
             [
                 controller.shortName,
-                util_toString(controller.microphoneName),
-                controller.state,
+                controller.microphoneName,
                 (controller.state? "Muted" : "Online"),
-                (controller.state? "true" : "false")
+                (controller.state? "true" : "false"),
+                (controller.shouldCallFeedback? "true" : "false")
             ]
         )
         return controllerParams

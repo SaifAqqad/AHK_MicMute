@@ -329,10 +329,6 @@ showFeedback(microphone){
 
     if (current_profile.OnscreenFeedback)
         osd_wnd.showAndHide(microphone.getStateString(), !microphone.state)
-
-    for _i, action in mic_actions {
-        action.run(microphone)
-    }
 }
 
 editConfig(){
@@ -415,6 +411,10 @@ onUpdateState(microphone){
         tray_update(microphone)
     } else {
         tray_defaults()
+    }
+    
+    for _i, action in mic_actions {
+        action.run(microphone)
     }
 }
 

@@ -20,7 +20,7 @@ class PowershellAction extends MicrophoneAction {
         }
     }
 
-    _exportConfig(){
+    getConfig(){
         return { "Type": this.TypeName, "Script": this.Script}
     }
 

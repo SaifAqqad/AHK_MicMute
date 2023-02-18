@@ -23,6 +23,7 @@ Class MicrophoneController {
         this.va_callback:= ""
         this.microphoneIds:= Object()
         this.shortName:= mic_obj.Name
+        this.callbackMic:=""
 
         switch mic_obj.Name {
             case "all microphones":
@@ -32,8 +33,9 @@ Class MicrophoneController {
                 ; add all microphones to mic array
                 for _i, mic in VA_GetDeviceList("capture") {
                     this.microphone.Push(mic ":capture")
-                    this.microphoneName.= mic . ", "
+                    this.microphoneName.= StrReplace(mic, ",") . ", "
                 }
+                this.microphoneName:= SubStr(this.microphoneName, 1, -2)
 
                 this.isMicrophoneArray:= 1
                 this.force_current_state:= 1
@@ -151,24 +153,33 @@ Class MicrophoneController {
         return micId
     }
 
-    onUpdateState(micName:= "", callback:=""){
+    onUpdateState(micName:= "", callback:=""){        
         Critical, On
+        ; set the microphone that will handle callbacks
+        if(callback && !this.callbackMic)
+            this.callbackMic:= micName
+
         if(callback){ ; called by VA
             if(this.force_current_state && this.state != callback.Muted)
-                this.setMuteStateVA(this.state, micName)
+                return this.setMuteStateVA(this.state, micName)
             else
                 this.state:= callback.Muted
         }else{ ; called manually
             micName:= this.isMicrophoneArray? this.microphone[1] : this.microphone
             this.state:= VA_GetMasterMute(this.getMicId(micName))+0
         }
-        this.state_callback.Call(this)
-        if(this.shouldCallFeedback){
+
+        ; check if the current microphone
+        ; is the one that should handle callbacks
+        if(micName == this.callbackMic) {
+            this.state_callback.Call(this)
+
             hotkeyId:= this.state? this.muteHotkeyId : this.unmuteHotkeyId
-            if(hotkeyId == 1){  ; if the current controller is the first registered for the current hotkey
-                this.shouldCallFeedback:=0
+            ; check if the current controller is the first registered for the current hotkey
+            if(this.shouldCallFeedback && hotkeyId == 1){
                 this.feedback_callback.Call(this)
             }
+            this.shouldCallFeedback:=0
         }
         Critical, Off
     }
