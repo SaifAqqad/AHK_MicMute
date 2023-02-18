@@ -316,6 +316,8 @@ switchProfile(p_name:=""){
     ;show switching-profile OSD
     if(config_obj.SwitchProfileOSD)
         osd_wnd.showAndHide(Format("Profile: {}", current_profile.ProfileName))
+
+    onUpdateState(mic_controllers[1])
     Critical, Off
 }
 
@@ -407,11 +409,13 @@ checkLinkedApps(){
     }
 }
 
-onUpdateState(mic){
-    if(mic_controllers.Length()>1)
-        return tray_defaults()
-    tray_update(mic)
-    overlay_wnd.setState(mic.state)
+onUpdateState(microphone){
+    if (mic_controllers.Length() == 1) {
+        overlay_wnd.setState(microphone.state)
+        tray_update(microphone)
+    } else {
+        tray_defaults()
+    }
 }
 
 updateSysTheme(_wParam:="", lParam:=""){

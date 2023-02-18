@@ -26,10 +26,14 @@ Class MicrophoneController {
 
         switch mic_obj.Name {
             case "all microphones":
-                ; add all microphones to mic array
                 this.microphone:= Array()
-                for _i, mic in VA_GetDeviceList("capture") 
+                this.microphoneName:= ""
+
+                ; add all microphones to mic array
+                for _i, mic in VA_GetDeviceList("capture") {
                     this.microphone.Push(mic ":capture")
+                    this.microphoneName.= mic . ", "
+                }
 
                 this.isMicrophoneArray:= 1
                 this.force_current_state:= 1
@@ -40,13 +44,13 @@ Class MicrophoneController {
                 OnMessage(WM_DEVICECHANGE, this.updateMicMethod)
             case "default": 
                 this.microphone:= "capture"
-                try this.shortName:= VA_GetDeviceName(VA_GetDevice("capture")) 
+                try this.shortName:= VA_GetDeviceName(VA_GetDevice("capture"))
+                this.microphoneName:= this.shortName
             default :
-                try this.shortName:= VA_GetDeviceName(VA_GetDevice(this.shortName)) 
+                try this.shortName:= VA_GetDeviceName(VA_GetDevice(this.shortName))
                 this.microphone.= ":capture"
+                this.microphoneName:= this.shortName
         }
-        ; ↓ this keeps compatibility with voicemeeterController
-        this.microphoneName:= this.microphone
 
         RegExMatch(this.shortName, "(.+)\s+\(.+\)", match)
         this.shortName:= match1? match1 : this.shortName
