@@ -728,6 +728,7 @@ UI_onCreateMicAction(neutron:="", actionType:=""){
             actionConfig:= ProgramAction.getConfig()
             action_editor:= new ProgramActionEditor(actionConfig, exitCallback)
     }
+    Sleep, 200
     ui_obj.Gui("+Disabled")
     action_editor.show(ui_obj.hWnd)
 }
@@ -747,6 +748,7 @@ UI_onEditMicAction(neutron:="", actionIndex:=""){
         case ProgramAction.TypeName:
             action_editor:= new ProgramActionEditor(action.Clone(), exitCallback)
     }
+    Sleep, 200
     ui_obj.Gui("+Disabled")
     action_editor.show(ui_obj.hWnd)
 }

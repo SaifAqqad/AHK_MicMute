@@ -173,7 +173,7 @@ util_tryB64Encode(string)
 {
     local bin, buf, size, len
     try{
-        VarSetCapacity(bin, StrPut(string, "UTF-16") * 2) && len := StrPut(string, &bin, "UTF-16") - 1 
+        VarSetCapacity(bin, StrPut(string, "UTF-16") * 3) && len := StrPut(string, &bin, "UTF-16") - 1 
         if !(DllCall("crypt32\CryptBinaryToString", "ptr", &bin, "uint", len*2, "uint", 0x1 | 0x40000000, "ptr", 0, "uint*", size))
             throw Exception("CryptBinaryToString failed", -1)
         VarSetCapacity(buf, size << 1, 0)
