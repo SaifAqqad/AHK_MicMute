@@ -700,10 +700,11 @@ UI_switchToTab(neutron, rootSelector, tabID){
         UI_switchToTab(neutron, ".profile-tabs", "hotkeys_tab")
 }
 
-UI_SetMicActionsDropdown(neutron:="", state:="", wait:=""){
+UI_SetMicActionsDropdown(neutron:="", state:=0, checkFocus:=0){
+    if(checkFocus && ui_obj.doc.activeElement.msMatchesSelector("#mic_actions_dropdown *"))
+        return
+
     dropdown:= ui_obj.doc.getElementById("mic_actions_dropdown")
-    if(wait)
-        sleep, % wait
     if(state == 1)
         dropdown.classList.add("is-active")
     else if(state == -1)
@@ -713,6 +714,7 @@ UI_SetMicActionsDropdown(neutron:="", state:="", wait:=""){
 }
 
 UI_onCreateMicAction(neutron:="", actionType:=""){
+    UI_SetMicActionsDropdown(neutron, 0)
     actionIndex:= current_profile.MicrophoneActions.Length() + 1
     exitCallback:= Func("UI_onSaveMicAction").Bind(actionIndex)
 
@@ -757,6 +759,7 @@ UI_onSaveMicAction(actionIndex, actionConfig){
     if(!actionConfig)
         return
     
+    UI_profileIsDirty:= 1
     if(actionConfig == -1){
         current_profile.MicrophoneActions.RemoveAt(actionIndex)
     }else{
@@ -780,7 +783,12 @@ UI_onRefreshMicActions(neutron:=""){
 UI_getActionText(action){
     switch action.Type {
         case "Powershell":
-            return SubStr(action.Script, 1, 12) . "&#x2026;"
+            script:= util_tryB64Decode(action.Script)
+            script:= Trim(StrReplace(script, "`r`n"))
+            if(StrLen(script) >= 11)
+                return SubStr(script, 1, 12) . "&#x2026;"
+            else
+                return script
         case "Program":
             return util_splitPath(action.Program).fileName
     }

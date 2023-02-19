@@ -1,0 +1,43 @@
+.CodeMirror{
+    height: 65vh;
+    min-height: 100px;
+    width: 100%;
+}
+
+.cm-s-micmute.CodeMirror,
+.cm-s-micmute.CodeMirror *
+{
+    scrollbar-base-color: #2b2b2b;
+    scrollbar-face-color: #4E4E4E;
+    scrollbar-3dlight-color: #4E4E4E;
+    scrollbar-highlight-color: #4E4E4E;
+    scrollbar-track-color: #2b2b2b;
+    scrollbar-arrow-color: #2b2b2b;
+    scrollbar-shadow-color: #4E4E4E;
+}
+
+.cm-s-micmute.CodeMirror {background: #323232; color: #d9d9d9;}
+.cm-s-micmute div.CodeMirror-selected {background: #2b2b2b !important;}
+.cm-s-micmute .CodeMirror-gutters {background: #2b2b2b; border-right: 0px;}
+.cm-s-micmute .CodeMirror-linenumber {color: #878787;}
+.cm-s-micmute .CodeMirror-cursor {border-left: 1px solid #dbd6d1 !important;}
+
+.cm-s-micmute span.cm-comment {color: #bc8d58;}
+.cm-s-micmute span.cm-atom {color: #ebceb3;}
+.cm-s-micmute span.cm-number {color: #f0895a;}
+
+.cm-s-micmute span.cm-property, .cm-s-micmute span.cm-attribute {color: #a5c261;}
+.cm-s-micmute span.cm-keyword {color: #f05d4c;}
+.cm-s-micmute span.cm-string {color: #ffc66d;}
+
+.cm-s-micmute span.cm-variable {color: #a5c261;}
+.cm-s-micmute span.cm-variable-2 {color: #cc7833;}
+.cm-s-micmute span.cm-def {color: #cc7833;}
+.cm-s-micmute span.cm-builtin {color: #6d9cbe;}
+.cm-s-micmute span.cm-error {background: #da4939; color: #d4cfc9;}
+.cm-s-micmute span.cm-bracket {color: #f4f1ed;}
+.cm-s-micmute span.cm-tag {color: #da4939;}
+.cm-s-micmute span.cm-link {color: #b6b3eb;}
+
+.cm-s-micmute .CodeMirror-matchingbracket { text-decoration: underline; color: white !important;}
+.cm-s-micmute .CodeMirror-activeline-background { background: #2e2e2e; }

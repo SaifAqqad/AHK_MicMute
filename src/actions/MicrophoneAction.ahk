@@ -5,7 +5,7 @@ class MicrophoneAction {
             "${microphone.name}": "{1}",
             "${microphone.fullName}": "{2}",
             "${microphone.state}": "{3}",
-            "${microphone.muteState}": "{4}",
+            "${microphone.isMuted}": "{4}",
             "${microphone.hotkeyTriggered}": "{5}"
         }
     )

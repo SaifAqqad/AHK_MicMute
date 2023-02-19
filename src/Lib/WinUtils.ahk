@@ -169,13 +169,35 @@ util_VerCmp(V1, V2) {
 }
 
 ; base64 function By jNizM https://github.com/jNizM/AHK_Scripts
-util_b64Encode(string)
+util_tryB64Encode(string)
 {
-    VarSetCapacity(bin, StrPut(string, "UTF-16")) && len := StrPut(string, &bin, "UTF-16") - 1 
-    if !(DllCall("crypt32\CryptBinaryToString", "ptr", &bin, "uint", len*2, "uint", 0x1 | 0x40000000, "ptr", 0, "uint*", size))
-        throw Exception("CryptBinaryToString failed", -1)
-    VarSetCapacity(buf, size << 1, 0)
-    if !(DllCall("crypt32\CryptBinaryToString", "ptr", &bin, "uint", len*2, "uint", 0x1 | 0x40000000, "ptr", &buf, "uint*", size))
-        throw Exception("CryptBinaryToString failed", -1)
-    return StrGet(&buf)
+    local bin, buf, size, len
+    try{
+        VarSetCapacity(bin, StrPut(string, "UTF-16") * 2) && len := StrPut(string, &bin, "UTF-16") - 1 
+        if !(DllCall("crypt32\CryptBinaryToString", "ptr", &bin, "uint", len*2, "uint", 0x1 | 0x40000000, "ptr", 0, "uint*", size))
+            throw Exception("CryptBinaryToString failed", -1)
+        VarSetCapacity(buf, size << 1, 0)
+        if !(DllCall("crypt32\CryptBinaryToString", "ptr", &bin, "uint", len*2, "uint", 0x1 | 0x40000000, "ptr", &buf, "uint*", size))
+            throw Exception("CryptBinaryToString failed", -1)
+        return StrGet(&buf, "UTF-16")
+    }catch err {
+        util_log(err)
+        return string
+    }
+}
+
+util_tryB64Decode(string)
+{
+    local buf, size
+    try{
+        if !(DllCall("crypt32\CryptStringToBinary", "ptr", &string, "uint", 0, "uint", 0x1, "ptr", 0, "uint*", size, "ptr", 0, "ptr", 0))
+            throw Exception("CryptStringToBinary failed", -1)
+        VarSetCapacity(buf, size*2, 0)
+        if !(DllCall("crypt32\CryptStringToBinary", "ptr", &string, "uint", 0, "uint", 0x1, "ptr", &buf, "uint*", size, "ptr", 0, "ptr", 0))
+            throw Exception("CryptStringToBinary failed", -1)
+        return StrGet(&buf, size*2, "UTF-16")
+    }catch err {
+        util_log(err)
+        return string
+    }
 }

@@ -519,3 +519,17 @@ a.dropdown-item:hover, button.dropdown-item:hover{
     background-color: #ff572d !important;
     color: white !important;
 }
+
+.is-70-page-height{
+    height: 70vh !important;
+}
+
+.is-full-width{
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+.is-full-height{
+    height: 100% !important;
+    max-height: 100% !important;
+}

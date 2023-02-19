@@ -16,17 +16,23 @@ class ActionEditor extends NeutronWindow {
     }
 
     show(ownerHwnd){
+        util_log("[ActionEditor] Showing '" this.actionConfig.Type "' ActionEditor window.")
         this.ownerHwnd:= ownerHwnd
         this.Gui(Format("+LabelUI_ +MinSize{:i}x{:i} +OwnDialogs +Owner{}", 685*UI_scale, 400*UI_scale, ownerHwnd))
-        base.Show(Format("w{:i} h{:i}",720*UI_scale,550*UI_scale), "MicMute")
+        base.Show(Format("w{:i} h{:i}",720*UI_scale,550*UI_scale), this.actionConfig.Type " action editor")
     }
 
     close(){
         this.Gui("+OwnDialogs")
-        MsgBox, 36, MicMute, Do you want to save the changes to this action
+        MsgBox, 36, MicMute, Do you want to save any changes to this action
+        IfMsgBox, Yes
+            return this.save()
         base.Destroy()
-        IfMsgBox, No
-            return this.exitCallback.Call("")
+        this.exitCallback.Call("")
+    }
+
+    save(){
+        base.Destroy()
         this.exitCallback.Call(this.actionConfig)
     }
 

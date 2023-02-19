@@ -37,7 +37,7 @@ global ICON_ID_APP:= 1000
 ;@Ahk2Exe-AddResource *10 %U_UI%\css\base.css
 ;@Ahk2Exe-AddResource *10 %U_UI%\css\dark.css
 ;@Ahk2Exe-AddResource *10 %U_UI%\css\codemirror.css
-;@Ahk2Exe-AddResource *10 %U_UI%\css\railscasts.css
+;@Ahk2Exe-AddResource *10 %U_UI%\css\codemirror_micmute.css
 
 class ResourcesManager {
     static RES_FOLDER:= A_ScriptDir . "\resources\"
@@ -57,7 +57,7 @@ class ResourcesManager {
               ,{ name:"base",file:"base.css"}
               ,{ name:"dark",file:"dark.css"}
               ,{ name:"codemirror",file:"codemirror.css"}
-              ,{ name:"railscasts",file:"railscasts.css"}]
+              ,{ name:"codemirror_micmute",file:"codemirror_micmute.css"}]
     jsFile:= [{ name:"codemirror",file:"codemirror.js"}
              ,{ name:"powershell",file:"powershell.js"}]
     __New(){
