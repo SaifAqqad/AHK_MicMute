@@ -1,9 +1,10 @@
 class ActionEditor extends NeutronWindow {
-    __New(actionConfig, exitCallback){
+    __New(actionConfig, exitCallback, sizeConfig){
         util_log("[ActionEditor] Creating '" actionConfig.Type "' ActionEditor window.")
         
         this.exitCallback:= exitCallback
         this.actionConfig:= actionConfig
+        this.sizeConfig:= sizeConfig
 
         features:= {"FEATURE_GPU_RENDERING": 0x1
             ,"FEATURE_BROWSER_EMULATION": 0x2AF8
@@ -18,8 +19,8 @@ class ActionEditor extends NeutronWindow {
     show(ownerHwnd){
         util_log("[ActionEditor] Showing '" this.actionConfig.Type "' ActionEditor window.")
         this.ownerHwnd:= ownerHwnd
-        this.Gui(Format("+LabelUI_ +MinSize{:i}x{:i} +OwnDialogs +Owner{}", 685*UI_scale, 400*UI_scale, ownerHwnd))
-        base.Show(Format("w{:i} h{:i}",720*UI_scale,550*UI_scale), this.actionConfig.Type " action editor")
+        this.Gui(Format("+LabelUI_ +MinSize{:i}x{:i} +OwnDialogs +Owner{}", this.sizeConfig.min.width, this.sizeConfig.min.height, ownerHwnd))
+        base.Show(Format("w{:i} h{:i}", this.sizeConfig.initial.width, this.sizeConfig.initial.height), this.actionConfig.Type " action editor")
     }
 
     close(){

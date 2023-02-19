@@ -38,6 +38,7 @@ label,
 code{
     color: #ff6920 !important;
     font-weight: 100 !important;
+    white-space: nowrap;
 }
 
 .text-orange{
@@ -295,6 +296,7 @@ label:hover>img#MicMute_icon {
 
 :-ms-input-placeholder {
     color: #9b9b9b !important;
+    font-style: italic !important;
 }
 
 input[type="text"].input-elem {

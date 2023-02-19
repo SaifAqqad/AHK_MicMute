@@ -28,8 +28,12 @@ class PowershellActionEditor extends ActionEditor {
     )
 
     __New(actionConfig, exitCallback){
-        base.__New(actionConfig, exitCallback)
+        this.sizeConfig:= {min: {width: 685*UI_scale, height: 400*UI_scale}
+        , initial: {width: 720*UI_scale, height: 550*UI_scale}}
         this.actionConfig:= actionConfig
+
+        base.__New(actionConfig, exitCallback, this.sizeConfig)
+
         this.load(resources_obj.htmlFile.PowershellActionEditor)
         this.loadCss()
         this.loadJs()

@@ -3,16 +3,124 @@
 
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Program action editor</title>
 </head>
 
 <body class="noselect" oncontextmenu="return false">
     <header class="title-bar-header">
-        <span class="title-bar" onmousedown="neutron.DragTitleBar()"></span>
-        <span class="title-btn title-btn-maximize" tabindex=0 aria-label="maximize" role="button" onclick="neutron.Maximize()">1</span>
-        <span class="title-btn title-btn-close" tabindex=0 aria-label="close" role="button" onclick="neutron.Close()">r</span>
+        <span class="title-bar" onmousedown="neutron.DragTitleBar()">
+            <svg class="mr-1" style='width:14px;height:14px' focusable='false' viewBox='0 -4 24 24'>
+                <path fill='currentColor' d="M21.7 18.6V17.6L22.8 16.8C22.9 16.7 23 16.6 22.9 16.5L21.9 14.8C21.9 14.7 21.7 14.7 21.6 14.7L20.4 15.2C20.1 15 19.8 14.8 19.5 14.7L19.3 13.4C19.3 13.3 19.2 13.2 19.1 13.2H17.1C16.9 13.2 16.8 13.3 16.8 13.4L16.6 14.7C16.3 14.9 16.1 15 15.8 15.2L14.6 14.7C14.5 14.7 14.4 14.7 14.3 14.8L13.3 16.5C13.3 16.6 13.3 16.7 13.4 16.8L14.5 17.6V18.6L13.4 19.4C13.3 19.5 13.2 19.6 13.3 19.7L14.3 21.4C14.4 21.5 14.5 21.5 14.6 21.5L15.8 21C16 21.2 16.3 21.4 16.6 21.5L16.8 22.8C16.9 22.9 17 23 17.1 23H19.1C19.2 23 19.3 22.9 19.3 22.8L19.5 21.5C19.8 21.3 20 21.2 20.3 21L21.5 21.4C21.6 21.4 21.7 21.4 21.8 21.3L22.8 19.6C22.9 19.5 22.9 19.4 22.8 19.4L21.7 18.6M18 19.5C17.2 19.5 16.5 18.8 16.5 18S17.2 16.5 18 16.5 19.5 17.2 19.5 18 18.8 19.5 18 19.5M12.3 22H3C1.9 22 1 21.1 1 20V4C1 2.9 1.9 2 3 2H21C22.1 2 23 2.9 23 4V13.1C22.4 12.5 21.7 12 21 11.7V6H3V20H11.3C11.5 20.7 11.8 21.4 12.3 22Z" />
+            </svg>
+            Program action editor
+        </span>
+        <span class="title-btn title-btn-maximize" tabindex=0 aria-label="maximize" role="button"
+              onclick="neutron.Maximize();this.blur()">1</span>
+        <span class="title-btn title-btn-close" tabindex=0 aria-label="close" role="button"
+              onclick="neutron.close();this.blur()">r</span>
     </header>
-    <div class="main">
-        <div class="container">
+
+    <div class="main is-full-height" style="overflow-y: hidden !important;">
+        <div class="container is-full-width is-full-height is-flex is-flex-direction-column is-justify-content-center">
+            <div class="mb-3">
+                <label for="Program" class="label title is-5 noselect mb-3">Program</label>
+                <div class="field has-addons">
+                    <div class="control is-expanded">
+                        <input class="input is-primary is-small input-elem" type="text" id="Program" placeholder="C:\Example.exe">
+                    </div>
+                    <div class="control">
+                        <button type="button" tabindex=0 class="button is-small is-primary"
+                                onclick="neutron.browsePrograms();this.blur()">
+                            <svg style="width:16px;height:16px" focusable="false" viewBox="0 0 24 24">
+                                <path fill='currentColor'
+                                      d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H13C12.59,21.75 12.2,21.44 11.86,21.1C11.53,20.77 11.25,20.4 11,20H6V4H13V9H18V10.18C18.71,10.34 19.39,10.61 20,11V8L14,2M20.31,18.9C21.64,16.79 21,14 18.91,12.68C16.8,11.35 14,12 12.69,14.08C11.35,16.19 12,18.97 14.09,20.3C15.55,21.23 17.41,21.23 18.88,20.32L22,23.39L23.39,22L20.31,18.9M16.5,19A2.5,2.5 0 0,1 14,16.5A2.5,2.5 0 0,1 16.5,14A2.5,2.5 0 0,1 19,16.5A2.5,2.5 0 0,1 16.5,19Z" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-5">
+                <div class="is-flex mb-2 is-align-content-center">
+                    <label for="Arguments" class="label title is-5 noselect mr-3">
+                        Arguments
+                    </label>
+                    <button type="button" tabindex=0 class="button is-small is-primary is-outlined"
+                            style="font-size: 0.6rem !important;" onclick="neutron.showHelpModal();this.blur()">
+                        <span class="icon">
+                            <svg style="width:18px;height:18px" focusable="false" viewBox="0 0 24 24">
+                                <path fill='currentColor' d="M10,19H13V22H10V19M12,2C17.35,2.22 19.68,7.62 16.5,11.67C15.67,12.67 14.33,13.33 13.67,14.17C13,15 13,16 13,17H10C10,15.33 10,13.92 10.67,12.92C11.33,11.92 12.67,11.33 13.5,10.67C15.92,8.43 15.32,5.26 12,5A3,3 0 0,0 9,8H6A6,6 0 0,1 12,2Z" />
+                            </svg>
+                        </span>
+                    </button>
+                </div>
+
+                <div class="field">
+                    <div class="control">
+                        <input class="input is-primary is-small input-elem" type="text" id="Arguments" placeholder='--myArg "${microphone.state}"'>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 is-flex is-justify-content-space-between mx-2">
+                <div class="is-flex">
+                    <button class="button is-danger is-outlined is-small"
+                            onclick="neutron.delete();this.blur()">Delete</button>
+                </div>
+                <div class="is-flex is-justify-content-flex-end">
+                    <button class="button is-primary is-small" onclick="neutron.save();this.blur()">Save</button>
+                    <button class="button is-primary is-outlined is-small ml-1"
+                            onclick="neutron.close();this.blur()">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="helpModal" class="custom-modal">
+        <style>
+            #helpModal li{
+                margin-top: 0.6rem;
+            }
+            #helpModal .card-content *{
+                -ms-user-select: text !important;
+            }
+        </style>
+        <div class="page-mask visible hidden" onclick="neutron.hideHelpModal();this.blur()"></div>
+        <div class="modal-card modal-contents visible hidden mx-0" style="height: 90vh;width: 75vw; overflow-y: hidden;">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Arguments</p>
+                <button class="delete" aria-label="close" onclick="neutron.hideHelpModal()"></button>
+            </header>
+            <div class="card mb-3 is-full-height" onkeydown="neutron.hideHelpModal(event)">
+                <div class="card-content is-full-height" style="overflow-y: auto;">
+                    <div class="content">
+                        <p>
+                            You can also use the following variables, which will be replaced with the actual values for the microphone:
+                        </p>
+                        <ul>
+                            <li><code>${microphone.name}</code></li>
+                            The microphone's name (example: <code>Headset Microphone</code>)
+                            <br>
+                            
+                            <li><code>${microphone.fullName}</code></li>
+                            The microphone's full name, including the controller's name (example: <code>Headset Microphone (Razer Barracuda X)</code>)
+                            <br>
+                            
+                            <li><code>${microphone.state}</code></li>
+                            The current state of the microphone (<code>Muted</code> or <code>Online</code>)
+                            <br>
+                            
+                            <li><code>${microphone.isMuted}</code></li>
+                            Whether the microphone is muted or not (<code>true</code> or <code>false</code>)
+                            <br>
+                            
+                            <li><code>${microphone.hotkeyTriggered}</code></li>
+                            Whether the hotkey was triggered or not (<code>true</code> or <code>false</code>).<br>if this is false, the microphone was un/muted by an external app
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </body>
