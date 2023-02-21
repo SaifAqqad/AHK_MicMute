@@ -26,6 +26,6 @@ class PowershellAction extends MicrophoneAction {
 
     _formatAction(){
         script := util_tryB64Decode(this.Script)
-        return "& {{}" StrReplace(this._substituteVarIndexes(script), "`r`n", ";") "{}}"
+        return "& {{}`r`n" this._substituteVarIndexes(script) "`r`n{}}"
     }
 }
