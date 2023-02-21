@@ -761,7 +761,6 @@ UI_onSaveMicAction(actionIndex, actionConfig){
     if(!actionConfig)
         return
     
-    UI_profileIsDirty:= 1
     if(actionConfig == -1){
         current_profile.MicrophoneActions.RemoveAt(actionIndex)
     }else{

@@ -31,6 +31,7 @@ global ICON_ID_APP:= 1000
 ;@Ahk2Exe-AddResource *10 %U_UI%\html\Updater.html
 ;@Ahk2Exe-AddResource *10 %U_UI%\html\about.html
 ;@Ahk2Exe-AddResource *10 %U_UI%\html\PowershellActionEditor.html
+;@Ahk2Exe-AddResource *10 %U_UI%\html\ProgramActionEditor.html
 ;@Ahk2Exe-AddResource *10 %U_UI%\js\codemirror.js
 ;@Ahk2Exe-AddResource *10 %U_UI%\js\powershell.js
 ;@Ahk2Exe-AddResource *10 %U_UI%\css\bulma.css
