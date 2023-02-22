@@ -28,8 +28,7 @@ class PowershellActionEditor extends ActionEditor {
     )
 
     __New(actionConfig, exitCallback){
-        this.sizeConfig:= {min: {width: 685*UI_scale, height: 400*UI_scale}
-        , initial: {width: 720*UI_scale, height: 550*UI_scale}}
+        this.sizeConfig:= {min: {width: 685, height: 400}, initial: {width: 720, height: 550}}
         this.actionConfig:= actionConfig
 
         base.__New(actionConfig, exitCallback, this.sizeConfig)
@@ -86,6 +85,12 @@ class PowershellActionEditor extends ActionEditor {
 
     save(){
         script:= Trim(this.codeMirror.getValue("`r`n"))
+
+        if(!script){
+            base.Destroy()
+            this.exitCallback.Call("")
+        }
+
         this.actionConfig.Script:= B64.encode(script)
         base.save()
     }

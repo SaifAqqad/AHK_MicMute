@@ -19,8 +19,8 @@ class ActionEditor extends NeutronWindow {
     show(ownerHwnd){
         util_log("[ActionEditor] Showing '" this.actionConfig.Type "' ActionEditor window.")
         this.ownerHwnd:= ownerHwnd
-        this.Gui(Format("+LabelUI_ +MinSize{:i}x{:i} +OwnDialogs +Owner{}", this.sizeConfig.min.width, this.sizeConfig.min.height, ownerHwnd))
-        base.Show(Format("w{:i} h{:i}", this.sizeConfig.initial.width, this.sizeConfig.initial.height), this.actionConfig.Type " action editor")
+        this.Gui(Format("+LabelUI_ +MinSize{:i}x{:i} +OwnDialogs +Owner{}", this.sizeConfig.min.width*UI_scale, this.sizeConfig.min.height*UI_scale, ownerHwnd))
+        base.Show(Format("w{:i} h{:i}", this.sizeConfig.initial.width*UI_scale, this.sizeConfig.initial.height*UI_scale), this.actionConfig.Type " action editor")
     }
 
     close(){

@@ -1,7 +1,6 @@
 class ProgramActionEditor extends ActionEditor {
     __New(actionConfig, exitCallback) {
-        this.sizeConfig:= {min: {width: 685*UI_scale, height: 400*UI_scale}
-        , initial: {width: 720*UI_scale, height: 400*UI_scale}}
+        this.sizeConfig:= {min: {width: 685, height: 400}, initial: {width: 720, height: 400}}
         this.actionConfig:= actionConfig
 
         base.__New(actionConfig, exitCallback, this.sizeConfig)
@@ -15,14 +14,20 @@ class ProgramActionEditor extends ActionEditor {
     }
 
     save(){
-        this.actionConfig.Program:= this.qs("#Program").value
-        this.actionConfig.Args:= this.qs("#Arguments").value
+        this.actionConfig.Program:= Trim(this.qs("#Program").value)
+        this.actionConfig.Args:= Trim(this.qs("#Arguments").value)
+
+        if(!this.actionConfig.Program){
+            base.Destroy()
+            this.exitCallback.Call("")
+        }
+
         base.save()
     }
 
     browsePrograms(){
         this.Gui("+OwnDialogs +Disabled")
-        FileSelectFile, fileOut, 1, % A_Desktop, MicMute - Select a program, Programs (*.exe)
+        FileSelectFile, fileOut, 1, % A_Desktop, Select a program - MicMute, Programs (*.exe)
         this.Gui("-OwnDialogs -Disabled")
         if (fileOut) {
             this.qs("#Program").value:= fileOut
