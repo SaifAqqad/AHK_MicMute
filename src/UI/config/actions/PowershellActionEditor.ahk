@@ -63,7 +63,7 @@ class PowershellActionEditor extends ActionEditor {
             goto checkJsLoaded
         }
         
-        script:= this.actionConfig.Script? util_tryB64Decode(this.actionConfig.Script) : ""
+        script:= this.actionConfig.Script? B64.decode(this.actionConfig.Script) : ""
 
         codeMirrorConfig := JSON.Dump
         ( Join LTrim ; ahk
@@ -86,7 +86,7 @@ class PowershellActionEditor extends ActionEditor {
 
     save(){
         script:= Trim(this.codeMirror.getValue("`r`n"))
-        this.actionConfig.Script:= util_tryB64Encode(script)
+        this.actionConfig.Script:= B64.encode(script)
         base.save()
     }
 

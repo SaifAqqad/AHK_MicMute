@@ -11,7 +11,7 @@ class PowershellAction extends MicrophoneAction {
 
     run(controller) {
         script := Format(this.ActionFormattedText, this._getControllerParams(controller)*)
-        formattedCommand := Format("""{1}"" {2} -EncodedCommand ""{3}""", this.PowershellPath, this.DefaultArgs, util_tryB64Encode(script))
+        formattedCommand := Format("""{1}"" {2} -EncodedCommand ""{3}""", this.PowershellPath, this.DefaultArgs, B64.encode(script))
         
         try {
             Run, % formattedCommand, % A_ScriptDir, Hide
@@ -25,7 +25,7 @@ class PowershellAction extends MicrophoneAction {
     }
 
     _formatAction(){
-        script := util_tryB64Decode(this.Script)
+        script := B64.decode(this.Script)
         return "& {{}`r`n" this._substituteVarIndexes(script) "`r`n{}}"
     }
 }

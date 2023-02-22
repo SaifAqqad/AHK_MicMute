@@ -26,6 +26,7 @@ SetWorkingDir %A_ScriptDir%
 #Include, <WinUtils>
 #Include, <StackSet>
 #Include, <SoundPlayer>
+#Include, <B64>
 
 ; ahkpm
 #Include, %A_ScriptDir%\..\ahkpm-modules\github.com\

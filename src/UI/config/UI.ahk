@@ -784,7 +784,7 @@ UI_onRefreshMicActions(neutron:=""){
 UI_getActionText(action){
     switch action.Type {
         case "Powershell":
-            script:= util_tryB64Decode(action.Script)
+            script:= B64.decode(action.Script)
             script:= Trim(StrReplace(script, "`r`n"))
             if(StrLen(script) >= 11)
                 return SubStr(script, 1, 12) . "&#x2026;"
