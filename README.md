@@ -16,10 +16,11 @@
 
    * Set up multiple profiles and link them to apps/games
    * Control multiple microphones simultaneously 
-   * Use separate hotkeys for Mute/Unmute or a single toggle/push-to-talk hotkey
-   * AFK timeout (auto mute when idling for longer than a specific time interval)
-   * Optional sound and on-screen feedback with ability to use custom sounds
+   * Use separate hotkeys for Mute/Unmute or a single toggle/push-to-talk/push-to-mute hotkey
+   * AFK timeout - Automatically mutes the microphone when you're AFK
+   * Customizable sound and on-screen feedback
    * Always-on-top overlay to show the microphone's state
+   * Run custom scripts/programs when muting/unmuting the microphone
    * Voicemeeter integration
 
 ## Installation
@@ -64,12 +65,12 @@ scoop install micmute
 <hr>
 
 ### Hotkey options
-| Option            | Description                                                                                                                                                      |
-|-------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Passthrough       | Hotkey presses will passthrough to the system (They won't be exclusive to MicMute).                                                                              |
-| Wildcard          | Trigger the hotkey even if it's pressed with extra modifiers/keys.                                                                                               |
+|      Option       | Description                                                                                                                                                      |
+| :---------------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|    Passthrough    | Hotkey presses will passthrough to the system (They won't be exclusive to MicMute).                                                                              |
+|     Wildcard      | Trigger the hotkey even if it's pressed with extra modifiers/keys.                                                                                               |
 | Neutral modifiers | MicMute won't differentiate between Left and Right modifiers (i.e Left/Right shift will both be Shift). This option should be set *before* recording the hotkey. |
-| Hybrid PTT        | Turns a PTT hotkey into a Hybrid PTT/Toggle hotkey (Long press -> PTT, short press -> toggle).                                                                   |
+|    Hybrid PTT     | Turns a PTT hotkey into a Hybrid PTT/Toggle hotkey (Long press -> PTT, short press -> toggle).                                                                   |
 <hr>
 
 ### Feedback options
@@ -119,12 +120,43 @@ Show the microphone's state in an always-on-top overlay.
     To use this feature, turn on the option in the config UI, then place the icons (`ico`/`png`/`jpeg`) in the same folder as `MicMute.exe` and rename them as:  
     -  Mute icon: `overlay_mute`
     -  Unmute icon: `overlay_unmute`
-   
-    <sub>**Avoid using icons that have a gray `#232323` color**</sub>
 <hr>
 
 ### Linked applications
 Link a profile to an app/game, when the app becomes visible (not minimized or hidden), MicMute will automatically switch to that profile, when the app is minimized/hidden/closed, MicMute will switch back to the default profile.
+
+### Microphone actions
+Run programs and powershell scripts when muting/unmuting the microphone(s).
+<details>
+ <summary>Screenshot</summary>
+
+ ![Microphone actions](./screenshots/configwindow_6.png)
+</details>
+
+#### 1. Program action:
+ Run any program (with optional arguments) when muting/unmuting the microphone(s).
+
+ You can also use the following variables in the arguments, which will be replaced with the actual values for the microphone:
+
+  |            Variable             | Description                                                                                                                                                                                                                 |
+  | :-----------------------------: | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+  |      `${microphone.name}`       | The microphone's name (example: `Headset Microphone`). <br> When using **All Microphones**, this will only contain the word `Microphones`                                                                                   |
+  |    `${microphone.fullName}`     | The microphone's full name, including the controller's name (example: `Headset Microphone (Razer Barracuda X)`). <br> When using **All Microphones**, this will contain the full name of every microphone seperated by `, ` |
+  |      `${microphone.state}`      | The current state of the microphone (`Muted` or `Online`)                                                                                                                                                                   |
+  |     `${microphone.isMuted}`     | Whether the microphone is muted or not (`true` or `false`)                                                                                                                                                                  |
+  | `${microphone.hotkeyTriggered}` | Whether the hotkey was triggered or not (`true` or `false`). <br> if this is `false`, the microphone was muted/umuted externally (by windows or another app)                                                                |
+
+#### 2. Powershell action:
+Run a powershell script when muting/unmuting the microphone(s).
+
+You can use the same variables as the program action (and you can just insert the `Microphone Data` snippet in the editor to use them).
+*  <details>
+    <summary>Screenshot</summary>
+
+    ![Powershell action editor](./screenshots/configwindow_7.png)
+   </details>
+
+This action works by encoding the script using base64 (UTF-16LE) and then passing it to powershell using the `-EncodedCommand` parameter, this avoids the need to create a temp file to run the script and even avoids any issues related to escaping special characters.
 <hr>
 
 ### Global options
@@ -145,10 +177,10 @@ Prevent other apps from changing the microphone's state (i.e mute/unmute the mic
 #### 5. Voicemeeter integration
 You can control Voicemeeter's inputs and outputs using MicMute, after turning on the option, refresh the microphones list and you should see voicemeeter's inputs (strips) and outputs (buses) in the microphone dropdown.
 <details>
-  <summary>Image</summary>
+  <summary>Screenshot</summary>
 
   ![Image](./screenshots/configwindow_5.png)
-  </details>
+</details>
 
 By default, MicMute will use the bus/strip's `mute` property, in the case of a strip, it can be set to any other property (`A1`, `A3`, `B3`, etc..) by changing the `VMRStripProperty` value in the [config file](#editing-the-config-file).
 
@@ -181,62 +213,14 @@ When using this feature, the following applies:
  
 
 ## Editing the config file
- Hold shift when asked to setup a profile or when clicking "Edit configuration" from the tray menu, and the config file will open in the default JSON editor
+Hold <kbd>Shift</kbd> when clicking **Edit configuration** in the tray menu, and the config file will open in the default JSON editor
 
-```json
-//config.json example 
-{
-	"AllowUpdateChecker": 1,
-	"DefaultProfile": "Default",
-	"ForceMicrophoneState": 0,
-	"MuteOnStartup": 1,
-	"PreferTheme": -1,
-	"Profiles": [
-		{
-			"afkTimeout": 0,
-			"ExcludeFullscreen": 0,
-			"LinkedApp": "",
-			"Microphone": [
-				{
-					"HybridPTT": 0,
-					"MuteHotkey": "*RShift",
-					"Name": "Microphone (AmazonBasics Desktop Mini Mic)",
-					"PushToTalk": 0,
-					"UnmuteHotkey": "*RShift",
-					"VMRStripProperty": ""
-				}
-			],
-			"OnscreenFeedback": 0,
-			"OnscreenOverlay": 1,
-			"OSDPos": {
-				"x": -1,
-				"y": -1
-			},
-			"OverlayPos": {
-				"x": 2318,
-				"y": 429
-			},
-			"OverlayShow": "2",
-			"OverlaySize": "59",
-			"OverlayTheme": "1",
-			"OverlayUseCustomIcons": 1,
-			"ProfileName": "Default",
-			"PTTDelay": 100,
-			"SoundFeedback": 1,
-			"SoundFeedbackDevice": "Default",
-			"SoundFeedbackUseCustomSounds": 0,
-			"UpdateWithSystem": 1
-		}
-	],
-	"SwitchProfileOSD": 1,
-	"VoicemeeterIntegration": 1,
-	"VoicemeeterPath": ""
-}
-```
+## Accessing the logs
+Hold <kbd>Shift</kbd> when clicking **Help** in the tray menu, and the logs window will open.
 
 ## CLI arguments
 | Argument                    | Description                                                                         |
-|-----------------------------|-------------------------------------------------------------------------------------|
+| --------------------------- | ----------------------------------------------------------------------------------- |
 | `/profile=<profile name>`   | Startup with a specific profile.                                                    |
 | `/noUI`                     | Disable the configuration UI completely. This decreases memory usage by almost 60%. |
 | `/debug`                    | Add shortcuts to `ListVars`, `ListHotkeys` and `View Log`  in the tray menu.        |
@@ -293,12 +277,12 @@ ahk2exe.exe /in ".\src\MicMute.ahk" /out ".\src\MicMute.exe";
 ## Libraries and resources used
 
 | Library                                                               | License                                                                        |
-|-----------------------------------------------------------------------|--------------------------------------------------------------------------------|
+| --------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
 | [Material Design icons](https://github.com/Templarian/MaterialDesign) | [Apache 2.0](https://github.com/Templarian/MaterialDesign/blob/master/LICENSE) |
 | [BASS audio library](https://www.un4seen.com)                         | [License](https://www.un4seen.com/#license)                                    |
 | [VA.ahk](https://github.com/SaifAqqad/VA.ahk)                         | [License](https://github.com/SaifAqqad/VA.ahk/blob/master/LICENSE)             |
 | [VMR.ahk](https://github.com/SaifAqqad/VMR.ahk)                       | [License](https://github.com/SaifAqqad/VMR.ahk/blob/master/LICENSE)            |
-| [mmikeww/AHKv2-Gdip](https://github.com/mmikeww/AHKv2-Gdip)           | [License](https://www.autohotkey.com/boards/viewtopic.php?t=6517)             |
+| [mmikeww/AHKv2-Gdip](https://github.com/mmikeww/AHKv2-Gdip)           | [License](https://www.autohotkey.com/boards/viewtopic.php?t=6517)              |
 | [Bulma CSS framework](https://bulma.io/)                              | [MIT](https://github.com/jgthms/bulma/blob/master/LICENSE)                     |
 | [G33kDude/cJson.ahk](https://github.com/G33kDude/cJson.ahk)           | [MIT](https://github.com/G33kDude/cJson.ahk/blob/main/LICENSE)                 |
 | [G33kDude/Neutron.ahk](https://github.com/G33kDude/Neutron.ahk)       | [MIT](https://github.com/G33kDude/Neutron.ahk/blob/master/LICENSE)             |
