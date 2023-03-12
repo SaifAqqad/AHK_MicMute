@@ -147,13 +147,36 @@ Run programs and powershell scripts when muting/unmuting the microphone(s).
   | `${microphone.hotkeyTriggered}` | Whether the hotkey was triggered or not (`true` or `false`). <br> if this is `false`, the microphone was muted/umuted externally (by windows or another app)                                                                |
 
 #### 2. Powershell action:
-Run a powershell script when muting/unmuting the microphone(s).
+Run a powershell script when muting/unmuting the microphone(s), This can be used for ***anything***, for example, you could send an http request to turn on/off a connected light with [Home Assistant](https://developers.home-assistant.io/docs/api/rest/#actions) or send a notification to your phone with [ntfy](https://docs.ntfy.sh/).
 
-You can use the same variables as the program action (and you can just insert the `Microphone Data` snippet in the editor to use them).
+You can use the same variables as the program action (and you can insert the '**Microphone Data**' snippet in the editor to use them).
 *  <details>
     <summary>Screenshot</summary>
 
     ![Powershell action editor](./screenshots/configwindow_7.png)
+   </details>
+
+*  <details>
+    <summary>HTTP request example</summary>
+    <br>
+
+    This example sends a notification using [ntfy](https://ntfy.sh/).
+    ```powershell
+   $microphone = @{
+       name = '${microphone.name}';
+       state = '${microphone.state}';
+   };
+
+   $ntfyUrl = "https://ntfy.sh";
+   $ntfyBody = @{
+      topic = 'your topic here';
+      message = "$($microphone.name) $($microphone.state)";
+      title = 'MicMute Alert';
+      priority = 4;
+   } | ConvertTo-Json;
+
+   Invoke-RestMethod -Method Post -Uri $ntfyUrl -Body $ntfyBody -ContentType 'application/json';
+    ```
    </details>
 
 This action works by encoding the script using base64 (UTF-16LE) and then passing it to powershell using the `-EncodedCommand` parameter, this avoids the need to create a temp file to run the script and even avoids any issues related to escaping special characters.
