@@ -10,6 +10,8 @@ class Config {
     VoicemeeterIntegration:=0
 
     __New(p_DefaultProfile:=""){
+        ; Set Json options
+        JSON.EmptyObjectsAsArrays:= 1
         if(!FileExist(A_ScriptDir "\config.json") || util_IsFileEmpty(A_ScriptDir "\config.json")){
             if(FileExist(A_ScriptDir "\config.ini")){
                 isFirstLaunch:=0

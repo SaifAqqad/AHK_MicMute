@@ -27,6 +27,7 @@ SetWorkingDir %A_ScriptDir%
 #Include, <StackSet>
 #Include, <SoundPlayer>
 #Include, <B64>
+#Include, <AuraSync>
 
 ; ahkpm
 #Include, %A_ScriptDir%\..\ahkpm-modules\github.com\
@@ -122,8 +123,6 @@ if(!arg_noUI)
     UI_create(Func("reloadMicMute"))
 ; initilize micmute
 initilizeMicMute(arg_profile)
-; export the processed config object
-config_obj.exportConfig()
 OnExit(Func("exitMicMute"), -1)
 ; listen for sys theme changes
 OnMessage(WM_SETTINGCHANGE, "updateSysTheme")
@@ -138,7 +137,7 @@ A_startupTime:= A_TickCount - A_startupTime
 util_log("[Main] MicMute startup took " A_startupTime "ms")
 
 
-initilizeMicMute(default_profile:=""){
+initilizeMicMute(default_profile:="", exportConfig:=1){
     util_log("[Main] Initilizing MicMute")
     ;make sure hotkeys are disabled before reinitilization
     if(mic_controllers)
@@ -168,6 +167,9 @@ initilizeMicMute(default_profile:=""){
         if(profile.LinkedApp)
             watched_profiles.Push(profile)
     }
+    ; export the processed config object
+    if(exportConfig)
+        config_obj.exportConfig()
     ;enable linked apps timer
     SetTimer, checkLinkedApps, % watched_profiles.Length()? 3000 : "Off"
     ;enable checkConfigDiff timer 
@@ -386,7 +388,7 @@ checkConfigDiff(){
         util_log("[Main] Detected changes to config file")
         last_modif_time:= ""
         setTimer, checkConfigDiff, Off
-        initilizeMicMute(current_profile.ProfileName)
+        initilizeMicMute(current_profile.ProfileName, false)
     }
     last_modif_time:= modif_time
 }
