@@ -122,6 +122,8 @@ UI_setProfile(_neutron, p_profile){
     ui_obj.doc.getElementById("OverlayTheme").value:= current_profile.OverlayTheme
     ui_obj.doc.getElementById("OverlaySize").value:= current_profile.OverlaySize
     UI_onUpdateOverlaySize(current_profile.OverlaySize)
+    ui_obj.doc.getElementById("VolumeLock").value:= current_profile.MicrophoneVolumeLock
+    UI_onUpdateVolumeLock(current_profile.MicrophoneVolumeLock)
     ui_obj.doc.getElementById("ExcludeFullscreen").checked:= current_profile.ExcludeFullscreen
     ui_obj.doc.getElementById("OSDPos_x").value:= current_profile.OSDPos.x==-1? "" : current_profile.OSDPos.x
     ui_obj.doc.getElementById("OSDPos_y").value:= current_profile.OSDPos.y==-1? "" : current_profile.OSDPos.y
@@ -246,6 +248,7 @@ UI_onSaveProfile(neutron, noReset:=0){
     current_profile.PTTDelay:= ui_obj.doc.getElementById("PTTDelay").value+0
     current_profile.OSDPos.x:= (val:= ui_obj.doc.getElementById("OSDPos_x").value)? val : -1
     current_profile.OSDPos.y:= (val:= ui_obj.doc.getElementById("OSDPos_y").value)? val : -1
+    current_profile.MicrophoneVolumeLock:= ui_obj.doc.getElementById("VolumeLock").value+0
     current_profile.Microphone:= Array()
     for mic, hp in hotkey_panels {
         if(!hp.mute.hotkey && !hp.unmute.hotkey)
@@ -461,6 +464,13 @@ UI_onUpdateDelay(delay){
 
 UI_onUpdateOverlaySize(size){
     ui_obj.doc.getElementByID("OverlaySize_text").value:= size . " px"
+}
+
+UI_onUpdateVolumeLock(volume){
+    if(volume == 0)
+        ui_obj.doc.getElementByID("VolumeLock_text").value:= "Disabled"
+    else
+        ui_obj.doc.getElementByID("VolumeLock_text").value:= volume . " %"
 }
 
 UI_onHotkeyType(type, delay:=0){

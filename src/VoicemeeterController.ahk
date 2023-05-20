@@ -16,7 +16,7 @@ class VoicemeeterController extends MicrophoneController{
     )
     , activeControllers:=[]
 
-    __New(mic_obj, voicemeeter_path="", ptt_delay:=0, force_current_state:=0, feedback_callback:="", state_callback:=""){
+    __New(mic_obj, voicemeeter_path="", ptt_delay:=0, force_current_state:=0, volume_lock:=0, feedback_callback:="", state_callback:=""){
         this.initVoicemeeter(voicemeeter_path)
         microphoneMatch:=""
         RegExMatch(mic_obj.Name, this.BUS_STRIP_REGEX, microphoneMatch)
@@ -35,6 +35,7 @@ class VoicemeeterController extends MicrophoneController{
         }
         this.ptt_key:=""
         this.ptt_delay:= ptt_delay
+        this.volumeLock:= volume_lock
         this.force_current_state:= force_current_state
         this.feedback_callback:= feedback_callback
         this.state_callback:= state_callback
@@ -59,15 +60,24 @@ class VoicemeeterController extends MicrophoneController{
     onUpdateState(){
         newState:= !!this.getStateProp()
         Critical, On
+
+        ; Force microphone volume lock
+        if(this.volumeLock > 0 && this.getVolume() != this.volumeLock)
+            this.setVolume(this.volumeLock)
+
+        ; Force microphone mute state
         if(this.force_current_state && this.state != newState)
             this.setStateProp(this.state)
         else
             this.state:= newState
+
         this.state_callback.Call(this)
         if(this.shouldCallFeedback){
+            ; Check if the current controller is the first registered for the current hotkey
             hotkeyId:= this.state? this.muteHotkeyId : (this.unmuteHotkeyId? this.unmuteHotkeyId : this.muteHotkeyId)
-            if(hotkeyId>1)
+            if (hotkeyId > 1)
                 return
+
             this.shouldCallFeedback:=0
             this.feedback_callback.Call(this)
         }
@@ -81,6 +91,22 @@ class VoicemeeterController extends MicrophoneController{
     setStateProp(state){
         this.microphone[this.prop]:= state ^ this.isInvertedProp
         return state
+    }
+
+    setMuteStateVA(state, _mic){
+        this.setStateProp(state)
+    }
+
+    getVolume(){
+        return this.microphone.getGainPercentage()
+    }
+
+    setVolume(volume){
+        return this.microphone.getdB(this.microphone.setGainPercentage(volume))
+    }
+
+    setVolumeVA(volume, _mic){
+        this.setVolume(volume)
     }
     
     enableCallback(){

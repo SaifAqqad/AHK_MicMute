@@ -2,7 +2,7 @@ Class MicrophoneController {
     static genericStateString:= {0:"Microphone Online",1:"Microphone Muted",-1:"Microphone Unavailable"}
         , isUsingMultipleMicrophones:= 0
 
-    __New(mic_obj, ptt_delay:=0, force_current_state:=0, feedback_callback:="", state_callback:=""){
+    __New(mic_obj, ptt_delay:=0, force_current_state:=0, volume_lock:=0, feedback_callback:="", state_callback:=""){
         ; Mic config
         this.microphone:= mic_obj.Name
         this.muteHotkey:= mic_obj.MuteHotkey
@@ -16,6 +16,7 @@ Class MicrophoneController {
         this.force_current_state:= force_current_state
         this.feedback_callback:= feedback_callback
         this.state_callback:= state_callback
+        this.volumeLock:= volume_lock
 
         this.state:=0
         this.ptt_key:=""
@@ -142,6 +143,19 @@ Class MicrophoneController {
         return result
     }
 
+    setVolumeVA(vol, mic){
+        ; Use cached microphone id
+        result := VA_SetMasterVolume(vol,, this.getMicId(mic))
+        if result in 0,1 ; success
+            return 0
+
+        ; Update the cached microphone id and retry
+        result := VA_SetMasterVolume(vol,, this.microphoneIds[mic]:= VA_GetDevice(mic))
+        if result in 0,1 ; success
+            return 0
+        return result
+    }
+
     getMicId(micName){
         ; Prevent caching the default device (which can change)
         if(micName == "capture")
@@ -155,22 +169,29 @@ Class MicrophoneController {
 
     onUpdateState(micName:= "", callback:=""){        
         Critical, On
-        ; set the microphone that will handle callbacks
+        ; Set the microphone that will handle callbacks
         if(callback && !this.callbackMic)
             this.callbackMic:= micName
+        
+        ; Called by VA
+        if(callback){
+            ; Force microphone volume lock
+            volume:= Format("{:d}", callback.MasterVolume*100)+0
+            if(this.volumeLock > 0 && volume != this.volumeLock)
+                this.setVolumeVA(this.volumeLock, micName)
 
-        if(callback){ ; called by VA
+            ; Force microphone mute state
             if(this.force_current_state && this.state != callback.Muted)
                 return this.setMuteStateVA(this.state, micName)
             else
                 this.state:= callback.Muted
-        }else{ ; called manually
+        } else {
+            ; Called manually
             micName:= this.isMicrophoneArray? this.microphone[1] : this.microphone
             this.state:= VA_GetMasterMute(this.getMicId(micName))+0
         }
 
-        ; check if the current microphone
-        ; is the one that should handle callbacks
+        ; Check if the current microphone is the one that should handle callbacks
         if(micName == this.callbackMic) {
             this.state_callback.Call(this)
 
@@ -197,8 +218,8 @@ Class MicrophoneController {
     }
 
     enableController(){
-        Try{
-            if(HotkeyPanel.hotkeyToKeys(this.muteHotkey,1)="")
+        Try {
+            if (HotkeyPanel.hotkeyToKeys(this.muteHotkey,1)="")
                 Throw, "Invalid hotkeys"
             if (this.muteHotkey=this.unmuteHotkey){
                 if(this.isPushToTalk){
@@ -222,15 +243,26 @@ Class MicrophoneController {
                 this.muteHotkeyId:= HotkeyManager.register(this.muteHotkey, ObjBindMethod(this,"setMuteState",1), this)
                 this.unmuteHotkeyId:= HotkeyManager.register(this.unmuteHotkey, ObjBindMethod(this,"setMuteState",0), this)
             }
-        }catch{
+        } catch {
             Throw, Format("Invalid hotkeys in profile '{}'",current_profile.ProfileName)
         }
+
+        ; Check if volume lock is enabled and set the microphone's initial volume
+        if (this.volumeLock > 0) {
+            if (this.isMicrophoneArray) {
+                for i, mic in this.Microphone
+                    this.setVolumeVA(this.volumeLock, mic)
+            } else {
+                this.setVolumeVA(this.volumeLock, this.microphone)
+            }
+        }
+
         this.enableCallback()
         util_log(Format("[MicrophoneController] Enabled: {}", util_toString(this.microphoneName)))
     }
 
     UpdateMicArray(wParam:="", _lParam:=""){
-        if(wParam != 0x0007 || !this.isMicrophoneArray)
+        if (wParam != 0x0007 || !this.isMicrophoneArray)
             return
         util_log("[MicrophoneController] Updating Microphones")
         this.microphone:= Array()
