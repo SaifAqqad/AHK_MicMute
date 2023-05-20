@@ -16,7 +16,7 @@
     "github.com/G33kDude/Neutron.ahk": "branch:master",
     "github.com/G33kDude/cJson.ahk": "branch:main",
     "github.com/SaifAqqad/VA.ahk": "1.x.x",
-    "github.com/SaifAqqad/VMR.ahk": "^1.1.0",
+    "github.com/SaifAqqad/VMR.ahk": "1.x.x",
     "github.com/mmikeww/AHKv2-Gdip": "branch:master"
   }
 }
