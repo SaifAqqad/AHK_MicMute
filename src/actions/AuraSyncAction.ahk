@@ -1,7 +1,7 @@
 #Requires AutoHotkey v1.1.35+
 
 class AuraSyncAction extends MicrophoneAction {
-    static TypeName := "AuraSync", AuraServiceFilePath:= A_ScriptDir "\Lib\AuraService.ahk"
+    static TypeName := "AuraSync", AuraServiceFilePath:= A_ScriptDir "\AuraService.ahk"
         , AuraServiceName := "AuraService"
         , AuraServicePID:=""
         , AuraServiceHwnd:=""

@@ -7,7 +7,7 @@ global ICON_ID_APP:= 1000
 , ICON_ID_WHITE:= 10
 , ICON_ID_BLACK:= 20
 
-;@Ahk2Exe-AddResource *10 %A_ScriptDir%\Lib\AuraService.ahk, AuraService
+;@Ahk2Exe-AddResource *10 %A_ScriptDir%\AuraService.ahk, AuraService
 ;@Ahk2Exe-AddResource *10 Lib\bass.dll
 ; app icons
 ;@Ahk2Exe-AddResource %U_Res%\icons\1000.png, icon.png

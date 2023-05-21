@@ -1,8 +1,8 @@
 #Requires AutoHotkey v1.1.35+
 
-#Include, %A_ScriptDir%\IPC.ahk
-#Include, %A_ScriptDir%\AuraSync.ahk
-#Include, %A_ScriptDir%\..\..\ahkpm-modules\github.com\G33kDude\cJson.ahk\Dist\JSON.ahk
+#Include, <IPC>
+#Include, <AuraSync>
+#Include, %A_ScriptDir%\..\ahkpm-modules\github.com\G33kDude\cJson.ahk\Dist\JSON.ahk
 
 #NoEnv
 #Persistent
