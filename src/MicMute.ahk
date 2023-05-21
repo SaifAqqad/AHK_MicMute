@@ -11,7 +11,7 @@
 ;@Ahk2Exe-SetVersion %U_Version%
 ;@Ahk2Exe-SetName MicMute
 ;@Ahk2Exe-SetDescription MicMute
-;@Ahk2Exe-Bin Unicode 64*
+;@Ahk2Exe-Base ..\AutoHotkeyU64.exe
 
 #NoEnv
 SetBatchLines -1
