@@ -32,7 +32,9 @@ global ui_obj, about_obj, current_profile, hotkey_panels, current_hp, action_edi
                   ,{ selector: ".hybrid_ptt-label"
                      , string: "Short press will toggle the microphone"}
                   ,{ selector: ".mic-actions-label"
-                     , string: "Run programs/scripts when muting/unmuting the microphone"}]
+                     , string: "Run programs/scripts when muting/unmuting the microphone"}
+                  ,{ selector: ".volume-lock-label"
+                     , string: "Lock the microphone's volume to a specific value"}]
 
 UI_create(p_onExitCallback){
     util_log("[UI] Creating 'config' window")
