@@ -27,7 +27,7 @@ SetWorkingDir %A_ScriptDir%
 #Include, <StackSet>
 #Include, <SoundPlayer>
 #Include, <B64>
-#Include, <AuraSync>
+#Include, <IPC>
 
 ; ahkpm
 #Include, %A_ScriptDir%\..\ahkpm-modules\github.com\
@@ -49,6 +49,7 @@ SetWorkingDir %A_ScriptDir%
 #Include, MicrophoneAction.ahk
 #Include, PowershellAction.ahk
 #Include, ProgramAction.ahk
+#Include, AuraSyncAction.ahk
 
 #Include, %A_ScriptDir%\config
 #Include, ProfileTemplate.ahk
