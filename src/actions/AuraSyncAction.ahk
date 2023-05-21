@@ -14,7 +14,6 @@ class AuraSyncAction extends MicrophoneAction {
 
         if (!AuraSyncAction.AuraServicePID) {
             this.initAuraService()
-            OnExit(ObjBindMethod(this, "_stopAuraService"))
         }
     }
 
@@ -24,7 +23,7 @@ class AuraSyncAction extends MicrophoneAction {
             return
         }
 
-        if (!controller.shouldCallFeedback)
+        if (this.releaseDelay > 0 && !controller.shouldCallFeedback)
             return
 
         pushedDelay := controller.isPushToTalk? 0 : this.releaseDelay
@@ -36,7 +35,13 @@ class AuraSyncAction extends MicrophoneAction {
             releaseDelay := controller.isInverted? this.releaseDelay : pushedDelay
         }
 
-        data := JSON.Dump({ type: "setAllDevicesColor", color: color, releaseDelay: releaseDelay})
+        sendActionAsync := ObjBindMethod(this, "sendAction", "setAllDevicesColor", color, releaseDelay)
+
+        SetTimer, % sendActionAsync, -1
+    }
+
+    sendAction(type, color:="", releaseDelay:=""){
+        data := JSON.Dump({ type: type, color: color, releaseDelay: releaseDelay})
 
         if (!IPC_Send(AuraSyncAction.AuraServiceHwnd, data))
             util_log("[AuraSyncAction] Failed to send data to AuraService")
@@ -59,16 +64,20 @@ class AuraSyncAction extends MicrophoneAction {
         return true
     }
 
-    _stopAuraService(){
+    stopAuraService(){
+        DetectHiddenWindows, On
+
         util_log("[AuraSyncAction] Stopping AuraService with PID: " AuraSyncAction.AuraServicePID)
-        IPC_Send(AuraSyncAction.AuraServiceHwnd, JSON.Dump({ type: "stopService" }))
+        this.sendAction("stopService")
         Sleep, 100
 
-        DetectHiddenWindows, On
         if (WinExist("ahk_pid " AuraSyncAction.AuraServicePID)) {
             util_log("[AuraSyncAction] Killing AuraService with PID: " AuraSyncAction.AuraServicePID)
             Process, Close, % AuraSyncAction.AuraServicePID
         }
+
+        AuraSyncAction.AuraServicePID:= ""
+        AuraSyncAction.AuraServiceHwnd:= ""
         DetectHiddenWindows, Off
     }
 
@@ -80,5 +89,9 @@ class AuraSyncAction extends MicrophoneAction {
 
     getConfig(){
         return { "Type": this.TypeName, "MuteColor": this.muteColor, "UnmuteColor": this.unmuteColor, "ReleaseDelay": this.releaseDelay }
+    }
+
+    __Delete(){
+        this.stopAuraService()
     }
 }

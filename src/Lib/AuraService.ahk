@@ -31,6 +31,7 @@ global aura := new AuraSync()
 auraReady := true
 
 AddTask(parentHwnd, data){
+    Critical, On
     ; Parse JSON
     data := JSON.Load(data)
     if (data == "")
@@ -40,6 +41,7 @@ AddTask(parentHwnd, data){
     if(tasks.Length() == 2)
         tasks.Pop()
     tasks.Push(data)
+    Critical, Off
 }
 
 RunTasks(){
