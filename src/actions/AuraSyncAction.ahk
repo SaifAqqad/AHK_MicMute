@@ -38,7 +38,8 @@ class AuraSyncAction extends MicrophoneAction {
 
         data := JSON.Dump({ type: "setAllDevicesColor", color: color, releaseDelay: releaseDelay})
 
-        IPC_Send(AuraSyncAction.AuraServiceHwnd, data)
+        if (!IPC_Send(AuraSyncAction.AuraServiceHwnd, data))
+            util_log("[AuraSyncAction] Failed to send data to AuraService")
     }
 
     initAuraService(){
@@ -48,14 +49,7 @@ class AuraSyncAction extends MicrophoneAction {
             Run, % this.serviceRunCommand, A_ScriptDir, Hide, childPID
             AuraSyncAction.AuraServicePID := childPID
 
-            DetectHiddenWindows, On
-
-            WinWait, % "ahk_pid " AuraSyncAction.AuraServicePID, , 1
-
-            WinGet, winHwnd, ID, % "ahk_pid " AuraSyncAction.AuraServicePID " ahk_class AutoHotkey"
-            AuraSyncAction.AuraServiceHwnd := winHwnd
-
-            DetectHiddenWindows, Off
+            AuraSyncAction.AuraServiceHwnd := util_getMainWindowHwnd(AuraSyncAction.AuraServicePID)
 
             util_log("[AuraSyncAction] Started AuraService with PID: " AuraSyncAction.AuraServicePID " and HWND: " AuraSyncAction.AuraServiceHwnd)
         } catch e {

@@ -7,6 +7,7 @@ class AuraSync {
         this.sdk := ComObjCreate(AuraSync.CLSID)
 
         this.isControlled := false
+        this.isReleasingControl := false
         this.devices := []
 
         this.releaseMethod := ObjBindMethod(this, "releaseControl")
@@ -21,8 +22,12 @@ class AuraSync {
     }
 
     takeControl(){
+        while(this.isReleasingControl)
+            Sleep, 100
+
         if(this.isControlled)
             return
+
         this.sdk.SwitchMode()
         this.isControlled := true
     }
@@ -30,8 +35,10 @@ class AuraSync {
     releaseControl(){
         if(!this.isControlled)
             return
+        this.isReleasingControl := true
         this.sdk.ReleaseControl(0)
         this.isControlled := false
+        this.isReleasingControl := false
     }
 
     setAllDevicesColor(color, releaseDelay:= 0){

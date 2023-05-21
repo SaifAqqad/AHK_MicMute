@@ -70,6 +70,37 @@ util_isProcessElevated(vPID){
     return vRet ? vIsElevated : -1
 }
 
+util_getMainWindowHwnd(p_pid){
+    WinWait, % "ahk_pid " p_pid, , 1
+
+    ; list all windows
+    windowList := util_getWindowList("ahk_pid " p_pid)
+
+    for i, window in windowList {
+        if(window.class == "AutoHotkey")
+            return window.hwnd
+    }
+
+    return windowList[1].hwnd
+}
+
+util_getWindowList(winTitle){
+    list:= Array()
+
+    DetectHiddenWindows, On
+    WinGet, winList, List, % winTitle
+    Loop, % winList {
+        winHwnd:= winList%A_Index%
+        WinGetTitle, winTitle, % "ahk_id " winHwnd
+        WinGetClass, winClass, % "ahk_id " winHwnd
+        WinGetText, winText, % "ahk_id " winHwnd
+        list.Push({"hwnd": winHwnd, "title": winTitle, "class": winClass, "text": winText})
+    }
+    DetectHiddenWindows, Off
+
+    return list
+}
+
 ; Returns the current system theme | 0 : light mode, 1 : dark mode
 util_getSystemTheme(){
     RegRead, reg
@@ -128,10 +159,10 @@ util_IsFileEmpty(file){
 util_splitPath(p_input){
     SplitPath, p_input, _t1, _t2, _t3, _t4, _t5
     return { "fileName":_t1
-           , "filePath":_t2
-           , "fileExt":_t3
-           , "fileNameNoExt":_t4
-           , "fileDrive":_t5}
+        , "filePath":_t2
+        , "fileExt":_t3
+        , "fileNameNoExt":_t4
+        , "fileDrive":_t5}
 }
 
 util_getFileSemVer(file){

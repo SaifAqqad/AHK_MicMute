@@ -8,7 +8,7 @@
 #Persistent
 #NoTrayIcon
 #ErrorStdOut UTF-16
-#SingleInstance, ignore
+#SingleInstance, Off
 
 global parentPID := A_Args[1]
     , servicePID:= DllCall("GetCurrentProcessId")
@@ -21,7 +21,7 @@ if (!parentPID || parentPID == servicePID)
 OnError(Func("ExitService"))
 
 ; Set tasks timer
-SetTimer, RunTasks, 160
+SetTimer, RunTasks, 60
 
 ; Register IPC handler
 IPC_SetHandler(Func("AddTask"))
@@ -37,6 +37,8 @@ AddTask(parentHwnd, data){
         return
 
     ; Add task to queue
+    if(tasks.Length() == 2)
+        tasks.Pop()
     tasks.Push(data)
 }
 
@@ -48,15 +50,20 @@ RunTasks(){
 
     if (!auraReady || tasks.Length() = 0)
         return
+    
+    if(aura.isReleasingControl)
+        return
 
     task := tasks.RemoveAt(1)
 
-    if (task.type == "setAllDevicesColor")
-        Try aura.setAllDevicesColor(AuraSync.hexToBgr(task.color), task.releaseDelay)
-    else if (task.type == "releaseControl")
-        Try aura.releaseControl()
-    else if (task.type == "stopService")
-        ExitService()
+    Try {
+        if (task.type == "setAllDevicesColor")
+            aura.setAllDevicesColor(AuraSync.hexToBgr(task.color), task.releaseDelay)
+        else if (task.type == "releaseControl")
+            aura.releaseControl()
+        else if (task.type == "stopService")
+            ExitService()
+    }
 }
 
 ExitService(errorCode:=0) {
