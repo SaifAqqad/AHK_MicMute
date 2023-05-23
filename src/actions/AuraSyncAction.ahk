@@ -3,8 +3,9 @@
 class AuraSyncAction extends MicrophoneAction {
     static TypeName := "AuraSync", AuraServiceFilePath:= A_ScriptDir "\AuraService.ahk"
         , AuraServiceName := "AuraService"
-        , AuraServicePID:=""
-        , AuraServiceHwnd:=""
+        , AuraServicePID := ""
+        , AuraServiceHwnd := ""
+        , ServiceEnabled := true
 
     __New(muteColor, unmuteColor, releaseDelay){
         this.muteColor := muteColor
@@ -23,7 +24,7 @@ class AuraSyncAction extends MicrophoneAction {
             return
         }
 
-        if (this.releaseDelay > 0 && !controller.shouldCallFeedback)
+        if (!AuraSyncAction.ServiceEnabled || (this.releaseDelay > 0 && !controller.shouldCallFeedback))
             return
 
         pushedDelay := controller.isPushToTalk? 0 : this.releaseDelay

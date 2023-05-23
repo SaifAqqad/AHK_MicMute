@@ -8,10 +8,12 @@ tray_init(){
     util_log("[Tray] Initilizing tray menu")
     tray_defaults()
     tray_createProfilesMenu()
+    tray_createAuraSyncMenu()
     tray_createDebugMenu()
 
     tray_add("Toggle microphone", Func("tray_noFunc"))
     tray_add("Profile", ":profiles")
+    tray_add("Aura Sync", ":auraSync")
     tray_add("Edit configuration", Func("editConfig"))
 
     Menu, Tray, Add, ;seperator line
@@ -24,7 +26,7 @@ tray_init(){
     if(!arg_noUI)
         tray_add("About",Func("tray_about"))
     tray_add("Reload",Func("tray_Reload"))
-    tray_add("Exit",Func("tray_exit"))  
+    tray_add("Exit",Func("tray_exit"))
 
     Menu, Tray, Click, 1
     Menu, Tray, Default, 1&
@@ -42,12 +44,12 @@ tray_init_updater(){
     util_log("[Tray] Initilizing updater tray menu")
     tray_defaults()
     tray_add("Help",Func("tray_launchHelp"))
-    tray_add("Exit",Func("tray_exit"))  
+    tray_add("Exit",Func("tray_exit"))
 }
 
 tray_defaults(){
     ico:= resources_obj.getIcon(ICON_ID_APP)
-    Menu, Tray, Tip, MicMute 
+    Menu, Tray, Tip, MicMute
     Menu, Tray, Icon, % ico.file, % ico.group,0
 }
 
@@ -63,7 +65,7 @@ tray_add(name, funcObj){
 }
 
 tray_remove(item){
-    Menu, Tray, Delete, %item%
+    Try Menu, Tray, Delete, %item%
 }
 
 tray_autoStart(){
@@ -96,6 +98,32 @@ tray_createProfilesMenu(){
         funcObj:= Func("switchProfile").bind(p_profile.ProfileName)
         Menu, profiles, Add, % p_profile.ProfileName, % funcObj, +Radio
     }
+}
+
+tray_createAuraSyncMenu(){
+    try Menu, auraSync, DeleteAll
+
+    funcObj := Func("tray_toggleAuraSyncPause")
+    Menu, auraSync, Add, Pause, % funcObj
+    Menu, auraSync, Uncheck, Pause
+
+    funcObj := Func("tray_resetAuraSync")
+    Menu auraSync, Add, Reset, % funcObj
+}
+
+tray_toggleAuraSyncPause(){
+    if (AuraSyncAction.ServiceEnabled) {
+        AuraSyncAction.ServiceEnabled := false
+        AuraSyncAction.sendAction("pauseService")
+        Menu, auraSync, Check, Pause
+    } else {
+        AuraSyncAction.ServiceEnabled := true
+        Menu, auraSync, Uncheck, Pause
+    }
+}
+
+tray_resetAuraSync(){
+    AuraSyncAction.sendAction("resetService")
 }
 
 tray_createDebugMenu(){

@@ -25,6 +25,7 @@ SetWorkingDir %A_ScriptDir%
 ; /Lib
 #Include, <WinUtils>
 #Include, <StackSet>
+#Include, <AuraSync>
 #Include, <SoundPlayer>
 #Include, <B64>
 #Include, <IPC>
@@ -71,6 +72,7 @@ SetWorkingDir %A_ScriptDir%
 #Include, ActionEditor.ahk
 #Include, PowershellActionEditor.ahk
 #Include, ProgramActionEditor.ahk
+#Include, AuraSyncActionEditor.ahk
 
 Global A_startupTime:= A_TickCount
     , config_obj
@@ -313,12 +315,18 @@ switchProfile(p_name:=""){
     }
 
     mic_actions:=""
+    auraSyncEnabled:=""
     if(current_profile.MicrophoneActions.Length() > 0){
         mic_actions:= Array()
         for _i, action in current_profile.MicrophoneActions {
+            if(action.Type == "AuraSync")
+                auraSyncEnabled:= 1
             mic_actions.Push(MicrophoneAction.Create(action))
         }
     }
+
+    if (!auraSyncEnabled)
+        tray_remove("Aura Sync")
 
     if (current_profile.afkTimeout)
         SetTimer, checkIsIdle, 1000  

@@ -14,6 +14,7 @@ global parentPID := A_Args[1]
     , servicePID:= DllCall("GetCurrentProcessId")
     , auraReady := false
     , tasks:= []
+    , lastTask
 
 if (!parentPID || parentPID == servicePID)
     ExitService(-1)
@@ -52,22 +53,30 @@ RunTasks(){
 
     if (!auraReady || tasks.Length() = 0)
         return
-    
+
     if(aura.isReleasingControl)
         return
 
     task := tasks.RemoveAt(1)
 
     Try {
-        if (task.type == "setAllDevicesColor")
-            aura.setAllDevicesColor(AuraSync.hexToBgr(task.color), task.releaseDelay)
-        else if (task.type == "releaseControl")
-            aura.releaseControl()
-        else if (task.type == "stopService")
-            ExitService()
+        switch task.type {
+            case "setAllDevicesColor":
+                aura.setAllDevicesColor(AuraSync.hexToBgr(task.color), task.releaseDelay)
+                lastTask := task
+            case "resetService":
+                aura.releaseControl()
+                if (lastTask.releaseDelay == 0)
+                    tasks.Push(lastTask)
+            case "pauseService":
+                aura.releaseControl()
+            case "stopService":
+                ExitService()
+        }
     }
 }
 
 ExitService(errorCode:=0) {
+    aura.releaseControl()
     ExitApp, %errorCode%
 }
