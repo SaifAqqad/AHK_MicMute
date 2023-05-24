@@ -209,8 +209,8 @@ switchProfile(p_name:=""){
     osd_wnd.destroy()
     sound_player.__free()
 
-    ;reset tray icon and tooltip
-    tray_defaults()
+    ;reset tray menu
+    tray_init()
 
     ;uncheck the profile in the tray menu
     Menu, profiles, Uncheck, % current_profile.ProfileName
@@ -318,9 +318,17 @@ switchProfile(p_name:=""){
     auraSyncEnabled:=""
     if(current_profile.MicrophoneActions.Length() > 0){
         mic_actions:= Array()
-        for _i, action in current_profile.MicrophoneActions {
-            if(action.Type == "AuraSync")
+        for i, action in current_profile.MicrophoneActions {
+            if (action.Type == "AuraSync") {
+                if (auraSyncEnabled) {
+                    util_log("[Main] Multiple Aura Sync actions detected, Ignoring Aura Sync action [" i "]")
+                    continue
+                } else if (!AuraSync.isInstalled() ) {
+                    util_log("[Main] Aura Sync is either not installed or has been disabled, Ignoring Aura Sync action")
+                    continue
+                }
                 auraSyncEnabled:= 1
+            }
             mic_actions.Push(MicrophoneAction.Create(action))
         }
     }
@@ -329,7 +337,8 @@ switchProfile(p_name:=""){
         tray_remove("Aura Sync")
 
     if (current_profile.afkTimeout)
-        SetTimer, checkIsIdle, 1000  
+        SetTimer, checkIsIdle, 1000
+
     ;show switching-profile OSD
     if(config_obj.SwitchProfileOSD)
         osd_wnd.showAndHide(Format("Profile: {}", current_profile.ProfileName))

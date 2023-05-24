@@ -735,11 +735,30 @@ UI_onCreateMicAction(neutron:="", actionType:=""){
         case PowershellAction.TypeName:
             actionConfig:= PowershellAction.getConfig()
             action_editor:= new PowershellActionEditor(actionConfig, exitCallback)
-            
+
         case ProgramAction.TypeName:
             actionConfig:= ProgramAction.getConfig()
             action_editor:= new ProgramActionEditor(actionConfig, exitCallback)
+
+        case AuraSyncAction.TypeName:
+            ; Check if Aura Sync is installed
+            if(!AuraSync.isInstalled()){
+                UI_notify("Aura Sync is either not installed or has been disabled.", -5000)
+                return
+            }
+
+            ; Check if there is already an Aura Sync action
+            for _i, action in current_profile.MicrophoneActions {
+                if(action.Type == AuraSyncAction.TypeName){
+                    UI_notify("You can only use one Aura Sync action per profile.", -5000)
+                    return
+                }
+            }
+
+            actionConfig:= AuraSyncAction.getConfig()
+            action_editor:= new AuraSyncActionEditor(actionConfig, exitCallback)
     }
+
     Sleep, 200
     ui_obj.Gui("+Disabled")
     action_editor.show(ui_obj.hWnd)
@@ -759,6 +778,9 @@ UI_onEditMicAction(neutron:="", actionIndex:=""){
             
         case ProgramAction.TypeName:
             action_editor:= new ProgramActionEditor(action.Clone(), exitCallback)
+
+        case AuraSyncAction.TypeName:
+            action_editor:= new AuraSyncActionEditor(action.Clone(), exitCallback)
     }
     Sleep, 200
     ui_obj.Gui("+Disabled")
@@ -804,6 +826,8 @@ UI_getActionText(action){
                 return script
         case "Program":
             return util_splitPath(action.Program).fileName
+        case "AuraSync":
+            return Format(template_aura_action, action.MuteColor, action.UnmuteColor)
     }
 }
 
@@ -860,10 +884,10 @@ UI_warnProfileIsDirty(){
         UI_onSaveProfile("", 1)
 }
 
-UI_notify(txt){
+UI_notify(txt, delay := -2000){
     ui_obj.doc.getElementById("notification_content").innerText:= txt
     ui_obj.doc.getElementById("notification").classList.remove("hidden")
-    SetTimer, UI_dismissNotif, -2000
+    SetTimer, UI_dismissNotif, % delay
 }
 
 UI_dismissNotif(_neutron:=""){

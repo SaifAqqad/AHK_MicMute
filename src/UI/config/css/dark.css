@@ -9,23 +9,23 @@ body {
     scrollbar-shadow-color: #4E4E4E;
 }
 
-.title-bar-header ,
-.modal-card-head{
+.title-bar-header,
+.modal-card-head {
     color: #d9d9d9 !important;
     background: #272727 !important;
 }
 
 .title-btn-minimize:hover,
 .title-btn-maximize:hover {
-  background: #414141 !important;
+    background: #414141 !important;
 }
 
 .title-btn-close:hover {
-  background: #e81123 !important;
+    background: #e81123 !important;
 }
 
 .box,
-.card{
+.card {
     background-color: #323232 !important;
     box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
 }
@@ -34,7 +34,12 @@ body {
     background-color: #323232 !important;
 }
 
-.tag{
+.input.is-outlined {
+    border-color: #272727;
+    box-shadow: rgba(0, 0, 0, 0.18) 0 2px 4px, rgba(0, 0, 0, 0.15) 0 0.5px 1px;
+}
+
+.tag {
     background-color: #323232 !important;
     margin: 5px;
 }
@@ -46,7 +51,7 @@ body {
 .box:hover,
 .tag:hover,
 .box:focus,
-.tag:focus{
+.tag:focus {
     background-color: #303030 !important;
 }
 
@@ -55,7 +60,7 @@ body {
     background-color: #323232 !important;
 }
 
-.custom-modal .card{
+.custom-modal .card {
     background-color: #303030 !important;
 }
 
@@ -78,7 +83,7 @@ span.label,
     color: #d9d9d9 !important;
 }
 
-code{
+code {
     background-color: #272727 !important;
 }
 
@@ -105,30 +110,31 @@ input[type="checkbox"]:checked+span {
     color: #FF6038 !important;
 }
 
-.tabs a ,
-.tabs a:hover{
+.tabs a,
+.tabs a:hover {
     color: #d9d9d9 !important;
     border-bottom-color: #d9d9d9;
 
 }
-.tabs a{
+
+.tabs a {
     border-bottom-color: #3B3B3B;
 }
 
-#notification{
+#notification {
     background-color: #272727 !important;
 }
 
-#notification label{
+#notification label {
     color: #d9d9d9 !important;
 }
 
 .card-footer,
-.card-footer *{
+.card-footer * {
     border-color: #555555 !important;
 }
 
-#details{
+#details {
     background-color: #2e2e2e !important;
     box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
 }
@@ -137,10 +143,10 @@ input[type="checkbox"]:checked+span {
     color: #c5c4c4 !important;
 }
 
-.dropdown-content{
+.dropdown-content {
     background-color: #313131 !important;
 }
 
-.dropdown-item{
+.dropdown-item {
     color: #d9d9d9 !important;
 }

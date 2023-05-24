@@ -33,6 +33,7 @@ global ICON_ID_APP:= 1000
 ;@Ahk2Exe-AddResource *10 %U_UI%\html\about.html
 ;@Ahk2Exe-AddResource *10 %U_UI%\html\PowershellActionEditor.html
 ;@Ahk2Exe-AddResource *10 %U_UI%\html\ProgramActionEditor.html
+;@Ahk2Exe-AddResource *10 %U_UI%\html\AuraSyncActionEditor.html
 ;@Ahk2Exe-AddResource *10 %U_UI%\js\codemirror.js
 ;@Ahk2Exe-AddResource *10 %U_UI%\js\powershell.js
 ;@Ahk2Exe-AddResource *10 %U_UI%\css\bulma.css
@@ -54,14 +55,16 @@ class ResourcesManager {
                , about: "about.html"
                , Updater: "Updater.html"
                , PowershellActionEditor: "PowershellActionEditor.html"
-               , ProgramActionEditor: "ProgramActionEditor.html"}
+               , ProgramActionEditor: "ProgramActionEditor.html"
+               , AuraSyncActionEditor: "AuraSyncActionEditor.html"}
     cssFile:= [{ name:"bulma",file: "bulma.css"}
               ,{ name:"base",file:"base.css"}
               ,{ name:"dark",file:"dark.css"}
               ,{ name:"codemirror",file:"codemirror.css"}
               ,{ name:"codemirror_micmute",file:"codemirror_micmute.css"}]
     jsFile:= [{ name:"codemirror",file:"codemirror.js"}
-             ,{ name:"powershell",file:"powershell.js"}]
+             ,{ name:"powershell",file:"powershell.js"}
+             ,{ name:"jscolor",file:"jscolor.js"}]
     __New(){
         if(A_IsCompiled){
             for type, file in this.SoundFile {
