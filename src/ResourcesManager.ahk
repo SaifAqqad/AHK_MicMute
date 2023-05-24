@@ -36,6 +36,7 @@ global ICON_ID_APP:= 1000
 ;@Ahk2Exe-AddResource *10 %U_UI%\html\AuraSyncActionEditor.html
 ;@Ahk2Exe-AddResource *10 %U_UI%\js\codemirror.js
 ;@Ahk2Exe-AddResource *10 %U_UI%\js\powershell.js
+;@Ahk2Exe-AddResource *10 %U_UI%\js\jscolor.js
 ;@Ahk2Exe-AddResource *10 %U_UI%\css\bulma.css
 ;@Ahk2Exe-AddResource *10 %U_UI%\css\base.css
 ;@Ahk2Exe-AddResource *10 %U_UI%\css\dark.css
