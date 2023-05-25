@@ -38,7 +38,7 @@ class AuraSyncAction extends MicrophoneAction {
 
         sendActionAsync := ObjBindMethod(this, "sendAction", "setAllDevicesColor", color, releaseDelay)
 
-        SetTimer, % sendActionAsync, -1
+        SetTimer, % sendActionAsync, -40
     }
 
     sendAction(type, color:="", releaseDelay:=""){

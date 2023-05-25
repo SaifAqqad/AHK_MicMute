@@ -28,7 +28,7 @@
  Returns:
 			Returns TRUE if message was or FALSE if sending failed. Error message is returned on invalid usage.
  */
-IPC_Send(Hwnd, Data) {
+IPC_Send(Hwnd, Data, timeout:= 500) {
     static WM_COPYDATA = 74
     VarSetCapacity(Struct, 3*A_PtrSize, 0)
     
@@ -36,7 +36,7 @@ IPC_Send(Hwnd, Data) {
     NumPut(&Data, Struct, A_PtrSize*2)
 
     DetectHiddenWindows, On
-    SendMessage, %WM_COPYDATA%, %A_ScriptHwnd%, &Struct,, ahk_id %Hwnd%
+    SendMessage, %WM_COPYDATA%, %A_ScriptHwnd%, &Struct,, ahk_id %Hwnd%,,,, %timeout%
     DetectHiddenWindows, Off
 
     return ErrorLevel = "FAIL" ? false : true

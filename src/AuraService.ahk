@@ -33,14 +33,13 @@ auraReady := true
 
 AddTask(parentHwnd, data){
     Critical, On
-    ; Parse JSON
-    data := JSON.Load(data)
-    if (data == "")
+    if (!data)
         return
 
     ; Add task to queue
     if(tasks.Length() == 2)
         tasks.Pop()
+
     tasks.Push(data)
     Critical, Off
 }
@@ -58,6 +57,10 @@ RunTasks(){
         return
 
     task := tasks.RemoveAt(1)
+
+    if (!IsObject(task)) {
+        task := JSON.Load(task)
+    }
 
     Try {
         switch task.type {
