@@ -5,16 +5,16 @@ class AuraSyncAction extends MicrophoneAction {
         , AuraServiceName := "AuraService"
         , AuraServicePID := ""
         , AuraServiceHwnd := ""
+        , AuraServiceCommand := AuraSyncAction._formatAction()
         , ServiceEnabled := true
 
     __New(muteColor, unmuteColor, releaseDelay){
         this.muteColor := muteColor
         this.unmuteColor := unmuteColor
         this.releaseDelay := releaseDelay
-        this.serviceRunCommand := this._formatAction()
 
         if (!AuraSyncAction.AuraServicePID) {
-            this.initAuraService()
+            AuraSyncAction.initAuraService()
         }
     }
 
@@ -36,28 +36,26 @@ class AuraSyncAction extends MicrophoneAction {
             releaseDelay := controller.isInverted? this.releaseDelay : pushedDelay
         }
 
-        sendActionAsync := ObjBindMethod(this, "sendAction", "setAllDevicesColor", color, releaseDelay)
-
-        SetTimer, % sendActionAsync, -40
+        this.sendAction("setAllDevicesColor", color, releaseDelay, 50)
     }
 
-    sendAction(type, color:="", releaseDelay:=""){
+    sendAction(type, color:="", releaseDelay:="", timeout:=500){
         data := JSON.Dump({ type: type, color: color, releaseDelay: releaseDelay})
 
-        if (!IPC_Send(AuraSyncAction.AuraServiceHwnd, data))
-            util_log("[AuraSyncAction] Failed to send data to AuraService")
+        if (!IPC_Send(AuraSyncAction.AuraServiceHwnd, data, timeout))
+            util_log("[AuraSyncAction] Failed to send data to AuraService in " timeout " ms")
     }
 
     initAuraService(){
         try {
-            util_log("[AuraSyncAction] Starting AuraService with command: " this.serviceRunCommand)
+            util_log("[AuraSyncAction] Starting AuraService with command: " AuraSyncAction.AuraServiceCommand)
+            Run, % this.AuraServiceCommand, A_ScriptDir, Hide, childPID
 
-            Run, % this.serviceRunCommand, A_ScriptDir, Hide, childPID
             AuraSyncAction.AuraServicePID := childPID
-
             AuraSyncAction.AuraServiceHwnd := util_getMainWindowHwnd(AuraSyncAction.AuraServicePID)
 
             util_log("[AuraSyncAction] Started AuraService with PID: " AuraSyncAction.AuraServicePID " and HWND: " AuraSyncAction.AuraServiceHwnd)
+            OnExit(ObjBindMethod(AuraSyncAction, "stopAuraService"))
         } catch e {
             util_log("[AuraSyncAction] Failed to start AuraService : " e.Message)
             return false
@@ -69,7 +67,7 @@ class AuraSyncAction extends MicrophoneAction {
         DetectHiddenWindows, On
 
         util_log("[AuraSyncAction] Stopping AuraService with PID: " AuraSyncAction.AuraServicePID)
-        this.sendAction("stopService")
+        AuraSyncAction.sendAction("stopService")
         Sleep, 100
 
         if (WinExist("ahk_pid " AuraSyncAction.AuraServicePID)) {
@@ -93,6 +91,6 @@ class AuraSyncAction extends MicrophoneAction {
     }
 
     __Delete(){
-        this.stopAuraService()
+        this.sendAction("pauseService",,, 1)
     }
 }

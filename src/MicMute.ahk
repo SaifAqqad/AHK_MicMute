@@ -165,10 +165,17 @@ initilizeMicMute(default_profile:="", exportConfig:=1){
         , last_modif_time:= ""
         , sound_player:=""
     tray_defaults()
-    ;add profiles with linked apps to watched_profiles
     for _i,profile in config_obj.Profiles {
-        if(profile.LinkedApp)
+        ; Add profiles with linked apps to watched_profiles
+        if (profile.LinkedApp)
             watched_profiles.Push(profile)
+        ; Check if AuraSyncAction is used in any profile and initilize AuraService
+        for _j, action in profile.MicrophoneActions {
+            if (action.Type = AuraSyncAction.TypeName && !AuraSyncAction.AuraServicePID) {
+                AuraSyncAction.initAuraService()
+                break
+            }
+        }
     }
     ; export the processed config object
     if(exportConfig)
