@@ -7,6 +7,7 @@ class AuraSyncAction extends MicrophoneAction {
         , AuraServiceHwnd := ""
         , AuraServiceCommand := AuraSyncAction._formatAction()
         , ServiceEnabled := true
+        , AuraReady := false
 
     __New(muteColor, unmuteColor, releaseDelay){
         this.muteColor := muteColor
@@ -19,7 +20,7 @@ class AuraSyncAction extends MicrophoneAction {
     }
 
     run(controller) {
-        if(!AuraSyncAction.AuraServicePID || !AuraSyncAction.AuraServiceHwnd){
+        if(!AuraSyncAction.AuraServicePID || !AuraSyncAction.AuraServiceHwnd || !AuraSyncAction.AuraReady){
             util_log("[AuraSyncAction] AuraService is not running, skipping action")
             return
         }
@@ -81,9 +82,10 @@ class AuraSyncAction extends MicrophoneAction {
     }
 
     _formatAction(){
-        return A_IsCompiled
-            ? Format("""{}"" /script *{} {}", A_AhkPath, AuraSyncAction.AuraServiceName, DllCall("GetCurrentProcessId"))
-            : Format("""{}"" ""{}"" {}", A_AhkPath, AuraSyncAction.AuraServiceFilePath, DllCall("GetCurrentProcessId"))
+        local debug := Arg_isDebug || A_DebuggerName ? "/debug" : ""
+        , command:= A_IsCompiled ? "/script *" AuraSyncAction.AuraServiceName : """" AuraSyncAction.AuraServiceFilePath """"
+
+        return Format("""{}"" {} {} {}", A_AhkPath, command, DllCall("GetCurrentProcessId"), debug)
     }
 
     getConfig(){

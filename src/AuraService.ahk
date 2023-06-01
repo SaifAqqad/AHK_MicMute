@@ -2,6 +2,7 @@
 
 #Include, <IPC>
 #Include, <AuraSync>
+#Include, <WinUtils>
 #Include, %A_ScriptDir%\..\ahkpm-modules\github.com\G33kDude\cJson.ahk\Dist\JSON.ahk
 
 #NoEnv
@@ -15,21 +16,27 @@ global parentPID := A_Args[1]
     , auraReady := false
     , tasks:= []
     , lastTask
+    , A_IsDebug := A_Args[2] = "/debug"
+
+global parentHwnd := util_getMainWindowHwnd(parentPID)
 
 if (!parentPID || parentPID == servicePID)
     ExitService(-1)
 
 OnError(Func("ExitService"))
 
-; Set tasks timer
-SetTimer, RunTasks, 60
-
 ; Register IPC handler
 IPC_SetHandler(Func("AddTask"))
 
 ; Initialize Aura Sync
+global currentTicks := A_TickCount
 global aura := new AuraSync()
-auraReady := true
+
+IPC_Send(parentHwnd, "Aura Sync initialized successfully in " A_TickCount - currentTicks " ms", 50)
+IPC_Send(parentHwnd, "auraReady", 50)
+
+; Set tasks timer
+SetTimer, RunTasks, 60
 
 AddTask(parentHwnd, data){
     Critical, On
@@ -50,13 +57,16 @@ RunTasks(){
     if (!ErrorLevel)
         ExitService()
 
-    if (!auraReady || tasks.Length() = 0)
+    if (tasks.Length() = 0)
         return
 
     if(aura.isReleasingControl)
         return
 
     task := tasks.RemoveAt(1)
+
+    if(A_IsDebug)
+        currentTicks := A_TickCount
 
     if (!IsObject(task)) {
         task := JSON.Load(task)
@@ -77,6 +87,9 @@ RunTasks(){
                 ExitService()
         }
     }
+    
+    if(A_IsDebug)
+        IPC_Send(parentHwnd, "Task " util_toString(task) " took " A_TickCount - currentTicks " ms", 50)
 }
 
 ExitService(errorCode:=0) {

@@ -173,6 +173,7 @@ initilizeMicMute(default_profile:="", exportConfig:=1){
         for _j, action in profile.MicrophoneActions {
             if (action.Type = AuraSyncAction.TypeName && !AuraSyncAction.AuraServicePID) {
                 AuraSyncAction.initAuraService()
+                IPC_SetHandler(Func("OnAuraServiceMessage"))
                 break
             }
         }
@@ -547,4 +548,13 @@ runUpdater(){
     FileCopy, %A_ScriptFullPath%, %A_Temp%\MicMuteUpdater.exe, 1
     Run, "%A_Temp%\MicMuteUpdater.exe" "/updater=1" "/installPath=%A_ScriptDir%"
     ExitApp, 1
+}
+
+OnAuraServiceMessage(parentHwnd, msg){
+    if(msg == "auraReady"){
+        AuraSyncAction.AuraReady:= 1
+        return
+    }
+
+    util_log("[AuraService] " msg)
 }

@@ -14,19 +14,23 @@ util_GetFileAssoc(extension){
 util_CreateStartupTask(){
     scheduler:= ComObjCreate("Schedule.Service")
     scheduler.Connect()
-    task:= scheduler.NewTask(0) ;TaskDefinition object
+
+    task:= scheduler.NewTask(0) ; TaskDefinition object
     task.RegistrationInfo.Description:= "Launch MicMute on startup"
-    task.Settings.ExecutionTimeLimit:= "PT0S" ;enable the task to run indefinitely
-    task.Settings.DisallowStartIfOnBatteries:= 0 ;why is this enabled by default o_o
-    task.Settings.StopIfGoingOnBatteries:= 0 ;bruh ^^^
-    trigger:= task.Triggers.Create(9) ;onLogon trigger = 9
+    task.Settings.ExecutionTimeLimit:= "PT0S" ; Enable the task to run indefinitely
+    task.Settings.DisallowStartIfOnBatteries:= 0
+    task.Settings.StopIfGoingOnBatteries:= 0
+    task.Principal.RunLevel:= A_IsAdmin
+
+    trigger:= task.Triggers.Create(9) ; onLogonTrigger = 9
     trigger.UserId:= A_ComputerName . "\" . A_UserName
     trigger.Delay:= "PT10S"
-    task.Principal.RunLevel:= A_IsAdmin
-    action:= task.Actions.Create(0) ;ExecAction = 0
+
+    action:= task.Actions.Create(0) ; ExecAction = 0
     action.Path:= A_ScriptFullPath
     action.Arguments:= args_str
     action.WorkingDirectory:= A_ScriptDir
+
     try scheduler.GetFolder("\").RegisterTaskDefinition("MicMute",task,6,"","",3)
     catch {
         return 0
