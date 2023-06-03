@@ -11,6 +11,8 @@
 #ErrorStdOut UTF-16
 #SingleInstance, Off
 
+SetBatchLines, -1
+
 global parentPID := A_Args[1]
     , servicePID:= DllCall("GetCurrentProcessId")
     , auraReady := false
@@ -83,6 +85,7 @@ RunTasks(){
                     tasks.Push(lastTask)
             case "pauseService":
                 aura.releaseControl()
+                lastTask := ""
             case "stopService":
                 ExitService()
         }
@@ -93,6 +96,10 @@ RunTasks(){
 }
 
 ExitService(errorCode:=0) {
+    if(IsObject(errorCode)){
+        IPC_Send(parentHwnd, "An error occured: " errorCode.Message, 50)
+        errorCode := 1
+    }
     aura.releaseControl()
     ExitApp, %errorCode%
 }

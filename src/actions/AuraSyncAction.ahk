@@ -21,7 +21,7 @@ class AuraSyncAction extends MicrophoneAction {
 
     run(controller) {
         if(!AuraSyncAction.AuraServicePID || !AuraSyncAction.AuraServiceHwnd || !AuraSyncAction.AuraReady){
-            util_log("[AuraSyncAction] AuraService is not running, skipping action")
+            util_log("[AuraSyncAction] Aura Sync is not initialized yet, skipping action")
             return
         }
 
@@ -57,6 +57,8 @@ class AuraSyncAction extends MicrophoneAction {
 
             util_log("[AuraSyncAction] Started AuraService with PID: " AuraSyncAction.AuraServicePID " and HWND: " AuraSyncAction.AuraServiceHwnd)
             OnExit(ObjBindMethod(AuraSyncAction, "stopAuraService"))
+
+            OnMessage(536, ObjBindMethod(AuraSyncAction, "__OnPowerChange")) ; WM_POWERBROADCAST=536
         } catch e {
             util_log("[AuraSyncAction] Failed to start AuraService : " e.Message)
             return false
@@ -83,7 +85,7 @@ class AuraSyncAction extends MicrophoneAction {
 
     _formatAction(){
         local debug := Arg_isDebug || A_DebuggerName ? "/debug" : ""
-        , command:= A_IsCompiled ? "/script *" AuraSyncAction.AuraServiceName : """" AuraSyncAction.AuraServiceFilePath """"
+            , command:= A_IsCompiled ? "/script *" AuraSyncAction.AuraServiceName : """" AuraSyncAction.AuraServiceFilePath """"
 
         return Format("""{}"" {} {} {}", A_AhkPath, command, DllCall("GetCurrentProcessId"), debug)
     }
@@ -94,5 +96,20 @@ class AuraSyncAction extends MicrophoneAction {
 
     __Delete(){
         this.sendAction("pauseService",,, 1)
+    }
+
+    __OnPowerChange(wParam){
+        static lastReset := ""
+
+        if(wParam = 0x12){
+            if(lastReset && A_TickCount - lastReset < 2000)
+                return
+
+            util_log("[AuraSyncAction] Detected a power state change, resetting AuraService")
+            lastReset := A_TickCount
+
+            resetMethod := ObjBindMethod(AuraSyncAction, "sendAction", "resetService")
+            SetTimer, % resetMethod, -1000
+        }
     }
 }
