@@ -41,18 +41,12 @@ class AuraSync {
         this.isReleasingControl := false
     }
 
-    setAllDevicesColor(color, releaseDelay:= 0){
-        _r := this.releaseMethod
-        SetTimer, % _r, Off
-
+    setAllDevicesColor(color){
         for i, device in this.devices {
             for i, light in device.lights
                 light.setColor(color)
             device.apply()
         }
-
-        if (releaseDelay > 0)
-            SetTimer, % _r, % -releaseDelay
     }
 
     isInstalled(){

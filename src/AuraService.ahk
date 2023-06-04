@@ -77,12 +77,11 @@ RunTasks(){
     Try {
         switch task.type {
             case "setAllDevicesColor":
-                aura.setAllDevicesColor(AuraSync.hexToBgr(task.color), task.releaseDelay)
+                aura.setAllDevicesColor(AuraSync.hexToBgr(task.color))
                 lastTask := task
             case "resetService":
                 aura.releaseControl()
-                if (lastTask.releaseDelay == 0)
-                    tasks.Push(lastTask)
+                tasks.Push(lastTask)
             case "pauseService":
                 aura.releaseControl()
                 lastTask := ""

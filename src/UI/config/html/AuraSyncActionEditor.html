@@ -23,9 +23,9 @@
 
     <div class="main is-full-height" style="overflow-y: hidden !important;padding: 15px 50px !important;">
         <div class="container is-full-width is-full-height is-flex is-flex-direction-column is-justify-content-center">
-            <div class="is-flex is-justify-content-space-evenly is-full-width">
+            <div class="is-flex is-justify-content-center is-full-width">
 
-                <div class="mb-3 mr-4" style="width: 30%;">
+                <div class="mb-3 mr-6" style="width: 40%;">
                     <label for="MuteColor" class="label title is-6 noselect mb-3">
                         <svg focusable="false" style="width:16px;height:16px" viewBox="0 -3 24 24">
                             <path fill="currentColor"
@@ -37,7 +37,7 @@
                     </div>
                 </div>
 
-                <div class="mb-3 mr-4" style="width: 30%;">
+                <div class="mb-3" style="width: 40%;">
                     <label for="UnmuteColor" class="label title is-6 noselect mb-3">
                         <svg focusable="false" style="width:16px;height:16px" viewBox="0 -3 24 24">
                             <path fill="currentColor"
@@ -46,25 +46,6 @@
                     </label>
                     <div class="field">
                         <input id="UnmuteColor" class="color-input input is-outlined is-small input-elem" type="color">
-                    </div>
-                </div>
-
-                <div class="mb-3" style="width: 40%;">
-                    <label for="ReleaseDelay" class="label title is-6 noselect mb-3">
-                        <svg focusable="false" style="width:16px;height:16px" viewBox="0 -5 24 24">
-                            <path fill="currentColor"
-                                  d="M12,20A7,7 0 0,1 5,13A7,7 0 0,1 12,6A7,7 0 0,1 19,13A7,7 0 0,1 12,20M19.03,7.39L20.45,5.97C20,5.46 19.55,5 19.04,4.56L17.62,6C16.07,4.74 14.12,4 12,4A9,9 0 0,0 3,13A9,9 0 0,0 12,22C17,22 21,17.97 21,13C21,10.88 20.26,8.93 19.03,7.39M11,14H13V8H11M15,1H9V3H15V1Z" />
-                        </svg> Release Delay
-                    </label>
-                    <div class="is-flex is-full-width is-justify-content-space-evenly">
-                        <div class="mr-2" style="width: 40%; padding-right: 0!important; padding-left: 0!important;">
-                            <input class="input is-primary is-small input-elem" placeholder="seconds" disabled type="text"
-                                   id="ReleaseDelay_text" value="Disabled">
-                        </div>
-                        <div style="width: 60%; max-width: 100px;">
-                            <input class="slider is-small" min="0" max="15" step="1" type="range" tabindex=0
-                                   id="ReleaseDelay" onchange="neutron.onChangeReleaseDelay(event.target.value)">
-                        </div>
                     </div>
                 </div>
 

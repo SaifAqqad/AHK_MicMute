@@ -14,10 +14,6 @@ class AuraSyncActionEditor extends ActionEditor {
         this.qs("#MuteColor").value := this.actionConfig.MuteColor ? this.actionConfig.MuteColor : defaultColor
         this.qs("#UnmuteColor").value := this.actionConfig.UnmuteColor ? this.actionConfig.UnmuteColor : defaultColor
         
-        releaseDelay := this.actionConfig.ReleaseDelay ? Format("{:u}",this.actionConfig.ReleaseDelay / 1000) : 0
-        this.qs("#ReleaseDelay").value := releaseDelay
-        this.onChangeReleaseDelay(releaseDelay)
-
         initColorInputsFunc:= ObjBindMethod(this, "initColorInputs")
         SetTimer, % initColorInputsFunc, -1
     }
@@ -71,12 +67,6 @@ class AuraSyncActionEditor extends ActionEditor {
         this.actionConfig.MuteColor := this.qs("#MuteColor").value
         this.actionConfig.UnmuteColor := this.qs("#UnmuteColor").value
         
-        this.actionConfig.ReleaseDelay := this.qs("#ReleaseDelay").value * 1000
-
         base.save()
-    }
-
-    onChangeReleaseDelay(value){
-        this.qs("#ReleaseDelay_text").value:= value == 0 ? "Disabled" : value . " seconds"
     }
 }

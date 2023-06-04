@@ -553,6 +553,7 @@ runUpdater(){
 OnAuraServiceMessage(parentHwnd, msg){
     if(msg == "auraReady"){
         AuraSyncAction.AuraReady:= 1
+        AuraSyncAction.run("")
         return
     }
 

@@ -17,7 +17,7 @@ class MicrophoneAction {
             case PowershellAction.TypeName:
                 return new PowershellAction(config.Script)
             case AuraSyncAction.TypeName:
-                return new AuraSyncAction(config.MuteColor, config.UnmuteColor, config.ReleaseDelay)
+                return new AuraSyncAction(config.MuteColor, config.UnmuteColor)
         }
         Throw, Exception("Unknown action type: " config.Type)
     }

@@ -8,11 +8,11 @@ class AuraSyncAction extends MicrophoneAction {
         , AuraServiceCommand := AuraSyncAction._formatAction()
         , ServiceEnabled := true
         , AuraReady := false
+        , InitialState := ""
 
-    __New(muteColor, unmuteColor, releaseDelay){
+    __New(muteColor, unmuteColor){
         this.muteColor := muteColor
         this.unmuteColor := unmuteColor
-        this.releaseDelay := releaseDelay
 
         if (!AuraSyncAction.AuraServicePID) {
             AuraSyncAction.initAuraService()
@@ -20,28 +20,27 @@ class AuraSyncAction extends MicrophoneAction {
     }
 
     run(controller) {
-        if(!AuraSyncAction.AuraServicePID || !AuraSyncAction.AuraServiceHwnd || !AuraSyncAction.AuraReady){
+        if (!AuraSyncAction.ServiceEnabled)
+            return
+
+        color := controller.state ? this.muteColor : this.unmuteColor
+
+        if (!AuraSyncAction.AuraServicePID || !AuraSyncAction.AuraServiceHwnd || !AuraSyncAction.AuraReady) {
             util_log("[AuraSyncAction] Aura Sync is not initialized yet, skipping action")
+            AuraSyncAction.InitialState := { color: color }
             return
         }
-
-        if (!AuraSyncAction.ServiceEnabled || (this.releaseDelay > 0 && !controller.shouldCallFeedback))
-            return
-
-        pushedDelay := controller.isPushToTalk? 0 : this.releaseDelay
-        if (controller.state) {
-            color := this.muteColor
-            releaseDelay := controller.isInverted? pushedDelay : this.releaseDelay
-        } else {
-            color := this.unmuteColor
-            releaseDelay := controller.isInverted? this.releaseDelay : pushedDelay
+        
+        if (AuraSyncAction.InitialState) {
+            color := AuraSyncAction.InitialState.color
+            AuraSyncAction.InitialState := ""
         }
 
-        this.sendAction("setAllDevicesColor", color, releaseDelay, 50)
+        this.sendAction("setAllDevicesColor", color, 50)
     }
 
-    sendAction(type, color:="", releaseDelay:="", timeout:=500){
-        data := JSON.Dump({ type: type, color: color, releaseDelay: releaseDelay})
+    sendAction(type, color:="", timeout:=500){
+        data := JSON.Dump({ type: type, color: color})
 
         if (!IPC_Send(AuraSyncAction.AuraServiceHwnd, data, timeout))
             util_log("[AuraSyncAction] Failed to send data to AuraService in " timeout " ms")
@@ -91,11 +90,11 @@ class AuraSyncAction extends MicrophoneAction {
     }
 
     getConfig(){
-        return { "Type": this.TypeName, "MuteColor": this.muteColor, "UnmuteColor": this.unmuteColor, "ReleaseDelay": this.releaseDelay }
+        return { "Type": this.TypeName, "MuteColor": this.muteColor, "UnmuteColor": this.unmuteColor }
     }
 
     __Delete(){
-        this.sendAction("pauseService",,, 1)
+        this.sendAction("pauseService",, 1)
     }
 
     __OnPowerChange(wParam){
@@ -108,7 +107,7 @@ class AuraSyncAction extends MicrophoneAction {
             util_log("[AuraSyncAction] Detected a power state change, resetting AuraService")
             lastReset := A_TickCount
 
-            resetMethod := ObjBindMethod(AuraSyncAction, "sendAction", "resetService")
+            resetMethod := ObjBindMethod(AuraSyncAction, "sendAction", "resetService",, 1)
             SetTimer, % resetMethod, -1000
         }
     }
