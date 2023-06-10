@@ -553,8 +553,13 @@ runUpdater(){
 OnAuraServiceMessage(parentHwnd, msg){
     if(msg == "auraReady"){
         AuraSyncAction.AuraReady:= 1
-        AuraSyncAction.run("")
-        return
+        for _i, action in mic_actions {
+            ; Run AuraSyncAction with initialState
+            if(action.TypeName == AuraSyncAction.TypeName)
+                return action.run("")
+        }
+        ; There's no auraSyncAction in the current profile
+        return AuraSyncAction.sendAction("pauseService")
     }
 
     util_log("[AuraService] " msg)
