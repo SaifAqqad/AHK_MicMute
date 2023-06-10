@@ -14,10 +14,10 @@ class ProfileTemplate {
         this.ExcludeFullscreen := 0
         this.OSDPos := { x: -1, y: -1 }
 
-        this.UpdateWithSystem := 1
         this.afkTimeout := 0
-        this.LinkedApp := ""
         this.PTTDelay := 100
+
+        this.LinkedApp := ""
 
         this.OverlayPos := { x: -1, y: -1 }
         this.OverlayShow := 2

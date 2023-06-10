@@ -13,14 +13,9 @@ class Config {
         ; Set Json options
         JSON.EmptyObjectsAsArrays:= 1
         if(!FileExist(A_ScriptDir "\config.json") || util_IsFileEmpty(A_ScriptDir "\config.json")){
-            if(FileExist(A_ScriptDir "\config.ini")){
-                isFirstLaunch:=0
-                this.importIniConfig()
-            }else{
-                isFirstLaunch:=1
-                this.DefaultProfile:= this.createProfile("Default").ProfileName
-                this.exportConfig()
-            }
+            isFirstLaunch:=1
+            this.DefaultProfile:= this.createProfile("Default").ProfileName
+            this.exportConfig()
         }else{
             isFirstLaunch:=0
             Try this.importConfig()
@@ -57,32 +52,6 @@ class Config {
             }
         }
         this.Delete("UseCustomSounds")
-    }
-
-    importIniConfig(){
-        util_log("[Config] Importing config.ini")
-        iniProfile:= { "afkTimeout":0
-                    , "ExcludeFullscreen":0
-                    , "Microphone":"capture"
-                    , "MuteHotkey":""
-                    , "OnscreenFeedback":0
-                    , "ProfileName":"Default"
-                    , "PushToTalk":0
-                    , "SoundFeedback":0
-                    , "UnmuteHotkey":""
-                    , "UpdateWithSystem":1}
-        for key in iniProfile {
-            IniRead, iniVal, %A_ScriptDir%\config.json, settings, %key%
-            if(iniVal = "ERROR")
-                continue
-            if val is number
-                iniVal+=0
-            iniProfile[key]:= iniVal
-        }
-        dfProfile:= this.createProfile(iniProfile)
-        this.DefaultProfile:= dfProfile.ProfileName
-        this.exportConfig()
-        FileDelete, config.ini
     }
 
     exportConfig(){
