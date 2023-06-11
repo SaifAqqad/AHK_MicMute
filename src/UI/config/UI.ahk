@@ -1,46 +1,12 @@
 global ui_obj, about_obj, current_profile, hotkey_panels, current_hp, action_editor
-, onExitCallback, UI_scale:= A_ScreenDPI/96, UI_profileIsDirty:= 0
-, input_hook, input_hook_timer, key_set, modifier_set, is_multiple_mics:=0
-, UI_tooltips:= [ { selector: ".passthrough-label"
-                     , string: "The hotkey's keystrokes won't be hidden from the OS"}
-                  ,{ selector: ".wildcard-label"
-                     , string: "Fire the hotkey even if extra modifiers are held down"}
-                  ,{ selector: ".nt-label"
-                     , string: "Use neutral modifiers (i.e. Alt instead of Left Alt / Right Alt)"}
-                  ,{ selector: ".ptt-delay-label"
-                     , string: "Delay between releasing the key and the audio cutting off"}
-                  ,{ selector: ".afk-label"
-                     , string: "Mute the microphone when idling for a length of time"}
-                  ,{ selector: ".ExcludeFullscreen-label"
-                     , string: "Don't show the OSD if the active app/game is fullscreen"}
-                  ,{ selector: ".SwitchProfileOSD-label"
-                     , string: "Show an OSD when switching between profiles"}
-                  ,{ selector: ".SoundFeedback-label"
-                     , string: "Play a sound when muting or unmuting the microphone"}
-                  ,{ selector: ".OnscreenFeedback-label"
-                     , string: "Show an OSD when muting or unmuting the microphone"}
-                  ,{ selector: ".OnscreenOverlay-label"
-                     , string: "Show the microphone's state in an always-on-top overlay"}
-                  ,{ selector: ".multiple-mics-label"
-                     , string: "Right click to view instructions"}
-                  ,{ selector: ".ForceMicrophoneState-label"
-                     , string: "Prevent other apps from changing the mic's state"}
-                  ,{ selector: ".UseCustomSounds-label"
-                     , string: "Right click to view instructions"}
-                  ,{ selector: ".OverlayUseCustomIcons-label"
-                     , string: "Right click to view instructions"}
-                  ,{ selector: ".hybrid_ptt-label"
-                     , string: "Short press will toggle the microphone"}
-                  ,{ selector: ".mic-actions-label"
-                     , string: "Run programs/scripts when muting/unmuting the microphone"}
-                  ,{ selector: ".volume-lock-label"
-                     , string: "Lock the microphone's volume to a specific value"}]
+    , onExitCallback, UI_scale:= A_ScreenDPI/96, UI_profileIsDirty:= 0
+    , input_hook, input_hook_timer, key_set, modifier_set, is_multiple_mics:=0
 
 UI_create(p_onExitCallback){
     util_log("[UI] Creating 'config' window")
     features:= {"FEATURE_GPU_RENDERING": 0x1
-            ,"FEATURE_BROWSER_EMULATION": 0x2AF8
-            ,"FEATURE_96DPI_PIXEL": 0x1}
+        ,"FEATURE_BROWSER_EMULATION": 0x2AF8
+        ,"FEATURE_96DPI_PIXEL": 0x1}
     UI_enableIeFeatures(features)
     ui_obj:= new NeutronWindow()
     ui_obj.load(resources_obj.htmlFile.UI)
@@ -76,7 +42,7 @@ UI_HotReload(){
 
 UI_enableIeFeatures(f_obj, delete:=0){
     static reg_dir:= "SOFTWARE\Microsoft\Internet Explorer\Main\FeatureControl\"
-         , executable:= A_IsCompiled? A_ScriptName : util_splitPath(A_AhkPath).fileName
+        , executable:= A_IsCompiled? A_ScriptName : util_splitPath(A_AhkPath).fileName
     for feature, value in f_obj
         if(!delete)
             RegWrite, REG_DWORD, % "HKCU\" reg_dir feature, % executable, % value
@@ -129,6 +95,7 @@ UI_setProfile(_neutron, p_profile){
     ui_obj.doc.getElementById("ExcludeFullscreen").checked:= current_profile.ExcludeFullscreen
     ui_obj.doc.getElementById("OSDPos_x").value:= current_profile.OSDPos.x==-1? "" : current_profile.OSDPos.x
     ui_obj.doc.getElementById("OSDPos_y").value:= current_profile.OSDPos.y==-1? "" : current_profile.OSDPos.y
+    ui_obj.doc.getElementById("ForegroundAppsOnly").checked := current_profile.ForegroundAppsOnly
     UI_onRefreshAppsList("")
     ui_obj.doc.getElementById("afkTimeout").value:= !current_profile.afkTimeout? "" : current_profile.afkTimeout
     ui_obj.doc.getElementById("PTTDelay").value:= current_profile.PTTDelay
@@ -194,7 +161,7 @@ UI_resetMicSelect(){
         }else{
             select.insertAdjacentHTML("beforeend", Format(template_mic, device, "", device))
         }
-    }    
+    }
     select.value:= "Default"
 }
 
@@ -247,6 +214,7 @@ UI_onSaveProfile(neutron, noReset:=0){
     current_profile.OverlaySize:= ui_obj.doc.getElementById("OverlaySize").value
     current_profile.afkTimeout:= (val:= ui_obj.doc.getElementById("afkTimeout").value)? val+0 : 0
     current_profile.LinkedApp:= ui_obj.doc.getElementById("LinkedApp").value
+    current_profile.ForegroundAppsOnly:= ui_obj.doc.getElementById("ForegroundAppsOnly").checked? 1 : 0
     current_profile.PTTDelay:= ui_obj.doc.getElementById("PTTDelay").value+0
     current_profile.OSDPos.x:= (val:= ui_obj.doc.getElementById("OSDPos_x").value)? val : -1
     current_profile.OSDPos.y:= (val:= ui_obj.doc.getElementById("OSDPos_y").value)? val : -1
@@ -260,21 +228,21 @@ UI_onSaveProfile(neutron, noReset:=0){
         if(!hp.isTypeValid())
             Continue
         current_profile.Microphone.Push(new MicrophoneTemplate(mic
-        , hp.mute.hotkey
-        , hp.unmute.hotkey
-        , (hp.hotkeyType >= 2? 1 : 0)
-        , hp.hybrid_ptt
-        , (hp.hotkeyType == 3? 1 : 0)))
+            , hp.mute.hotkey
+            , hp.unmute.hotkey
+            , (hp.hotkeyType >= 2? 1 : 0)
+            , hp.hybrid_ptt
+            , (hp.hotkeyType == 3? 1 : 0)))
     }
     if(!current_profile.Microphone.Length()){
-        current_profile.Microphone.Push(new MicrophoneTemplate("Default", "", ""))    
+        current_profile.Microphone.Push(new MicrophoneTemplate("Default", "", ""))
     }
     config_obj.exportConfig()
     if(!noReset){
         UI_reset()
         UI_setProfile(neutron, current_profile.ProfileName)
     }
-    UI_notify("Profile saved")   
+    UI_notify("Profile saved")
 }
 
 UI_onDeleteProfile(neutron){
@@ -326,7 +294,7 @@ UI_onRecord(type){
     inputElem:= ui_obj.doc.getElementByID(type . "_input")
     inputElem.value:=""
     inputElem.placeholder:="Recording"
-    ;setup a new input hook 
+    ;setup a new input hook
     input_hook:= InputHook("L0 T3","{Enter}{Escape}")
     input_hook.KeyOpt("{ALL}", "NI")
     input_hook.VisibleText:= false
@@ -343,8 +311,8 @@ UI_onRecord(type){
 
 UI_addKey(type, _InputHook, VK, SC){
     key_name:= GetKeyName(Format("vk{:x}sc{:x}", VK, SC))
-    , inputElem:= ui_obj.doc.getElementByID(type "_input")
-    , unq:=""
+        , inputElem:= ui_obj.doc.getElementByID(type "_input")
+        , unq:=""
     if(StrLen(key_name) == 1)
         key_name:= Format("{:U}", key_name)
     key_name:= current_hp[type].nt? current_hp.modifierToNeutral(key_name) : key_name
@@ -531,11 +499,11 @@ UI_asyncOnSetMicrophone(mic_name){
         hotkey_panels[mic_name]:= new HotkeyPanel("","",1)
     }
     if(is_multiple_mics){
-        UI_setHotkeyPanel(hotkey_panels[mic_name])        
+        UI_setHotkeyPanel(hotkey_panels[mic_name])
     }else{
         hotkey_panels:= {}
         hotkey_panels[mic_name]:= current_hp
-        UI_setHotkeyPanel(hotkey_panels[mic_name]) 
+        UI_setHotkeyPanel(hotkey_panels[mic_name])
     }
     ui_obj.doc.getElementById("hotkeys_panel").classList.remove("hidden")
 }
@@ -625,19 +593,31 @@ UI_updateStopTimer(id){
 
 }
 
+UI_onToggleForegroundApps(){
+    current_profile.ForegroundAppsOnly:= ui_obj.doc.getElementById("ForegroundAppsOnly").checked? 1 : 0
+    UI_onRefreshAppsList("")
+}
+
 UI_onRefreshAppsList(neutron){
-    list:= UI_getProcessList()
+    processes := util_getRunningProcesses(!current_profile.ForegroundAppsOnly)
+
+    ; Add existing linked app to list if it's not running
+    if(current_profile.LinkedApp && !processes.HasKey(current_profile.LinkedApp)){
+        processes[current_profile.LinkedApp] := { name: current_profile.LinkedApp }
+    }
+
     select:= ui_obj.doc.getElementById("LinkedApp")
-    if(current_profile.LinkedApp)
-        list.push(current_profile.LinkedApp)
     select.innerHTML:=""
     select.insertAdjacentHTML("beforeend", Format(template_app, "", "Select an app", "selected"))
-    for _i, process in list.data {
-        WinGetTitle, winTitle, ahk_exe %process%
-        winTitle:= winTitle? winTitle " (" process ")" : process
-        select.insertAdjacentHTML("beforeend"
-        , Format(template_app, process, winTitle, process = current_profile.LinkedApp? "selected" : ""))    
+
+    for _i, proc in processes {
+        isSelected:= proc.name = current_profile.LinkedApp
+        titleValue:= util_firstNonEmpty(proc.description, proc.title)
+
+        label:= titleValue ? Format("{} ({})", titleValue, proc.name) : proc.name
+        select.insertAdjacentHTML("beforeend", Format(template_app, proc.name, label, isSelected? "selected" : ""))
     }
+
     if(neutron)
         UI_notify("Refreshed running apps")
 }
@@ -698,8 +678,8 @@ UI_switchToTab(neutron, rootSelector, tabID){
     wantedTabContent:= ui_obj.doc.getElementById(tabID "_content")
 
     if(neutron && activeTab.id == wantedTab.id)
-        return 
-        
+        return
+
     activeTab.classList.remove("is-active")
     wantedTab.classList.add("is-active")
     activeTabContent.classList.add("hidden")
@@ -730,8 +710,7 @@ UI_onCreateMicAction(neutron:="", actionType:=""){
     actionIndex:= current_profile.MicrophoneActions.Length() + 1
     exitCallback:= Func("UI_onSaveMicAction").Bind(actionIndex)
 
-    switch actionType
-    {
+    switch actionType {
         case PowershellAction.TypeName:
             actionConfig:= PowershellAction.getConfig()
             action_editor:= new PowershellActionEditor(actionConfig, exitCallback)
@@ -768,14 +747,13 @@ UI_onEditMicAction(neutron:="", actionIndex:=""){
     action:= current_profile.MicrophoneActions[actionIndex]
     if(!action)
         return
-    
+
     exitCallback:= Func("UI_onSaveMicAction").Bind(actionIndex)
 
-    switch action.Type
-    {
+    switch action.Type {
         case PowershellAction.TypeName:
             action_editor:= new PowershellActionEditor(action.Clone(), exitCallback)
-            
+
         case ProgramAction.TypeName:
             action_editor:= new ProgramActionEditor(action.Clone(), exitCallback)
 
@@ -794,7 +772,7 @@ UI_onSaveMicAction(actionIndex, actionConfig){
 
     if(!actionConfig)
         return
-    
+
     if(actionConfig == -1){
         current_profile.MicrophoneActions.RemoveAt(actionIndex)
     }else{
@@ -976,16 +954,4 @@ UI_launchURL(_neutron:="", url:="", isFullUrl:=0){
 UI_launchReleasePage(_neutron:="", version:=""){
     url:= "https://github.com/SaifAqqad/AHK_MicMute/releases/tag/" . (version? version : A_Version)
     Run, %url%, %A_Desktop%
-}
-
-UI_getProcessList(){
-    pSet:= new StackSet()
-    WinGet, pList, List
-    loop %pList% 
-    {
-        pHwnd:= pList%A_Index%
-        WinGet, pName, ProcessName, ahk_id %pHwnd%
-        pSet.push(pName)
-    }
-    return pSet
 }

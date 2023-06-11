@@ -18,6 +18,7 @@ class ProfileTemplate {
         this.PTTDelay := 100
 
         this.LinkedApp := ""
+        this.ForegroundAppsOnly := 1
 
         this.OverlayPos := { x: -1, y: -1 }
         this.OverlayShow := 2

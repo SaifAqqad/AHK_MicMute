@@ -74,7 +74,57 @@ util_isProcessElevated(vPID){
     return vRet ? vIsElevated : -1
 }
 
-util_getMainWindowHwnd(p_pid){
+util_getRunningProcesses(includeHidden:=0) {
+    static _sysProcesses := new StackSet("svchost.exe", "explorer.exe", "Taskmgr.exe", "SystemSettings.exe")
+
+    _hiddenValue:= A_DetectHiddenWindows
+    if (includeHidden)
+        DetectHiddenWindows, On
+
+    pSet:= {}
+    WinGet, pList, List
+    loop %pList%
+    {
+        pHwnd:= pList%A_Index%
+
+        WinGet, pPath, ProcessPath, ahk_id %pHwnd%
+        if (!pPath)
+            continue
+        pSplitPath := util_splitPath(pPath)
+
+        if(pSplitPath.fileExt != "exe" || pSet.HasKey(pSplitPath.fileName) || _sysProcesses.exists(pSplitPath.fileName))
+            continue
+
+        WinGetTitle, pTitle, ahk_id %pHwnd%
+        pInfo:= util_getFileInfo(pPath)
+
+        pSet[pSplitPath.fileName] := { hwnd: pHwnd
+            , path: pPath
+            , name: pSplitPath.fileName
+            , title: pTitle
+            , description: pInfo.FileDescription }
+    }
+    DetectHiddenWindows, % _hiddenValue
+
+    return pSet
+}
+
+util_getFileInfo(lptstrFilename) {
+    List := "Comments InternalName ProductName CompanyName LegalCopyright ProductVersion"
+        . " FileDescription LegalTrademarks PrivateBuild FileVersion OriginalFilename SpecialBuild"
+    dwLen := DllCall("Version.dll\GetFileVersionInfoSize", "Str", lptstrFilename, "Ptr", 0)
+    dwLen := VarSetCapacity( lpData, dwLen + A_PtrSize)
+    DllCall("Version.dll\GetFileVersionInfo", "Str", lptstrFilename, "UInt", 0, "UInt", dwLen, "Ptr", &lpData)
+    DllCall("Version.dll\VerQueryValue", "Ptr", &lpData, "Str", "\VarFileInfo\Translation", "PtrP", lplpBuffer, "PtrP", puLen )
+    sLangCP := Format("{:04X}{:04X}", NumGet(lplpBuffer+0, "UShort"), NumGet(lplpBuffer+2, "UShort"))
+    i := {}
+    Loop, Parse, % List, %A_Space%
+        DllCall("Version.dll\VerQueryValue", "Ptr", &lpData, "Str", "\StringFileInfo\" sLangCp "\" A_LoopField, "PtrP", lplpBuffer, "PtrP", puLen )
+            ? i[A_LoopField] := StrGet(lplpBuffer, puLen) : ""
+    return i
+}
+
+util_getAhkMainWindowHwnd(p_pid){
     WinWait, % "ahk_pid " p_pid, , 1
 
     ; list all windows
@@ -194,6 +244,13 @@ util_toString(obj){
         output_str:= SubStr(output_str, 1, -2) . " "
     output_str .= isArray? "]": "}"
     return output_str
+}
+
+util_firstNonEmpty(params*) {
+    for _, param in params
+        if (param && Trim(param))
+            return param
+    return ""
 }
 
 ; VerCmp() for Windows by SKAN on D35T/D37L @ tiny.cc/vercmp

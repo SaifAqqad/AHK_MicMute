@@ -492,7 +492,17 @@
                                             <svg focusable="false" style="width:16px;height:16px" viewBox="0 -5 24 24">
                                                 <path fill="currentColor"
                                                       d="M3 1C1.89 1 1 1.89 1 3V14C1 15.11 1.89 16 3 16H14C15.11 16 16 15.11 16 14V11H14V14H3V3H14V5H16V3C16 1.89 15.11 1 14 1M9 7C7.89 7 7 7.89 7 9V12H9V9H20V20H9V18H7V20C7 21.11 7.89 22 9 22H20C21.11 22 22 21.11 22 20V9C22 7.89 21.11 7 20 7H9" />
-                                            </svg> Linked application</label>
+                                            </svg> Linked application
+                                            <span class="tag tag-is-small has-tooltip" tabindex=0 role="button" aria-pressed="false" aria-label="Foreground only"
+                                                  style="margin-top: 0px;"
+                                                  onkeydown="switch(event.keyCode){case 32:case 69: case 13:this.click()}"
+                                                  onclick="ahk.UI_flipVal('ForegroundAppsOnly');ahk.UI_onChange('UI_onToggleForegroundApps');this.blur()">
+                                                <label class="checkbox">
+                                                    <input type="checkbox" name="ForegroundAppsOnly" id="ForegroundAppsOnly" disabled>
+                                                    <span class="ForegroundAppsOnly-label">Foreground only</span>
+                                                </label>
+                                            </span>
+                                        </label>
                                         <div class="field has-addons">
                                             <div class="control is-expanded ">
                                                 <div class="select is-fullwidth is-small is-primary">
@@ -623,7 +633,7 @@
                                             </svg> Volume Lock
                                         </label>
                                         <div class="columns is-mobile" style="margin-left: 1px;">
-                                            <div class="column is-5" style="padding-right: 0!important; padding-left: 0!important;">
+                                            <div class="column is-5" style="padding-left: 0px !important;">
                                                 <input class="input is-primary is-small input-elem" placeholder="Percentage" disabled type="text"
                                                        id="VolumeLock_text" value="Disabled">
                                             </div>

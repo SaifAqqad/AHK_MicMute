@@ -52,7 +52,7 @@ class AuraSyncAction extends MicrophoneAction {
             Run, % this.AuraServiceCommand, A_ScriptDir, Hide, childPID
 
             AuraSyncAction.AuraServicePID := childPID
-            AuraSyncAction.AuraServiceHwnd := util_getMainWindowHwnd(AuraSyncAction.AuraServicePID)
+            AuraSyncAction.AuraServiceHwnd := util_getAhkMainWindowHwnd(AuraSyncAction.AuraServicePID)
 
             util_log("[AuraSyncAction] Started AuraService with PID: " AuraSyncAction.AuraServicePID " and HWND: " AuraSyncAction.AuraServiceHwnd)
             OnExit(ObjBindMethod(AuraSyncAction, "stopAuraService"))

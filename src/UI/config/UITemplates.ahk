@@ -110,3 +110,39 @@ global template_link:= "<link rel='stylesheet' id='css_{1:}' href='{2:}'>"
                     <li>Setup the hotkeys</li>
                 </ol>
                 )"}
+, UI_tooltips:= [ { selector: ".passthrough-label"
+                , string: "The hotkey's keystrokes won't be hidden from the OS"}
+             ,{ selector: ".wildcard-label"
+                , string: "Fire the hotkey even if extra modifiers are held down"}
+             ,{ selector: ".nt-label"
+                , string: "Use neutral modifiers (i.e. Alt instead of Left Alt / Right Alt)"}
+             ,{ selector: ".ptt-delay-label"
+                , string: "Delay between releasing the key and the audio cutting off"}
+             ,{ selector: ".afk-label"
+                , string: "Mute the microphone when idling for a length of time"}
+             ,{ selector: ".ExcludeFullscreen-label"
+                , string: "Don't show the OSD if the active app/game is fullscreen"}
+             ,{ selector: ".SwitchProfileOSD-label"
+                , string: "Show an OSD when switching between profiles"}
+             ,{ selector: ".SoundFeedback-label"
+                , string: "Play a sound when muting or unmuting the microphone"}
+             ,{ selector: ".OnscreenFeedback-label"
+                , string: "Show an OSD when muting or unmuting the microphone"}
+             ,{ selector: ".OnscreenOverlay-label"
+                , string: "Show the microphone's state in an always-on-top overlay"}
+             ,{ selector: ".multiple-mics-label"
+                , string: "Right click to view instructions"}
+             ,{ selector: ".ForceMicrophoneState-label"
+                , string: "Prevent other apps from changing the mic's state"}
+             ,{ selector: ".UseCustomSounds-label"
+                , string: "Right click to view instructions"}
+             ,{ selector: ".OverlayUseCustomIcons-label"
+                , string: "Right click to view instructions"}
+             ,{ selector: ".hybrid_ptt-label"
+                , string: "Short press will toggle the microphone"}
+             ,{ selector: ".mic-actions-label"
+                , string: "Run programs/scripts when muting/unmuting the microphone"}
+             ,{ selector: ".volume-lock-label"
+                , string: "Lock the microphone's volume to a specific value"}
+             ,{ selector: ".ForegroundAppsOnly-label"
+                , string: "Require apps to be in the foreground to trigger a profile change"}]

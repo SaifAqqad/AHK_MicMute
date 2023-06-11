@@ -187,8 +187,6 @@ initilizeMicMute(default_profile:="", exportConfig:=1){
     setTimer, checkConfigDiff, 3000
     ;update theme variables
     updateSysTheme()
-    ;initilize tray
-    tray_init()
     if(config_obj.AllowUpdateChecker==-1){
         MsgBox, 36, MicMute, Allow MicMute to connect to the internet and check for updates on startup?
         IfMsgBox, Yes
@@ -421,21 +419,41 @@ checkConfigDiff(){
 
 checkLinkedApps(){
     if(watched_profile){
-        WinGet, minState, MinMax, % "ahk_exe " . watched_profile.LinkedApp ; -1 -> minimized
-        if(!WinExist("ahk_exe " . watched_profile.LinkedApp) || minState == -1){
+        if(!isAppActive(watched_profile.LinkedApp)){
             util_log("[Main] Linked app closed: " . watched_profile.LinkedApp)
-            switchProfile(config_obj.DefaultProfile)
             watched_profile:=""
+            switchProfile(config_obj.DefaultProfile)
         }
         return
     }
-    for _i, prof in watched_profiles {
-        WinGet, minState, MinMax, % "ahk_exe " . prof.LinkedApp
-        if(WinExist("ahk_exe " . prof.LinkedApp) && (minState!="" && minState!=-1)){
-            util_log("[Main] Detected linked app: " . prof.LinkedApp)
-            watched_profile:= prof
-            switchProfile(prof.ProfileName)
+
+    for _i, p in watched_profiles {
+        if(isAppActive(p.LinkedApp)){
+            util_log("[Main] Detected linked app: " . p.LinkedApp)
+            watched_profile:= p
+            switchProfile(p.ProfileName)
+            break
         }
+    }
+}
+
+isAppActive(appFile){
+    if (current_profile.ForegroundAppsOnly) {
+        windowExists := WinExist("ahk_exe " . appFile)
+        WinGet, minState, MinMax, ahk_exe %appFile%
+
+        ; An app is active in the foreground if it has a window that's not hidden
+        ; Minimized windows are considered hidden
+        return windowExists && minState !== "" && minState !== -1
+    } else {
+        _hiddenValue := A_DetectHiddenWindows
+        DetectHiddenWindows, On
+
+        ; Try to get the PID
+        WinGet, appPid, PID, ahk_exe %appFile%
+
+        DetectHiddenWindows, %_hiddenValue%
+        return appPid !== ""
     }
 }
 
@@ -482,7 +500,7 @@ reloadMicMute(p_profile:=""){
 }
 
 parseArgs(){
-    arg_regex:= "i)\/([\w]+)(=(.+))?"
+    arg_regex:= "i)[\/\-]?([\w]+)(=(.+))?"
     for _i, arg in A_Args {
         match:= RegExMatch(arg, arg_regex, val)
         if(!match)

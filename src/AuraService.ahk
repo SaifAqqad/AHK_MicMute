@@ -20,7 +20,7 @@ global parentPID := A_Args[1]
     , lastTask
     , A_IsDebug := A_Args[2] = "/debug"
 
-global parentHwnd := util_getMainWindowHwnd(parentPID)
+global parentHwnd := util_getAhkMainWindowHwnd(parentPID)
 
 if (!parentPID || parentPID == servicePID)
     ExitService(-1)
