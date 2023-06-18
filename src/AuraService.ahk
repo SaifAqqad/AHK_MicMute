@@ -85,6 +85,7 @@ RunTasks(){
             case "pauseService":
                 aura.releaseControl()
                 lastTask := ""
+                Sleep, 100
             case "stopService":
                 ExitService()
         }
