@@ -21,6 +21,7 @@
    * Customizable sound and on-screen feedback
    * Always-on-top overlay to show the microphone's state
    * Run custom scripts/programs when muting/unmuting the microphone
+   * ASUS Aura Sync integration
    * Voicemeeter integration
 
 ## Installation
@@ -125,6 +126,12 @@ Show the microphone's state in an always-on-top overlay.
 ### Linked applications
 Link a profile to an app/game, when the app becomes visible (not minimized or hidden), MicMute will automatically switch to that profile, when the app is minimized/hidden/closed, MicMute will switch back to the default profile.
 
+**Foreground only** option (Enabled by default) can be disabled so background apps (minimized or hidden) can also trigger the profile switch. <small>`v1.2.8+`</small> 
+
+### Volume Lock
+Locks the microphone's volume to a specific value and prevents other apps from changing it.
+<small>`v1.2.8+`</small>
+
 ### Microphone actions
 Run programs and powershell scripts when muting/unmuting the microphone(s).
 <details>
@@ -179,7 +186,20 @@ You can use the same variables as the program action (and you can insert the '**
     ```
    </details>
 
-This action works by encoding the script using base64 (UTF-16LE) and then passing it to powershell using the `-EncodedCommand` parameter, this avoids the need to create a temp file to run the script and even avoids any issues related to escaping special characters.
+<small>This action works by encoding the script using base64 (UTF-16LE) and then passing it to powershell using the `-EncodedCommand` parameter, this avoids the need to create a temp file to run the script and even avoids any issues related to escaping special characters.</small>
+
+#### 3. Aura Sync action: <small>`v1.2.8+`</small>
+Syncs the microphone's state with ASUS Aura Sync compatible devices.
+
+* You need to have **Armoury Crate** (or the standalone Aura Sync app) installed for this action to work, though it doesn't need to be running.
+*  <details>
+    <summary>Screenshot</summary>
+
+    ![Aura Sync action](./screenshots/configwindow_8.png)
+   </details>
+
+<small>Due to how slow the Aura Sync API is, this action requires a seperate MicMute process that controls the RGB by listening for messages from the main MicMute process, this ensures that the action does not affect the responsiveness of the hotkeys.</small>
+
 <hr>
 
 ### Global options
@@ -199,7 +219,7 @@ Prevent other apps from changing the microphone's state (i.e mute/unmute the mic
 
 #### 5. Voicemeeter integration
 You can control Voicemeeter's inputs and outputs using MicMute, after turning on the option, refresh the microphones list and you should see voicemeeter's inputs (strips) and outputs (buses) in the microphone dropdown.
-<details>
+* <details>
   <summary>Screenshot</summary>
 
   ![Image](./screenshots/configwindow_5.png)
@@ -242,12 +262,12 @@ Hold <kbd>Shift</kbd> when clicking **Edit configuration** in the tray menu, and
 Hold <kbd>Shift</kbd> when clicking **Help** in the tray menu, and the logs window will open.
 
 ## CLI arguments
-| Argument                    | Description                                                                         |
-| --------------------------- | ----------------------------------------------------------------------------------- |
-| `/profile=<profile name>`   | Startup with a specific profile.                                                    |
-| `/noUI`                     | Disable the configuration UI completely. This decreases memory usage by almost 60%. |
-| `/debug`                    | Add shortcuts to `ListVars`, `ListHotkeys` and `View Log`  in the tray menu.        |
-| `/logFile=<file_to_log_to>` | Outputs the log to a file (it's written to stdout by default )                      |
+| Argument                    | Description                                                                                                                                 |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/profile=<profile name>`   | Startup with a specific profile.                                                                                                            |
+| `/noUI`                     | Disable the configuration UI completely. This decreases memory usage by almost 60%.                                                         |
+| `/debug`                    | Add shortcuts to `ListVars`, `ListHotkeys` and `View Log` in the tray menu. Enables logging for Aura Sync action (<small>`v1.2.8+`</small>) |
+| `/logFile=<file_to_log_to>` | Outputs the log to a file (it's written to stdout by default )                                                                              |
 
 Example: `MicMute.exe "/profile=profile 1" /noUI /debug /logFile=MicMute.log`
 ## Compile instructions
@@ -307,8 +327,10 @@ ahk2exe.exe /in ".\src\MicMute.ahk" /out ".\src\MicMute.exe";
 | [VMR.ahk](https://github.com/SaifAqqad/VMR.ahk)                       | [License](https://github.com/SaifAqqad/VMR.ahk/blob/master/LICENSE)            |
 | [mmikeww/AHKv2-Gdip](https://github.com/mmikeww/AHKv2-Gdip)           | [License](https://www.autohotkey.com/boards/viewtopic.php?t=6517)              |
 | [Bulma CSS framework](https://bulma.io/)                              | [MIT](https://github.com/jgthms/bulma/blob/master/LICENSE)                     |
+| [CodeMirror 5](https://codemirror.net/5)                              | [MIT](https://codemirror.net/5/LICENSE)                                        |
 | [G33kDude/cJson.ahk](https://github.com/G33kDude/cJson.ahk)           | [MIT](https://github.com/G33kDude/cJson.ahk/blob/main/LICENSE)                 |
 | [G33kDude/Neutron.ahk](https://github.com/G33kDude/Neutron.ahk)       | [MIT](https://github.com/G33kDude/Neutron.ahk/blob/master/LICENSE)             |
+| [jscolor Color Picker](https://jscolor.com)                           | [GPL v3](https://jscolor.com/download/#open-source-license)                    |
 
 ## Credits
 This project would not exist without these people:
