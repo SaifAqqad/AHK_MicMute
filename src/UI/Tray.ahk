@@ -83,12 +83,14 @@ tray_autoStart(){
 }
 
 tray_setToggleMic(onOff){
-    if(onOff){
-        Menu, Tray, Enable, 1&
-        Menu, Tray, Default, 1&
-    }else{
-        Menu, Tray, Disable, 1&
-        Menu, Tray, NoDefault
+    Try {
+        if(onOff){
+            Menu, Tray, Enable, 1&
+            Menu, Tray, Default, 1&
+        }else{
+            Menu, Tray, Disable, 1&
+            Menu, Tray, NoDefault
+        }
     }
 }
 
