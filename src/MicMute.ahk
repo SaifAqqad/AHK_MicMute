@@ -346,6 +346,7 @@ switchProfile(p_name:=""){
                 auraSyncEnabled:= 1
             }
             mic_actions.Push(MicrophoneAction.Create(action))
+            util_log("[Main] Registered " action.Type " action")
         }
     }
 

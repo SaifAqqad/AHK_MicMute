@@ -182,7 +182,7 @@ Class MicrophoneController {
 
             ; Force microphone mute state
             if(this.force_current_state && this.state != callback.Muted)
-                return this.setMuteStateVA(this.state, micName)
+                this.setMuteStateVA(this.state, micName)
             else
                 this.state:= callback.Muted
         } else {
@@ -198,9 +198,9 @@ Class MicrophoneController {
             hotkeyId:= this.state? this.muteHotkeyId : this.unmuteHotkeyId
             ; check if the current controller is the first registered for the current hotkey
             if(this.shouldCallFeedback && hotkeyId == 1){
+                this.shouldCallFeedback:=0
                 this.feedback_callback.Call(this)
             }
-            this.shouldCallFeedback:=0
         }
         Critical, Off
     }
@@ -286,10 +286,10 @@ Class MicrophoneController {
         if(this.isMicrophoneArray){
             this.va_callback:= Object()
             for _i, mic in this.microphone {
-                this.va_callback[mic]:= VA_CreateAudioEndpointCallback(ObjBindMethod(this, "onUpdateState", mic), this.getMicId(mic))
+                this.va_callback[mic]:= VA_CreateAudioEndpointCallback(ObjBindMethod(this, "onUpdateState", mic), mic)
             }
         }else{
-            this.va_callback:= VA_CreateAudioEndpointCallback(ObjBindMethod(this, "onUpdateState", this.microphone), this.getMicId(this.microphone))
+            this.va_callback:= VA_CreateAudioEndpointCallback(ObjBindMethod(this, "onUpdateState", this.microphone), this.microphone)
         }
     }
 
