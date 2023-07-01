@@ -25,17 +25,25 @@ global parentHwnd := util_getAhkMainWindowHwnd(parentPID)
 if (!parentPID || parentPID == servicePID)
     ExitService(-1)
 
-OnError(Func("ExitService"))
+OnError(Func("logMsg"), -1)
+OnError(Func("ExitService"), 1)
+
+logMsg("AuraService started")
 
 ; Register IPC handler
 IPC_SetHandler(Func("AddTask"))
+
+if (!AuraSync.isInstalled()){
+    logMsg("Aura Sync is not installed")
+    ExitService(-1)
+}
 
 ; Initialize Aura Sync
 global currentTicks := A_TickCount
 global aura := new AuraSync()
 
-IPC_Send(parentHwnd, "Aura Sync initialized successfully in " A_TickCount - currentTicks " ms", 50)
-IPC_Send(parentHwnd, "auraReady", 50)
+logMsg("Aura Sync initialized in " A_TickCount - currentTicks " ms")
+logMsg("auraReady")
 
 ; Set tasks timer
 SetTimer, RunTasks, 60
@@ -91,15 +99,22 @@ RunTasks(){
         }
     }
     
-    if(A_IsDebug)
-        IPC_Send(parentHwnd, "Task " util_toString(task) " took " A_TickCount - currentTicks " ms", 50)
+    logMsg("Task " util_toString(task) " took " A_TickCount - currentTicks " ms", true)
 }
 
 ExitService(errorCode:=0) {
-    if(IsObject(errorCode)){
-        IPC_Send(parentHwnd, "An error occured: " errorCode.Message, 50)
+    if (IsObject(errorCode))
         errorCode := 1
-    }
+    logMsg("AuraService Exiting with errorCode " errorCode)
+
     aura.releaseControl()
     ExitApp, %errorCode%
+}
+
+logMsg(msg, debugOnly:=0) {
+    if (IsObject(msg))
+        msg := "Exception: " msg.Message
+
+    if(!debugOnly || A_IsDebug)
+        IPC_Send(parentHwnd, msg, 50)
 }

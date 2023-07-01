@@ -142,13 +142,16 @@ util_log("[Main] MicMute startup took " A_startupTime "ms")
 
 initilizeMicMute(default_profile:="", exportConfig:=1){
     util_log("[Main] Initilizing MicMute")
+
     ;make sure hotkeys are disabled before reinitilization
     if(mic_controllers)
         for _i,mic in mic_controllers
             mic.disableController()
+
     ;destroy existing guis 
     overlay_wnd.destroy()
     osd_wnd.destroy()
+
     ;initilize globals
     config_obj:= new Config()
         , osd_wnd:=""
@@ -172,19 +175,21 @@ initilizeMicMute(default_profile:="", exportConfig:=1){
         ; Check if AuraSyncAction is used in any profile and initilize AuraService
         for _j, action in profile.MicrophoneActions {
             if (action.Type = AuraSyncAction.TypeName && !AuraSyncAction.AuraServicePID) {
-                AuraSyncAction.initAuraService()
-                IPC_SetHandler(Func("OnAuraServiceMessage"))
+                auraServiceEnabled := true
                 break
             }
         }
     }
+
     ; export the processed config object
     if(exportConfig)
         config_obj.exportConfig()
+
     ;enable linked apps timer
     SetTimer, checkLinkedApps, % watched_profiles.Length()? 3000 : "Off"
     ;enable checkConfigDiff timer 
     setTimer, checkConfigDiff, 3000
+
     ;update theme variables
     updateSysTheme()
     if(config_obj.AllowUpdateChecker==-1){
@@ -194,14 +199,19 @@ initilizeMicMute(default_profile:="", exportConfig:=1){
         IfMsgBox, No
             config_obj.AllowUpdateChecker:= 0
     }
+
     ;on first launch -> immediately call editConfig()
     if(isFirstLaunch){
         current_profile:= config_obj.Profiles[1]
         editConfig()
         return
     }
+
     ;switch to the default profile
     switchProfile(default_profile)
+
+    if(auraServiceEnabled)
+        SetTimer, initAuraService, -20
 }
 
 switchProfile(p_name:=""){
@@ -566,6 +576,11 @@ runUpdater(){
     FileCopy, %A_ScriptFullPath%, %A_Temp%\MicMuteUpdater.exe, 1
     Run, "%A_Temp%\MicMuteUpdater.exe" "/updater=1" "/installPath=%A_ScriptDir%"
     ExitApp, 1
+}
+
+initAuraService(){
+    IPC_SetHandler(Func("OnAuraServiceMessage"))
+    AuraSyncAction.initAuraService()
 }
 
 OnAuraServiceMessage(parentHwnd, msg){

@@ -147,8 +147,7 @@ util_getWindowList(winTitle){
         winHwnd:= winList%A_Index%
         WinGetTitle, winTitle, % "ahk_id " winHwnd
         WinGetClass, winClass, % "ahk_id " winHwnd
-        WinGetText, winText, % "ahk_id " winHwnd
-        list.Push({"hwnd": winHwnd, "title": winTitle, "class": winClass, "text": winText})
+        list.Push({"hwnd": winHwnd, "title": winTitle, "class": winClass})
     }
     DetectHiddenWindows, Off
 

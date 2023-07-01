@@ -55,7 +55,7 @@ class AuraSyncAction extends MicrophoneAction {
             AuraSyncAction.AuraServiceHwnd := util_getAhkMainWindowHwnd(AuraSyncAction.AuraServicePID)
 
             util_log("[AuraSyncAction] Started AuraService with PID: " AuraSyncAction.AuraServicePID " and HWND: " AuraSyncAction.AuraServiceHwnd)
-            OnExit(ObjBindMethod(AuraSyncAction, "stopAuraService"))
+            OnExit(ObjBindMethod(AuraSyncAction, "stopAuraService"), -1)
 
             OnMessage(536, ObjBindMethod(AuraSyncAction, "__OnPowerChange")) ; WM_POWERBROADCAST=536
         } catch e {
