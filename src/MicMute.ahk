@@ -167,6 +167,8 @@ initilizeMicMute(default_profile:="", exportConfig:=1){
         , mic_actions:=""
         , last_modif_time:= ""
         , sound_player:=""
+        , auraServiceEnabled:= ""
+
     tray_defaults()
     for _i,profile in config_obj.Profiles {
         ; Add profiles with linked apps to watched_profiles
@@ -332,6 +334,7 @@ switchProfile(p_name:=""){
 
     mic_actions:=""
     auraSyncEnabled:=""
+    ; Register microphone actions
     if(current_profile.MicrophoneActions.Length() > 0){
         mic_actions:= Array()
         for i, action in current_profile.MicrophoneActions {
