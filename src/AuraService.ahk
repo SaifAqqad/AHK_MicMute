@@ -26,7 +26,6 @@ if (!parentPID || parentPID == servicePID)
     ExitService(-1)
 
 OnError(Func("logMsg"), -1)
-OnError(Func("ExitService"), 1)
 
 logMsg("AuraService started")
 
