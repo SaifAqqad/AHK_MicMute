@@ -27,6 +27,7 @@ SetWorkingDir %A_ScriptDir%
 #Include, <StackSet>
 #Include, <AuraSync>
 #Include, <SoundPlayer>
+#Include, <DisplayDevices>
 #Include, <B64>
 #Include, <IPC>
 
@@ -106,6 +107,7 @@ Global A_startupTime:= A_TickCount
     , updater_UI:=""
     , WM_SETTINGCHANGE:= 0x001A
     , WM_DEVICECHANGE := 0x0219
+    , WM_DISPLAYCHANGE := 0x007E
 
 ; parse cli args
 parseArgs()
@@ -139,7 +141,6 @@ if(A_IsCompiled && !arg_reload && config_obj.AllowUpdateChecker=1){
 A_startupTime:= A_TickCount - A_startupTime
 util_log("[Main] MicMute startup took " A_startupTime "ms")
 
-
 initilizeMicMute(default_profile:="", exportConfig:=1){
     util_log("[Main] Initilizing MicMute")
 
@@ -148,7 +149,7 @@ initilizeMicMute(default_profile:="", exportConfig:=1){
         for _i,mic in mic_controllers
             mic.disableController()
 
-    ;destroy existing guis 
+    ;destroy existing guis
     overlay_wnd.destroy()
     osd_wnd.destroy()
 
@@ -189,7 +190,7 @@ initilizeMicMute(default_profile:="", exportConfig:=1){
 
     ;enable linked apps timer
     SetTimer, checkLinkedApps, % watched_profiles.Length()? 3000 : "Off"
-    ;enable checkConfigDiff timer 
+    ;enable checkConfigDiff timer
     setTimer, checkConfigDiff, 3000
 
     ;update theme variables
@@ -222,7 +223,7 @@ switchProfile(p_name:=""){
     ;turn off profile-specific timers
     try SetTimer, checkIsIdle, Off
 
-    ;destroy existing guis 
+    ;destroy existing guis
     overlay_wnd.destroy()
     osd_wnd.destroy()
     sound_player.__free()
@@ -320,7 +321,7 @@ switchProfile(p_name:=""){
                 for _i, registration in registrations {
                     registration.callbackObj.force_current_state:= 1
                 }
-            } 
+            }
         }
     }else{
         if(current_profile.OnscreenOverlay.Enabled){
@@ -372,7 +373,7 @@ showFeedback(microphone){
     if (current_profile.SoundFeedback){
         file:= resources_obj.getSoundFile(microphone.state, microphone.isPushToTalk)
         sound_player.play(file)
-    }    
+    }
 
     if (current_profile.OnscreenFeedback)
         osd_wnd.showAndHide(microphone.getStateString(), !microphone.state)
@@ -392,7 +393,7 @@ editConfig(){
     try osd_wnd.destroy()
     Thread, NoTimers, 1
     if(current_profile){
-        for _i, mic in mic_controllers 
+        for _i, mic in mic_controllers
             mic.disableController()
         overlay_wnd.destroy()
         SetTimer, checkIsIdle, Off
@@ -479,7 +480,7 @@ onUpdateState(microphone){
     } else {
         tray_defaults()
     }
-    
+
     for _i, action in mic_actions {
         action.run(microphone)
     }
@@ -505,7 +506,7 @@ exitMicMute(){
 }
 
 reloadMicMute(p_profile:=""){
-    args:= Format("/reload=1 ""/profile={1:}"" /debug={2:} /noui={3:} ""/logFile={4:}""" 
+    args:= Format("/reload=1 ""/profile={1:}"" /debug={2:} /noui={3:} ""/logFile={4:}"""
         , p_profile, arg_isDebug, arg_noUI, arg_logFile)
     util_log("[Main] Reloading MicMute with args (" args ")")
     if(A_IsCompiled)
@@ -521,17 +522,17 @@ parseArgs(){
         if(!match)
             continue
         switch val1 {
-            case "debug": 
+            case "debug":
                 arg_isDebug:= (val3=""? 1 : val3)
                 args_str.= val " "
-            case "noui": 
+            case "noui":
                 arg_noUI:= (val3=""? 1 : val3)
                 args_str.= val " "
-            case "profile": 
+            case "profile":
                 arg_profile:= val3
                 args_str.= val " "
             case "reload": arg_reload:= (val3=""? 1 : val3)
-            case "logFile": 
+            case "logFile":
                 arg_logFile:= val3
                 args_str.= val " "
             case "updater": arg_isUpdater:= (val3=""? 1 : val3)
