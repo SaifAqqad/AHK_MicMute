@@ -10,7 +10,6 @@ class ProfileTemplate {
         this.SoundFeedbackUseCustomSounds := 0
 
         this.OnscreenFeedback := 0
-        this.OnscreenOverlay := 0
         this.ExcludeFullscreen := 0
         this.OSDPos := { x: -1, y: -1 }
 
@@ -20,17 +19,28 @@ class ProfileTemplate {
         this.LinkedApp := ""
         this.ForegroundAppsOnly := 1
 
-        this.OverlayPos := { x: -1, y: -1 }
-        this.OverlayShow := 2
-        this.OverlayTheme := 0
-        this.OverlaySize := 48
-        this.OverlayUseCustomIcons := 0
+        this.OnscreenOverlay := { Enabled: 0
+            , Position: [ { x: -1, y: -1 } ]
+            , ShowOnState: 2
+            , Theme: 0
+            , Size: 48
+            , UseCustomIcons: 0 }
 
         if (IsObject(p_name_Obj)) {
             ; Ensure compatibility with old versions
             onMuteOnly := p_name_Obj.Delete("OverlayOnMuteOnly")
             if (onMuteOnly)
-                this.OverlayShow := onMuteOnly
+                this.OnscreenOverlay.ShowOnState := onMuteOnly
+
+            ; Ensure compatibility with old versions
+            if (!IsObject(p_name_Obj.OnscreenOverlay)){
+                this.OnscreenOverlay.Enabled := p_name_Obj.Delete("OnscreenOverlay")
+                this.OnscreenOverlay.Position[1] := p_name_Obj.Delete("OverlayPos")
+                this.OnscreenOverlay.ShowOnState := p_name_Obj.Delete("OverlayShow")
+                this.OnscreenOverlay.Theme := p_name_Obj.Delete("OverlayTheme")
+                this.OnscreenOverlay.Size := p_name_Obj.Delete("OverlaySize")
+                this.OnscreenOverlay.UseCustomIcons := p_name_Obj.Delete("OverlayUseCustomIcons")
+            }
 
             for prop, val in p_name_Obj {
                 this[prop] := val

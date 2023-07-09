@@ -323,12 +323,13 @@ switchProfile(p_name:=""){
             } 
         }
     }else{
-        if(current_profile.OnscreenOverlay){
-            overlay_wnd:= new Overlay({size: current_profile.overlaySize
-            , theme: current_profile.overlayTheme
-            , pos: current_profile.OverlayPos
-            , showOn: current_profile.OverlayShow
-            , useCustomIcons: current_profile.OverlayUseCustomIcons}, mic_controllers[1].state)
+        if(current_profile.OnscreenOverlay.Enabled){
+            overlay_wnd:= new Overlay({size: current_profile.OnscreenOverlay.Size
+                , theme: current_profile.OnscreenOverlay.Theme
+                , pos: current_profile.OnscreenOverlay.Position
+                , showOn: current_profile.OnscreenOverlay.ShowOnState
+                , useCustomIcons: current_profile.OnscreenOverlay.UseCustomIcons}, mic_controllers[1].state)
+
         }
     }
 

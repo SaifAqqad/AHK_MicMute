@@ -60,6 +60,9 @@ class Config {
         jsonFile:=FileOpen(A_ScriptDir "\config.json", "w")
         jsonFile.Write(jsonStr)
         jsonFile.Close()
+
+        FileGetTime, modif_time, config.json
+        last_modif_time := modif_time
     }
 
     getProfile(p_name:=""){

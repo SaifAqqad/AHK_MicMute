@@ -84,12 +84,12 @@ UI_setProfile(_neutron, p_profile){
     UI_onRefreshOutputDeviceList("")
     ui_obj.doc.getElementById("output_device").value:= current_profile.SoundFeedbackDevice
     ui_obj.doc.getElementById("OnscreenFeedback").checked:= current_profile.OnscreenFeedback
-    ui_obj.doc.getElementById("OnscreenOverlay").checked:= current_profile.OnscreenOverlay
-    ui_obj.doc.getElementById("OverlayShow").value:= current_profile.OverlayShow
-    ui_obj.doc.getElementById("OverlayUseCustomIcons").checked:= current_profile.OverlayUseCustomIcons
-    ui_obj.doc.getElementById("OverlayTheme").value:= current_profile.OverlayTheme
-    ui_obj.doc.getElementById("OverlaySize").value:= current_profile.OverlaySize
-    UI_onUpdateOverlaySize(current_profile.OverlaySize)
+    ui_obj.doc.getElementById("OnscreenOverlay").checked:= current_profile.OnscreenOverlay.Enabled
+    ui_obj.doc.getElementById("OverlayShow").value:= current_profile.OnscreenOverlay.ShowOnState
+    ui_obj.doc.getElementById("OverlayUseCustomIcons").checked:= current_profile.OnscreenOverlay.UseCustomIcons
+    ui_obj.doc.getElementById("OverlayTheme").value:= current_profile.OnscreenOverlay.Theme
+    ui_obj.doc.getElementById("OverlaySize").value:= current_profile.OnscreenOverlay.Size
+    UI_onUpdateOverlaySize(current_profile.OnscreenOverlay.Size)
     ui_obj.doc.getElementById("VolumeLock").value:= current_profile.MicrophoneVolumeLock
     UI_onUpdateVolumeLock(current_profile.MicrophoneVolumeLock)
     ui_obj.doc.getElementById("ExcludeFullscreen").checked:= current_profile.ExcludeFullscreen
@@ -206,12 +206,12 @@ UI_onSaveProfile(neutron, noReset:=0){
     current_profile.SoundFeedbackUseCustomSounds:= ui_obj.doc.getElementById("UseCustomSounds").checked? 1 : 0
     current_profile.SoundFeedbackDevice:= ui_obj.doc.getElementById("output_device").value
     current_profile.OnscreenFeedback:= ui_obj.doc.getElementById("OnscreenFeedback").checked? 1 : 0
-    current_profile.OnscreenOverlay:= ui_obj.doc.getElementById("OnscreenOverlay").checked? 1 : 0
+    current_profile.OnscreenOverlay.Enabled:= ui_obj.doc.getElementById("OnscreenOverlay").checked? 1 : 0
     current_profile.ExcludeFullscreen:= ui_obj.doc.getElementById("ExcludeFullscreen").checked? 1 : 0
-    current_profile.OverlayShow:= ui_obj.doc.getElementById("OverlayShow").value
-    current_profile.OverlayUseCustomIcons:= ui_obj.doc.getElementById("OverlayUseCustomIcons").checked? 1 : 0
-    current_profile.OverlayTheme:= ui_obj.doc.getElementById("OverlayTheme").value
-    current_profile.OverlaySize:= ui_obj.doc.getElementById("OverlaySize").value
+    current_profile.OnscreenOverlay.ShowOnState:= ui_obj.doc.getElementById("OverlayShow").value
+    current_profile.OnscreenOverlay.UseCustomIcons:= ui_obj.doc.getElementById("OverlayUseCustomIcons").checked? 1 : 0
+    current_profile.OnscreenOverlay.Theme:= ui_obj.doc.getElementById("OverlayTheme").value
+    current_profile.OnscreenOverlay.Size:= ui_obj.doc.getElementById("OverlaySize").value
     current_profile.afkTimeout:= (val:= ui_obj.doc.getElementById("afkTimeout").value)? val+0 : 0
     current_profile.LinkedApp:= ui_obj.doc.getElementById("LinkedApp").value
     current_profile.ForegroundAppsOnly:= ui_obj.doc.getElementById("ForegroundAppsOnly").checked? 1 : 0
