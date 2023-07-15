@@ -1,4 +1,4 @@
-#Requires AutoHotkey v1.1.36+
+﻿#Requires AutoHotkey v1.1.36+
 
 ;compiler directives
 ;@Ahk2Exe-Let Res = %A_ScriptDir%\resources
@@ -97,6 +97,7 @@ Global A_startupTime:= A_TickCount
     , args_str:=""
     , resources_obj:= new ResourcesManager()
     , isFirstLaunch:=0
+    , isAfterUpdate:=0
     , A_Version:= A_IsCompiled? util_getFileSemVer(A_ScriptFullPath) : U_Version
     , sound_player
     , osd_wnd
