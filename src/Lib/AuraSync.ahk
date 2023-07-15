@@ -1,4 +1,4 @@
-#Requires AutoHotkey v1.1.35+
+#Requires AutoHotkey v1.1.36+
 
 class AuraSync {
     static CLSID := "aura.sdk.1"

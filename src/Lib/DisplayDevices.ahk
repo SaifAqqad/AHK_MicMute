@@ -1,4 +1,4 @@
-#Requires AutoHotkey v1.1.35+
+#Requires AutoHotkey v1.1.36+
 
 class DisplayDevices {
     static _wmiPath := "winmgmts:{impersonationLevel=impersonate}!\\" A_ComputerName "\root\wmi"

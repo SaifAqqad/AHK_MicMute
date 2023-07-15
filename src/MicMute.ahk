@@ -1,4 +1,4 @@
-#Requires AutoHotkey v1.1.35+
+#Requires AutoHotkey v1.1.36+
 
 ;compiler directives
 ;@Ahk2Exe-Let Res = %A_ScriptDir%\resources
