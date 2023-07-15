@@ -1,4 +1,4 @@
-;Ordered collection of unique values
+﻿;Ordered collection of unique values
 class StackSet{
     __New(elements*){
         this.data:= Array()

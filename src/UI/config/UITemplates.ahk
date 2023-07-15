@@ -1,4 +1,4 @@
-#Requires AutoHotkey v1.1.36+
+﻿#Requires AutoHotkey v1.1.36+
 
 global template_link:= "<link rel='stylesheet' id='css_{1:}' href='{2:}'>"
 , template_default_profile:= "<option value='{1:}' {2:} >{1:}</option>"

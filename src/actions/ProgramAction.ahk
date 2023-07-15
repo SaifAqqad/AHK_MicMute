@@ -1,4 +1,4 @@
-class ProgramAction extends MicrophoneAction {
+﻿class ProgramAction extends MicrophoneAction {
     static TypeName := "Program"
 
     __New(program, args) {

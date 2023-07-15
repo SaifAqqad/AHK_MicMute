@@ -1,4 +1,4 @@
-class MicrophoneTemplate{
+﻿class MicrophoneTemplate{
     __New(name, muteHotkey, unmuteHotkey, pushToTalk:=0, hybridPTT:=0, inverted:=0, stripProperty:=""){
         this.Name:= name
         this.MuteHotkey:= muteHotkey

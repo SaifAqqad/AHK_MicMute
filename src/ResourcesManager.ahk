@@ -1,4 +1,4 @@
-
+﻿
 global ICON_ID_APP:= 1000
 , ICON_ID_TRAY:= 2000
 , ICON_ID_OVERLAY:= 3000

@@ -1,4 +1,4 @@
-global ui_obj, about_obj, current_profile, hotkey_panels, current_hp, action_editor
+﻿global ui_obj, about_obj, current_profile, hotkey_panels, current_hp, action_editor
     , onExitCallback, UI_scale:= A_ScreenDPI/96, UI_profileIsDirty:= 0
     , input_hook, input_hook_timer, key_set, modifier_set, is_multiple_mics:=0
 

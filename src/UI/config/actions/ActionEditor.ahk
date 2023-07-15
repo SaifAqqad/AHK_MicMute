@@ -1,4 +1,4 @@
-class ActionEditor extends NeutronWindow {
+﻿class ActionEditor extends NeutronWindow {
     __New(actionConfig, exitCallback, sizeConfig){
         util_log("[ActionEditor] Creating '" actionConfig.Type "' ActionEditor window.")
         

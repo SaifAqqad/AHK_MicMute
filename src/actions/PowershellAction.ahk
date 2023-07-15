@@ -1,4 +1,4 @@
-class PowershellAction extends MicrophoneAction {
+﻿class PowershellAction extends MicrophoneAction {
     static TypeName := "Powershell"
     , PowershellPath := A_WinDir . "\System32\WindowsPowerShell\v1.0\powershell.exe"
     , DefaultArgs := "-NoProfile -NonInteractive -WindowStyle Hidden"

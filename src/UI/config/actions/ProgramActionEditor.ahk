@@ -1,4 +1,4 @@
-class ProgramActionEditor extends ActionEditor {
+﻿class ProgramActionEditor extends ActionEditor {
     __New(actionConfig, exitCallback) {
         this.sizeConfig:= {min: {width: 685, height: 400}, initial: {width: 720, height: 400}}
         this.actionConfig:= actionConfig

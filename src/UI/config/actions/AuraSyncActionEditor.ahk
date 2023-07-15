@@ -1,4 +1,4 @@
-class AuraSyncActionEditor extends ActionEditor {
+﻿class AuraSyncActionEditor extends ActionEditor {
     __New(actionConfig, exitCallback) {
         this.sizeConfig:= {min: {width: 580, height: 240}, initial: {width: 620, height: 240}}
         this.actionConfig:= actionConfig

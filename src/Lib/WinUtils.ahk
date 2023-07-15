@@ -1,4 +1,4 @@
-; Returns the full path to the program associated with a given extension
+﻿; Returns the full path to the program associated with a given extension
 util_GetFileAssoc(extension){
     VarSetCapacity(numChars, 4)
     DllCall("Shlwapi.dll\AssocQueryStringW", "UInt", 0x0, "UInt"

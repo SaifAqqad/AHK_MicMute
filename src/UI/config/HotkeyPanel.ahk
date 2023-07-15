@@ -1,4 +1,4 @@
-class HotkeyPanel{
+﻿class HotkeyPanel{
     static modifier_regex:= "i)(([RL]?)(\w+))"
     , symbol_regex:= "([<>])?([+^!#])"
     , nt_regex:= "i)[RL][SAWC]|[<>][+^!#]"

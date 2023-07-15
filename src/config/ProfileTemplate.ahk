@@ -1,4 +1,4 @@
-class ProfileTemplate {
+﻿class ProfileTemplate {
     __New(p_name_Obj) {
         this.ProfileName := p_name_Obj
         this.Microphone := Array(new MicrophoneTemplate("Default", "", ""))

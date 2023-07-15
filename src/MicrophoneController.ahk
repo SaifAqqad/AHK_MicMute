@@ -1,4 +1,4 @@
-Class MicrophoneController {
+﻿Class MicrophoneController {
     static genericStateString:= {0:"Microphone Online",1:"Microphone Muted",-1:"Microphone Unavailable"}
         , isUsingMultipleMicrophones:= 0
 

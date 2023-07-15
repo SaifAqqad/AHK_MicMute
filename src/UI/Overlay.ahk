@@ -1,4 +1,4 @@
-class Overlay {
+﻿class Overlay {
     static GDI_TOKEN := 0
         , BACKGROUND_COLOR := 0x232323
         , BACKGROUND_TRANSPARENCY := 0xef000000

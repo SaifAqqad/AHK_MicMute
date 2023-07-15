@@ -1,4 +1,4 @@
-class HotkeyManager {
+﻿class HotkeyManager {
     static registeredHotkeys:= ""
 
     _init(){

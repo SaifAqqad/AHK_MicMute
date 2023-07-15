@@ -1,4 +1,4 @@
-class UpdaterUI extends NeutronWindow{
+﻿class UpdaterUI extends NeutronWindow{
     static UI_STATES := ["pre-update", "during-update", "post-update", "post-error"]
     
     __New(){

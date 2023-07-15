@@ -1,4 +1,4 @@
-class Updater {
+﻿class Updater {
     latestVersionInfo:= { "scoop": { "url": "https://raw.githubusercontent.com/ScoopInstaller/Extras/master/bucket/micmute.json"
                                   , "prop": "version" }
                        , "github": { "url": "https://api.github.com/repos/SaifAqqad/AHK_MicMute/releases/latest"

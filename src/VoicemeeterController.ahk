@@ -1,4 +1,4 @@
-class VoicemeeterController extends MicrophoneController{
+﻿class VoicemeeterController extends MicrophoneController{
     static voicemeeter:=""
     , BUS_STRIP_REGEX:= "iO)VMR_(?<type>\w+)\[(?<index>\d)\]"
     , STRIP_PROPERTIES:=

@@ -1,4 +1,4 @@
-; UTF-16LE Base64 encode/decode 
+﻿; UTF-16LE Base64 encode/decode 
 ; By tmplinshi (https://github.com/tmplinshi)
 ; https://gist.github.com/tmplinshi/3776c215152436c6f1d722e0151d2fcb
 class B64

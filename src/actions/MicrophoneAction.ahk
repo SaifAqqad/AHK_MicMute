@@ -1,4 +1,4 @@
-class MicrophoneAction {
+﻿class MicrophoneAction {
     static _variablesIndex :=
     ( Join LTrim ; ahk
         {

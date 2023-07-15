@@ -1,4 +1,4 @@
-#Requires AutoHotkey v1.1.36+
+﻿#Requires AutoHotkey v1.1.36+
 
 #Include, <IPC>
 #Include, <AuraSync>

@@ -1,4 +1,4 @@
-class PowershellActionEditor extends ActionEditor {
+﻿class PowershellActionEditor extends ActionEditor {
     static PowershellSnippets := 
     ( Join LTrim RTrim0
         {

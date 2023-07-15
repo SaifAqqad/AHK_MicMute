@@ -1,4 +1,4 @@
-; Stripped down wrapper for Bass audio library (https://www.un4seen.com)
+﻿; Stripped down wrapper for Bass audio library (https://www.un4seen.com)
 ; based on https://autohotkey.com/board/topic/33963-bass-library-extreme-ahk-multimedia-power/
 class SoundPlayer {
     static BASS_STREAM_AUTOFREE := 0x40000

@@ -1,4 +1,4 @@
-Global startup_shortcut:= A_Programs . "\Startup\MicMute.lnk"
+﻿Global startup_shortcut:= A_Programs . "\Startup\MicMute.lnk"
 
 tray_init(){
     global
