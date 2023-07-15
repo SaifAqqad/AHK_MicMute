@@ -100,7 +100,7 @@ class Updater {
             return
         }
         latestVersion:= this.getLatestVersion()
-        if(latestVersion && util_VerCmp(latestVersion, A_Version) = 1){
+        if(latestVersion && VerCompare(latestVersion, A_Version) > 0){
             if(isBackground){
                 TrayTip, MicMute, % "A new version of MicMute is available, click 'Check for updates' in the tray menu to update"
                 onUpdateState(mic_controllers[1])

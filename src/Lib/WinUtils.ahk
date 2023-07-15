@@ -251,10 +251,3 @@ util_firstNonEmpty(params*) {
             return param
     return ""
 }
-
-; VerCmp() for Windows by SKAN on D35T/D37L @ tiny.cc/vercmp
-util_VerCmp(V1, V2) {
-    return ( ( V1 := Format("{:04X}{:04X}{:04X}{:04X}", StrSplit(V1 . "...", ".",, 5)*) )
-        < ( V2 := Format("{:04X}{:04X}{:04X}{:04X}", StrSplit(V2 . "...", ".",, 5)*) ) )
-        ? -1 : ( V2<V1 ) ? 1 : 0
-}
