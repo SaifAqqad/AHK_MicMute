@@ -22,7 +22,7 @@
             isFirstLaunch := 0
             Try this.importConfig()
             catch err {
-                MsgBox, 65, MicMute, %"Importing the config file failed`nError: "
+                MsgBox, 65, MicMute, % "Importing the config file failed`nError: "
                     . (IsObject(err) ? err.Message : err) . "`nClick OK to reset configuration"
                 IfMsgBox, Cancel
                     return
