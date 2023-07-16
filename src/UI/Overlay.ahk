@@ -80,9 +80,8 @@
                 ; position is not set -> use default position
                 if (!this.windowPosition)
                     this._setDefaultPos(display)
-                else {
+                else 
                     this.currentPos := this.options.pos[1] := display.getRelativePosition(this.windowPosition.X, this.windowPosition.Y)
-                }
             }
         } else {
             positionConfig := this.options.pos[1]
@@ -98,7 +97,7 @@
                 if (!display)
                     display := DisplayDevices.getByPosition(positionConfig.X, positionConfig.Y)
 
-                ; display wasn't -> fallback to primary display
+                ; display wasn't found -> fallback to primary display
                 if (!display)
                     display := DisplayDevices.getPrimary()
 
@@ -107,9 +106,8 @@
                 ; position is not set -> use default position
                 if (!this.windowPosition)
                     this._setDefaultPos(display)
-                else {
+                else 
                     this.currentPos := this.options.pos[1] := display.getRelativePosition(this.windowPosition.X, this.windowPosition.Y)
-                }
             }
         }
 
@@ -143,7 +141,7 @@
         this.currentPos := this.options.pos[1] := Overlay.DEFAULT_POSITION.Clone()
         this.options.pos[1].DisplayId := display.id
 
-        this.windowPosition := display.getAbsolutePosition(this.options.pos[1].X, this.options.pos[1].X)
+        this.windowPosition := display.getAbsolutePosition(this.options.pos[1].X, this.options.pos[1].Y)
     }
 
     _createWindow() {
