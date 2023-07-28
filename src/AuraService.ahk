@@ -77,8 +77,8 @@ RunTasks(){
     if(A_IsDebug)
         currentTicks := A_TickCount
 
-    if (!IsObject(task)) {
-        task := JSON.Load(task)
+    if (task && !IsObject(task)) {
+        try task := JSON.Load(task)
     }
 
     Try {
