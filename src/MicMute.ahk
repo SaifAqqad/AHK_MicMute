@@ -3,9 +3,9 @@
 ;compiler directives
 ;@Ahk2Exe-Let Res = %A_ScriptDir%\resources
 ;@Ahk2Exe-Let UI = %A_ScriptDir%\UI\config
-;@Ahk2Exe-Let Version = 1.2.9
+;@Ahk2Exe-Let Version = 1.3.0
 ;@Ahk2Exe-IgnoreBegin
-    U_Version:= "1.2.9"
+    U_Version:= "1.3.0"
 ;@Ahk2Exe-IgnoreEnd
 ;@Ahk2Exe-SetMainIcon %U_Res%\icons\1000.ico
 ;@Ahk2Exe-SetVersion %U_Version%
