@@ -161,13 +161,13 @@
         this.icons[1] := resources_obj.getIcon(ICON_ID_OVERLAY + ICON_ID_MUTE + iconColor)
 
         if (this.options.useCustomIcons) {
-            Loop, Files, overlay_unmute. *
+            Loop, Files, overlay_unmute.*
             {
                 this.icons[0].file := A_LoopFileLongPath
                 this.icons[0].group := 1
                 break
             }
-            Loop, Files, overlay_mute. *
+            Loop, Files, overlay_mute.*
             {
                 this.icons[1].file := A_LoopFileLongPath
                 this.icons[1].group := 1
@@ -210,9 +210,11 @@
     }
 
     _updateLayeredWindow() {
-        UpdateLayeredWindow(this.hwnd, this.deviceContext
-            , this.windowPosition.x, this.windowPosition.y
-            , this.options.size, this.options.size)
+        pos := this.windowPosition
+        if (this.changedPos)
+            pos := this.changedPos
+
+        UpdateLayeredWindow(this.hwnd, this.deviceContext, pos.x, pos.y, this.options.size, this.options.size)
     }
 
     _clear() {
@@ -348,11 +350,14 @@
 
     setState(state) {
         if (state == this.state)
-        return
+            return
+
         this.state := state
         this.draw()
+
         if (this.options.showOn != 2)
             this.setShow(state == this.options.showOn)
+
         return this
     }
 
