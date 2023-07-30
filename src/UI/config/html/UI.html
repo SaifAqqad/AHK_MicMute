@@ -20,23 +20,19 @@
                 <!-- title -->
                 <div class="_title spaced-label">
                     <p>
-                        <label class="title is-3 is-spaced noselect" onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
-                               onclick="ahk.UI_showAbout();this.blur()" tabindex=0 role="button">
+                        <label class="title is-3 noselect" onkeydown="switch(event.keyCode){case 32:case 13:this.click()}" onclick="ahk.UI_showAbout();this.blur()" tabindex=0 role="button">
                             <img src="" id="MicMute_icon">
                             MicMute</label>
-                        <a tabindex=0 onkeydown="switch(event.keyCode){case 32:case 13:this.click()}" onclick="ahk.UI_launchReleasePage();this.blur()"
-                           style="font-size: small;">v<span id="version"></span></a>
+                        <a tabindex=0 onkeydown="switch(event.keyCode){case 32:case 13:this.click()}" onclick="ahk.UI_launchReleasePage();this.blur()" style="font-size: small;">v<span id="version"></span></a>
                     </p>
                 </div>
                 <br>
                 <div class="tabs is-fullwidth main-tabs">
                     <ul style="color: transparent;">
-                        <li id="profiles_tab" onkeydown="switch(event.keyCode){case 32:case 13:this.click()}" tabindex=0
-                            onclick="ahk.UI_switchToTab('.main-tabs','profiles_tab');this.blur()">
+                        <li id="profiles_tab" onkeydown="switch(event.keyCode){case 32:case 13:this.click()}" tabindex=0 onclick="ahk.UI_switchToTab('.main-tabs','profiles_tab');this.blur()">
                             <a>Profiles</a>
                         </li>
-                        <li id="global_options_tab" onkeydown="switch(event.keyCode){case 32:case 13:this.click()}" tabindex=0
-                            onclick="ahk.UI_switchToTab('.main-tabs','global_options_tab');this.blur()">
+                        <li id="global_options_tab" onkeydown="switch(event.keyCode){case 32:case 13:this.click()}" tabindex=0 onclick="ahk.UI_switchToTab('.main-tabs','global_options_tab');this.blur()">
                             <a>Global options</a>
                         </li>
                     </ul>
@@ -54,8 +50,7 @@
                         <div class="column is-1" style="margin-top: 0 !important;margin-bottom: 0 !important">
                             <div class="field has-addons">
                                 <p class="control profile-action">
-                                    <button tabindex=0 aria-label="save" type="button" class="button is-primary is-small is-outlined"
-                                            onclick="ahk.UI_onSaveProfile();this.blur()">
+                                    <button tabindex=0 aria-label="save" type="button" class="button is-primary is-small is-outlined" onclick="ahk.UI_onSaveProfile();this.blur()">
                                         <span class="icon">
                                             <svg style="width:24px;height:24px" focusable="false" viewBox="0 0 24 24">
                                                 <path fill="currentColor"
@@ -66,8 +61,7 @@
                                     </button>
                                 </p>
                                 <p class="control profile-action">
-                                    <button tabindex=0 type="button" aria-label="create" class="button is-primary is-small is-outlined "
-                                            onclick="ahk.UI_onCreateProfile();this.blur()">
+                                    <button tabindex=0 type="button" aria-label="create" class="button is-primary is-small is-outlined " onclick="ahk.UI_onCreateProfile();this.blur()">
                                         <span class="icon">
                                             <svg style="width:24px;height:24px" focusable="false" viewBox="0 0 24 24">
                                                 <path fill="currentColor" d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z" />
@@ -76,12 +70,10 @@
                                     </button>
                                 </p>
                                 <p class="control profile-action">
-                                    <button tabindex=0 type="button" aria-label="delete" class="button is-danger is-small is-outlined"
-                                            onclick="ahk.UI_onDeleteProfile();this.blur()">
+                                    <button tabindex=0 type="button" aria-label="delete" class="button is-danger is-small is-outlined" onclick="ahk.UI_onDeleteProfile();this.blur()">
                                         <span class="icon">
                                             <svg style="width:24px;height:24px" focusable="false" viewBox="0 0 24 24">
-                                                <path fill="currentColor"
-                                                      d="M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19M8,9H16V19H8V9M15.5,4L14.5,3H9.5L8.5,4H5V6H19V4H15.5Z" />
+                                                <path fill="currentColor" d="M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19M8,9H16V19H8V9M15.5,4L14.5,3H9.5L8.5,4H5V6H19V4H15.5Z" />
                                             </svg>
                                         </span>
                                     </button>
@@ -95,16 +87,13 @@
                     <div class="inner-tabs">
                         <div class="tabs is-fullwidth profile-tabs">
                             <ul style="color: transparent;">
-                                <li class="is-active" onkeydown="switch(event.keyCode){case 32:case 13:this.click()}" tabindex=0 id="hotkeys_tab"
-                                    onclick="ahk.UI_switchToTab('.profile-tabs','hotkeys_tab');this.blur()">
+                                <li class="is-active" onkeydown="switch(event.keyCode){case 32:case 13:this.click()}" tabindex=0 id="hotkeys_tab" onclick="ahk.UI_switchToTab('.profile-tabs','hotkeys_tab');this.blur()">
                                     <a>Hotkeys</a>
                                 </li>
-                                <li id="feedback_tab" onkeydown="switch(event.keyCode){case 32:case 13:this.click()}" tabindex=0
-                                    onclick="ahk.UI_switchToTab('.profile-tabs','feedback_tab');this.blur()">
+                                <li id="feedback_tab" onkeydown="switch(event.keyCode){case 32:case 13:this.click()}" tabindex=0 onclick="ahk.UI_switchToTab('.profile-tabs','feedback_tab');this.blur()">
                                     <a>Feedback</a>
                                 </li>
-                                <li id="misc_tab" onkeydown="switch(event.keyCode){case 32:case 13:this.click()}" tabindex=0
-                                    onclick="ahk.UI_switchToTab('.profile-tabs','misc_tab');this.blur()">
+                                <li id="misc_tab" onkeydown="switch(event.keyCode){case 32:case 13:this.click()}" tabindex=0 onclick="ahk.UI_switchToTab('.profile-tabs','misc_tab');this.blur()">
                                     <a>Misc</a>
                                 </li>
                             </ul>
@@ -119,10 +108,8 @@
                                         <path fill="currentColor"
                                               d="M12,2A3,3 0 0,1 15,5V11A3,3 0 0,1 12,14A3,3 0 0,1 9,11V5A3,3 0 0,1 12,2M19,11C19,14.53 16.39,17.44 13,17.93V21H11V17.93C7.61,17.44 5,14.53 5,11H7A5,5 0 0,0 12,16A5,5 0 0,0 17,11H19Z" />
                                     </svg> Microphone
-                                    <span class="tag tag-is-small has-tooltip" tabindex=0 role="button" aria-pressed="false" aria-label="multiple"
-                                          style="margin-top: 0px;"
-                                          onkeydown="switch(event.keyCode){case 32:case 69: event.preventDefault(); this.oncontextmenu.call() ;break; case 13:this.click()}"
-                                          oncontextmenu="ahk.UI_showHelpModal('Multiple Microphones')"
+                                    <span class="tag tag-is-small has-tooltip" tabindex=0 role="button" aria-pressed="false" aria-label="multiple" style="margin-top: 0px;"
+                                          onkeydown="switch(event.keyCode){case 32:case 69: event.preventDefault(); this.oncontextmenu.call() ;break; case 13:this.click()}" oncontextmenu="ahk.UI_showHelpModal('Multiple Microphones')"
                                           onclick="ahk.UI_flipVal('multiple_mics');ahk.UI_onChange('UI_onToggleMultiple');this.blur()">
                                         <label class="checkbox">
                                             <input type="checkbox" name="multiple_mics" id="multiple_mics" disabled>
@@ -133,15 +120,13 @@
                                 <div class="field has-addons">
                                     <div class="control is-expanded ">
                                         <div class="select is-small is-fullwidth is-primary">
-                                            <select tabindex=0 class="input-elem" name="microphone" id="microphone"
-                                                    onchange="ahk.UI_onChange('UI_onSetMicrophone',event.target.value)">
+                                            <select tabindex=0 class="input-elem" name="microphone" id="microphone" onchange="ahk.UI_onChange('UI_onSetMicrophone',event.target.value)">
                                                 <option value="0" id="mic_Name" selected>Select Microphone</option>
                                             </select>
                                         </div>
                                     </div>
                                     <div class="control">
-                                        <button type="button" tabindex=0 class="button is-small is-primary" aria-label="refresh microphones"
-                                                onclick="ahk.UI_onRefreshDeviceList();this.blur()">
+                                        <button type="button" tabindex=0 class="button is-small is-primary" aria-label="refresh microphones" onclick="ahk.UI_onRefreshDeviceList();this.blur()">
                                             <svg style="width:16px;height:16px" focusable="false" viewBox="0 0 24 24">
                                                 <path fill="currentColor"
                                                       d="M17.65,6.35C16.2,4.9 14.21,4 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20C15.73,20 18.84,17.45 19.73,14H17.65C16.83,16.33 14.61,18 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6C13.66,6 15.14,6.69 16.22,7.78L13,11H20V4L17.65,6.35Z" />
@@ -159,38 +144,33 @@
                                                       d="M6,16H18V18H6V16M6,13V15H2V13H6M7,15V13H10V15H7M11,15V13H13V15H11M14,15V13H17V15H14M18,15V13H22V15H18M2,10H5V12H2V10M19,12V10H22V12H19M18,12H16V10H18V12M8,12H6V10H8V12M12,12H9V10H12V12M15,12H13V10H15V12M2,9V7H4V9H2M5,9V7H7V9H5M8,9V7H10V9H8M11,9V7H13V9H11M14,9V7H16V9H14M17,9V7H22V9H17Z" />
                                             </svg> Hotkeys
                                         </span>
-                                        <button tabindex=0 type="button" aria-label="Clear" class="button is-primary tag-is-small is-outlined"
-                                                onclick="ahk.UI_onClearHotkey();this.blur()" style="margin: 0.5em;padding: 2px 8px;">
+                                        <button tabindex=0 type="button" aria-label="Clear" class="button is-primary tag-is-small is-outlined" onclick="ahk.UI_onClearHotkey();this.blur()" style="margin: 0.5em;padding: 2px 8px;">
                                             <span>Reset</span>
                                         </button>
                                     </div>
                                     <div class="control type-radio" style="margin-bottom: 10px;">
-                                        <div class="tag is-medium" tabindex=0 role="button" aria-pressed="false" aria-labelledby="seperate_hotkeys_label"
-                                             onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
+                                        <div class="tag is-medium" tabindex=0 role="button" aria-pressed="false" aria-labelledby="seperate_hotkeys_label" onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
                                              onclick="document.getElementById('hktype_0').checked=1;ahk.UI_onChange('UI_onHotkeyType',0,120);this.blur()">
                                             <label class="radio">
                                                 <input type="radio" name="hotkeyType" id="hktype_0" checked disabled>
                                                 <span id="seperate_hotkeys_label">Separate hotkeys</span>
                                             </label>
                                         </div>
-                                        <div class="tag is-medium" tabindex=0 role="button" aria-pressed="false" aria-labelledby="Toggle_hotkeys_label"
-                                             onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
+                                        <div class="tag is-medium" tabindex=0 role="button" aria-pressed="false" aria-labelledby="Toggle_hotkeys_label" onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
                                              onclick="document.getElementById('hktype_1').checked=1;ahk.UI_onChange('UI_onHotkeyType',1,120);this.blur()">
                                             <label class="radio">
                                                 <input type="radio" name="hotkeyType" id="hktype_1" disabled>
                                                 <span id="Toggle_hotkeys_label">Toggle</span>
                                             </label>
                                         </div>
-                                        <div class="tag is-medium" tabindex=0 role="button" aria-pressed="false" aria-labelledby="push_to_talk_label"
-                                             onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
+                                        <div class="tag is-medium" tabindex=0 role="button" aria-pressed="false" aria-labelledby="push_to_talk_label" onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
                                              onclick="document.getElementById('hktype_2').checked=1;ahk.UI_onChange('UI_onHotkeyType',2,120);this.blur()">
                                             <label class="radio">
                                                 <input type="radio" name="hotkeyType" id="hktype_2" disabled>
                                                 <span id="push_to_talk_label">Push-to-talk</span>
                                             </label>
                                         </div>
-                                        <div class="tag is-medium" tabindex=0 role="button" aria-pressed="false" aria-labelledby="push_to_mute_label"
-                                             onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
+                                        <div class="tag is-medium" tabindex=0 role="button" aria-pressed="false" aria-labelledby="push_to_mute_label" onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
                                              onclick="document.getElementById('hktype_3').checked=1;ahk.UI_onChange('UI_onHotkeyType',3,120);this.blur()">
                                             <label class="radio">
                                                 <input type="radio" name="hotkeyType" id="hktype_3" disabled>
@@ -206,39 +186,33 @@
                                                     hotkey</label>
                                                 <div class="field has-addons">
                                                     <div class="control is-expanded">
-                                                        <input class="input is-primary input-elem is-small" type="text" name="mute_input" id="mute_input"
-                                                               disabled placeholder="Click Record">
+                                                        <input class="input is-primary input-elem is-small" type="text" name="mute_input" id="mute_input" disabled placeholder="Click Record">
                                                     </div>
                                                     <div class="control " id="mute_record">
-                                                        <button type="button" class="button is-small is-primary is-outlined" tabindex=0
-                                                                onclick="ahk.UI_onChange('UI_onRecord','mute');this.blur()">Record</button>
+                                                        <button type="button" class="button is-small is-primary is-outlined" tabindex=0 onclick="ahk.UI_onChange('UI_onRecord','mute');this.blur()">Record</button>
                                                     </div>
                                                     <div class="control  is-hidden" id="mute_stop">
-                                                        <button type="button" class="button is-small is-primary" value="3" tabindex=0
-                                                                onclick="ahk.UI_onChange('UI_onStop','mute');this.blur()">Stop</button>
+                                                        <button type="button" class="button is-small is-primary" value="3" tabindex=0 onclick="ahk.UI_onChange('UI_onStop','mute');this.blur()">Stop</button>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="row is-one-third">
                                                 <label class="noselect label is-small">Options</label>
-                                                <div class="tag is-small option has-tooltip" tabindex=0 role="button" aria-pressed="false"
-                                                     onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
+                                                <div class="tag is-small option has-tooltip" tabindex=0 role="button" aria-pressed="false" onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
                                                      onclick="ahk.UI_flipVal('mute_passthrough');ahk.UI_onChange('UI_updateHotkeyOption','mute_passthrough');this.blur()">
                                                     <label class="checkbox">
                                                         <input type="checkbox" id="mute_passthrough" disabled>
                                                         <span class="passthrough-label">Passthrough</span>
                                                     </label>
                                                 </div>
-                                                <div class="tag is-small option has-tooltip" tabindex=0 role="button" aria-pressed="false"
-                                                     onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
+                                                <div class="tag is-small option has-tooltip" tabindex=0 role="button" aria-pressed="false" onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
                                                      onclick="ahk.UI_flipVal('mute_wildcard');ahk.UI_onChange('UI_updateHotkeyOption','mute_wildcard');this.blur()">
                                                     <label class="checkbox">
                                                         <input type="checkbox" id="mute_wildcard" disabled>
                                                         <span class="wildcard-label">Wildcard</span>
                                                     </label>
                                                 </div>
-                                                <div class="tag is-small option has-tooltip" tabindex=0 role="button" aria-pressed="false"
-                                                     onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
+                                                <div class="tag is-small option has-tooltip" tabindex=0 role="button" aria-pressed="false" onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
                                                      onclick="ahk.UI_flipVal('mute_nt');ahk.UI_onChange('UI_updateHotkeyOption','mute_nt');this.blur()">
                                                     <label class="checkbox">
                                                         <input type="checkbox" id="mute_nt" disabled>
@@ -246,8 +220,7 @@
                                                     </label>
                                                 </div>
                                                 <!-- Hybrid PTT -->
-                                                <div class="tag is-small option has-tooltip " id="hybrid_ptt_tag" tabindex=0 role="button" aria-pressed="false"
-                                                     onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
+                                                <div class="tag is-small option has-tooltip " id="hybrid_ptt_tag" tabindex=0 role="button" aria-pressed="false" onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
                                                      onclick="ahk.UI_flipVal('hybrid_ptt');ahk.UI_onChange('UI_updateHotkeyOption','hybrid_ptt', 1);this.blur()">
                                                     <label class="checkbox">
                                                         <input type="checkbox" id="hybrid_ptt" disabled>
@@ -263,39 +236,33 @@
                                                     hotkey</label>
                                                 <div class="field has-addons">
                                                     <div class="control is-expanded">
-                                                        <input class="input is-primary is-small input-elem" type="text" name="unmute_input" id="unmute_input"
-                                                               disabled placeholder="Click Record">
+                                                        <input class="input is-primary is-small input-elem" type="text" name="unmute_input" id="unmute_input" disabled placeholder="Click Record">
                                                     </div>
                                                     <div class="control" id="unmute_record">
-                                                        <button type="button" class="button is-primary is-small is-outlined" tabindex=0
-                                                                onclick="ahk.UI_onChange('UI_onRecord','unmute');this.blur()">Record</button>
+                                                        <button type="button" class="button is-primary is-small is-outlined" tabindex=0 onclick="ahk.UI_onChange('UI_onRecord','unmute');this.blur()">Record</button>
                                                     </div>
                                                     <div class="control is-hidden" id="unmute_stop">
-                                                        <button type="button" class="button is-small is-primary" value="3" tabindex=0
-                                                                onclick="ahk.UI_onChange('UI_onStop','unmute');this.blur()">Stop</button>
+                                                        <button type="button" class="button is-small is-primary" value="3" tabindex=0 onclick="ahk.UI_onChange('UI_onStop','unmute');this.blur()">Stop</button>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="row is-one-third">
                                                 <label class="noselect label is-small">Options</label>
-                                                <div class="tag is-small option" tabindex=0 role="button" aria-pressed="false"
-                                                     onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
+                                                <div class="tag is-small option" tabindex=0 role="button" aria-pressed="false" onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
                                                      onclick="ahk.UI_flipVal('unmute_passthrough');ahk.UI_onChange('UI_updateHotkeyOption','unmute_passthrough');this.blur()">
                                                     <label class="checkbox">
                                                         <input type="checkbox" id="unmute_passthrough" disabled>
                                                         <span class="passthrough-label">Passthrough</span>
                                                     </label>
                                                 </div>
-                                                <div class="tag is-small option" tabindex=0 role="button" aria-pressed="false"
-                                                     onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
+                                                <div class="tag is-small option" tabindex=0 role="button" aria-pressed="false" onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
                                                      onclick="ahk.UI_flipVal('unmute_wildcard');ahk.UI_onChange('UI_updateHotkeyOption','unmute_wildcard');this.blur()">
                                                     <label class="checkbox">
                                                         <input type="checkbox" name="unmute_wildcard" id="unmute_wildcard" disabled>
                                                         <span class="wildcard-label">Wildcard</span>
                                                     </label>
                                                 </div>
-                                                <div class="tag is-small option" tabindex=0 role="button" aria-pressed="false"
-                                                     onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
+                                                <div class="tag is-small option" tabindex=0 role="button" aria-pressed="false" onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
                                                      onclick="ahk.UI_flipVal('unmute_nt');ahk.UI_onChange('UI_updateHotkeyOption','unmute_nt');this.blur()">
                                                     <label class="checkbox">
                                                         <input type="checkbox" name="unmute_nt" id="unmute_nt" disabled>
@@ -319,8 +286,7 @@
                                     <div class="columns inner-container-95">
                                         <div class="column is-7">
                                             <label class="label title is-7 noselect">Options</label>
-                                            <div class="tag is-small option" tabindex=0 role="button" aria-pressed="false"
-                                                 onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
+                                            <div class="tag is-small option" tabindex=0 role="button" aria-pressed="false" onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
                                                  onclick="ahk.UI_flipVal('SoundFeedback');ahk.UI_onChange('');this.blur()">
                                                 <label class="checkbox">
                                                     <input type="checkbox" id="SoundFeedback" disabled>
@@ -328,10 +294,8 @@
                                                 </label>
                                             </div>
                                             <!-- Use custom sounds -->
-                                            <div class="tag is-small option has-tooltip" tabindex=0 role="button" aria-pressed="false"
-                                                 onclick="ahk.UI_flipVal('UseCustomSounds');ahk.UI_onChange('');this.blur()"
-                                                 oncontextmenu="ahk.UI_showHelpModal('Custom Sounds')"
-                                                 onkeydown="switch(event.keyCode){case 32:case 69: event.preventDefault(); this.oncontextmenu.call() ;break; case 13:this.click()}">
+                                            <div class="tag is-small option has-tooltip" tabindex=0 role="button" aria-pressed="false" onclick="ahk.UI_flipVal('UseCustomSounds');ahk.UI_onChange('');this.blur()"
+                                                 oncontextmenu="ahk.UI_showHelpModal('Custom Sounds')" onkeydown="switch(event.keyCode){case 32:case 69: event.preventDefault(); this.oncontextmenu.call() ;break; case 13:this.click()}">
                                                 <label class="checkbox">
                                                     <input type="checkbox" id="UseCustomSounds" disabled>
                                                     <span class="UseCustomSounds-label">Use custom sounds</span>
@@ -344,8 +308,7 @@
                                             <div class="field has-addons">
                                                 <div class="control is-expanded">
                                                     <div class="select is-fullwidth is-small is-primary">
-                                                        <select tabindex=0 class="input-elem" name="output_device" id="output_device"
-                                                                onchange="ahk.UI_onChange('')">
+                                                        <select tabindex=0 class="input-elem" name="output_device" id="output_device" onchange="ahk.UI_onChange('')">
                                                             <option value="output_name" id="output_name" selected>
                                                                 Default
                                                             </option>
@@ -353,8 +316,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="control">
-                                                    <button type="button" tabindex=0 class="button is-small is-primary"
-                                                            onclick="ahk.UI_onRefreshOutputDeviceList();this.blur()">
+                                                    <button type="button" tabindex=0 class="button is-small is-primary" onclick="ahk.UI_onRefreshOutputDeviceList();this.blur()">
                                                         <svg style="width:16px;height:16px" focusable="false" viewBox="0 0 24 24">
                                                             <path fill="currentColor"
                                                                   d="M17.65,6.35C16.2,4.9 14.21,4 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20C15.73,20 18.84,17.45 19.73,14H17.65C16.83,16.33 14.61,18 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6C13.66,6 15.14,6.69 16.22,7.78L13,11H20V4L17.65,6.35Z" />
@@ -369,22 +331,19 @@
                                 <div id="onscreen_feedback_group">
                                     <label class="label title is-6 noselect has-tooltip tooltip-offset-right OnscreenFeedback-label">
                                         <svg style="width:16px;height:16px" viewBox="0 -4 24 24" focusable="false">
-                                            <path fill="currentColor"
-                                                  d="M19,11H11V17H19V11M23,19V5C23,3.88 22.1,3 21,3H3A2,2 0 0,0 1,5V19A2,2 0 0,0 3,21H21A2,2 0 0,0 23,19M21,19H3V4.97H21V19Z" />
+                                            <path fill="currentColor" d="M19,11H11V17H19V11M23,19V5C23,3.88 22.1,3 21,3H3A2,2 0 0,0 1,5V19A2,2 0 0,0 3,21H21A2,2 0 0,0 23,19M21,19H3V4.97H21V19Z" />
                                         </svg> Onscreen feedback</label>
                                     <div class="columns inner-container-95">
                                         <div class="column is-7">
                                             <label class="label title is-7 noselect">Options</label>
-                                            <div class="tag is-small option" tabindex=0 role="button" aria-pressed="false"
-                                                 onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
+                                            <div class="tag is-small option" tabindex=0 role="button" aria-pressed="false" onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
                                                  onclick="ahk.UI_flipVal('OnscreenFeedback');ahk.UI_onChange('');this.blur()">
                                                 <label class="checkbox">
                                                     <input type="checkbox" id="OnscreenFeedback" disabled>
                                                     <span>Enabled</span>
                                                 </label>
                                             </div>
-                                            <div class="tag is-small option has-tooltip" id="ExcludeFullscreen_tag" tabindex=0 role="button"
-                                                 aria-pressed="false" onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
+                                            <div class="tag is-small option has-tooltip" id="ExcludeFullscreen_tag" tabindex=0 role="button" aria-pressed="false" onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
                                                  onclick="ahk.UI_flipVal('ExcludeFullscreen');ahk.UI_onChange('');this.blur()">
                                                 <label class="checkbox">
                                                     <input type="checkbox" id="ExcludeFullscreen" disabled>
@@ -396,16 +355,13 @@
                                             <label class="label title is-7 noselect">OSD position</label>
                                             <div class="field has-addons">
                                                 <div class="control">
-                                                    <input class="input is-primary is-small input-elem" type="number" disabled placeholder="X"
-                                                           style="text-align: center;" id="OSDPos_x">
+                                                    <input class="input is-primary is-small input-elem" type="number" disabled placeholder="X" style="text-align: center;" id="OSDPos_x">
                                                 </div>
                                                 <div class="control">
-                                                    <input class="input is-primary is-small input-elem" type="number" disabled placeholder="Y"
-                                                           style="text-align: center;" id="OSDPos_y">
+                                                    <input class="input is-primary is-small input-elem" type="number" disabled placeholder="Y" style="text-align: center;" id="OSDPos_y">
                                                 </div>
                                                 <div class="control">
-                                                    <button type="button" class="button is-small is-primary"
-                                                            onclick="ahk.UI_onChange('UI_onOSDset');this.blur()">Set</button>
+                                                    <button type="button" class="button is-small is-primary" onclick="ahk.UI_onChange('UI_onOSDset');this.blur()">Set</button>
                                                 </div>
 
                                             </div>
@@ -416,24 +372,20 @@
                                 <div id="onscreen_overlay_group">
                                     <label class="label title is-6 noselect has-tooltip tooltip-offset-right OnscreenOverlay-label">
                                         <svg style="width:16px;height:16px" viewBox="0 -4 24 24" focusable="false">
-                                            <path fill="currentColor"
-                                                  d="M19,11H11V17H19V11M17,15H13V13H17V15M21,3H3A2,2 0 0,0 1,5V19A2,2 0 0,0 3,21H21A2,2 0 0,0 23,19V5C23,3.88 22.1,3 21,3M21,19H3V4.97H21V19Z" />
+                                            <path fill="currentColor" d="M19,11H11V17H19V11M17,15H13V13H17V15M21,3H3A2,2 0 0,0 1,5V19A2,2 0 0,0 3,21H21A2,2 0 0,0 23,19V5C23,3.88 22.1,3 21,3M21,19H3V4.97H21V19Z" />
                                         </svg> Onscreen overlay</label>
                                     <div class="columns inner-container-95" style="margin-bottom: 0 !important;">
                                         <div class="column is-7">
                                             <label class="label title is-7 noselect">Options</label>
-                                            <div class="tag is-small option" tabindex=0 role="button" aria-pressed="false"
-                                                 onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
+                                            <div class="tag is-small option" tabindex=0 role="button" aria-pressed="false" onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
                                                  onclick="ahk.UI_flipVal('OnscreenOverlay');ahk.UI_onChange('');this.blur()">
                                                 <label class="checkbox">
                                                     <input type="checkbox" id="OnscreenOverlay" disabled>
                                                     <span>Enabled</span>
                                                 </label>
                                             </div>
-                                            <div class="tag is-small option has-tooltip" id="OverlayUseCustomIcons_tag" tabindex=0 role="button"
-                                                 aria-pressed="false"
-                                                 onkeydown="switch(event.keyCode){case 32:case 69: event.preventDefault(); this.oncontextmenu.call() ;break; case 13:this.click()}"
-                                                 oncontextmenu="ahk.UI_showHelpModal('Custom Icons')"
+                                            <div class="tag is-small option has-tooltip" id="OverlayUseCustomIcons_tag" tabindex=0 role="button" aria-pressed="false"
+                                                 onkeydown="switch(event.keyCode){case 32:case 69: event.preventDefault(); this.oncontextmenu.call() ;break; case 13:this.click()}" oncontextmenu="ahk.UI_showHelpModal('Custom Icons')"
                                                  onclick="ahk.UI_flipVal('OverlayUseCustomIcons');ahk.UI_onChange('');this.blur()">
                                                 <label class="checkbox">
                                                     <input type="checkbox" id="OverlayUseCustomIcons" disabled>
@@ -459,12 +411,10 @@
                                             <label class="label title is-7 noselect">Overlay size</label>
                                             <div class="columns is-mobile" style="margin-left: 1px;">
                                                 <div class="column is-3" style="padding-right: 0 !important;">
-                                                    <input class="input is-primary is-small input-elem" placeholder="px" disabled type="text"
-                                                           id="OverlaySize_text" value="40px">
+                                                    <input class="input is-primary is-small input-elem" placeholder="px" disabled type="text" id="OverlaySize_text" value="40px">
                                                 </div>
                                                 <div class="column is-6">
-                                                    <input class="slider is-small" min="20" max="100" step="1" value="40" type="range" tabindex=0
-                                                           id="OverlaySize" onchange="ahk.UI_onChange('UI_onUpdateOverlaySize',event.target.value)">
+                                                    <input class="slider is-small" min="20" max="100" step="1" value="40" type="range" tabindex=0 id="OverlaySize" onchange="ahk.UI_onChange('UI_onUpdateOverlaySize',event.target.value)">
                                                 </div>
                                             </div>
                                         </div>
@@ -493,10 +443,8 @@
                                                 <path fill="currentColor"
                                                       d="M3 1C1.89 1 1 1.89 1 3V14C1 15.11 1.89 16 3 16H14C15.11 16 16 15.11 16 14V11H14V14H3V3H14V5H16V3C16 1.89 15.11 1 14 1M9 7C7.89 7 7 7.89 7 9V12H9V9H20V20H9V18H7V20C7 21.11 7.89 22 9 22H20C21.11 22 22 21.11 22 20V9C22 7.89 21.11 7 20 7H9" />
                                             </svg> Linked application
-                                            <span class="tag tag-is-small has-tooltip" tabindex=0 role="button" aria-pressed="false" aria-label="Foreground only"
-                                                  style="margin-top: 0px;"
-                                                  onkeydown="switch(event.keyCode){case 32:case 69: case 13:this.click()}"
-                                                  onclick="ahk.UI_flipVal('ForegroundAppsOnly');ahk.UI_onChange('UI_onToggleForegroundApps');this.blur()">
+                                            <span class="tag tag-is-small has-tooltip" tabindex=0 role="button" aria-pressed="false" aria-label="Foreground only" style="margin-top: 0px;"
+                                                  onkeydown="switch(event.keyCode){case 32:case 69: case 13:this.click()}" onclick="ahk.UI_flipVal('ForegroundAppsOnly');ahk.UI_onChange('UI_onToggleForegroundApps');this.blur()">
                                                 <label class="checkbox">
                                                     <input type="checkbox" name="ForegroundAppsOnly" id="ForegroundAppsOnly" disabled>
                                                     <span class="ForegroundAppsOnly-label">Foreground only</span>
@@ -512,8 +460,7 @@
                                                 </div>
                                             </div>
                                             <div class="control">
-                                                <button type="button" tabindex=0 class="button is-small is-primary"
-                                                        onclick="ahk.UI_onRefreshAppsList();this.blur()">
+                                                <button type="button" tabindex=0 class="button is-small is-primary" onclick="ahk.UI_onRefreshAppsList();this.blur()">
                                                     <svg style="width:16px;height:16px" focusable="false" viewBox="0 0 24 24">
                                                         <path fill="currentColor"
                                                               d="M17.65,6.35C16.2,4.9 14.21,4 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20C15.73,20 18.84,17.45 19.73,14H17.65C16.83,16.33 14.61,18 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6C13.66,6 15.14,6.69 16.22,7.78L13,11H20V4L17.65,6.35Z" />
@@ -530,8 +477,7 @@
                                                       d="M12,20A7,7 0 0,1 5,13A7,7 0 0,1 12,6A7,7 0 0,1 19,13A7,7 0 0,1 12,20M19.03,7.39L20.45,5.97C20,5.46 19.55,5 19.04,4.56L17.62,6C16.07,4.74 14.12,4 12,4A9,9 0 0,0 3,13A9,9 0 0,0 12,22C17,22 21,17.97 21,13C21,10.88 20.26,8.93 19.03,7.39M11,14H13V8H11M15,1H9V3H15V1Z" />
                                             </svg> <span class="afk-label"> AFK
                                                 timeout</span></label>
-                                        <input class="input is-primary is-small input-elem" min="0" max="1000" placeholder="Minutes"
-                                               onchange="ahk.UI_onChange('')" tabindex=0 type="number" id="afkTimeout">
+                                        <input class="input is-primary is-small input-elem" min="0" max="1000" placeholder="Minutes" onchange="ahk.UI_onChange('')" tabindex=0 type="number" id="afkTimeout">
                                     </div>
                                     <!-- ptt delay -->
                                     <div class="column is-5 is-hidden" id="PTTDelay_group">
@@ -543,12 +489,10 @@
                                             release delay</label>
                                         <div class="columns is-mobile">
                                             <div class="column is-5">
-                                                <input class="input is-primary is-small input-elem" placeholder="ms" disabled type="text" id="PTTDelay_text"
-                                                       value="100 ms">
+                                                <input class="input is-primary is-small input-elem" placeholder="ms" disabled type="text" id="PTTDelay_text" value="100 ms">
                                             </div>
                                             <div class="column">
-                                                <input class="slider is-small" min="0" max="500" step="50" value="100" type="range" tabindex=0 id="PTTDelay"
-                                                       onchange="ahk.UI_onChange('UI_onUpdateDelay',event.target.value)">
+                                                <input class="slider is-small" min="0" max="500" step="50" value="100" type="range" tabindex=0 id="PTTDelay" onchange="ahk.UI_onChange('UI_onUpdateDelay',event.target.value)">
                                             </div>
                                         </div>
                                     </div>
@@ -634,12 +578,10 @@
                                         </label>
                                         <div class="columns is-mobile" style="margin-left: 1px;">
                                             <div class="column is-5" style="padding-left: 0px !important;">
-                                                <input class="input is-primary is-small input-elem" placeholder="Percentage" disabled type="text"
-                                                       id="VolumeLock_text" value="Disabled">
+                                                <input class="input is-primary is-small input-elem" placeholder="Percentage" disabled type="text" id="VolumeLock_text" value="Disabled">
                                             </div>
                                             <div class="column is-7">
-                                                <input class="slider is-small" min="0" max="100" step="1" value="0" type="range" tabindex=0
-                                                       id="VolumeLock" onchange="ahk.UI_onChange('UI_onUpdateVolumeLock', event.target.value)">
+                                                <input class="slider is-small" min="0" max="100" step="1" value="0" type="range" tabindex=0 id="VolumeLock" onchange="ahk.UI_onChange('UI_onUpdateVolumeLock', event.target.value)">
                                             </div>
                                         </div>
                                     </div>
@@ -656,16 +598,14 @@
                     <div class="column is-8">
                         <label class="label title is-6 noselect">Options</label>
                         <!-- Mute on startup -->
-                        <div class="tag is-small option" onclick="ahk.UI_onGlobalOption('MuteOnStartup',1);this.blur()" tabindex=0
-                             onkeydown="switch(event.keyCode){case 32:case 13:this.click()}" role="button" aria-pressed="false">
+                        <div class="tag is-small option" onclick="ahk.UI_onGlobalOption('MuteOnStartup',1);this.blur()" tabindex=0 onkeydown="switch(event.keyCode){case 32:case 13:this.click()}" role="button" aria-pressed="false">
                             <label class="checkbox">
                                 <input type="checkbox" name="MuteOnStartup" id="MuteOnStartup" disabled>
                                 <span>Mute on startup</span>
                             </label>
                         </div>
                         <!-- Switching-profile OSD -->
-                        <div class="tag is-small option has-tooltip" role="button" aria-pressed="false"
-                             onclick="ahk.UI_onGlobalOption('SwitchProfileOSD',1);this.blur()" tabindex=0
+                        <div class="tag is-small option has-tooltip" role="button" aria-pressed="false" onclick="ahk.UI_onGlobalOption('SwitchProfileOSD',1);this.blur()" tabindex=0
                              onkeydown="switch(event.keyCode){case 32:case 13:this.click()}">
                             <label class="checkbox">
                                 <input tabindex="0" type="checkbox" name="SwitchProfileOSD" id="SwitchProfileOSD" disabled>
@@ -673,8 +613,7 @@
                             </label>
                         </div>
                         <!-- Force Mic state -->
-                        <div class="tag is-small option has-tooltip" role="button" aria-pressed="false"
-                             onclick="ahk.UI_onGlobalOption('ForceMicrophoneState',1);this.blur()" tabindex=0
+                        <div class="tag is-small option has-tooltip" role="button" aria-pressed="false" onclick="ahk.UI_onGlobalOption('ForceMicrophoneState',1);this.blur()" tabindex=0
                              onkeydown="switch(event.keyCode){case 32:case 13:this.click()}">
                             <label class="checkbox">
                                 <input tabindex="0" type="checkbox" name="ForceMicrophoneState" id="ForceMicrophoneState" disabled>
@@ -683,8 +622,7 @@
                             </label>
                         </div>
                         <!-- Allow update checker -->
-                        <div class="tag is-small option has-tooltip" role="button" aria-pressed="false"
-                             onclick="ahk.UI_onGlobalOption('AllowUpdateChecker',1);this.blur()" tabindex=0
+                        <div class="tag is-small option has-tooltip" role="button" aria-pressed="false" onclick="ahk.UI_onGlobalOption('AllowUpdateChecker',1);this.blur()" tabindex=0
                              onkeydown="switch(event.keyCode){case 32:case 13:this.click()}">
                             <label class="checkbox">
                                 <input tabindex="0" type="checkbox" name="AllowUpdateChecker" id="AllowUpdateChecker" disabled>
@@ -692,8 +630,7 @@
                             </label>
                         </div>
                         <!-- Voicemeeter integration -->
-                        <div class="tag is-small option" onclick="ahk.UI_onGlobalOption('VoicemeeterIntegration',1);this.blur()" tabindex=0
-                             onkeydown="switch(event.keyCode){case 32:case 13:this.click()}" role="button" aria-pressed="false">
+                        <div class="tag is-small option" onclick="ahk.UI_onGlobalOption('VoicemeeterIntegration',1);this.blur()" tabindex=0 onkeydown="switch(event.keyCode){case 32:case 13:this.click()}" role="button" aria-pressed="false">
                             <label class="checkbox">
                                 <input type="checkbox" name="VoicemeeterIntegration" id="VoicemeeterIntegration" disabled>
                                 <span>Voicemeeter integration</span>
@@ -730,8 +667,8 @@
         <div id="profileRenameModal" class="custom-modal">
             <div class="page-mask visible hidden" onclick="ahk.UI_hideProfileRename();this.blur()"></div>
             <div class="modal-contents field visible hidden">
-                <input class="input is-primary input-elem" placeholder="Profile name" name="profile_name_field" id="profile_name_field"
-                       onkeydown="ahk.UI_hideProfileRename(event)" tabindex=0 onblur="ahk.UI_onChangeProfileName(event);ahk.UI_hideProfileRename()">
+                <input class="input is-primary input-elem" placeholder="Profile name" name="profile_name_field" id="profile_name_field" onkeydown="ahk.UI_hideProfileRename(event)" tabindex=0
+                       onblur="ahk.UI_onChangeProfileName(event);ahk.UI_hideProfileRename()">
             </div>
         </div>
         <!-- help modal -->
