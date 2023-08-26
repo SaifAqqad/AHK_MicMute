@@ -7,10 +7,10 @@ UI_create(p_onExitCallback){
     features:= {"FEATURE_GPU_RENDERING": 0x1
         ,"FEATURE_BROWSER_EMULATION": 0x2AF8
         ,"FEATURE_96DPI_PIXEL": 0x1}
-    UI_enableIeFeatures(features)
+    UI_setIeFeatures(features, true)
     ui_obj:= new NeutronWindow()
     ui_obj.load(resources_obj.htmlFile.UI)
-    UI_enableIeFeatures(features,1)
+    UI_setIeFeatures(features, false)
     UI_loadCss(ui_obj)
     OnMessage(WM_SETTINGCHANGE, Func("UI_updateTheme"))
     onExitCallback:= p_onExitCallback
@@ -35,16 +35,16 @@ UI_Show(p_profile, setPos:=1){
 
 UI_HotReload(){
     ui_obj.load(resources_obj.htmlFile.UI)
-    UI_enableIeFeatures(features,1)
+    UI_setIeFeatures(features, false)
     UI_loadCss(ui_obj)
     UI_Show(current_profile.ProfileName, 0)
 }
 
-UI_enableIeFeatures(f_obj, delete:=0){
+UI_setIeFeatures(f_obj, enabled){
     static reg_dir:= "SOFTWARE\Microsoft\Internet Explorer\Main\FeatureControl\"
         , executable:= A_IsCompiled? A_ScriptName : util_splitPath(A_AhkPath).fileName
     for feature, value in f_obj
-        if(!delete)
+        if(enabled)
             RegWrite, REG_DWORD, % "HKCU\" reg_dir feature, % executable, % value
         else
             RegDelete, % "HKCU\" reg_dir feature, % executable

@@ -9,9 +9,9 @@
         features:= {"FEATURE_GPU_RENDERING": 0x1
             ,"FEATURE_BROWSER_EMULATION": 0x2AF8
             ,"FEATURE_96DPI_PIXEL": 0x1}
-        this.enableIeFeatures(features)
+        this.setIeFeatures(features, true)
         base.__New()
-        this.enableIeFeatures(features, 1)
+        this.setIeFeatures(features, false)
         
         OnMessage(WM_SETTINGCHANGE, ObjBindMethod(this, "updateUITheme"))
     }
@@ -67,11 +67,11 @@
         }
     }
 
-    enableIeFeatures(f_obj, delete:=0){
+    setIeFeatures(f_obj, enabled){
         static reg_dir:= "SOFTWARE\Microsoft\Internet Explorer\Main\FeatureControl\"
              , executable:= A_IsCompiled? A_ScriptName : util_splitPath(A_AhkPath).fileName
         for feature, value in f_obj
-            if(!delete)
+            if(enabled)
                 RegWrite, REG_DWORD, % "HKCU\" reg_dir feature, % executable, % value
             else
                 RegDelete, % "HKCU\" reg_dir feature, % executable
