@@ -89,7 +89,7 @@
             if (this.isModifier(value) && !isModifierHotkey)
                 str .=  this.modifierToSymbol(value)
             else ; else => append the part
-                str .= value . " & "
+                str .= Format("VK{:x}", GetKeyVK(value)) " & "
         }
         ; remove trailing " & "
         if(SubStr(str, -2) = " & ")
@@ -116,18 +116,18 @@
                 ;match modifier symbols
                 str:= StrReplace(str, symbol, "",, 1)
                 modifier:= this.symbolToModifier(symbol)
-                finalStr.= (useNeutralModifers? this.modifierToNeutral(modifier) : modifier) . " + "
+                finalStr.= (useNeutralModifers? this.modifierToNeutral(modifier) : this.GetHKeyName(modifier)) . " + "
             }else if(RegExMatch(str, this.modifier_regex, modifier)){ ; no more symbols
                 ;match modifiers
                 str:= StrReplace(str, modifier, "",, 1)
-                finalStr.= (useNeutralModifers? this.modifierToNeutral(modifier) : modifier) . " + "
+                finalStr.= (useNeutralModifers? this.modifierToNeutral(modifier) : this.GetHKeyName(modifier)) . " + "
             }else{ ;no more modifiers
                 ;match keys
                 Loop, Parse, str, % "&", %A_Space%%A_Tab%
                 {
                     if(A_LoopField){
                         str:= StrReplace(str, A_LoopField, "",, 1)
-                        finalStr.= A_LoopField . " + "
+                        finalStr.= this.GetHKeyName(A_LoopField) . " + "
                     }
                 }
                 ;remove spaces and '&' from str
@@ -136,6 +136,15 @@
             }
         }
         return SubStr(finalStr,1,-3) 
+    }
+
+    GetHKeyName(key){
+        key:= GetKeyName(key)
+
+        if(StrLen(key) == 1)
+            key:= Format("{:U}", key)
+
+        return key
     }
 
     modifierToSymbol(modifier){
