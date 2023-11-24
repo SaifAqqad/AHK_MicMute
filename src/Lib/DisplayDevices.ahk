@@ -9,9 +9,18 @@ class DisplayDevices {
         , _length_DeviceID := 128
         , _cachedDisplays := ""
         , _primaryDisplayId := ""
+        , _listeners := Array()
 
     _NewEnum() {
         return new DisplayDevices.DisplayEnumerator(DisplayDevices._cachedDisplays)
+    }
+
+    AddListener(funObj) {
+        return DisplayDevices._listeners.Push(funObj)
+    }
+
+    RemoveListener(index) {
+        try DisplayDevices._listeners[index] := ""
     }
 
     getById(id) {
@@ -65,6 +74,12 @@ class DisplayDevices {
 
             if (display.Primary)
                 DisplayDevices._primaryDisplayId := display.Id
+        }
+
+        util_log("[DisplayDevices] Calling listeners")
+        for _, listener in DisplayDevices._listeners {
+            if (listener)
+                listener.Call()
         }
 
         Critical, Off
@@ -168,5 +183,10 @@ class DisplayDevices {
     }
 }
 
+DisplayDevices_UpdateDisplays() {
+    static method := ObjBindMethod(DisplayDevices, "updateCachedDisplays")
+    SetTimer, %method%, -10
+}
+
 DisplayDevices.updateCachedDisplays()
-OnMessage(0x007E, ObjBindMethod(DisplayDevices, "updateCachedDisplays"), -1)
+OnMessage(0x007E, "DisplayDevices_UpdateDisplays", -1)

@@ -1,4 +1,4 @@
-﻿class Overlay {
+class Overlay {
     static GDI_TOKEN := 0
         , BACKGROUND_COLOR := 0x232323
         , BACKGROUND_TRANSPARENCY := 0xef000000
@@ -45,14 +45,8 @@
         Try Hotkey, ^!F10, % lockFunc, On
     }
 
-    _onDisplayChange(wParam:="", lParam:="", msg:="", hwnd:=""){
-        if (hwnd) {
-            if (this.hwnd != hwnd)
-                return
-
-            util_log("[Overlay] Detected a display change, Recalculating overlay position")
-        }
-
+    _onDisplayChange(){
+        util_log("[Overlay] Detected a display change, Recalculating overlay position")
         cFunc := this.calculatePosFunc
         SetTimer, % cFunc, -1000
     }
@@ -150,7 +144,7 @@
         this.hwnd := ui_hwnd
         OnMessage(0x201, this.onDragFunc)
         OnMessage(0x46, this.onPosChangeFunc)
-        OnMessage(WM_DISPLAYCHANGE, this.onDisplayChangeFunc)
+        this.onDisplayChangeFuncIndex := DisplayDevices.AddListener(this.onDisplayChangeFunc)
     }
 
     _loadIcons() {
@@ -384,6 +378,7 @@
             Gui, Destroy
             OnMessage(0x201, this.onDragFunc, 0)
             OnMessage(0x46, this.onPosChangeFunc, 0)
+            DisplayDevices.RemoveListener(this.onDisplayChangeFuncIndex)
             Gdip_DeleteBrush(this.backgroundBrush)
             DeleteObject(this.canvas)
             DeleteDC(this.deviceContext)
