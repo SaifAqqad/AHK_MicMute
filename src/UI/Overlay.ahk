@@ -1,4 +1,4 @@
-class Overlay {
+﻿class Overlay {
     static GDI_TOKEN := 0
         , BACKGROUND_COLOR := 0x232323
         , BACKGROUND_TRANSPARENCY := 0xef000000
@@ -52,6 +52,8 @@ class Overlay {
     }
     
     _calculatePos(){
+        this.changedPos:= ""
+
         if (this.options.pos.Length() > 1) {
             ; there's multiple positions -> Apply the first available
             isPositionSet:= 0
@@ -237,10 +239,10 @@ class Overlay {
             return
 
         WinGetPos, xPos, yPos, , , % "ahk_id " this.hwnd
-        if (xPos == "" || yPos == "")
+        if (xPos == "" || yPos == "" || (this.lastChangedPos && this.lastChangedPos.x == xPos && this.lastChangedPos.y == yPos))
             return
 
-        this.changedPos := { x: xPos, y: yPos }
+        this.lastChangedPos := this.changedPos := { x: xPos, y: yPos }
     }
 
     _onPosChanged(){
