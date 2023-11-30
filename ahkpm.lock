@@ -11,7 +11,7 @@
     {
       "name": "github.com/G33kDude/Neutron.ahk",
       "version": "branch:master",
-      "sha": "a1ec4de705b1cc6d73519169d15545b0fe5f3600",
+      "sha": "595ff6aac5a37f6810e82a8f690333bc3400e831",
       "installPath": "ahkpm-modules/github.com/G33kDude/Neutron.ahk",
       "dependencies": {}
     },
