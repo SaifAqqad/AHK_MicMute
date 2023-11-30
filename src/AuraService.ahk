@@ -3,7 +3,7 @@
 #Include, <IPC>
 #Include, <AuraSync>
 #Include, <WinUtils>
-#Include, %A_ScriptDir%\..\ahkpm-modules\github.com\G33kDude\cJson.ahk\Dist\JSON.ahk
+#Include, %A_ScriptDir%\..\ahkpm-modules\github.com\SaifAqqad\cJson.ahk\Dist\JSON.ahk
 
 #NoEnv
 #Persistent

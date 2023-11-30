@@ -33,8 +33,8 @@ SetWorkingDir %A_ScriptDir%
 
 ; ahkpm
 #Include, %A_ScriptDir%\..\ahkpm-modules\github.com\
-#Include, G33kDude\cJson.ahk\Dist\JSON.ahk
 #Include, G33kDude\Neutron.ahk\Neutron.ahk
+#Include, SaifAqqad\cJson.ahk\Dist\JSON.ahk
 #Include, SaifAqqad\VA.ahk\VA.ahk
 #Include, SaifAqqad\VMR.ahk\dist\VMR.ahk
 #Include, mmikeww\AHKv2-Gdip\Gdip_All.ahk
