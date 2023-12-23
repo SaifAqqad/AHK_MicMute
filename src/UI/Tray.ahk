@@ -121,6 +121,7 @@ tray_toggleAuraSyncPause(){
     } else {
         AuraSyncAction.ServiceEnabled := true
         Menu, auraSync, Uncheck, Pause
+        SetTimer, updateMicrophonesState, -1000
     }
 }
 

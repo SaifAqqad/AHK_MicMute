@@ -486,6 +486,14 @@ onUpdateState(microphone){
     }
 }
 
+updateMicrophonesState(){
+    if(mic_controllers){
+        for _i, mic in mic_controllers{
+            onUpdateState(mic)
+        }
+    }
+}
+
 updateSysTheme(_wParam:="", lParam:=""){
     if(!lParam || StrGet(lParam) == "ImmersiveColorSet"){
         themes:= util_getSystemTheme()
