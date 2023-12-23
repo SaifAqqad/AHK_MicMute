@@ -435,7 +435,7 @@ checkConfigDiff(){
 
 checkLinkedApps(){
     if(watched_profile){
-        if(!isAppActive(watched_profile.LinkedApp)){
+        if(!isAppActive(watched_profile.LinkedApp, watched_profile.ForegroundAppsOnly)){
             util_log("[Main] Linked app closed: " . watched_profile.LinkedApp)
             watched_profile:=""
             switchProfile(config_obj.DefaultProfile)
@@ -444,7 +444,7 @@ checkLinkedApps(){
     }
 
     for _i, p in watched_profiles {
-        if(isAppActive(p.LinkedApp)){
+        if(isAppActive(p.LinkedApp, p.ForegroundAppsOnly)){
             util_log("[Main] Detected linked app: " . p.LinkedApp)
             watched_profile:= p
             switchProfile(p.ProfileName)
@@ -453,8 +453,8 @@ checkLinkedApps(){
     }
 }
 
-isAppActive(appFile){
-    if (current_profile.ForegroundAppsOnly) {
+isAppActive(appFile, foregroundOnly){
+    if (foregroundOnly) {
         windowExists := WinExist("ahk_exe " . appFile)
         WinGet, minState, MinMax, ahk_exe %appFile%
 
