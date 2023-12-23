@@ -88,7 +88,11 @@ RunTasks(){
                 lastTask := task
             case "resetService":
                 aura.releaseControl()
-                tasks.Push(lastTask)
+                Sleep, 100
+                tasks := [{type: "startService"}, lastTask]
+            case "startService":
+                aura.takeControl()
+                Sleep, 100
             case "pauseService":
                 aura.releaseControl()
                 lastTask := ""
