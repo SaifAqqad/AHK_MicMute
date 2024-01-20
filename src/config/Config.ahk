@@ -43,6 +43,12 @@
         jsonFile.Close()
         jsonObj := JSON.Load(jsonStr)
 
+        this.Version := jsonObj.Version
+        if (!this.Version || VerCompare(A_Version, this.Version) > 0) {
+            A_PreviousVersion := this.Version
+            A_AfterUpdate := true
+        }
+
         ; Apply json object props over config object props
         for prop, val in jsonObj {
             if (prop = "profiles")
@@ -52,10 +58,8 @@
                 this[prop] := jsonObj[prop]
         }
 
-        if (!this.Version || VerCompare(A_Version, this.Version) > 0) {
-            isAfterUpdate := true
-            this.Version := A_Version
-        }
+        ; Update the config version
+        this.Version := A_Version
 
         ; Ensure compatibility with old versions
         if (this.UseCustomSounds) {

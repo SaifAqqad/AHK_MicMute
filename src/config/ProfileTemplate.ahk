@@ -47,6 +47,12 @@
             }
 
             ; Ensure compatibility with old versions
+            ; AFK timeout was stored in minutes, now in ms
+            ; if it's less than 1000, it's most likely an old value
+            if (A_AfterUpdate && p_name_Obj.afkTimeout < 1000)
+                this.afkTimeout := p_name_Obj.afkTimeout * 60000
+
+            ; Ensure compatibility with old versions
             if (!IsObject(this.Microphone)) {
                 this.Microphone := Array(new MicrophoneTemplate(this.Delete("Microphone")
                     , this.Delete("MuteHotkey")

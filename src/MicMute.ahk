@@ -1,4 +1,4 @@
-﻿#Requires AutoHotkey v1.1.36+
+#Requires AutoHotkey v1.1.36+
 
 ;compiler directives
 ;@Ahk2Exe-Let Res = %A_ScriptDir%\resources
@@ -407,18 +407,23 @@ editConfig(){
 }
 
 checkIsIdle(){
-    static wasIdle:= 0
-    if (A_TimeIdlePhysical < current_profile.afkTimeout * 60000){
-        wasIdle:=0
+    static wasIdle := false
+    if (A_TimeIdlePhysical < current_profile.afkTimeout){
+        if (wasIdle)
+            util_log("[Main] Idling ended")
+        wasIdle := false
         return
     }
 
-    if(!wasIdle)
-        util_log("[Main] User is idle")
-    wasIdle:= 1
+    if (!wasIdle){
+        util_log("[Main] Detected idling for " current_profile.afkTimeout " ms")
+        wasIdle := true
+    }
+
+    ; Ensure microphones are muted
     for _i, mic in mic_controllers
         if(!mic.isPushToTalk)
-            mic.setMuteState(1)
+            mic.setMuteState(true)
 }
 
 ;checks for changes to the config file

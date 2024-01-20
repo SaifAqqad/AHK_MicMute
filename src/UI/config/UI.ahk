@@ -97,7 +97,7 @@ UI_setProfile(_neutron, p_profile){
     ui_obj.doc.getElementById("OSDPos_y").value:= current_profile.OSDPos.y==-1? "" : current_profile.OSDPos.y
     ui_obj.doc.getElementById("ForegroundAppsOnly").checked := current_profile.ForegroundAppsOnly
     UI_onRefreshAppsList("")
-    ui_obj.doc.getElementById("afkTimeout").value:= !current_profile.afkTimeout? "" : current_profile.afkTimeout
+    UI_setAfkTimeoutValue(current_profile.afkTimeout)
     ui_obj.doc.getElementById("PTTDelay").value:= current_profile.PTTDelay
     UI_onUpdateDelay(current_profile.PTTDelay)
     UI_onRefreshMicActions("")
@@ -189,6 +189,39 @@ UI_setHotkeyPanel(hotkey_panel, delay:=0){
     UI_checkMicOptions()
 }
 
+UI_setAfkTimeoutValue(value){
+    valueInput := ui_obj.doc.getElementById("afkTimeout")
+    unitSelect := ui_obj.doc.getElementById("afkTimeoutUnit")
+
+    if (!value){
+        valueInput.value := ""
+        unitSelect.value := "m"
+        return
+    }
+
+    if (value >= 60000 && Mod(value, 60000) == 0){
+        valueInput.value := value / 60000
+        unitSelect.value := "m"
+        return
+    }
+
+    valueInput.value := value / 1000
+    unitSelect.value := "s"
+}
+
+UI_getAfkTimeoutValue(){
+    valueInput := ui_obj.doc.getElementById("afkTimeout")
+    unitSelect := ui_obj.doc.getElementById("afkTimeoutUnit")
+
+    if (!valueInput.value)
+        return 0
+
+    if (unitSelect.value == "m")
+        return valueInput.value * 60000
+
+    return valueInput.value * 1000
+}
+
 UI_updateHotkeyOption(option, isRootValue:=0){
     elem:= ui_obj.doc.getElementById(option)
     if(isRootValue){
@@ -212,7 +245,7 @@ UI_onSaveProfile(neutron, noReset:=0){
     current_profile.OnscreenOverlay.UseCustomIcons:= ui_obj.doc.getElementById("OverlayUseCustomIcons").checked? 1 : 0
     current_profile.OnscreenOverlay.Theme:= ui_obj.doc.getElementById("OverlayTheme").value
     current_profile.OnscreenOverlay.Size:= ui_obj.doc.getElementById("OverlaySize").value
-    current_profile.afkTimeout:= (val:= ui_obj.doc.getElementById("afkTimeout").value)? val+0 : 0
+    current_profile.afkTimeout:= UI_getAfkTimeoutValue()
     current_profile.LinkedApp:= ui_obj.doc.getElementById("LinkedApp").value
     current_profile.ForegroundAppsOnly:= ui_obj.doc.getElementById("ForegroundAppsOnly").checked? 1 : 0
     current_profile.PTTDelay:= ui_obj.doc.getElementById("PTTDelay").value+0

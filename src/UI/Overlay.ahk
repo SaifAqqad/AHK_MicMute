@@ -249,10 +249,10 @@
         if (!this.changedPos)
             return
 
-        util_log("[Overlay] Position changed")
-
         this.windowPosition.X := xPos := this.changedPos.x
         this.windowPosition.Y := yPos := this.changedPos.y
+
+        util_log("[Overlay] Overlay position changed to: " xPos ", " yPos)
 
         this.changedPos := ""
         display := DisplayDevices.getByPosition(xPos, yPos)
