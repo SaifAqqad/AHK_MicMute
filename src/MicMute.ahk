@@ -1,4 +1,4 @@
-#Requires AutoHotkey v1.1.36+
+﻿#Requires AutoHotkey v1.1.36+
 
 ;compiler directives
 ;@Ahk2Exe-Let Res = %A_ScriptDir%\resources
@@ -87,7 +87,7 @@ Global A_startupTime:= A_TickCount
     , watched_profile
     , mic_actions
     , last_modif_time
-    , arg_isDebug:=0
+    , arg_isDebug:= A_DebuggerName ? 1 : 0
     , arg_profile:=""
     , arg_noUI:=0
     , arg_reload:= 0
@@ -97,7 +97,8 @@ Global A_startupTime:= A_TickCount
     , args_str:=""
     , resources_obj:= new ResourcesManager()
     , isFirstLaunch:=0
-    , isAfterUpdate:=0
+    , A_AfterUpdate:=0
+    , A_PreviousVersion:=""
     , A_Version:= A_IsCompiled? util_getFileSemVer(A_ScriptFullPath) : U_Version
     , sound_player
     , osd_wnd
@@ -109,14 +110,13 @@ Global A_startupTime:= A_TickCount
     , WM_SETTINGCHANGE:= 0x001A
     , WM_DEVICECHANGE := 0x0219
 
-; parse cli args
+util_log("MicMute v" A_Version)
 parseArgs()
 tray_defaults()
-util_log("MicMute v" . A_Version)
-util_log(Format("[Main] Running as user {}, A_IsAdmin = {}", A_UserName, A_IsAdmin))
+util_log(Format("[Main] {} as user {}, A_IsAdmin = {}, A_Args = {}", arg_reload ? "Reloading" : "Running", A_UserName, A_IsAdmin, args_str))
 OnError(Func("util_log"))
 if(arg_isUpdater){
-    util_log("[Main] Updater mode")
+    util_log("[Main] Starting updater mode")
     tray_init_updater()
     updater_UI:= new UpdaterUI()
     return
@@ -416,7 +416,7 @@ checkIsIdle(){
     }
 
     if (!wasIdle){
-        util_log("[Main] Detected idling for " current_profile.afkTimeout " ms")
+        util_log("[Main] Detected idling for " A_TimeIdlePhysical " ms")
         wasIdle := true
     }
 
@@ -441,7 +441,7 @@ checkConfigDiff(){
 checkLinkedApps(){
     if(watched_profile){
         if(!isAppActive(watched_profile.LinkedApp, watched_profile.ForegroundAppsOnly)){
-            util_log("[Main] Linked app closed: " . watched_profile.LinkedApp)
+            util_log("[Main] Linked app closed: " watched_profile.LinkedApp)
             watched_profile:=""
             switchProfile(config_obj.DefaultProfile)
         }
@@ -450,7 +450,7 @@ checkLinkedApps(){
 
     for _i, p in watched_profiles {
         if(isAppActive(p.LinkedApp, p.ForegroundAppsOnly)){
-            util_log("[Main] Detected linked app: " . p.LinkedApp)
+            util_log("[Main] Detected linked app: " p.LinkedApp)
             watched_profile:= p
             switchProfile(p.ProfileName)
             break
@@ -460,7 +460,7 @@ checkLinkedApps(){
 
 isAppActive(appFile, foregroundOnly){
     if (foregroundOnly) {
-        windowExists := WinExist("ahk_exe " . appFile)
+        windowExists := WinExist("ahk_exe " appFile)
         WinGet, minState, MinMax, ahk_exe %appFile%
 
         ; An app is active in the foreground if it has a window that's not hidden
@@ -581,7 +581,7 @@ showElevatedWarning(){
 
 configMsg(err){
     Thread, NoTimers, 1
-    MsgBox, 65, MicMute, % (IsObject(err)? err.Message : err) . "`nClick OK to edit configuration"
+    MsgBox, 65, MicMute, % (IsObject(err)? err.Message : err) "`nClick OK to edit configuration"
     IfMsgBox, OK
         editConfig()
     IfMsgBox, Cancel

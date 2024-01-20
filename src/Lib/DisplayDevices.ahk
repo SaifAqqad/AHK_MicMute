@@ -185,7 +185,7 @@ class DisplayDevices {
 
 DisplayDevices_UpdateDisplays() {
     static method := ObjBindMethod(DisplayDevices, "updateCachedDisplays")
-    SetTimer, %method%, -10
+    SetTimer, %method%, -100
 }
 
 DisplayDevices.updateCachedDisplays()

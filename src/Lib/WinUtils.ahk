@@ -228,7 +228,10 @@ util_log(msg){
     static logNum:=0
     msg:= Format("#{:i} {}: {}`n", ++logNum, A_TickCount, IsObject(msg)? "Error: " . msg.Message : msg)
     A_log.= msg
-    Try FileOpen(arg_logFile, "a").Write(msg)
+    if (arg_isDebug || A_DebuggerName)
+        OutputDebug, % msg
+    else
+        Try FileOpen(arg_logFile, "a").Write(msg)
 }
 
 util_toString(obj){

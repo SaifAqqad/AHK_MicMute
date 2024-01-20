@@ -62,7 +62,7 @@
                 if (!this._setPosConfig(positionConfig))
                     Continue
 
-                this.options.pos[i] := this.currentPos
+                this.options.pos[i] := this.relativePosition
                 isPositionSet := 1
                 Break
             }
@@ -71,13 +71,13 @@
             if (!isPositionSet) {
                 display := DisplayDevices.getPrimary()
 
-                this.windowPosition := display.getAbsolutePosition(this.options.pos[1].X, this.options.pos[1].Y)
+                this.absolutePosition := display.getAbsolutePosition(this.options.pos[1].X, this.options.pos[1].Y)
 
                 ; position is not set -> use default position
-                if (!this.windowPosition)
+                if (!this.absolutePosition)
                     this._setDefaultPos(display)
                 else 
-                    this.currentPos := this.options.pos[1] := display.getRelativePosition(this.windowPosition.X, this.windowPosition.Y)
+                    this.relativePosition := this.options.pos[1] := display.getRelativePosition(this.absolutePosition.X, this.absolutePosition.Y)
             }
         } else {
             positionConfig := this.options.pos[1]
@@ -97,18 +97,18 @@
                 if (!display)
                     display := DisplayDevices.getPrimary()
 
-                this.windowPosition := display.getAbsolutePosition(positionConfig.X, positionConfig.Y)
+                this.absolutePosition := display.getAbsolutePosition(positionConfig.X, positionConfig.Y)
 
                 ; position is not set -> use default position
-                if (!this.windowPosition)
+                if (!this.absolutePosition)
                     this._setDefaultPos(display)
                 else 
-                    this.currentPos := this.options.pos[1] := display.getRelativePosition(this.windowPosition.X, this.windowPosition.Y)
+                    this.relativePosition := this.options.pos[1] := display.getRelativePosition(this.absolutePosition.X, this.absolutePosition.Y)
             }
         }
 
-        if (this.hwnd && this.shown && this.windowPosition.x && this.windowPosition.y)
-            WinMove, % "ahk_id " this.hwnd, , % this.windowPosition.x, % this.windowPosition.y
+        if (this.hwnd && this.shown && this.absolutePosition.x && this.absolutePosition.y)
+            WinMove, % "ahk_id " this.hwnd, , % this.absolutePosition.x, % this.absolutePosition.y
     }
 
     _setPosConfig(positionConfig){
@@ -122,11 +122,11 @@
         if (!display)
             return false
 
-        this.windowPosition := display.getAbsolutePosition(positionConfig.X, positionConfig.Y)
-        if (!this.windowPosition)
+        this.absolutePosition := display.getAbsolutePosition(positionConfig.X, positionConfig.Y)
+        if (!this.absolutePosition)
             return false
 
-        this.currentPos := display.getRelativePosition(this.windowPosition.X, this.windowPosition.Y)
+        this.relativePosition := display.getRelativePosition(this.absolutePosition.X, this.absolutePosition.Y)
         return true
     }
 
@@ -134,10 +134,10 @@
         if (!display)
             display := DisplayDevices.getPrimary()
 
-        this.currentPos := this.options.pos[1] := Overlay.DEFAULT_POSITION.Clone()
+        this.relativePosition := this.options.pos[1] := Overlay.DEFAULT_POSITION.Clone()
         this.options.pos[1].DisplayId := display.id
 
-        this.windowPosition := display.getAbsolutePosition(this.options.pos[1].X, this.options.pos[1].Y)
+        this.absolutePosition := display.getAbsolutePosition(this.options.pos[1].X, this.options.pos[1].Y)
     }
 
     _createWindow() {
@@ -206,11 +206,7 @@
     }
 
     _updateLayeredWindow() {
-        pos := this.windowPosition
-        if (this.changedPos)
-            pos := this.changedPos
-
-        UpdateLayeredWindow(this.hwnd, this.deviceContext, pos.x, pos.y, this.options.size, this.options.size)
+        UpdateLayeredWindow(this.hwnd, this.deviceContext, this.absolutePosition.x, this.absolutePosition.y, this.options.size, this.options.size)
     }
 
     _clear() {
@@ -249,20 +245,20 @@
         if (!this.changedPos)
             return
 
-        this.windowPosition.X := xPos := this.changedPos.x
-        this.windowPosition.Y := yPos := this.changedPos.y
+        this.absolutePosition.X := xPos := this.changedPos.x
+        this.absolutePosition.Y := yPos := this.changedPos.y
 
         util_log("[Overlay] Overlay position changed to: " xPos ", " yPos)
 
         this.changedPos := ""
-        display := DisplayDevices.getByPosition(xPos, yPos)
+        newPosDisplay := DisplayDevices.getByPosition(xPos, yPos)
 
         ; Check if we're on the same display
-        if (display.Id == this.windowPosition.DisplayId){
-            relativePos := display.getRelativePosition(xPos, yPos)
+        if (newPosDisplay.Id == this.absolutePosition.DisplayId){
+            relativePos := newPosDisplay.getRelativePosition(xPos, yPos)
 
-            this.currentPos.X := relativePos.X
-            this.currentPos.Y := relativePos.Y
+            this.relativePosition.X := relativePos.X
+            this.relativePosition.Y := relativePos.Y
 
             config_obj.exportConfig()
             return
@@ -271,32 +267,32 @@
         ; Check if there's a config for the new display
         existingConfigIndex := 0
         for i, positionConfig in this.options.pos {
-            if (positionConfig.displayId = display.Id) {
+            if (positionConfig.displayId = newPosDisplay.Id) {
                 existingConfigIndex := i
                 break
             }
         }
 
         if (existingConfigIndex) {
-            this.currentPos := existingConfig := this.options.pos[existingConfigIndex]
+            this.relativePosition := existingConfig := this.options.pos[existingConfigIndex]
 
             this.options.pos.Delete(existingConfigIndex)
             this.options.pos.InsertAt(1, existingConfig)
 
-            relativePos := display.getRelativePosition(xPos, yPos)
+            relativePos := newPosDisplay.getRelativePosition(xPos, yPos)
             existingConfig.X := relativePos.X
             existingConfig.Y := relativePos.Y
 
-            this.windowPosition.DisplayId := display.Id
+            this.absolutePosition.DisplayId := newPosDisplay.Id
 
             config_obj.exportConfig()
             return
         }
 
         ; No config for the new display, add a new one
-        this.currentPos := display.getRelativePosition(xPos, yPos)
-        this.options.pos.InsertAt(1, this.currentPos)
-        this.windowPosition.DisplayId := display.Id
+        this.relativePosition := newPosDisplay.getRelativePosition(xPos, yPos)
+        this.options.pos.InsertAt(1, this.relativePosition)
+        this.absolutePosition.DisplayId := newPosDisplay.Id
 
         config_obj.exportConfig()
     }
@@ -315,7 +311,7 @@
         Gui, % this.hwnd ":Default"
         Gui, Show, % Format("w{} h{} x{} y{} NA"
             , this.options.size, this.options.size
-            , this.windowPosition.x, this.windowPosition.y)
+            , this.absolutePosition.x, this.absolutePosition.y)
         this._updateLayeredWindow()
         this.shown := 1
     }
