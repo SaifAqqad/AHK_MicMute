@@ -1,4 +1,4 @@
-#Requires AutoHotkey v1.1.36+
+﻿#Requires AutoHotkey v1.1.36+
 
 class DisplayDevices {
     static _wmiPath := "winmgmts:{impersonationLevel=impersonate}!\\" A_ComputerName "\root\wmi"
@@ -115,7 +115,8 @@ class DisplayDevices {
             return displaySerialNum
         }
 
-        return ""
+        ; Fallback to the UID from instance path
+        return RegExMatch(instance, "UID(\d+)", serialNum) ? serialNum : ""
     }
 
     class Display {
