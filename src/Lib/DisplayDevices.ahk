@@ -1,4 +1,4 @@
-﻿#Requires AutoHotkey v1.1.36+
+#Requires AutoHotkey v1.1.36+
 
 class DisplayDevices {
     static _wmiPath := "winmgmts:{impersonationLevel=impersonate}!\\" A_ComputerName "\root\wmi"
@@ -101,7 +101,7 @@ class DisplayDevices {
     }
 
     _getSerialNumber(instance) {
-        displaysQuery := ComObjGet(this._wmiPath).ExecQuery("Select * from WmiMonitorID")
+        try displaysQuery := ComObjGet(this._wmiPath).ExecQuery("Select * from WmiMonitorID")
 
         for display in displaysQuery {
             if(!InStr(display.InstanceName, instance))
