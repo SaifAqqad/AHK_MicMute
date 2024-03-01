@@ -18,8 +18,9 @@
         ; gui actual size = iconSize + 2*padding
         this.options.size += 2 * Overlay.PADDING_SIZE
 
-        ;set overlay position
+        ; Calculate initial position and export it
         this._calculatePos()
+        config_obj.exportConfig()
 
         this.onDragFunc := ObjBindMethod(this, "_onDrag")
         this.onPosChangeFunc := ObjBindMethod(this, "_onPosChange")
@@ -53,67 +54,45 @@
     
     _calculatePos(){
         this.changedPos:= ""
+        isPositionSet:= 0
 
-        if (this.options.pos.Length() > 1) {
-            ; there's multiple positions -> Apply the first available
-            isPositionSet:= 0
+        for i, positionConfig in this.options.pos {
+            if (!this._setPosConfig(positionConfig))
+                Continue
 
-            for i, positionConfig in this.options.pos {
-                if (!this._setPosConfig(positionConfig))
-                    Continue
-
-                this.options.pos[i] := this.relativePosition
-                isPositionSet := 1
-                Break
-            }
-
-            ; no position was set -> use the first position on primary display
-            if (!isPositionSet) {
-                display := DisplayDevices.getPrimary()
-
-                this.absolutePosition := display.getAbsolutePosition(this.options.pos[1].X, this.options.pos[1].Y)
-
-                ; position is not set -> use default position
-                if (!this.absolutePosition)
-                    this._setDefaultPos(display)
-                else 
-                    this.relativePosition := this.options.pos[1] := display.getRelativePosition(this.absolutePosition.X, this.absolutePosition.Y)
-            }
-        } else {
-            positionConfig := this.options.pos[1]
-
-            if (positionConfig.X = -1 && positionConfig.Y = -1) {
-                ; position is not set -> use default position on primary display
-                this._setDefaultPos()
-            } else {
-                ; Try to find the display using it's id or window position
-                if (positionConfig.DisplayId)
-                    display := DisplayDevices.getById(positionConfig.DisplayId)
-
-                if (!display)
-                    display := DisplayDevices.getByPosition(positionConfig.X, positionConfig.Y)
-
-                ; display wasn't found -> fallback to primary display
-                if (!display)
-                    display := DisplayDevices.getPrimary()
-
-                this.absolutePosition := display.getAbsolutePosition(positionConfig.X, positionConfig.Y)
-
-                ; position is not set -> use default position
-                if (!this.absolutePosition)
-                    this._setDefaultPos(display)
-                else 
-                    this.relativePosition := this.options.pos[1] := display.getRelativePosition(this.absolutePosition.X, this.absolutePosition.Y)
-            }
+            this.options.pos[i] := this.relativePosition
+            Goto, _positionSet
+            Break
         }
 
+        ; No position was set -> use the first position (or default) on primary display
+        positionConfig := this.options.pos[1]
+        primaryDisplay := DisplayDevices.getPrimary()
+
+        ; First time using the overlay, set the default position
+        if (positionConfig.X = -1 || positionConfig.Y = -1){
+            this._setDefaultPos(primaryDisplay, this.options.pos.Length() > 1)
+            Goto, _positionSet
+        }
+
+        ; Try to clone the first position onto the primary display
+        if (this._setPosConfig(positionConfig, primaryDisplay)){
+            this.options.pos.InsertAt(1, this.relativePosition)
+            Goto, _positionSet
+        }
+
+        ; Fallback to the default position
+        this._setDefaultPos(primaryDisplay, true)
+
+        _positionSet:
+        util_log("[Overlay] Calculated overlay position: [" this.absolutePosition.x ", " this.absolutePosition.y "] on display '" this.absolutePosition.DisplayId "'")
         if (this.hwnd && this.shown && this.absolutePosition.x && this.absolutePosition.y)
             WinMove, % "ahk_id " this.hwnd, , % this.absolutePosition.x, % this.absolutePosition.y
     }
 
-    _setPosConfig(positionConfig){
+    _setPosConfig(positionConfig, display := ""){
         ; Try to find the display using it's id or window position
-        if (positionConfig.DisplayId)
+        if (!display && positionConfig.DisplayId)
             display := DisplayDevices.getById(positionConfig.DisplayId)
 
         if (!display)
@@ -130,14 +109,16 @@
         return true
     }
 
-    _setDefaultPos(display := "") {
-        if (!display)
-            display := DisplayDevices.getPrimary()
+    _setDefaultPos(display, appendDisplay := false) {
+        this.relativePosition := Overlay.DEFAULT_POSITION.Clone()
+        this.relativePosition.DisplayId := display.id
 
-        this.relativePosition := this.options.pos[1] := Overlay.DEFAULT_POSITION.Clone()
-        this.options.pos[1].DisplayId := display.id
+        if (appendDisplay)
+            this.options.pos.InsertAt(1, this.relativePosition)
+        else
+            this.options.pos[1] := this.relativePosition
 
-        this.absolutePosition := display.getAbsolutePosition(this.options.pos[1].X, this.options.pos[1].Y)
+        this.absolutePosition := display.getAbsolutePosition(this.relativePosition.X, this.relativePosition.Y)
     }
 
     _createWindow() {
@@ -248,10 +229,10 @@
         this.absolutePosition.X := xPos := this.changedPos.x
         this.absolutePosition.Y := yPos := this.changedPos.y
 
-        util_log("[Overlay] Overlay position changed to: " xPos ", " yPos)
-
         this.changedPos := ""
         newPosDisplay := DisplayDevices.getByPosition(xPos, yPos)
+
+        util_log("[Overlay] Overlay position changed to [" xPos ", " yPos "] on display '" newPosDisplay.Id "'")
 
         ; Check if we're on the same display
         if (newPosDisplay.Id == this.absolutePosition.DisplayId){
