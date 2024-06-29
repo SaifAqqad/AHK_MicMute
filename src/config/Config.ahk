@@ -8,6 +8,7 @@
     ForceMicrophoneState := 0
     VoicemeeterPath := ""
     VoicemeeterIntegration := 0
+    
     Version := ""
 
     __New(p_DefaultProfile := "") {
