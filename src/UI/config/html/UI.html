@@ -711,6 +711,14 @@
                                 <span>Voicemeeter integration</span>
                             </label>
                         </div>
+                        <!-- Notify For Admin Apps -->
+                        <div class="tag is-small option has-tooltip" onclick="ahk.UI_onGlobalOption('NotifyForAdminApps',1);this.blur()" tabindex=0
+                            onkeydown="switch(event.keyCode){case 32:case 13:this.click()}" role="button" aria-pressed="false">
+                            <label class="checkbox">
+                                <input type="checkbox" name="NotifyForAdminApps" id="NotifyForAdminApps" disabled>
+                                <span class="NotifyForAdminApps-label">Notify For Admin Apps</span>
+                            </label>
+                        </div>
                     </div>
                     <div class="column is-4">
                         <!-- default profile -->

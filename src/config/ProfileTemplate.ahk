@@ -27,21 +27,6 @@
             , UseCustomIcons: 0 }
 
         if (IsObject(p_name_Obj)) {
-            ; Ensure compatibility with old versions
-            onMuteOnly := p_name_Obj.Delete("OverlayOnMuteOnly")
-            if (onMuteOnly)
-                this.OnscreenOverlay.ShowOnState := onMuteOnly
-
-            ; Ensure compatibility with old versions
-            if (!IsObject(p_name_Obj.OnscreenOverlay)){
-                this.OnscreenOverlay.Enabled := p_name_Obj.Delete("OnscreenOverlay")
-                this.OnscreenOverlay.Position[1] := p_name_Obj.Delete("OverlayPos")
-                this.OnscreenOverlay.ShowOnState := p_name_Obj.Delete("OverlayShow")
-                this.OnscreenOverlay.Theme := p_name_Obj.Delete("OverlayTheme")
-                this.OnscreenOverlay.Size := p_name_Obj.Delete("OverlaySize")
-                this.OnscreenOverlay.UseCustomIcons := p_name_Obj.Delete("OverlayUseCustomIcons")
-            }
-
             for prop, val in p_name_Obj {
                 this[prop] := val
             }
@@ -51,14 +36,6 @@
             ; if it's less than 1000, it's most likely an old value
             if (A_AfterUpdate && p_name_Obj.afkTimeout < 1000)
                 this.afkTimeout := p_name_Obj.afkTimeout * 60000
-
-            ; Ensure compatibility with old versions
-            if (!IsObject(this.Microphone)) {
-                this.Microphone := Array(new MicrophoneTemplate(this.Delete("Microphone")
-                    , this.Delete("MuteHotkey")
-                    , this.Delete("UnmuteHotkey")
-                    , this.Delete("PushToTalk")))
-            }
         }
     }
 }

@@ -137,6 +137,10 @@ UI_reset(){
         ui_obj.doc.getElementById("VoicemeeterIntegration").setAttribute("checked", 1)
     else
         ui_obj.doc.getElementById("VoicemeeterIntegration").removeAttribute("checked")
+    if(config_obj.NotifyForAdminApps)
+        ui_obj.doc.getElementById("NotifyForAdminApps").setAttribute("checked", 1)
+    else
+        ui_obj.doc.getElementById("NotifyForAdminApps").removeAttribute("checked")
     ui_obj.doc.getElementById("PreferTheme").value:= config_obj.PreferTheme
 }
 

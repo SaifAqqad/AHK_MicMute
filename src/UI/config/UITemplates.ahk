@@ -145,4 +145,6 @@ global template_link:= "<link rel='stylesheet' id='css_{1:}' href='{2:}'>"
              ,{ selector: ".volume-lock-label"
                 , string: "Lock the microphone's volume to a specific value"}
              ,{ selector: ".ForegroundAppsOnly-label"
-                , string: "Require apps to be in the foreground to trigger a profile change"}]
+                , string: "Require apps to be in the foreground to trigger a profile change"}
+             ,{ selector: ".NotifyForAdminApps-label"
+                , string: "Show a notification when an admin app is detected"}]

@@ -8,7 +8,7 @@
     ForceMicrophoneState := 0
     VoicemeeterPath := ""
     VoicemeeterIntegration := 0
-    
+    NotifyForAdminApps := 1
     Version := ""
 
     __New(p_DefaultProfile := "") {
@@ -61,14 +61,6 @@
 
         ; Update the config version
         this.Version := A_Version
-
-        ; Ensure compatibility with old versions
-        if (this.UseCustomSounds) {
-            for i, profile in this.profiles {
-                profile.SoundFeedbackUseCustomSounds := this.UseCustomSounds
-            }
-        }
-        this.Delete("UseCustomSounds")
     }
 
     exportConfig() {

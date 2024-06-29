@@ -555,27 +555,32 @@ parseArgs(){
 }
 
 registerWindowHook(){
-    DllCall( "RegisterShellHookWindow", UInt,A_ScriptHwnd )
-    MsgNum := DllCall( "RegisterWindowMessage", Str,"SHELLHOOK" )
-    OnMessage( MsgNum, "onWindowChange" )
+    DllCall("RegisterShellHookWindow", "UInt", A_ScriptHwnd)
+    msgNum := DllCall("RegisterWindowMessage", "Str", "SHELLHOOK")
+    OnMessage(msgNum, "onWindowChange")
 }
 
 onWindowChange(wParam, _lParam){
-    if(wParam=1)
-        showElevatedWarning()
+    if (wParam = 1 && IsActiveAppAdmin()) {
+        TrayTip, MicMute, Detected an application running with administrator privileges. You need to run MicMute as administrator for the hotkeys to work with it.
+        onUpdateState(mic_controllers[1])
+    }
 }
 
-showElevatedWarning(){
-    static lastP:=""
+IsActiveAppAdmin(){
+    static lastProcess:=""
+    if (A_IsAdmin || !config_obj.NotifyForAdminApps)
+        return false
+
     WinGet, pid, pid, A
     WinGet, pName, ProcessName, A
-    if(A_IsAdmin || !pName || pName == lastP)
-        return
-    if(util_isProcessElevated(pid)){
+    if (!pName || pName == lastProcess)
+        return false
+
+    if (util_isProcessElevated(pid)){
         util_log("[Main] Detected elevated app: " pName " (" pid ")")
-        TrayTip, MicMute, Detected an application running with administrator privileges. You need to run MicMute as administrator for the hotkeys to work with it.
-        lastP:= pName
-        onUpdateState(mic_controllers[1])
+        lastProcess:= pName
+        return true
     }
 }
 
