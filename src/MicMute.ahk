@@ -188,11 +188,6 @@ initilizeMicMute(default_profile:="", exportConfig:=1){
     if(exportConfig)
         config_obj.exportConfig()
 
-    ;enable linked apps timer
-    SetTimer, checkLinkedApps, % watched_profiles.Length()? 3000 : "Off"
-    ;enable checkConfigDiff timer
-    setTimer, checkConfigDiff, 3000
-
     ;update theme variables
     updateSysTheme()
     if(config_obj.AllowUpdateChecker==-1){
@@ -212,6 +207,11 @@ initilizeMicMute(default_profile:="", exportConfig:=1){
 
     ;switch to the default profile
     switchProfile(default_profile)
+
+    ;enable linked apps timer
+    SetTimer, checkLinkedApps, % watched_profiles.Length()? 3000 : "Off"
+    ;enable checkConfigDiff timer
+    setTimer, checkConfigDiff, 3000
 
     if(auraServiceEnabled)
         SetTimer, initAuraService, -20
