@@ -2,7 +2,7 @@
     static genericStateString:= {0:"Microphone Online",1:"Microphone Muted",-1:"Microphone Unavailable"}
         , isUsingMultipleMicrophones:= 0
 
-    __New(mic_obj, ptt_delay:=0, force_current_state:=0, volume_lock:=0, feedback_callback:="", state_callback:=""){
+    __New(mic_obj, ptt_delay:=0, force_current_state:=0, volume_lock:=0, use_volume_based_mute:=0, feedback_callback:="", state_callback:=""){
         ; Mic config
         this.microphone:= mic_obj.Name
         this.muteHotkey:= mic_obj.MuteHotkey
@@ -10,6 +10,8 @@
         this.isPushToTalk:= mic_obj.PushToTalk
         this.isHybridPTT:= mic_obj.HybridPTT
         this.isInverted:= mic_obj.Inverted
+        this.UseVolumeBasedMute:= use_volume_based_mute
+        this.microphoneDefaultVolume:= 100
 
         ; Global config
         this.ptt_delay:= ptt_delay
@@ -29,12 +31,19 @@
         switch mic_obj.Name {
             case "all microphones":
                 this.microphone:= Array()
+                this.microphoneDefaultVolumes := {}
                 this.microphoneName:= ""
 
                 ; add all microphones to mic array
                 for _i, mic in VA_GetDeviceList("capture") {
-                    this.microphone.Push(mic ":capture")
+                    micId := mic ":capture"
+                    this.microphone.Push(micId)
                     this.microphoneName.= StrReplace(mic, ",") . ", "
+
+                    if (this.volumeLock > 0)
+                        this.microphoneDefaultVolumes[micId] := this.volumeLock
+                    else
+                        this.microphoneDefaultVolumes[micId] := VA_GetMasterVolume(VA_GetDevice(micId))
                 }
                 this.microphoneName:= SubStr(this.microphoneName, 1, -2)
 
@@ -47,13 +56,18 @@
                 OnMessage(WM_DEVICECHANGE, this.updateMicMethod)
             case "default": 
                 this.microphone:= "capture"
+                try this.microphoneDefaultVolume := VA_GetMasterVolume(VA_GetDevice("capture"))
                 try this.shortName:= VA_GetDeviceName(VA_GetDevice("capture"))
                 this.microphoneName:= this.shortName
             default :
+                try this.microphoneDefaultVolume := VA_GetMasterVolume(VA_GetDevice(this.shortName))
                 try this.shortName:= VA_GetDeviceName(VA_GetDevice(this.shortName))
                 this.microphone.= ":capture"
                 this.microphoneName:= this.shortName
         }
+
+        if (this.volumeLock > 0)
+            this.microphoneDefaultVolume := this.volumeLock
 
         RegExMatch(this.shortName, "(.+)\s+\(.+\)", match)
         this.shortName:= match1? match1 : this.shortName
@@ -102,8 +116,10 @@
 
         if(this.isMicrophoneArray){
             failureCount:=0
-            for _i, mic in this.Microphone 
+            for _i, mic in this.Microphone {
                 failureCount+= !!this.setMuteStateVA(state, mic)
+                this.setVolumeVA(state ? 0 : this.microphoneDefaultVolumes[mic], mic)
+            }
 
             this.state:= state
             if(failureCount = this.Microphone.Length()){
@@ -111,11 +127,13 @@
                 Goto, s_failure
                 return
             }
-        }else{
-            if(this.setMuteStateVA(state, this.Microphone) != 0){
+        } else {
+            if (this.setMuteStateVA(state, this.Microphone) != 0) {
                 Goto, s_failure
                 return
             }
+
+            this.setVolumeVA(state ? 0 : this.microphoneDefaultVolume, this.microphone)
             this.state:= state
         }
 
@@ -167,6 +185,15 @@
         return micId
     }
 
+    checkVolumeLock(volume, state, micName){
+        if (this.volumeLock && volume != this.volumeLock) {
+            if (this.UseVolumeBasedMute && state == 1)
+                return
+
+            this.setVolumeVA(this.volumeLock, micName)
+        }
+    }
+
     onUpdateState(micName:= "", callback:=""){        
         Critical, On
         ; Set the microphone that will handle callbacks
@@ -177,8 +204,7 @@
         if(callback){
             ; Force microphone volume lock
             volume:= Format("{:d}", callback.MasterVolume*100)+0
-            if(this.volumeLock > 0 && volume != this.volumeLock)
-                this.setVolumeVA(this.volumeLock, micName)
+            this.checkVolumeLock(volume, callback.Muted, micName)
 
             ; Force microphone mute state
             if(this.force_current_state && this.state != callback.Muted)

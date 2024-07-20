@@ -4,6 +4,7 @@
         this.Microphone := Array(new MicrophoneTemplate("Default", "", ""))
         this.MicrophoneActions := Array()
         this.MicrophoneVolumeLock := 0
+        this.UseVolumeBasedMute := 0
 
         this.SoundFeedback := 0
         this.SoundFeedbackDevice := "Default"
