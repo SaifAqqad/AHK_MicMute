@@ -118,7 +118,8 @@
             failureCount:=0
             for _i, mic in this.Microphone {
                 failureCount+= !!this.setMuteStateVA(state, mic)
-                this.setVolumeVA(state ? 0 : this.microphoneDefaultVolumes[mic], mic)
+                if (this.UseVolumeBasedMute)
+                    this.setVolumeVA(state ? 0 : this.microphoneDefaultVolumes[mic], mic)
             }
 
             this.state:= state
@@ -133,7 +134,8 @@
                 return
             }
 
-            this.setVolumeVA(state ? 0 : this.microphoneDefaultVolume, this.microphone)
+            if (this.UseVolumeBasedMute)
+                this.setVolumeVA(state ? 0 : this.microphoneDefaultVolume, this.microphone)
             this.state:= state
         }
 
@@ -174,6 +176,16 @@
         return result
     }
 
+    getVolumeVA(mic){
+        ; Use cached microphone id
+        vol := VA_GetMasterVolume(this.getMicId(mic))
+        if vol
+            return vol
+
+        ; Update the cached microphone id and retry
+        return VA_GetMasterVolume(this.microphoneIds[mic]:= VA_GetDevice(mic))
+    }
+
     getMicId(micName){
         ; Prevent caching the default device (which can change)
         if(micName == "capture")
@@ -206,11 +218,17 @@
             volume:= Format("{:d}", callback.MasterVolume*100)+0
             this.checkVolumeLock(volume, callback.Muted, micName)
 
-            ; Force microphone mute state
-            if(this.force_current_state && this.state != callback.Muted)
-                this.setMuteStateVA(this.state, micName)
-            else
+            ; Force microphone state
+            if (this.force_current_state) {
+                if (this.state != callback.Muted) {
+                    this.setMuteStateVA(this.state, micName)
+                }
+                vol := this.state ? 0 : this.microphoneDefaultVolume
+                if (this.UseVolumeBasedMute && this.getVolumeVA(micName) != vol)
+                    this.setVolumeVA(vol, micName)
+            } else {
                 this.state:= callback.Muted
+            }
         } else {
             ; Called manually
             micName:= this.isMicrophoneArray? this.microphone[1] : this.microphone
@@ -277,9 +295,9 @@
         if (this.volumeLock > 0) {
             if (this.isMicrophoneArray) {
                 for i, mic in this.Microphone
-                    this.setVolumeVA(this.volumeLock, mic)
+                    this.checkVolumeLock(-1, this.state, mic)
             } else {
-                this.setVolumeVA(this.volumeLock, this.microphone)
+                this.checkVolumeLock(-1, this.state, this.microphone)
             }
         }
 

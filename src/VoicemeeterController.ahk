@@ -16,7 +16,7 @@
     )
     , activeControllers:=[]
 
-    __New(mic_obj, voicemeeter_path="", ptt_delay:=0, force_current_state:=0, volume_lock:=0, feedback_callback:="", state_callback:=""){
+    __New(mic_obj, voicemeeter_path="", ptt_delay:=0, force_current_state:=0, volume_lock:=0, use_volume_based_mute:=0, feedback_callback:="", state_callback:=""){
         this.initVoicemeeter(voicemeeter_path)
         microphoneMatch:=""
         RegExMatch(mic_obj.Name, this.BUS_STRIP_REGEX, microphoneMatch)
@@ -33,14 +33,17 @@
             this.prop:= mic_obj.VMRStripProperty
             this.isInvertedProp:= this.STRIP_PROPERTIES[mic_obj.VMRStripProperty] || 0
         }
+
         this.ptt_key:=""
         this.ptt_delay:= ptt_delay
         this.volumeLock:= volume_lock
+        this.UseVolumeBasedMute:= use_volume_based_mute
         this.force_current_state:= force_current_state
         this.feedback_callback:= feedback_callback
         this.state_callback:= state_callback
         this.shouldCallFeedback:=0
         this.microphone:= this.voicemeeter[this.microphoneType][this.microphoneIndex]
+        this.microphoneDefaultVolume:= this.volumeLock > 0 ? this.volumeLock : this.microphone.getGainPercentage()
         this.shortName:= this.microphone.label? this.microphone.label : this.microphone.name
         this.stateString:= {0:this.shortName . " Online",1:this.shortName . " Muted", -1:this.shortName . " Unavailable"}
         this.voicemeeter.onUpdateParameters:= ObjBindMethod(VoicemeeterController, "_activeControllersCallback")
@@ -52,7 +55,11 @@
             case this.state: return
             case -2: state:= !this.state
         }
+
         this.state:= this.setStateProp(state)
+        if (this.UseVolumeBasedMute)
+            this.setVolume(state ? 0 : this.microphoneDefaultVolume)
+
         this.shouldCallFeedback:= shouldCallFeedback
         Critical, Off
     }
@@ -62,14 +69,22 @@
         Critical, On
 
         ; Force microphone volume lock
-        if(this.volumeLock > 0 && this.getVolume() != this.volumeLock)
-            this.setVolume(this.volumeLock)
+        volume:= this.getVolume()
+        this.checkVolumeLock(volume, newState, "")
 
         ; Force microphone mute state
-        if(this.force_current_state && this.state != newState)
-            this.setStateProp(this.state)
-        else
+        if (this.force_current_state) {
+            if (this.state != newState) {
+                this.setStateProp(this.state)
+            }
+
+            vol := this.state ? 0 : this.microphoneDefaultVolume
+            if (this.UseVolumeBasedMute && this.getVolume() != vol) {
+                this.setVolume(vol)
+            }
+        } else {
             this.state:= newState
+        }
 
         this.state_callback.Call(this)
         if(this.shouldCallFeedback){
@@ -108,7 +123,7 @@
     setVolumeVA(volume, _mic){
         this.setVolume(volume)
     }
-    
+
     enableCallback(){
         this.activeControllers.Push(this)
         this.id:= this.activeControllers.Length()
