@@ -1,4 +1,4 @@
-﻿Class MicrophoneController {
+Class MicrophoneController {
     static genericStateString:= {0:"Microphone Online",1:"Microphone Muted",-1:"Microphone Unavailable"}
         , isUsingMultipleMicrophones:= 0
 
@@ -198,7 +198,7 @@
     }
 
     checkVolumeLock(volume, state, micName){
-        if (this.volumeLock && volume != this.volumeLock) {
+        if (this.volumeLock > 0 && volume != this.volumeLock) {
             if (this.UseVolumeBasedMute && state == 1)
                 return
 

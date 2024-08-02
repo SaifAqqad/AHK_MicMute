@@ -267,11 +267,11 @@ switchProfile(p_name:=""){
             ;create a new MicrophoneController object for each mic
             if(InStr(mic.Name, "VMR_") = 1){
                 if(config_obj.VoicemeeterIntegration)
-                    controller:= new VoicemeeterController(mic, config_obj.VoicemeeterPath, current_profile.PTTDelay, config_obj.ForceMicrophoneState, current_profile.MicrophoneVolumeLock, Func("showFeedback"), Func("onUpdateState"))
+                    controller:= new VoicemeeterController(mic, config_obj.VoicemeeterPath, current_profile.PTTDelay, config_obj.ForceMicrophoneState, current_profile.MicrophoneVolumeLock, current_profile.UseVolumeBasedMute, Func("showFeedback"), Func("onUpdateState"))
                 else
                     throw Exception("Voicemeeter integration is disabled")
             }else{
-                controller:= new MicrophoneController(mic, current_profile.PTTDelay, config_obj.ForceMicrophoneState, current_profile.MicrophoneVolumeLock, Func("showFeedback"), Func("onUpdateState"))
+                controller:= new MicrophoneController(mic, current_profile.PTTDelay, config_obj.ForceMicrophoneState, current_profile.MicrophoneVolumeLock, current_profile.UseVolumeBasedMute, Func("showFeedback"), Func("onUpdateState"))
             }
             ; mute mics on startup
             if(config_obj.MuteOnStartup)
