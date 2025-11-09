@@ -32,7 +32,10 @@
     }
 
     setFromKeySet(type, keys_set, wildcard, passthrough, nt){
-        this[type].hotkey:= this.keySetToHotkey(keys_set)
+        result := this.keySetToHotkey(keys_set)
+        this[type].hotkey := result.Hotkey
+        this[type].modifierCount := result.ModifierCount
+        this[type].keyCount := result.KeyCount
         this[type].wildcard:= wildcard
         this[type].passthrough:= passthrough || InStr(this.unmute.hotkey, "~")
         this[type].nt:= nt
@@ -46,10 +49,14 @@
         this[type][option]:= enable
         symb:=""
         switch option {
-            case "wildcard": symb:="*"
+            case "wildcard": symb:= this[type].keyCount != 2 || this[type].modifierCount > 0 ? "*" : ""
             case "passthrough": symb:="~"
             case "nt": return
         }
+
+        if(symb == "")
+            return
+
         if(enable){
             if(!InStr(this[type].hotkey, symb))
                 this[type].hotkey:= symb . this[type].hotkey
@@ -62,11 +69,26 @@
         ; check hotkey length
         while(keySet.data.Length()>5)
             keySet.pop()
+
         ; check modifier count
         modifierCount:= 0
-        for _i, value in keySet.data 
+        for _i, value in keySet.data
             modifierCount += this.isModifier(value)
+
         keyCount:= keySet.data.Length() - modifierCount
+
+        ; order keys
+        loop, % keySet.data.maxindex() - 1
+        {
+            loop, % keySet.data.maxindex() - 1
+            {
+                if (this.getKeyOrder(keySet.data[A_Index]) > this.getKeyOrder(keySet.data[A_Index + 1]))
+                {
+                    keySet.data.InsertAt(A_Index, keySet.data.RemoveAt(A_Index + 1))
+                }
+            }
+        }
+
         switch modifierCount {
             case 0,1: ; (1/2 keys) | (1 modifier 1 key)
                 while(keySet.data.Length()>2)
@@ -84,12 +106,21 @@
         isModifierHotkey:= modifierCount = keySet.data.Length()
         ; append hotkey parts
         str := ""
+        alternateModifier := isModifierHotkey && modifierCount > 1
         for _i, value in keySet.data {
             ; if the part is a modifier and the hotkey is not a modifier-only hotkey => append symbol
-            if (this.isModifier(value) && !isModifierHotkey)
+            if (alternateModifier || (this.isModifier(value) && !isModifierHotkey)){
                 str .=  this.modifierToSymbol(value)
-            else ; else => append the part
-                str .= Format("VK{:x}", GetKeyVK(value)) " & "
+                alternateModifier := false
+            }else{ ; else => append the part
+                if(value == "Win")
+                    value := "LWin"
+
+                if(this.isNonVkKey(value))
+                    str .= value " & "
+                else
+                    str .= Format("VK{:x}", GetKeyVK(value)) " & "
+            }
         }
         ; remove trailing " & "
         if(SubStr(str, -2) = " & ")
@@ -99,8 +130,8 @@
             case "Shift","Alt","Control":
                 str:= "~" . str
         }
-        return str
 
+        return { Hotkey: str, ModifierCount: modifierCount, KeyCount: keyCount}
         invalidHk:
             Throw, "Invalid Hotkey"
     }
@@ -135,10 +166,13 @@
                 str:= StrReplace(str, "&", "")
             }
         }
-        return SubStr(finalStr,1,-3) 
+        return SubStr(finalStr,1,-3)
     }
 
     GetHKeyName(key){
+        if key in Win
+            return Key
+
         key:= GetKeyName(key)
 
         if(StrLen(key) == 1)
@@ -150,7 +184,7 @@
     modifierToSymbol(modifier){
         out:= str:= ""
         RegExMatch(modifier, this.modifier_regex, out)
-        switch out2 { 
+        switch out2 {
             case "R": str.=">"
             case "L": str.="<"
         }
@@ -161,6 +195,22 @@
             case "Win": str.= "#"
         }
         return str
+    }
+
+    getKeyOrder(key){
+        switch key {
+            case "LControl","RControl","Control": return 1
+            case "LAlt","RAlt","Alt": return 2
+            case "LShift","RShift","Shift": return 3
+            case "LWin","RWin","Win": return 4
+            default: return 5
+        }
+    }
+
+    isNonVkKey(key){
+        if key contains Insert,Numpad
+            return 1
+        return 0
     }
 
     modifierToNeutral(modifier){
@@ -180,10 +230,10 @@
             case ">": str.= "R"
         }
         switch out2 {
-            case "!": str.= "Alt" 
-            case "+": str.= "Shift" 
-            case "^": str.= "Control" 
-            case "#": str.= "Win" 
+            case "!": str.= "Alt"
+            case "+": str.= "Shift"
+            case "^": str.= "Control"
+            case "#": str.= "Win"
         }
         return str
     }
