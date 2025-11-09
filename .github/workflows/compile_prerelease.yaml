@@ -39,11 +39,6 @@ jobs:
       - name: Calculate file hash
         shell: pwsh
         run: (Get-FileHash '.\MicMute.exe').Hash  | Tee-Object -FilePath  .\MicMute.sha256;
-      
-      - uses: actions/upload-artifact@v3
-        with:
-          name: MicMute
-          path: ./MicMute.*
 
       - name: Create release
         uses: "marvinpinto/action-automatic-releases@latest"
