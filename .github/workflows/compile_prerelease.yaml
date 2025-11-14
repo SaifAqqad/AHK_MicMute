@@ -31,7 +31,7 @@ jobs:
           Start-Process "$cwd\ahkpmDir\ahkpm\ahkpm.exe" -ArgumentList "install" -WorkingDirectory "$cwd" -Wait -NoNewWindow
 
       - name: Compile MicMute
-        uses: SaifAqqad/GitHub-Action-Ahk2Exe@v1.0.2
+        uses: SaifAqqad/GitHub-Action-Ahk2Exe@v1.0.3
         with:
           in: '.\src\MicMute.ahk'
           out: '.\MicMute.exe'
