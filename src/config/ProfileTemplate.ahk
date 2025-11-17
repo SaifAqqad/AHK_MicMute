@@ -24,6 +24,8 @@
             , ShowOnState: 2
             , Theme: 0
             , Size: 48
+            , ShowActivityIndicator: 1
+            , ActivityIndicatorThreshold: 10
             , UseCustomIcons: 0 }
 
         if (IsObject(p_name_Obj)) {

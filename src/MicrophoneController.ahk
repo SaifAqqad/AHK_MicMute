@@ -25,6 +25,9 @@
         this.microphoneIds:= Object()
         this.shortName:= mic_obj.Name
         this.callbackMic:=""
+        this.level_callback:=""
+        this.audioMeter:=""
+        this.lvlUpdateFunc:= ObjBindMethod(this, "OnLevelUpdate")
 
         switch mic_obj.Name {
             case "all microphones":
@@ -45,11 +48,11 @@
                 ; update mic array when devices change
                 this.updateMicMethod := ObjBindMethod(this, "UpdateMicArray")
                 OnMessage(WM_DEVICECHANGE, this.updateMicMethod)
-            case "default": 
+            case "default":
                 this.microphone:= "capture"
                 try this.shortName:= VA_GetDeviceName(VA_GetDevice("capture"))
                 this.microphoneName:= this.shortName
-            default :
+                default :
                 try this.shortName:= VA_GetDeviceName(VA_GetDevice(this.shortName))
                 this.microphone.= ":capture"
                 this.microphoneName:= this.shortName
@@ -95,14 +98,14 @@
         Critical, On
 
         switch state {
-            case this.state: return
-            case -2: state:= !this.state ; toggle
-            default : 
+        case this.state: return
+        case -2: state:= !this.state ; toggle
+            default :
         }
 
         if(this.isMicrophoneArray){
             failureCount:=0
-            for _i, mic in this.Microphone 
+            for _i, mic in this.Microphone
                 failureCount+= !!this.setMuteStateVA(state, mic)
 
             this.state:= state
@@ -124,9 +127,9 @@
         return
 
         s_failure:
-            this.state:= -1
-            this.state_callback.Call(this)
-            util_log("[MicrophoneController] " util_toString(this.microphoneName) " is unavailable")
+        this.state:= -1
+        this.state_callback.Call(this)
+        util_log("[MicrophoneController] " util_toString(this.microphoneName) " is unavailable")
         return
     }
 
@@ -167,12 +170,12 @@
         return micId
     }
 
-    onUpdateState(micName:= "", callback:=""){        
+    onUpdateState(micName:= "", callback:=""){
         Critical, On
         ; Set the microphone that will handle callbacks
         if(callback && !this.callbackMic)
             this.callbackMic:= micName
-        
+
         ; Called by VA
         if(callback){
             ; Force microphone volume lock
@@ -224,7 +227,7 @@
             if (this.muteHotkey=this.unmuteHotkey){
                 if(this.isPushToTalk){
                     this.ptt_key:= (StrSplit(this.muteHotkey, [" ","#","!","^","+","&",">","<","*","~","$","UP"], " `t")).Pop()
-   
+
                     if(this.isMicrophoneArray){
                         for i, mic in this.Microphone
                             this.setMuteStateVA(!this.isInverted, mic)
@@ -291,6 +294,9 @@
         }else{
             this.va_callback:= VA_CreateAudioEndpointCallback(ObjBindMethod(this, "onUpdateState", this.microphone), this.microphone)
         }
+
+        if (this._level_callback)
+            this.setLevelCallback(this._level_callback)
     }
 
     disableCallback(){
@@ -303,7 +309,51 @@
             try VA_ReleaseAudioEndpointCallback(this.getMicId(this.microphone), this.va_callback)
             this.va_callback:=""
         }
+        this._level_callback := this.level_callback
+        this.setLevelCallback("")
         this.microphoneIds:= Object()
         OnMessage(0x0219, this.updateMicMethod, 0)
+    }
+
+    setLevelCallback(level_callback:=""){
+        if(level_callback){ ;enable
+            micPeriod:=defaultMicPeriod:=30
+            if(this.isMicrophoneArray){
+                this.audioMeter:= Array()
+                for i, mic in this.microphone {
+                    currMicPeriod:=""
+                    VA_GetDevicePeriod(mic, currMicPeriod)
+                    micPeriod:= Min(micPeriod,currMicPeriod)
+                    this.audioMeter.Push(VA_GetAudioMeter(mic))
+                }
+            }else{
+                this.audioMeter:= VA_GetAudioMeter(this.microphone)
+                VA_GetDevicePeriod(this.microphone, micPeriod)
+            }
+            this.level_callback:= level_callback
+            lvlUpdateFunc:= this.lvlUpdateFunc
+            SetTimer, % lvlUpdateFunc, % micPeriod ? micPeriod : defaultMicPeriod
+        }else{ ;disable
+            this.audioMeter:=""
+            this.level_callback:=""
+            lvlUpdateFunc:= this.lvlUpdateFunc
+            Try SetTimer, % lvlUpdateFunc, Delete
+        }
+    }
+
+    onLevelUpdate(){
+        peakLvl:=0
+        if(this.isMicrophoneArray){
+            for i, audioMeter in this.audioMeter {
+                currentPeakLvl:=""
+                VA_IAudioMeterInformation_GetPeakValue(audioMeter, currentPeakLvl)
+                peakLvl:= Max(peakLvl, currentPeakLvl)
+            }
+        }else{
+            VA_IAudioMeterInformation_GetPeakValue(this.audioMeter, peakLvl)
+        }
+
+        peakLvl := Round(peakLvl * 100)
+        this.level_callback.Call(peakLvl)
     }
 }

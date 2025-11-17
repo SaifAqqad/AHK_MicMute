@@ -440,9 +440,17 @@
                                                     <span class="OverlayUseCustomIcons-label">Use custom icons</span>
                                                 </label>
                                             </div>
+                                            <div class="tag is-small option has-tooltip" id="OverlayShowActivityIndicator_tag" tabindex=0 role="button"
+                                                aria-pressed="false" onkeydown="switch(event.keyCode){case 32:case 13:this.click()}"
+                                                onclick="ahk.UI_flipVal('OverlayShowActivityIndicator');ahk.UI_onChange('');this.blur()">
+                                                <label class="checkbox">
+                                                    <input type="checkbox" id="OverlayShowActivityIndicator" disabled>
+                                                    <span class="OverlayShowActivityIndicator-label">Show Activity Indicator</span>
+                                                </label>
+                                            </div>
                                         </div>
                                         <div class="column is-5">
-                                            <label class="label title is-7 noselect">Show Overlay</label>
+                                            <label class="label title is-7 noselect" for="OverlayShow">Show Overlay</label>
                                             <div class="control is-expanded ">
                                                 <div class="select is-fullwidth is-small is-primary">
                                                     <select class="input-elem" name="OverlayShow" id="OverlayShow" onchange="ahk.UI_onChange('')" tabindex=0>
@@ -455,7 +463,7 @@
                                         </div>
                                     </div>
                                     <div class="columns inner-container-95">
-                                        <div class="column is-7">
+                                        <div class="column is-7 pb-2">
                                             <label class="label title is-7 noselect">Overlay size</label>
                                             <div class="columns is-mobile" style="margin-left: 1px;">
                                                 <div class="column is-3" style="padding-right: 0 !important;">
@@ -476,6 +484,24 @@
                                                         <option value="0" selected>Light</option>
                                                         <option value="1">Dark</option>
                                                     </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="columns inner-container-95">
+                                        <div class="column is-7 pt-0">
+                                            <label class="label title is-7 noselect" for="OverlayActivityIndicatorThreshold">Activity Indicator Threshold</label>
+                                            <div class="control ml-3 mt-1">
+                                                <div class="columns is-mobile">
+                                                    <div class="column is-3 pr-0">
+                                                        <input class="input is-primary is-small input-elem" placeholder="%" disabled type="text"
+                                                            id="OverlayActivityIndicatorThreshold_text" value="100%">
+                                                    </div>
+                                                    <div class="column is-6">
+                                                        <input class="slider is-small" min="0" max="100" step="1" value="10" type="range" tabindex=0
+                                                            id="OverlayActivityIndicatorThreshold"
+                                                            onchange="ahk.UI_onChange('UI_onUpdateActivityIndicatorThreshold',event.target.value)">
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>

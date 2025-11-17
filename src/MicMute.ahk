@@ -329,8 +329,13 @@ switchProfile(p_name:=""){
                 , theme: current_profile.OnscreenOverlay.Theme
                 , pos: current_profile.OnscreenOverlay.Position
                 , showOn: current_profile.OnscreenOverlay.ShowOnState
+                , showActivityIndicator: current_profile.OnscreenOverlay.ShowActivityIndicator
+                , activityIndicatorThreshold: current_profile.OnscreenOverlay.ActivityIndicatorThreshold
                 , useCustomIcons: current_profile.OnscreenOverlay.UseCustomIcons}, mic_controllers[1].state)
 
+            ; setup level callback
+            if (current_profile.OnscreenOverlay.ShowActivityIndicator)
+                mic_controllers[1].setLevelCallback(ObjBindMethod(overlay_wnd, "micLevelUpdated"))
         }
     }
 
@@ -434,6 +439,7 @@ checkConfigDiff(){
         last_modif_time:= ""
         setTimer, checkConfigDiff, Off
         initilizeMicMute(current_profile.ProfileName, false)
+        return
     }
     last_modif_time:= modif_time
 }

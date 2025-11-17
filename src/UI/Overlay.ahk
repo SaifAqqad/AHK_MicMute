@@ -26,6 +26,7 @@
         this.onPosChangeFunc := ObjBindMethod(this, "_onPosChange")
         this.onDisplayChangeFunc := ObjBindMethod(this, "_onDisplayChange")
         this.calculatePosFunc := ObjBindMethod(this, "_calculatePos")
+        this.drawFunc := ObjBindMethod(this, "draw")
         this.state := initialState
         this.locked := 1
 
@@ -51,7 +52,7 @@
         cFunc := this.calculatePosFunc
         SetTimer, % cFunc, -1000
     }
-    
+
     _calculatePos(){
         this.changedPos:= ""
         isPositionSet:= 0
@@ -204,6 +205,19 @@
             , 0, 0, iconObj.width, iconObj.height)
     }
 
+    _drawActivityIndicator() {
+        if (!this.micActive || this.state)
+            return
+
+        indicatorSize := this.options.size / 6
+        Gdip_FillEllipse(this.graphics
+            , Gdip_BrushCreateSolid(0xFF00FF00)
+            , this.options.size - indicatorSize - Overlay.PADDING_SIZE
+            , indicatorSize - Overlay.PADDING_SIZE
+            , indicatorSize
+            , indicatorSize)
+    }
+
     _onDrag(wParam, lParam, msg, hwnd) {
         if (hwnd = this.hwnd)
             PostMessage, 0xA1, 2, , , % "ahk_id " this.hwnd
@@ -282,8 +296,8 @@
         this._clear()
         if (!this.locked)
             this._fillBackground()
-        iconObj := this.icons[this.state]
-        this._drawIcon(iconObj)
+        this._drawIcon(this.icons[this.state])
+        this._drawActivityIndicator()
         this._updateLayeredWindow()
         return this
     }
@@ -349,6 +363,21 @@
                 this.setShow(1)
         }
         return this
+    }
+
+    micLevelUpdated(level) {
+        static previousPeakLvl := 0, noiseDiffThreshold := 3
+        if (!this.options.showActivityIndicator || level == "")
+            return
+
+        micActive := level >= this.options.activityIndicatorThreshold || Abs(level - previousPeakLvl) >= noiseDiffThreshold
+        previousPeakLvl := level + 0
+
+        if (micActive != this.micActive) {
+            this.micActive := micActive
+            _drawFunc := this.drawFunc
+            SetTimer, % _drawFunc, -100
+        }
     }
 
     destroy() {

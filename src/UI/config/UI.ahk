@@ -86,6 +86,8 @@ UI_setProfile(_neutron, p_profile){
     ui_obj.doc.getElementById("OnscreenFeedback").checked:= current_profile.OnscreenFeedback
     ui_obj.doc.getElementById("OnscreenOverlay").checked:= current_profile.OnscreenOverlay.Enabled
     ui_obj.doc.getElementById("OverlayShow").value:= current_profile.OnscreenOverlay.ShowOnState
+    ui_obj.doc.getElementById("OverlayShowActivityIndicator").checked:= current_profile.OnscreenOverlay.ShowActivityIndicator
+    ui_obj.doc.getElementById("OverlayActivityIndicatorThreshold").value:= current_profile.OnscreenOverlay.ActivityIndicatorThreshold ? current_profile.OnscreenOverlay.ActivityIndicatorThreshold : 0
     ui_obj.doc.getElementById("OverlayUseCustomIcons").checked:= current_profile.OnscreenOverlay.UseCustomIcons
     ui_obj.doc.getElementById("OverlayTheme").value:= current_profile.OnscreenOverlay.Theme
     ui_obj.doc.getElementById("OverlaySize").value:= current_profile.OnscreenOverlay.Size
@@ -100,6 +102,7 @@ UI_setProfile(_neutron, p_profile){
     UI_setAfkTimeoutValue(current_profile.afkTimeout)
     ui_obj.doc.getElementById("PTTDelay").value:= current_profile.PTTDelay
     UI_onUpdateDelay(current_profile.PTTDelay)
+    UI_onUpdateActivityIndicatorThreshold(current_profile.OnscreenOverlay.ActivityIndicatorThreshold)
     UI_onRefreshMicActions("")
     innerCont.classList.remove("hidden")
     UI_profileIsDirty:= 0
@@ -246,7 +249,9 @@ UI_onSaveProfile(neutron, noReset:=0){
     current_profile.OnscreenOverlay.Enabled:= ui_obj.doc.getElementById("OnscreenOverlay").checked? 1 : 0
     current_profile.ExcludeFullscreen:= ui_obj.doc.getElementById("ExcludeFullscreen").checked? 1 : 0
     current_profile.OnscreenOverlay.ShowOnState:= ui_obj.doc.getElementById("OverlayShow").value
+    current_profile.OnscreenOverlay.ShowActivityIndicator:= ui_obj.doc.getElementById("OverlayShowActivityIndicator").checked? 1 : 0
     current_profile.OnscreenOverlay.UseCustomIcons:= ui_obj.doc.getElementById("OverlayUseCustomIcons").checked? 1 : 0
+    current_profile.OnscreenOverlay.ActivityIndicatorThreshold:= ui_obj.doc.getElementById("OverlayActivityIndicatorThreshold").value+0
     current_profile.OnscreenOverlay.Theme:= ui_obj.doc.getElementById("OverlayTheme").value
     current_profile.OnscreenOverlay.Size:= ui_obj.doc.getElementById("OverlaySize").value
     current_profile.afkTimeout:= UI_getAfkTimeoutValue()
@@ -576,6 +581,10 @@ UI_onConfirmOSDPos(x,y){
     ui_obj.doc.getElementByID("OSDPos_x").value:= x
     ui_obj.doc.getElementByID("OSDPos_y").value:= y
     Gui, % ui_obj.hWnd ":Restore"
+}
+
+UI_onUpdateActivityIndicatorThreshold(sensitivity){
+    ui_obj.doc.getElementByID("OverlayActivityIndicatorThreshold_text").value:= (sensitivity ? sensitivity : 0) . "%"
 }
 
 UI_onChangeProfileName(neutron, event){
