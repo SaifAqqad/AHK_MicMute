@@ -18,8 +18,8 @@
    * Control multiple microphones simultaneously 
    * Use separate hotkeys for Mute/Unmute or a single toggle/push-to-talk/push-to-mute hotkey
    * AFK timeout - Automatically mutes the microphone when you're AFK
+   * Always-on-top overlay to show the microphone's state + voice activity
    * Customizable sound and on-screen feedback
-   * Always-on-top overlay to show the microphone's state
    * Run custom scripts/programs when muting/unmuting the microphone
    * ASUS Aura Sync integration
    * Voicemeeter integration
