@@ -3,7 +3,7 @@
     MicMute
 </h1>
 <p align="center">
-    Control your microphone using keyboard and mouse hotkeys.
+    Super simple mic control with all the tweaks you could ever want.
 </p>
 
 <p align="center">
