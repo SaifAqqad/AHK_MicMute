@@ -25,12 +25,17 @@
             , Theme: 0
             , Size: 48
             , ShowActivityIndicator: 1
-            , ActivityIndicatorThreshold: 10
+            , ActivityIndicatorThreshold: 20
             , UseCustomIcons: 0 }
 
         if (IsObject(p_name_Obj)) {
             for prop, val in p_name_Obj {
                 this[prop] := val
+            }
+
+            if (!this.OnscreenOverlay.HasKey("ActivityIndicatorThreshold")) {
+                this.OnscreenOverlay.ActivityIndicatorThreshold := 20
+                this.OnscreenOverlay.ShowActivityIndicator := 1
             }
 
             ; Ensure compatibility with old versions

@@ -340,8 +340,10 @@
             return
 
         this.state := state
-        this.draw()
+        if (!this.locked)
+            return
 
+        this.draw()
         if (this.options.showOn != 2)
             this.setShow(state == this.options.showOn)
 
@@ -367,7 +369,7 @@
 
     micLevelUpdated(level) {
         static previousPeakLvl := 0, noiseDiffThreshold := 3
-        if (!this.options.showActivityIndicator || level == "")
+        if (!this.options.showActivityIndicator || level == "" || !this.locked)
             return
 
         micActive := level >= this.options.activityIndicatorThreshold || Abs(level - previousPeakLvl) >= noiseDiffThreshold

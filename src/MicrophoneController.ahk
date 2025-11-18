@@ -353,7 +353,7 @@
             VA_IAudioMeterInformation_GetPeakValue(this.audioMeter, peakLvl)
         }
 
-        peakLvl := Round(peakLvl * 100)
+        peakLvl := Min(Round(peakLvl * 200), 100)
         this.level_callback.Call(peakLvl)
     }
 }

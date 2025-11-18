@@ -121,6 +121,16 @@ Show the microphone's state in an always-on-top overlay.
     To use this feature, turn on the option in the config UI, then place the icons (`ico`/`png`/`jpeg`) in the same folder as `MicMute.exe` and rename them as:  
     -  Mute icon: `overlay_mute`
     -  Unmute icon: `overlay_unmute`
+* The voice activity indicator <small>`v1.3.3+`</small> can be enabled to show when audio is detected through the microphone
+    <details>
+    <summary>Screenshot</summary>
+
+    ![overlay](./screenshots/activityindicator.png)
+    
+    Configuration:            
+    ![overlay](./screenshots/activityindicator_config.png)
+   </details>
+
 <hr>
 
 ### Linked applications
