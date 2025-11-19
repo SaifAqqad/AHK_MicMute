@@ -332,12 +332,12 @@
             }
             this.level_callback:= level_callback
             lvlUpdateFunc:= this.lvlUpdateFunc
-            SetTimer, % lvlUpdateFunc, % micPeriod ? micPeriod : defaultMicPeriod
+            Try SetTimer, % lvlUpdateFunc, % micPeriod ? micPeriod : defaultMicPeriod
         }else{ ;disable
             this.audioMeter:=""
             this.level_callback:=""
             lvlUpdateFunc:= this.lvlUpdateFunc
-            Try SetTimer, % lvlUpdateFunc, Delete
+            Try SetTimer, % lvlUpdateFunc, Off
         }
     }
 
