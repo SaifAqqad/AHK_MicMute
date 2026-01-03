@@ -18,6 +18,7 @@
 
         this.LinkedApp := ""
         this.ForegroundAppsOnly := 1
+        this.AutoExitApps := []
 
         this.OnscreenOverlay := { Enabled: 0
             , Position: [ { x: -1, y: -1 } ]

@@ -3,9 +3,9 @@
 ;compiler directives
 ;@Ahk2Exe-Let Res = %A_ScriptDir%\resources
 ;@Ahk2Exe-Let UI = %A_ScriptDir%\UI\config
-;@Ahk2Exe-Let Version = 1.3.4
+;@Ahk2Exe-Let Version = 1.3.5
 ;@Ahk2Exe-IgnoreBegin
-    U_Version:= "1.3.4"
+    U_Version:= "1.3.5"
 ;@Ahk2Exe-IgnoreEnd
 ;@Ahk2Exe-SetMainIcon %U_Res%\icons\1000.ico
 ;@Ahk2Exe-SetVersion %U_Version%
@@ -570,6 +570,21 @@ onWindowChange(wParam, _lParam){
     if (wParam = 1 && IsActiveAppAdmin()) {
         TrayTip, MicMute, Detected an application running with administrator privileges. You need to run MicMute as administrator for the hotkeys to work with it.
         onUpdateState(mic_controllers[1])
+    }
+
+    if(current_profile.AutoExitApps.Length() > 0) {
+        WinGet, pid, pid, A
+        WinGet, pName, ProcessName, A
+        if (!pName)
+            return
+        for _i, app in current_profile.AutoExitApps {
+            if (pName = app) {
+                util_log("[Main] Detected auto-exit app: " pName " (" pid ")")
+                exitMicMute()
+                ExitApp, 0
+            }
+        }
+
     }
 }
 
